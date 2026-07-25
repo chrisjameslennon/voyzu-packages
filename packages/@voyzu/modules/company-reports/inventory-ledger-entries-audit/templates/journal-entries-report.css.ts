@@ -1,0 +1,181 @@
+export const journalEntriesReportCss = `
+.reportPage {
+  box-sizing: border-box;
+  min-height: 210mm;
+  padding: 16mm;
+  color: #111827;
+  background: #fff;
+  font-size: 11px;
+}
+
+.reportSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reportTitle {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.reportSubTitle {
+  color: #374151;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.reportFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+  padding-top: 8px;
+  border-top: 1px solid #d1d5db;
+  color: #6b7280;
+  font-size: 10px;
+}
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.yearControl {
+  width: 280px;
+}
+
+.rangePreset {
+  width: 240px;
+}
+
+.dateControl {
+  width: 180px;
+}
+
+.rangeSeparator {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.journalList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.journal {
+  padding: 10px 0 0;
+}
+
+.journal:first-child {
+  padding-top: 0;
+}
+
+.headerRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px 16px;
+  padding-bottom: 8px;
+}
+
+.lineList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lineRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px 16px;
+  padding-top: 6px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.fullWidthFields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.jsonField {
+  display: block;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.jsonFieldLabel {
+  color: var(--gray-500);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.jsonFieldValue {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.journalDivider {
+  height: 2px;
+  width: 100%;
+  margin-top: 12px;
+  background: #111827;
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  gap: 4px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.fieldLabel {
+  color: var(--gray-500);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.fieldValue {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.empty {
+  padding: 24px 0;
+  color: var(--gray-500);
+}
+
+
+`;
+
+export const journalEntriesReportStyles = {
+  reportPage: "reportPage",
+  reportSection: "reportSection",
+  reportTitle: "reportTitle",
+  reportSubTitle: "reportSubTitle",
+  reportFooter: "reportFooter",
+  dateRange: "dateRange",
+  yearControl: "yearControl",
+  rangePreset: "rangePreset",
+  dateControl: "dateControl",
+  rangeSeparator: "rangeSeparator",
+  journalList: "journalList",
+  journal: "journal",
+  headerRow: "headerRow",
+  lineList: "lineList",
+  lineRow: "lineRow",
+  fullWidthFields: "fullWidthFields",
+  jsonField: "jsonField",
+  jsonFieldLabel: "jsonFieldLabel",
+  jsonFieldValue: "jsonFieldValue",
+  journalDivider: "journalDivider",
+  field: "field",
+  fieldLabel: "fieldLabel",
+  fieldValue: "fieldValue",
+  empty: "empty",
+} as const;

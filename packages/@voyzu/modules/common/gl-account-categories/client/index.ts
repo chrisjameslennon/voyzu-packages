@@ -1,0 +1,1 @@
+export { GlAccountCategoryDetailsForm } from "./GlAccountCategoryDetailsForm";

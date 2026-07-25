@@ -1,0 +1,2 @@
+export { CompanyInventoryItemPostingProfilesListContent } from "./CompanyInventoryItemPostingProfilesListContent";
+export { CompanyInventoryItemPostingProfileDetail } from "./CompanyInventoryItemPostingProfileDetail";

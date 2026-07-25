@@ -1,0 +1,90 @@
+export const taxPositionReportCss = `
+.reportDocument {
+  width: 100%;
+  background: #fff;
+  color: #1f1f1f;
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.reportHeader {
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid #404040;
+}
+
+.reportHeader h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.reportHeader h2 {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+.reportHeader p {
+  margin: 4px 0 0;
+  color: #6b6b6b;
+}
+
+.reportTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.reportTable th {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #d8d8d8;
+  background: #e8e8e8;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.reportTable td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #d8d8d8;
+}
+
+.amount {
+  width: 10rem;
+  min-width: 10rem;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount.amount {
+  text-align: right;
+}
+
+.totalRow td {
+  border-top: 2px solid #404040;
+  border-bottom: none;
+  font-weight: 700;
+}
+
+.reportFooter {
+  margin-top: 20px;
+  padding-top: 8px;
+  border-top: 1px solid #d8d8d8;
+  color: #6b6b6b;
+  font-size: 11px;
+  text-align: right;
+}
+
+`;
+
+export const taxPositionReportStyles = {
+  reportDocument: "reportDocument",
+  reportHeader: "reportHeader",
+  reportTable: "reportTable",
+  amount: "amount",
+  totalRow: "totalRow",
+  reportFooter: "reportFooter",
+} as const;

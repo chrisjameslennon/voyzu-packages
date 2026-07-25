@@ -1,0 +1,115 @@
+.reportPage {
+  font-family: var(--voyzu-font-family);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--voyzu-color-text-primary);
+  background: #fff;
+}
+
+.reportPage,
+.reportPage * {
+  box-sizing: border-box;
+}
+
+.reportHeader {
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid #404040;
+}
+
+.reportCompanyName {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.reportHeaderLine {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--voyzu-color-text-muted);
+}
+
+.reportHeaderLineStrong {
+  font-weight: 700;
+  color: var(--voyzu-color-text-primary);
+}
+
+.reportSection {
+  margin: 0;
+}
+
+.reportFooter {
+  margin-top: 20px;
+  padding-top: 8px;
+  border-top: 1px solid var(--voyzu-color-border-soft);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--voyzu-color-text-muted);
+  text-align: right;
+}
+
+.colCode {
+  width: 90px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.colName {
+  /* absorbs remaining space */
+}
+
+.nowrapCell {
+  white-space: nowrap;
+}
+
+.colAmount {
+  width: 130px;
+  text-align: right !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.sectionRow.sectionRow td {
+  padding-top: 0.75rem;
+  font-weight: 700;
+  border-bottom: none;
+}
+
+.lineName {
+  padding-left: 1rem;
+}
+
+.indentCell {
+  width: 1rem;
+  padding: 0;
+}
+
+.categoryRow.categoryRow td {
+  padding-top: 0.5rem;
+  font-weight: 700;
+  border-bottom: none;
+}
+
+.categoryTotalsRow.categoryTotalsRow td {
+  font-weight: 700;
+  border-top: none;
+}
+
+.totalsRow.totalsRow td {
+  font-weight: 700;
+  border-top: none;
+  border-bottom: none;
+}
+
+.netProfitRow.netProfitRow td {
+  font-weight: 700;
+  border-top: 2px solid #404040;
+  border-bottom: none;
+}
+
+.spacerRow td {
+  height: 0.75rem;
+  border-bottom: none;
+}

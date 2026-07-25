@@ -1,0 +1,59 @@
+.statusRailStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vz-grid-gap);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgb(15 23 42 / 45%);
+}
+
+.modal {
+  width: min(800px, 100%);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--voyzu-color-surface);
+  border-radius: 1rem;
+  box-shadow: var(--voyzu-shadow-floating);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--voyzu-color-border);
+}
+
+.modalActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modalCode {
+  margin: 0;
+  padding: 1.25rem;
+  overflow: auto;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  .modalOverlay {
+    padding: 1rem;
+  }
+}

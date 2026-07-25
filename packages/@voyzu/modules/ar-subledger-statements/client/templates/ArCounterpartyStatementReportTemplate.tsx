@@ -1,0 +1,168 @@
+"use client";
+
+import type { ArCounterpartyStatementResponseDto } from "@voyzu/types/modules/ar-subledger";
+
+import localStyles from "./ar-document-report-template.module.css";
+
+function formatAmount(value: number): string {
+  if (value === 0) return "-";
+  const formatted = Math.abs(value).toLocaleString("en-NZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return value < 0 ? `(${formatted})` : formatted;
+}
+
+function roundMoney(value: number): number {
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
+function formatDate(value: string): string {
+  if (!value) return "";
+  try {
+    return new Date(value).toLocaleDateString("en-NZ", { day: "numeric", month: "short", year: "numeric" });
+  } catch {
+    return value;
+  }
+}
+
+function memoOrDescription(memo: string | null, description: string) {
+  return memo || description || <span className={localStyles.muted}>-</span>;
+}
+
+export interface ArCounterpartyStatementReportTemplateProps {
+  statement: ArCounterpartyStatementResponseDto;
+  generatedAt: string;
+  organizationName?: string;
+  showOrganization?: boolean;
+}
+
+export function ArCounterpartyStatementReportTemplate({
+  statement,
+  generatedAt,
+  organizationName = "",
+  showOrganization = false,
+}: ArCounterpartyStatementReportTemplateProps) {
+  const { company } = statement;
+  let runningBalance = 0;
+  const statementRows = statement.groups
+    .flatMap((group) => [
+      { kind: "group" as const, key: `group-${group.code}`, row: group, appliedTo: "" },
+      ...group.applications.map((application, index) => ({
+        kind: "application" as const,
+        key: `application-${group.code}-${application.code}-${index}`,
+        row: application,
+        appliedTo: group.documentId,
+      })),
+    ])
+    .sort((a, b) => (
+      a.row.postingDate.localeCompare(b.row.postingDate) ||
+      a.row.code.localeCompare(b.row.code) ||
+      a.key.localeCompare(b.key)
+    ))
+    .map((entry) => {
+      runningBalance = roundMoney(runningBalance + entry.row.debit - entry.row.credit);
+      return { ...entry, runningBalance };
+    });
+
+  return (
+    <div className={localStyles.reportPage}>
+      <style>{"@media print { @page { size: A4 landscape; } }"}</style>
+
+      <header className={localStyles.reportHeader}>
+        {showOrganization && organizationName && (
+          <div className={localStyles.reportOrgNameCentered}>{organizationName}</div>
+        )}
+        <div className={localStyles.reportCompanyName}>{company.name}</div>
+        <div className={`${localStyles.reportHeaderLine} ${localStyles.reportHeaderLineStrong}`}>Customer Statement</div>
+        <div className={localStyles.reportHeaderLine}>As at {formatDate(statement.asAtDate)}</div>
+      </header>
+
+      <section className={localStyles.reportSection}>
+        <div className={`${localStyles.grid12} ${localStyles.rowBordered}`}>
+          <div className={`${localStyles.topCompany} ${localStyles.addressBlock}`}>
+            <p className={localStyles.label}>Company</p>
+            <p className={localStyles.name}>{company.name}</p>
+            <p className={localStyles.line}>{company.code}</p>
+            <p className={localStyles.line}>{company.country?.name ?? company.countryCode}</p>
+            <p className={localStyles.line}>Base currency {company.baseCurrencyCode}</p>
+          </div>
+          <div className={`${localStyles.topCounterparty} ${localStyles.addressBlock}`}>
+            <p className={localStyles.label}>Counterparty</p>
+            <p className={localStyles.name}>{statement.counterpartyName}</p>
+            <p className={localStyles.line}>{statement.counterpartyCode}</p>
+          </div>
+        </div>
+
+        <div className={`${localStyles.grid12} ${localStyles.metaRow}`}>
+          <div className={localStyles.statementMetaSlot}>
+            <p className={localStyles.label}>Statement Date</p>
+            <p className={localStyles.metaValue}>{formatDate(statement.asAtDate)}</p>
+          </div>
+          <div className={localStyles.statementMetaSlot}>
+            <p className={localStyles.label}>Currency</p>
+            <p className={localStyles.metaValue}>{statement.baseCurrencyCode}</p>
+          </div>
+          <div className={localStyles.statementMetaSlot}>
+            <p className={localStyles.label}>Total Owing</p>
+            <p className={localStyles.metaValue}>{formatAmount(statement.totalOwing)}</p>
+          </div>
+        </div>
+
+        <section className={localStyles.section}>
+          <h2 className={localStyles.sectionTitle}>Statement</h2>
+          {statement.groups.length === 0 ? (
+            <p className={localStyles.muted}>No transactions on this account.</p>
+          ) : (
+            <table className={localStyles.table}>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Document</th>
+                  <th>Code</th>
+                  <th>Doc ID</th>
+                  <th>Applied To</th>
+                  <th>Memo / Description</th>
+                  <th className={localStyles.number}>Debit</th>
+                  <th className={localStyles.number}>Credit</th>
+                  <th className={localStyles.number}>Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {statementRows.map(({ kind, key, row, appliedTo, runningBalance: balance }) => (
+                  <tr key={key} className={kind === "group" ? localStyles.rootRow : localStyles.applicationRow}>
+                    <td className={kind === "application" ? localStyles.firstAppCell : undefined}>{formatDate(row.postingDate)}</td>
+                    <td>{kind === "application" ? <span className={localStyles.appLabel}>{row.documentTypeLabel}</span> : row.documentTypeLabel}</td>
+                    <td className={localStyles.code}>{row.code}</td>
+                    <td className={localStyles.code}>{row.documentId}</td>
+                    <td>{appliedTo || <span className={localStyles.muted}>-</span>}</td>
+                    <td>{memoOrDescription(row.memo, row.description)}</td>
+                    <td className={localStyles.number}>{formatAmount(row.debit)}</td>
+                    <td className={localStyles.number}>{formatAmount(row.credit)}</td>
+                    <td className={localStyles.number}>{formatAmount(balance)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+
+        <div className={localStyles.totalsRow}>
+          <div className={localStyles.totalsItem}>
+            <span className={localStyles.totalsLabel}>Total Debit</span>
+            <span className={localStyles.totalsValue}>{formatAmount(statement.totalDebit)}</span>
+          </div>
+          <div className={localStyles.totalsItem}>
+            <span className={localStyles.totalsLabel}>Total Credit</span>
+            <span className={localStyles.totalsValue}>{formatAmount(statement.totalCredit)}</span>
+          </div>
+          <div className={`${localStyles.totalsItem} ${localStyles.totalsOwing}`}>
+            <span className={localStyles.totalsLabel}>Total Owing</span>
+            <span className={localStyles.totalsValue}>{formatAmount(statement.totalOwing)}</span>
+          </div>
+        </div>
+      </section>
+
+      <footer className={localStyles.reportFooter}>
+        <span>Generated {generatedAt}</span>
+      </footer>
+    </div>
+  );
+}

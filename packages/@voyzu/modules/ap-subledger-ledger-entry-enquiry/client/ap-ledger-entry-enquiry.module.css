@@ -1,0 +1,85 @@
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.yearControl {
+  width: 17.5rem;
+}
+
+.dateControl {
+  width: 11.25rem;
+}
+
+.rangeSeparator {
+  color: var(--voyzu-color-text-muted);
+  font-size: 0.875rem;
+}
+
+.filterToolbar {
+  grid-column: 1 / 13;
+  grid-row: 4;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--vz-grid-gap);
+}
+
+.search {
+  width: min(22.5rem, 100%);
+}
+
+.chipsBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--vz-grid-gap);
+  min-width: 0;
+}
+
+.chipsRow,
+.chipActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.chipsRow {
+  flex-wrap: wrap;
+}
+
+.chipActions {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1023px) {
+  .dateRange {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 767px) {
+  .dateRange,
+  .filterToolbar,
+  .chipsBar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .filterToolbar {
+    grid-row: 5;
+  }
+
+  .chipActions {
+    align-self: flex-end;
+  }
+
+  .yearControl,
+  .dateControl,
+  .search {
+    width: 100%;
+  }
+}

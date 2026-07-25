@@ -1,0 +1,110 @@
+.checkboxOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.reportTab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--voyzu-color-surface-secondary);
+}
+
+.divider {
+  width: 1px;
+  height: 1.75rem;
+  background: var(--voyzu-color-border);
+  margin: 0 0.25rem;
+}
+
+.documentShell {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  overflow-x: auto;
+  padding: 1.75rem 0 0;
+}
+
+.statusRailStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vz-grid-gap);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgb(15 23 42 / 45%);
+}
+
+.modal {
+  width: min(800px, 100%);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--voyzu-color-surface);
+  border-radius: 1rem;
+  box-shadow: var(--voyzu-shadow-floating);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--voyzu-color-border);
+}
+
+.modalActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modalCode {
+  margin: 0;
+  padding: 1.25rem;
+  overflow: auto;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  .toolbar {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .documentShell {
+    justify-content: flex-start;
+    padding-top: 1rem;
+  }
+
+  .modalOverlay {
+    padding: 1rem;
+  }
+}

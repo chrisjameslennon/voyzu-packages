@@ -1,0 +1,12 @@
+{
+  "name": "voyzu-modules",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:setup": "node scripts/dev/setup.mjs",
+    "compose": "node scripts/dev/compose.mjs",
+    "dev": "npm --prefix apps/web run dev",
+    "typecheck": "npm --prefix apps/web run typecheck"
+  }
+}

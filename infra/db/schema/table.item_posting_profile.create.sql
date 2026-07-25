@@ -1,0 +1,51 @@
+-- ============================================================
+-- Item Posting Profile
+-- Business domain: Company Financial Settings > Inventory > Item Posting Profiles
+-- ============================================================
+
+DROP TABLE IF EXISTS item_posting_profile CASCADE;
+
+CREATE TABLE item_posting_profile (
+    id                            BIGSERIAL PRIMARY KEY,
+    company_id                    BIGINT NOT NULL,
+    code                          business_code NOT NULL,
+    name                          display_name NOT NULL,
+    description                   description_text NOT NULL,
+
+    is_sold                       BOOLEAN NOT NULL DEFAULT FALSE,
+    is_purchased                  BOOLEAN NOT NULL DEFAULT FALSE,
+    is_consumed                   BOOLEAN NOT NULL DEFAULT FALSE,
+
+    revenue_gl_account_id         BIGINT,
+    cogs_gl_account_id            BIGINT,
+    purchase_expense_gl_account_id BIGINT,
+    consumption_gl_account_id     BIGINT,
+    adjustment_gain_gl_account_id BIGINT,
+    adjustment_loss_gl_account_id BIGINT,
+
+    status                        active_status NOT NULL DEFAULT 'ACTIVE',
+
+    creation_date                 audit_timestamp,
+    creation_actor_type           actor_type,
+    creation_user_id              TEXT,
+    creation_mutation_id UUID,
+    updated_date                  audit_timestamp,
+    updated_actor_type            actor_type,
+    updated_user_id               TEXT,
+    updated_mutation_id UUID,
+
+    deletion_date audit_timestamp,
+    deletion_actor_type actor_type,
+    deletion_user_id TEXT,
+    deletion_mutation_id UUID,
+
+    CONSTRAINT fk_item_posting_profile_company FOREIGN KEY (company_id) REFERENCES company(id),
+    CONSTRAINT fk_item_posting_profile_revenue_gl_account FOREIGN KEY (company_id, revenue_gl_account_id) REFERENCES gl_account(company_id, id),
+    CONSTRAINT fk_item_posting_profile_cogs_gl_account FOREIGN KEY (company_id, cogs_gl_account_id) REFERENCES gl_account(company_id, id),
+    CONSTRAINT fk_item_posting_profile_purchase_expense_gl_account FOREIGN KEY (company_id, purchase_expense_gl_account_id) REFERENCES gl_account(company_id, id),
+    CONSTRAINT fk_item_posting_profile_consumption_gl_account FOREIGN KEY (company_id, consumption_gl_account_id) REFERENCES gl_account(company_id, id),
+    CONSTRAINT fk_item_posting_profile_adjustment_gain_gl_account FOREIGN KEY (company_id, adjustment_gain_gl_account_id) REFERENCES gl_account(company_id, id),
+    CONSTRAINT fk_item_posting_profile_adjustment_loss_gl_account FOREIGN KEY (company_id, adjustment_loss_gl_account_id) REFERENCES gl_account(company_id, id),
+    CONSTRAINT uq_item_posting_profile_company_code UNIQUE (company_id, code),
+    CONSTRAINT uq_item_posting_profile_company_id UNIQUE (company_id, id)
+);

@@ -1,0 +1,14 @@
+.operationsHeading {
+  margin-bottom: 0;
+}
+
+.fullRow {
+  grid-column: 1 / -1;
+}
+
+.operationsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
