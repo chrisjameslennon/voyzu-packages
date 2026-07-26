@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "create-dev": "npm exec --yes --package=github:chrisjameslennon/create-voyzu#main -- create-voyzu dev",
-    "dev": "npm --prefix .dev/voyzu run dev",
-    "build": "npm --prefix .dev/voyzu run build",
-    "typecheck": "npm --prefix .dev/voyzu run typecheck"
+    "dev": "npm --prefix .dev run dev",
+    "build": "npm --prefix .dev run build",
+    "typecheck": "npm --prefix .dev run typecheck"
   }
 }
