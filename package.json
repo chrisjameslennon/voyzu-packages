@@ -6,6 +6,7 @@
   "scripts": {
     "create-dev": "npm exec --yes --package=github:chrisjameslennon/create-voyzu#main -- create-voyzu dev",
     "re-install": "npm run create-dev -- --force",
+    "compose": "node ./scripts/compose.mjs",
     "dev": "npm --prefix .dev run dev",
     "build": "npm --prefix .dev run build",
     "typecheck": "npm --prefix .dev run typecheck"

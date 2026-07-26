@@ -1,0 +1,27 @@
+{
+  "name": "@voyzu-modules/hello-modules",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "voyzu": {
+    "voyzu-package": true
+  },
+  "exports": {
+    "./ui-domain": {
+      "types": "./ui-domain/hello-modules.ui-domain.ts",
+      "import": "./ui-domain/hello-modules.ui-domain.ts"
+    },
+    "./modules/hello-module": {
+      "types": "./modules/hello-module/module.ts",
+      "import": "./modules/hello-module/module.ts"
+    },
+    "./modules/hello-module/server": {
+      "types": "./modules/hello-module/server/index.ts",
+      "import": "./modules/hello-module/server/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "@voyzu/ui-surface": "^0.1.0",
+    "react": "^19"
+  }
+}
