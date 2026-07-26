@@ -3,8 +3,8 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import type { ApBillRequestDto } from "@voyzu-modules/types/modules/financial-document-processing-engine";
-import { processApBill } from "@voyzu-modules/all-modules/financial-document-processing-engine/ap_bill/lib/ap-bill.service";
+import type { ApBillRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine";
+import { processApBill } from "@voyzu-modules/core/financial-document-processing-engine/ap_bill/lib/ap-bill.service";
 import { skipExistingSampleDocument } from "./sample-document";
 import { localizeCounterpartyName, localizeTaxRule, SAMPLE_POSTING_COMPANIES, standardGross, type SampleCompanyConfig } from "./sample-company-config";
 

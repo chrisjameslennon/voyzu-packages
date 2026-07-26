@@ -19,26 +19,17 @@ const applicationPackages = resolve(applicationRoot, "packages/@voyzu");
 const applicationNodeModules = resolve(applicationRoot, "node_modules/@voyzu");
 const applicationBusinessPackage = resolve(
   applicationRoot,
-  "packages/@voyzu-modules/all-modules",
+  "packages/@voyzu-modules/core",
 );
 const applicationBusinessNodeModule = resolve(
   applicationRoot,
-  "node_modules/@voyzu-modules/all-modules",
-);
-const applicationBusinessTypesPackage = resolve(
-  applicationRoot,
-  "packages/@voyzu-modules/types",
-);
-const applicationBusinessTypesNodeModule = resolve(
-  applicationRoot,
-  "node_modules/@voyzu-modules/types",
+  "node_modules/@voyzu-modules/core",
 );
 const platformPackages = resolve(platformRoot, "packages/@voyzu");
 const businessPackage = resolve(
   repositoryRoot,
-  "packages/@voyzu-modules/all-modules",
+  "packages/@voyzu-modules/core",
 );
-const businessTypes = resolve(repositoryRoot, "packages/@voyzu-modules/types");
 
 const linkedPlatformPackages = [
   "api",
@@ -117,14 +108,9 @@ async function composeModules() {
 
 async function linkBusinessDevelopmentDependencies() {
   await replaceWithDirectoryLink(
-    resolve(repositoryNodeModules, "@voyzu-modules/all-modules"),
+    resolve(repositoryNodeModules, "@voyzu-modules/core"),
     businessPackage,
   );
-  await replaceWithDirectoryLink(
-    resolve(repositoryNodeModules, "@voyzu-modules/types"),
-    businessTypes,
-  );
-
   for (const packageName of linkedPlatformPackages) {
     await replaceWithDirectoryLink(
       resolve(repositoryNodeModules, `@voyzu/${packageName}`),
@@ -149,17 +135,6 @@ async function linkBusinessDevelopmentDependencies() {
       resolve(applicationRoot, `node_modules/${packageName}`),
     );
   }
-}
-
-async function composeTypes() {
-  await replaceWithDirectoryLink(
-    applicationBusinessTypesPackage,
-    businessTypes,
-  );
-  await replaceWithDirectoryLink(
-    applicationBusinessTypesNodeModule,
-    businessTypes,
-  );
 }
 
 async function overlayDevelopmentAssets() {
@@ -192,12 +167,12 @@ async function rewriteBusinessImports(directory) {
     const current = await readFile(path, "utf8");
     let updated = current.replaceAll(
       "@voyzu/modules/",
-      "@voyzu-modules/all-modules/",
+      "@voyzu-modules/core/",
     );
 
     for (const moduleName of retainedPlatformModules) {
       updated = updated.replaceAll(
-        `@voyzu-modules/all-modules/${moduleName}`,
+        `@voyzu-modules/core/${moduleName}`,
         `@voyzu/modules/${moduleName}`,
       );
     }
@@ -214,8 +189,7 @@ async function configureGeneratedApplication() {
     await readFile(rootPackageJsonPath, "utf8"),
   );
   const businessWorkspaces = [
-    "packages/@voyzu-modules/all-modules",
-    "packages/@voyzu-modules/types",
+    "packages/@voyzu-modules/core",
   ];
 
   if (
@@ -241,8 +215,7 @@ async function configureGeneratedApplication() {
 
   let webPackageChanged = false;
   for (const packageName of [
-    "@voyzu-modules/all-modules",
-    "@voyzu-modules/types",
+    "@voyzu-modules/core",
   ]) {
     if (!webPackageJson.dependencies[packageName]) {
       webPackageJson.dependencies[packageName] = "*";
@@ -279,17 +252,10 @@ async function configureTurbopackRoot() {
   const currentConfig = await readFile(nextConfigPath, "utf8");
   let configured = currentConfig;
 
-  if (!configured.includes('"@voyzu-modules/all-modules"')) {
+  if (!configured.includes('"@voyzu-modules/core"')) {
     configured = configured.replace(
       '"@voyzu/modules",',
-      '"@voyzu/modules",\n    "@voyzu-modules/all-modules",',
-    );
-  }
-
-  if (!configured.includes('"@voyzu-modules/types",')) {
-    configured = configured.replace(
-      '"@voyzu-modules/all-modules",',
-      '"@voyzu-modules/all-modules",\n    "@voyzu-modules/types",',
+      '"@voyzu/modules",\n    "@voyzu-modules/core",',
     );
   }
 
@@ -301,8 +267,7 @@ async function configureTurbopackRoot() {
         "  turbopack: {",
         `    root: ${JSON.stringify(resolve(repositoryRoot, ".."))},`,
         "    resolveAlias: {",
-        `      "@voyzu-modules/all-modules": ${JSON.stringify(businessPackage)},`,
-        `      "@voyzu-modules/types": ${JSON.stringify(businessTypes)},`,
+        `      "@voyzu-modules/core": ${JSON.stringify(businessPackage)},`,
         "    },",
         "  },",
       ].join("\n"),
@@ -314,18 +279,9 @@ async function configureTurbopackRoot() {
         "  turbopack: {",
         `    root: ${JSON.stringify(resolve(repositoryRoot, ".."))},`,
         "    resolveAlias: {",
-        `      "@voyzu-modules/all-modules": ${JSON.stringify(businessPackage)},`,
-        `      "@voyzu-modules/types": ${JSON.stringify(businessTypes)},`,
+        `      "@voyzu-modules/core": ${JSON.stringify(businessPackage)},`,
         "    },",
         "  },",
-      ].join("\n"),
-    );
-  } else if (!configured.includes('"@voyzu-modules/types":')) {
-    configured = configured.replace(
-      `      "@voyzu-modules/all-modules": ${JSON.stringify(businessPackage)},`,
-      [
-        `      "@voyzu-modules/all-modules": ${JSON.stringify(businessPackage)},`,
-        `      "@voyzu-modules/types": ${JSON.stringify(businessTypes)},`,
       ].join("\n"),
     );
   }
@@ -360,9 +316,6 @@ async function main() {
 
   console.log("Linking business-package development dependencies...");
   await linkBusinessDevelopmentDependencies();
-
-  console.log("Composing shared and business types...");
-  await composeTypes();
 
   console.log("Configuring the generated application package split...");
   await configureGeneratedApplication();

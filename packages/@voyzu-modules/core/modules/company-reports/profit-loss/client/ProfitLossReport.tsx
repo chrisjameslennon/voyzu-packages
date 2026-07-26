@@ -1,0 +1,465 @@
+"use client";
+
+import { financeApiUrl } from "@voyzu-modules/core/common/client";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+
+import type { FinancialPeriodResponseDto } from "@voyzu-modules/core/types/modules/financial-periods";
+import type { FinancialYearResponseDto } from "@voyzu-modules/core/types/modules/financial-years";
+import type { ProfitLossResponseDto } from "@voyzu-modules/core/types/modules/company-reports";
+import { Button } from "@voyzu/ui-components";
+import { Breadcrumbs } from "@voyzu/ui-components";
+import { Checkbox } from "@voyzu/ui-components";
+import { DatePicker } from "@voyzu/ui-components";
+import { DropdownMenu, type DropdownMenuItem } from "@voyzu/ui-components";
+import { SearchableSelect } from "@voyzu/ui-components";
+import { ProfitLossReportTemplate } from "../templates/ProfitLossReportTemplate";
+import layout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
+import styles from "@voyzu/ui-style/css-modules/list.module.css";
+import localStyles from "./profit-loss-report.module.css";
+import typography from "@voyzu/ui-style/css-modules/typography.module.css";
+
+const A4_PORTRAIT_WIDTH_MM = 210;
+
+function titleToFileSlug(title: string): string {
+  return title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "report";
+}
+
+function todayIso(): string {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+}
+
+function toIso(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function formatPeriodDateRange(period: FinancialPeriodResponseDto): string {
+  return `${period.startDate} - ${period.endDate}`;
+}
+
+function rangeForPreset(value: string, year: FinancialYearResponseDto | undefined): { fromDate: string; toDate: string } {
+  const today = new Date();
+  const yearStart = year?.startDate;
+  const yearEnd = year?.endDate;
+
+  if (value === "this-month") {
+    const fromDate = toIso(new Date(today.getFullYear(), today.getMonth(), 1));
+    const toDate = toIso(today);
+    return {
+      fromDate: yearStart && fromDate < yearStart ? yearStart : fromDate,
+      toDate: yearEnd && toDate > yearEnd ? yearEnd : toDate,
+    };
+  }
+
+  if (value === "last-three-months") {
+    const fromDate = toIso(new Date(today.getFullYear(), today.getMonth() - 3, 1));
+    const toDate = toIso(new Date(today.getFullYear(), today.getMonth(), 0));
+    return {
+      fromDate: yearStart && fromDate < yearStart ? yearStart : fromDate,
+      toDate: yearEnd && toDate > yearEnd ? yearEnd : toDate,
+    };
+  }
+
+  if (value === "previous-90-days") {
+    const fromDate = toIso(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90));
+    const toDate = toIso(today);
+    return {
+      fromDate: yearStart && fromDate < yearStart ? yearStart : fromDate,
+      toDate: yearEnd && toDate > yearEnd ? yearEnd : toDate,
+    };
+  }
+
+  if (value === "previous-2-complete-months") {
+    const fromDate = toIso(new Date(today.getFullYear(), today.getMonth() - 2, 1));
+    const toDate = toIso(new Date(today.getFullYear(), today.getMonth(), 0));
+    return {
+      fromDate: yearStart && fromDate < yearStart ? yearStart : fromDate,
+      toDate: yearEnd && toDate > yearEnd ? yearEnd : toDate,
+    };
+  }
+
+  if (value === "previous-6-complete-months") {
+    const fromDate = toIso(new Date(today.getFullYear(), today.getMonth() - 6, 1));
+    const toDate = toIso(new Date(today.getFullYear(), today.getMonth(), 0));
+    return {
+      fromDate: yearStart && fromDate < yearStart ? yearStart : fromDate,
+      toDate: yearEnd && toDate > yearEnd ? yearEnd : toDate,
+    };
+  }
+
+  if (value === "entire-financial-year" && year) {
+    return { fromDate: year.startDate, toDate: year.endDate };
+  }
+
+  const fromDate = toIso(new Date(today.getFullYear(), today.getMonth() - 1, 1));
+  const toDate = toIso(new Date(today.getFullYear(), today.getMonth(), 0));
+  return {
+    fromDate: yearStart && fromDate < yearStart ? yearStart : fromDate,
+    toDate: yearEnd && toDate > yearEnd ? yearEnd : toDate,
+  };
+}
+
+interface ProfitLossReportProps {
+  pageTitle: string;
+  initialData: ProfitLossResponseDto | null;
+  initialFromDate: string;
+  initialToDate: string;
+  initialFinancialYears: FinancialYearResponseDto[];
+  initialPeriods: FinancialPeriodResponseDto[];
+  initialSelectedYearCode: string;
+  organizationName: string;
+  selectedCompanyId: number | null;
+}
+
+export function ProfitLossReport({
+  pageTitle,
+  initialData,
+  initialFromDate,
+  initialToDate,
+  initialFinancialYears,
+  initialPeriods,
+  initialSelectedYearCode,
+  organizationName,
+  selectedCompanyId,
+}: ProfitLossReportProps) {
+  const [data, setData] = useState<ProfitLossResponseDto | null>(initialData);
+  const [fromDate, setFromDate] = useState<string>(initialFromDate);
+  const [toDate, setToDate] = useState<string>(initialToDate);
+  const [financialYears, setFinancialYears] = useState<FinancialYearResponseDto[]>(initialFinancialYears);
+  const [periods, setPeriods] = useState<FinancialPeriodResponseDto[]>(initialPeriods);
+  const [selectedYearCode, setSelectedYearCode] = useState(initialSelectedYearCode);
+  const [rangePreset, setRangePreset] = useState("previous-90-days");
+  const [rangeLabel, setRangeLabel] = useState("Previous 90 days");
+  const [loading, setLoading] = useState(false);
+  const [showAccountCode, setShowAccountCode] = useState(false);
+  const [showOrganization, setShowOrganization] = useState(false);
+  const [showCompanyHeader, setShowCompanyHeader] = useState(false);
+  const [showCompanyFooter, setShowCompanyFooter] = useState(false);
+  const [showReportingCategories, setShowReportingCategories] = useState(true);
+  const [showDecimals, setShowDecimals] = useState(false);
+  const isFirstRender = useRef(true);
+
+  const fetchData = useCallback(async (companyId: number, rangeStart: string, rangeEnd: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        companyId: String(companyId),
+        fromDate: rangeStart,
+        toDate: rangeEnd,
+      });
+      const res = await fetch(await financeApiUrl(`/reports/profit-loss?${params.toString()}`));
+      if (!res.ok) return;
+      const json = (await res.json()) as ProfitLossResponseDto;
+      setData(json);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (!selectedCompanyId) return;
+    void fetchData(selectedCompanyId, fromDate, toDate);
+  }, [selectedCompanyId, fromDate, toDate, fetchData]);
+
+  const selectedYear = useMemo(
+    () => financialYears.find((year) => year.code === selectedYearCode),
+    [financialYears, selectedYearCode],
+  );
+  const isHistoricalYear = Boolean(selectedYear && (selectedYear.startDate > todayIso() || selectedYear.endDate < todayIso()));
+
+  const yearOptions = useMemo(
+    () => financialYears.map((year) => ({ value: year.code, label: year.name, code: year.code })),
+    [financialYears],
+  );
+
+  const applyPreset = useCallback((value: string, label: string, year: FinancialYearResponseDto | undefined) => {
+    const range = rangeForPreset(value, year);
+    setRangePreset(value);
+    setRangeLabel(label);
+    setFromDate(range.fromDate);
+    setToDate(range.toDate);
+  }, []);
+
+  const fetchPeriods = useCallback(async (companyId: number, yearCode: string) => {
+    const res = await fetch(await financeApiUrl(`/financial-years/${yearCode}/periods`));
+    if (!res.ok) {
+      setPeriods([]);
+      return [];
+    }
+    const json = (await res.json()) as FinancialPeriodResponseDto[];
+    setPeriods(json);
+    return json;
+  }, []);
+
+  const handleYearChange = async (yearCode: string) => {
+    setSelectedYearCode(yearCode);
+    const nextYear = financialYears.find((year) => year.code === yearCode);
+    const historical = Boolean(nextYear && (nextYear.startDate > todayIso() || nextYear.endDate < todayIso()));
+    if (historical) {
+      setRangePreset("entire-financial-year");
+      setRangeLabel("Financial year");
+    }
+    if (selectedCompanyId) await fetchPeriods(selectedCompanyId, yearCode);
+    if (historical && nextYear) {
+      setRangePreset("entire-financial-year");
+      setRangeLabel("Financial year");
+      setFromDate(nextYear.startDate);
+      setToDate(nextYear.endDate);
+      return;
+    }
+    applyPreset("previous-90-days", "Previous 90 days", nextYear);
+  };
+
+  useEffect(() => {
+    if (!selectedCompanyId) return;
+    const loadYears = async () => {
+      const res = await fetch(await financeApiUrl(`/financial-years`));
+      if (!res.ok) return;
+      const years = ((await res.json()) as FinancialYearResponseDto[]).filter((year) => year.hasPostings);
+      setFinancialYears(years);
+
+      const today = todayIso();
+      const currentYear = years.find((year) => year.startDate <= today && today <= year.endDate);
+      const nextYear = currentYear ?? years[0];
+      setSelectedYearCode(nextYear?.code ?? "");
+      if (nextYear) await fetchPeriods(selectedCompanyId, nextYear.code);
+      if (!nextYear) setPeriods([]);
+      if (nextYear && nextYear.endDate < today) {
+        setRangePreset("entire-financial-year");
+        setRangeLabel("Financial year");
+        setFromDate(nextYear.startDate);
+        setToDate(nextYear.endDate);
+      } else {
+        applyPreset("previous-90-days", "Previous 90 days", nextYear);
+      }
+    };
+    void loadYears();
+  }, [selectedCompanyId, fetchPeriods, applyPreset]);
+
+  const companyId = data?.companyId ?? selectedCompanyId;
+
+  const generatedAt = useMemo(
+    () =>
+      new Date().toLocaleString("en-GB", {
+        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
+      }),
+    [],
+  );
+
+  const printableBase = "/finance/reports/profit-loss/printable";
+  const urlParams = new URLSearchParams();
+  if (companyId) urlParams.set("companyId", String(companyId));
+  urlParams.set("fromDate", fromDate);
+  urlParams.set("toDate", toDate);
+  urlParams.set("showAccountCode", String(showAccountCode));
+  urlParams.set("showOrganization", String(showOrganization));
+  urlParams.set("showCompanyHeader", String(showCompanyHeader));
+  urlParams.set("showCompanyFooter", String(showCompanyFooter));
+  urlParams.set("showReportingCategories", String(showReportingCategories));
+  urlParams.set("showDecimals", String(showDecimals));
+  const queryString = urlParams.toString();
+
+  const printablePath = `${printableBase}${queryString ? `?${queryString}` : ""}`;
+  const pdfParams = new URLSearchParams({ orientation: "portrait", path: printableBase, filename: titleToFileSlug(pageTitle), fromDate, toDate });
+  if (companyId) pdfParams.set("companyId", String(companyId));
+  pdfParams.set("showAccountCode", String(showAccountCode));
+  pdfParams.set("showOrganization", String(showOrganization));
+  pdfParams.set("showCompanyHeader", String(showCompanyHeader));
+  pdfParams.set("showCompanyFooter", String(showCompanyFooter));
+  pdfParams.set("showReportingCategories", String(showReportingCategories));
+  pdfParams.set("showDecimals", String(showDecimals));
+  const pdfViewPath = `/api/capability/pdf-view?${pdfParams.toString()}`;
+  const pdfPath = `/api/capability/pdf?${pdfParams.toString()}`;
+
+  const periodItems: DropdownMenuItem[] = periods
+    .map((period) => ({
+      value: `period:${period.code}`,
+      label: period.name,
+      details: formatPeriodDateRange(period),
+      muted: !period.hasPostings,
+      onSelect: () => {
+        setRangePreset(`period:${period.code}`);
+        setRangeLabel(period.name);
+        setFromDate(selectedYear && period.startDate < selectedYear.startDate ? selectedYear.startDate : period.startDate);
+        setToDate(period.endDate);
+      },
+    }));
+
+  const rangeItems: DropdownMenuItem[] = [
+    { value: "this-month", label: "Month to date", onSelect: () => applyPreset("this-month", "Month to date", selectedYear) },
+    { value: "last-month", label: "Previous month", onSelect: () => applyPreset("last-month", "Previous month", selectedYear) },
+    { value: "previous-2-complete-months", label: "Previous 2 full months", onSelect: () => applyPreset("previous-2-complete-months", "Previous 2 full months", selectedYear) },
+    { value: "last-three-months", label: "Previous 3 full months", onSelect: () => applyPreset("last-three-months", "Previous 3 full months", selectedYear) },
+    { value: "previous-6-complete-months", label: "Previous 6 full months", onSelect: () => applyPreset("previous-6-complete-months", "Previous 6 full months", selectedYear) },
+    { value: "previous-90-days", label: "Previous 90 days", onSelect: () => applyPreset("previous-90-days", "Previous 90 days", selectedYear) },
+    { value: "entire-financial-year", label: "Financial year", onSelect: () => applyPreset("entire-financial-year", "Financial year", selectedYear) },
+    { value: "periods", label: "Period", disabled: periodItems.length === 0, children: periodItems },
+  ];
+  const historicalRangeItems = rangeItems.filter(({ value }) => value === "entire-financial-year" || value === "period" || value === "periods");
+
+  const optionItems: DropdownMenuItem[] = [
+    {
+      value: "show-account-code",
+      label: (
+        <span className={localStyles.checkboxOption}>
+          <Checkbox checked={showAccountCode} onChange={() => undefined} tabIndex={-1} />
+          <span>Show account code</span>
+        </span>
+      ),
+      onSelect: () => setShowAccountCode((checked) => !checked),
+    },
+    {
+      value: "show-decimals",
+      label: (
+        <span className={localStyles.checkboxOption}>
+          <Checkbox checked={showDecimals} onChange={() => undefined} tabIndex={-1} />
+          <span>Show decimals</span>
+        </span>
+      ),
+      onSelect: () => setShowDecimals((checked) => !checked),
+    },
+    {
+      value: "show-organization",
+      label: (
+        <span className={localStyles.checkboxOption}>
+          <Checkbox checked={showOrganization} onChange={() => undefined} tabIndex={-1} />
+          <span>Show organization name</span>
+        </span>
+      ),
+      onSelect: () => setShowOrganization((checked) => !checked),
+    },
+    {
+      value: "show-company-header",
+      label: (
+        <span className={localStyles.checkboxOption}>
+          <Checkbox checked={showCompanyHeader} onChange={() => undefined} tabIndex={-1} />
+          <span>Show company header</span>
+        </span>
+      ),
+      onSelect: () => setShowCompanyHeader((checked) => !checked),
+    },
+    {
+      value: "show-company-footer",
+      label: (
+        <span className={localStyles.checkboxOption}>
+          <Checkbox checked={showCompanyFooter} onChange={() => undefined} tabIndex={-1} />
+          <span>Show company footer</span>
+        </span>
+      ),
+      onSelect: () => setShowCompanyFooter((checked) => !checked),
+    },
+    {
+      value: "show-reporting-categories",
+      label: (
+        <span className={localStyles.checkboxOption}>
+          <Checkbox checked={showReportingCategories} onChange={() => undefined} tabIndex={-1} />
+          <span>Show reporting categories</span>
+        </span>
+      ),
+      onSelect: () => setShowReportingCategories((checked) => !checked),
+    },
+  ];
+
+  const handleFromDateChange = (value: string) => {
+    setRangePreset("custom");
+    setRangeLabel("Custom");
+    setFromDate(selectedYear && value < selectedYear.startDate ? selectedYear.startDate : value);
+  };
+
+  const handleToDateChange = (value: string) => {
+    setRangePreset("custom");
+    setRangeLabel("Custom");
+    setToDate(value);
+  };
+
+  return (
+    <div className={layout.reportView}>
+      <header className={layout.reportHeader}>
+        <div className={layout.slotBreadcrumb}>
+          <Breadcrumbs />
+        </div>
+        <div className={layout.slotTitle}>
+          <div className={styles.titleIcon}>
+            <span className={`material-symbols-outlined ${styles.titleIconSymbol}`}>monitoring</span>
+          </div>
+          <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{pageTitle}</h1>
+        </div>
+        <div className={layout.slotToolbarLeft}>
+          <div className={localStyles.dateRange}>
+            <div className={localStyles.yearControl}>
+              <SearchableSelect
+                value={selectedYearCode}
+                onChange={handleYearChange}
+                options={yearOptions}
+                placeholder="Financial year"
+                searchable={false}
+                dropdownWidth="trigger"
+                disabled={yearOptions.length === 0}
+              />
+            </div>
+            <div className={localStyles.rangePreset}>
+              <DropdownMenu
+                alignment="left"
+                width={240}
+                selectedValue={rangePreset}
+                items={isHistoricalYear ? historicalRangeItems : rangeItems}
+                trigger={<Button variant="secondary" icon="date_range">{rangeLabel}</Button>}
+              />
+            </div>
+            {!isHistoricalYear && <>
+              <div className={localStyles.dateControl}>
+                <DatePicker
+                  value={fromDate}
+                  onChange={handleFromDateChange}
+                  clearable={false}
+                />
+              </div>
+              <span className={localStyles.rangeSeparator}>through</span>
+              <div className={localStyles.dateControl}>
+                <DatePicker value={toDate} onChange={handleToDateChange} clearable={false} />
+              </div>
+            </>}
+          </div>
+        </div>
+        <div className={layout.slotToolbarRight}>
+          <DropdownMenu
+            alignment="right"
+            width={240}
+            items={optionItems}
+            trigger={<Button variant="plain" icon="tune" title="Options" />}
+            closeOnSelect={false}
+          />
+          <div className={styles.divider} />
+          <Button variant="secondary" icon="open_in_new" title="Printable Page" onClick={() => window.open(printablePath, "_blank", "noopener,noreferrer")} />
+          <Button variant="secondary" icon="picture_as_pdf" title="View PDF" onClick={() => window.open(pdfViewPath, "_blank", "noopener,noreferrer")} />
+          <Button variant="secondary" icon="download" title="Download PDF" onClick={() => window.open(pdfPath)} />
+        </div>
+      </header>
+      <div className={layout.slotDocument}>
+        {loading && <div style={{ padding: "2rem", color: "var(--voyzu-color-text-muted)" }}>Loading...</div>}
+        {!loading && data && (
+          <div className={layout.document} style={{ maxWidth: `${A4_PORTRAIT_WIDTH_MM}mm` }}>
+            <ProfitLossReportTemplate
+              data={data}
+              generatedAt={generatedAt}
+              showAccountCode={showAccountCode}
+              showOrganization={showOrganization}
+              showCompanyHeader={showCompanyHeader}
+              showCompanyFooter={showCompanyFooter}
+              showReportingCategories={showReportingCategories}
+              showDecimals={showDecimals}
+              organizationName={organizationName}
+            />
+          </div>
+        )}
+        {!loading && !data && (
+          <div style={{ padding: "2rem", color: "var(--voyzu-color-text-muted)" }}>No data available. Select a company to view the profit and loss.</div>
+        )}
+      </div>
+    </div>
+  );
+}

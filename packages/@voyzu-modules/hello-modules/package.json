@@ -7,9 +7,9 @@
     "voyzu-package": true
   },
   "exports": {
-    "./ui-domain": {
-      "types": "./ui-domain/hello-modules.ui-domain.ts",
-      "import": "./ui-domain/hello-modules.ui-domain.ts"
+    "./ui-domains": {
+      "types": "./ui-domain/ui-domains.ts",
+      "import": "./ui-domain/ui-domains.ts"
     },
     "./modules/hello-module": {
       "types": "./modules/hello-module/module.ts",

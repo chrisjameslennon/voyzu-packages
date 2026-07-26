@@ -3,7 +3,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { createCompany } from "../../../packages/@voyzu-modules/all-modules/companies/server/lib/company.service";
+import { createCompany } from "../../../packages/@voyzu-modules/core/modules/companies/server/lib/company.service";
 import { ConflictError } from "@voyzu/capability/errors";
 
 const COMPANIES: Record<string, { name: string; suffix: string }> = {
