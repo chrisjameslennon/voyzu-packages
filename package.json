@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:setup": "node scripts/dev/setup.mjs",
-    "compose": "node scripts/dev/compose.mjs",
-    "dev": "npm --prefix apps/web run dev",
-    "typecheck": "npm --prefix apps/web run typecheck"
+    "create-dev": "npm exec --yes --package=github:chrisjameslennon/create-voyzu#main -- create-voyzu dev",
+    "dev": "npm --prefix .dev/voyzu run dev",
+    "build": "npm --prefix .dev/voyzu run build",
+    "typecheck": "npm --prefix .dev/voyzu run typecheck"
   }
 }
