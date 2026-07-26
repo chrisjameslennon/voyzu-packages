@@ -1,0 +1,13 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { ControlAccountSummaryPanel } from "@voyzu-modules/all-modules/common/control-accounts/client";
+import type { TaxControlAccountResponseDto } from "@voyzu-modules/types/modules/tax-control-accounts";
+import styles from "./control-account-summary-panels.module.css";
+
+interface Props { controlAccounts: TaxControlAccountResponseDto[]; basePath: string; }
+
+export function CompanyTaxControlAccountsContent({ controlAccounts, basePath }: Props) {
+  const router = useRouter();
+  return <div className={styles.panelGrid}>{controlAccounts.map((account) => <ControlAccountSummaryPanel key={account.code} title={account.name} code={account.code} description={account.description} supportingLedger="Tax" glAccountName={account.glAccount.name} glAccountCode={account.glAccount.code} hasPostings={account.hasPostings} onViewEdit={() => router.push(`${basePath}/${encodeURIComponent(account.code)}`)} />)}</div>;
+}

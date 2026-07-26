@@ -1,0 +1,363 @@
+{
+  "name": "@voyzu-modules/types",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./modules/bank-cash-accounts": {
+      "types": "./src/modules/bank-cash-accounts/index.ts",
+      "import": "./src/modules/bank-cash-accounts/index.ts"
+    },
+    "./modules/companies": {
+      "types": "./src/modules/companies/index.ts",
+      "import": "./src/modules/companies/index.ts"
+    },
+    "./modules/currencies": {
+      "types": "./src/modules/currencies/index.ts",
+      "import": "./src/modules/currencies/index.ts"
+    },
+    "./modules/countries": {
+      "types": "./src/modules/countries/index.ts",
+      "import": "./src/modules/countries/index.ts"
+    },
+    "./modules/dimensions": {
+      "types": "./src/modules/dimensions/index.ts",
+      "import": "./src/modules/dimensions/index.ts"
+    },
+    "./modules/financial-document-types": {
+      "types": "./src/modules/financial-document-types/index.ts",
+      "import": "./src/modules/financial-document-types/index.ts"
+    },
+    "./modules/control-accounts": {
+      "types": "./src/modules/control-accounts/index.ts",
+      "import": "./src/modules/control-accounts/index.ts"
+    },
+    "./params": {
+      "types": "./src/params/index.ts",
+      "import": "./src/params/index.ts"
+    },
+    "./modules/gl-accounts": {
+      "types": "./src/modules/gl-accounts/index.ts",
+      "import": "./src/modules/gl-accounts/index.ts"
+    },
+    "./modules/gl-account-categories": {
+      "types": "./src/modules/gl-account-categories/index.ts",
+      "import": "./src/modules/gl-account-categories/index.ts"
+    },
+    "./modules/financial-years": {
+      "types": "./src/modules/financial-years/index.ts",
+      "import": "./src/modules/financial-years/index.ts"
+    },
+    "./modules/financial-periods": {
+      "types": "./src/modules/financial-periods/index.ts",
+      "import": "./src/modules/financial-periods/index.ts"
+    },
+    "./modules/financial-document-defaults": {
+      "types": "./src/modules/financial-document-defaults/index.ts",
+      "import": "./src/modules/financial-document-defaults/index.ts"
+    },
+    "./modules/journals": {
+      "types": "./src/modules/journals/index.ts",
+      "import": "./src/modules/journals/index.ts"
+    },
+    "./modules/inventory-categories": {
+      "types": "./src/modules/inventory-categories/index.ts",
+      "import": "./src/modules/inventory-categories/index.ts"
+    },
+    "./modules/inventory-items": {
+      "types": "./src/modules/inventory-items/index.ts",
+      "import": "./src/modules/inventory-items/index.ts"
+    },
+    "./modules/inventory-control-accounts": {
+      "types": "./src/modules/inventory-control-accounts/index.ts",
+      "import": "./src/modules/inventory-control-accounts/index.ts"
+    },
+    "./modules/inventory-item-posting-profiles": {
+      "types": "./src/modules/inventory-item-posting-profiles/index.ts",
+      "import": "./src/modules/inventory-item-posting-profiles/index.ts"
+    },
+    "./modules/tax-control-accounts": {
+      "types": "./src/modules/tax-control-accounts/index.ts",
+      "import": "./src/modules/tax-control-accounts/index.ts"
+    },
+    "./modules/tax": {
+      "types": "./src/modules/tax/index.ts",
+      "import": "./src/modules/tax/index.ts"
+    },
+    "./modules/ap-subledger": {
+      "types": "./src/modules/ap-subledger/index.ts",
+      "import": "./src/modules/ap-subledger/index.ts"
+    },
+    "./modules/ar-subledger": {
+      "types": "./src/modules/ar-subledger/index.ts",
+      "import": "./src/modules/ar-subledger/index.ts"
+    },
+    "./modules/audit": {
+      "types": "./src/modules/audit/index.ts",
+      "import": "./src/modules/audit/index.ts"
+    },
+    "./modules/companies/company.create.request.dto": {
+      "types": "./src/modules/companies/company.create.request.dto.ts",
+      "import": "./src/modules/companies/company.create.request.dto.ts"
+    },
+    "./modules/companies/company.patch.request.dto": {
+      "types": "./src/modules/companies/company.patch.request.dto.ts",
+      "import": "./src/modules/companies/company.patch.request.dto.ts"
+    },
+    "./modules/companies/company.response.dto": {
+      "types": "./src/modules/companies/company.response.dto.ts",
+      "import": "./src/modules/companies/company.response.dto.ts"
+    },
+    "./modules/companies/company.update.request.dto": {
+      "types": "./src/modules/companies/company.update.request.dto.ts",
+      "import": "./src/modules/companies/company.update.request.dto.ts"
+    },
+    "./modules/company-reports": {
+      "types": "./src/modules/company-reports/index.ts",
+      "import": "./src/modules/company-reports/index.ts"
+    },
+    "./modules/company-reports/balance-sheet": {
+      "types": "./src/modules/company-reports/balance-sheet/index.ts",
+      "import": "./src/modules/company-reports/balance-sheet/index.ts"
+    },
+    "./modules/company-switcher": {
+      "types": "./src/modules/company-switcher/index.ts",
+      "import": "./src/modules/company-switcher/index.ts"
+    },
+    "./modules/countries/country.patch.request.dto": {
+      "types": "./src/modules/countries/country.patch.request.dto.ts",
+      "import": "./src/modules/countries/country.patch.request.dto.ts"
+    },
+    "./modules/countries/country.response.dto": {
+      "types": "./src/modules/countries/country.response.dto.ts",
+      "import": "./src/modules/countries/country.response.dto.ts"
+    },
+    "./modules/countries/country.update.request.dto": {
+      "types": "./src/modules/countries/country.update.request.dto.ts",
+      "import": "./src/modules/countries/country.update.request.dto.ts"
+    },
+    "./modules/currencies/currency.create.request.dto": {
+      "types": "./src/modules/currencies/currency.create.request.dto.ts",
+      "import": "./src/modules/currencies/currency.create.request.dto.ts"
+    },
+    "./modules/currencies/currency.patch.request.dto": {
+      "types": "./src/modules/currencies/currency.patch.request.dto.ts",
+      "import": "./src/modules/currencies/currency.patch.request.dto.ts"
+    },
+    "./modules/currencies/currency.response.dto": {
+      "types": "./src/modules/currencies/currency.response.dto.ts",
+      "import": "./src/modules/currencies/currency.response.dto.ts"
+    },
+    "./modules/currencies/currency.update.request.dto": {
+      "types": "./src/modules/currencies/currency.update.request.dto.ts",
+      "import": "./src/modules/currencies/currency.update.request.dto.ts"
+    },
+    "./modules/dimensions/dimension.create.request.dto": {
+      "types": "./src/modules/dimensions/dimension.create.request.dto.ts",
+      "import": "./src/modules/dimensions/dimension.create.request.dto.ts"
+    },
+    "./modules/dimensions/dimension.patch.request.dto": {
+      "types": "./src/modules/dimensions/dimension.patch.request.dto.ts",
+      "import": "./src/modules/dimensions/dimension.patch.request.dto.ts"
+    },
+    "./modules/dimensions/dimension.response.dto": {
+      "types": "./src/modules/dimensions/dimension.response.dto.ts",
+      "import": "./src/modules/dimensions/dimension.response.dto.ts"
+    },
+    "./modules/dimensions/dimension.update.request.dto": {
+      "types": "./src/modules/dimensions/dimension.update.request.dto.ts",
+      "import": "./src/modules/dimensions/dimension.update.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine": {
+      "types": "./src/modules/financial-document-processing-engine/index.ts",
+      "import": "./src/modules/financial-document-processing-engine/index.ts"
+    },
+    "./modules/financial-document-processing-engine/ap-adjustment.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ap-adjustment.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ap-adjustment.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ap-bill-cancellation.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ap-bill-cancellation.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ap-bill-cancellation.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ap-bill.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ap-bill.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ap-bill.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ap-bill.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ap-bill.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ap-bill.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ap-payment-application.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ap-payment-application.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ap-payment-application.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ap-payment.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ap-payment.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ap-payment.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ap-processing.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ap-processing.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ap-processing.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-adjustment.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-adjustment.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-adjustment.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-credit-note.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-credit-note.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-credit-note.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-invoice-cancellation.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-invoice-cancellation.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-invoice-cancellation.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-invoice.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-invoice.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-invoice.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-invoice.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-invoice.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-invoice.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-opening-balance.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-opening-balance.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-opening-balance.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-receipt-application.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-receipt-application.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-receipt-application.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-receipt-application.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-receipt-application.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-receipt-application.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-receipt.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-receipt.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-receipt.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-receipt.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-receipt.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-receipt.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-refund.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-refund.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-refund.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ar-write-off.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ar-write-off.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ar-write-off.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/bank-cash-details.dto": {
+      "types": "./src/modules/financial-document-processing-engine/bank-cash-details.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/bank-cash-details.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/inventory-adjustment.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/inventory-adjustment.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/inventory-adjustment.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/inventory-issue.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/inventory-issue.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/inventory-issue.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/inventory-processing.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/inventory-processing.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/inventory-processing.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/inventory-receipt.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/inventory-receipt.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/inventory-receipt.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ledger-journal-reversal.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ledger-journal-reversal.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ledger-journal-reversal.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ledger-journal-reversal.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ledger-journal-reversal.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ledger-journal-reversal.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ledger-journal.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ledger-journal.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ledger-journal.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/ledger-journal.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/ledger-journal.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/ledger-journal.response.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/tax-processing.request.dto": {
+      "types": "./src/modules/financial-document-processing-engine/tax-processing.request.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/tax-processing.request.dto.ts"
+    },
+    "./modules/financial-document-processing-engine/tax-processing.response.dto": {
+      "types": "./src/modules/financial-document-processing-engine/tax-processing.response.dto.ts",
+      "import": "./src/modules/financial-document-processing-engine/tax-processing.response.dto.ts"
+    },
+    "./modules/financial-years/financial-year.create.request.dto": {
+      "types": "./src/modules/financial-years/financial-year.create.request.dto.ts",
+      "import": "./src/modules/financial-years/financial-year.create.request.dto.ts"
+    },
+    "./modules/financial-years/financial-year.response.dto": {
+      "types": "./src/modules/financial-years/financial-year.response.dto.ts",
+      "import": "./src/modules/financial-years/financial-year.response.dto.ts"
+    },
+    "./modules/gl-account-categories/gl-account-category.create.request.dto": {
+      "types": "./src/modules/gl-account-categories/gl-account-category.create.request.dto.ts",
+      "import": "./src/modules/gl-account-categories/gl-account-category.create.request.dto.ts"
+    },
+    "./modules/gl-account-categories/gl-account-category.patch.request.dto": {
+      "types": "./src/modules/gl-account-categories/gl-account-category.patch.request.dto.ts",
+      "import": "./src/modules/gl-account-categories/gl-account-category.patch.request.dto.ts"
+    },
+    "./modules/gl-account-categories/gl-account-category.response.dto": {
+      "types": "./src/modules/gl-account-categories/gl-account-category.response.dto.ts",
+      "import": "./src/modules/gl-account-categories/gl-account-category.response.dto.ts"
+    },
+    "./modules/gl-account-categories/gl-account-category.update.request.dto": {
+      "types": "./src/modules/gl-account-categories/gl-account-category.update.request.dto.ts",
+      "import": "./src/modules/gl-account-categories/gl-account-category.update.request.dto.ts"
+    },
+    "./modules/gl-accounts/gl-account.create.request.dto": {
+      "types": "./src/modules/gl-accounts/gl-account.create.request.dto.ts",
+      "import": "./src/modules/gl-accounts/gl-account.create.request.dto.ts"
+    },
+    "./modules/gl-accounts/gl-account.patch.request.dto": {
+      "types": "./src/modules/gl-accounts/gl-account.patch.request.dto.ts",
+      "import": "./src/modules/gl-accounts/gl-account.patch.request.dto.ts"
+    },
+    "./modules/gl-accounts/gl-account.response.dto": {
+      "types": "./src/modules/gl-accounts/gl-account.response.dto.ts",
+      "import": "./src/modules/gl-accounts/gl-account.response.dto.ts"
+    },
+    "./modules/gl-accounts/gl-account.update.request.dto": {
+      "types": "./src/modules/gl-accounts/gl-account.update.request.dto.ts",
+      "import": "./src/modules/gl-accounts/gl-account.update.request.dto.ts"
+    },
+    "./modules/inventory-ledger": {
+      "types": "./src/modules/inventory-ledger/index.ts",
+      "import": "./src/modules/inventory-ledger/index.ts"
+    },
+    "./modules/organization": {
+      "types": "./src/modules/organization/index.ts",
+      "import": "./src/modules/organization/index.ts"
+    },
+    "./modules/organization/organization.response.dto": {
+      "types": "./src/modules/organization/organization.response.dto.ts",
+      "import": "./src/modules/organization/organization.response.dto.ts"
+    },
+    "./modules/organization/organization.update.request.dto": {
+      "types": "./src/modules/organization/organization.update.request.dto.ts",
+      "import": "./src/modules/organization/organization.update.request.dto.ts"
+    },
+    "./modules/tax-ledger": {
+      "types": "./src/modules/tax-ledger/index.ts",
+      "import": "./src/modules/tax-ledger/index.ts"
+    }
+  },
+  "dependencies": {
+    "@voyzu/types": "*"
+  }
+}

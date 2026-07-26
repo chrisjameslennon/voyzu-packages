@@ -1,6 +1,7 @@
 import {
   access,
   cp,
+  mkdir,
   readFile,
   readdir,
   rm,
@@ -13,15 +14,37 @@ import { fileURLToPath } from "node:url";
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const applicationRoot = resolve(repositoryRoot, "apps/web");
 const platformRoot = resolve(repositoryRoot, "../voyzu");
+const repositoryNodeModules = resolve(repositoryRoot, "node_modules");
 const applicationPackages = resolve(applicationRoot, "packages/@voyzu");
 const applicationNodeModules = resolve(applicationRoot, "node_modules/@voyzu");
+const applicationBusinessPackage = resolve(
+  applicationRoot,
+  "packages/@voyzu-modules/all-modules",
+);
+const applicationBusinessNodeModule = resolve(
+  applicationRoot,
+  "node_modules/@voyzu-modules/all-modules",
+);
+const applicationBusinessTypesPackage = resolve(
+  applicationRoot,
+  "packages/@voyzu-modules/types",
+);
+const applicationBusinessTypesNodeModule = resolve(
+  applicationRoot,
+  "node_modules/@voyzu-modules/types",
+);
 const platformPackages = resolve(platformRoot, "packages/@voyzu");
-const businessPackages = resolve(repositoryRoot, "packages/@voyzu");
+const businessPackage = resolve(
+  repositoryRoot,
+  "packages/@voyzu-modules/all-modules",
+);
+const businessTypes = resolve(repositoryRoot, "packages/@voyzu-modules/types");
 
 const linkedPlatformPackages = [
   "api",
   "api-reference",
   "capability",
+  "types",
   "ui-components",
   "ui-layout",
   "ui-style",
@@ -39,6 +62,7 @@ function assertInside(parent, child) {
 async function replaceWithDirectoryLink(target, source) {
   await access(source);
   await rm(target, { recursive: true, force: true });
+  await mkdir(dirname(target), { recursive: true });
   await symlink(
     source,
     target,
@@ -49,7 +73,6 @@ async function replaceWithDirectoryLink(target, source) {
 async function composeModules() {
   const target = resolve(applicationPackages, "modules");
   const platform = resolve(platformPackages, "modules");
-  const business = resolve(businessPackages, "modules");
 
   for (const entry of await readdir(target, { withFileTypes: true })) {
     if (
@@ -71,47 +94,72 @@ async function composeModules() {
     });
   }
 
-  for (const entry of await readdir(business, { withFileTypes: true })) {
-    if (!entry.isDirectory() || retainedPlatformModules.has(entry.name)) {
-      continue;
-    }
-
-    await cp(
-      resolve(business, entry.name),
-      resolve(target, entry.name),
-      { recursive: true },
-    );
-  }
-
-  await cp(
-    resolve(business, "package.json"),
+  const platformPackageJson = JSON.parse(
+    await readFile(resolve(platform, "package.json"), "utf8"),
+  );
+  platformPackageJson.exports = Object.fromEntries(
+    Object.entries(platformPackageJson.exports).filter(([exportPath]) => {
+      const moduleName = exportPath.split("/")[1];
+      return retainedPlatformModules.has(moduleName);
+    }),
+  );
+  await writeFile(
     resolve(target, "package.json"),
+    `${JSON.stringify(platformPackageJson, null, 2)}\n`,
+  );
+
+  await replaceWithDirectoryLink(applicationBusinessPackage, businessPackage);
+  await replaceWithDirectoryLink(
+    applicationBusinessNodeModule,
+    businessPackage,
   );
 }
 
-async function composeTypes() {
-  const target = resolve(applicationPackages, "types");
-  const platform = resolve(platformPackages, "types");
-  const business = resolve(businessPackages, "types");
-  const generatedIndexes = new Map();
+async function linkBusinessDevelopmentDependencies() {
+  await replaceWithDirectoryLink(
+    resolve(repositoryNodeModules, "@voyzu-modules/all-modules"),
+    businessPackage,
+  );
+  await replaceWithDirectoryLink(
+    resolve(repositoryNodeModules, "@voyzu-modules/types"),
+    businessTypes,
+  );
 
-  for (const relativePath of [
-    "src/index.ts",
-    "src/modules/index.ts",
-    "src/params/index.ts",
-  ]) {
-    generatedIndexes.set(
-      relativePath,
-      await readFile(resolve(target, relativePath), "utf8"),
+  for (const packageName of linkedPlatformPackages) {
+    await replaceWithDirectoryLink(
+      resolve(repositoryNodeModules, `@voyzu/${packageName}`),
+      resolve(platformPackages, packageName),
     );
   }
 
-  await cp(platform, target, { recursive: true });
-  await cp(business, target, { recursive: true });
+  await replaceWithDirectoryLink(
+    resolve(repositoryNodeModules, "@voyzu/modules"),
+    resolve(applicationPackages, "modules"),
+  );
 
-  for (const [relativePath, contents] of generatedIndexes) {
-    await writeFile(resolve(target, relativePath), contents);
+  for (const packageName of [
+    "archiver",
+    "next",
+    "react",
+    "react-dom",
+    "server-only",
+  ]) {
+    await replaceWithDirectoryLink(
+      resolve(repositoryNodeModules, packageName),
+      resolve(applicationRoot, `node_modules/${packageName}`),
+    );
   }
+}
+
+async function composeTypes() {
+  await replaceWithDirectoryLink(
+    applicationBusinessTypesPackage,
+    businessTypes,
+  );
+  await replaceWithDirectoryLink(
+    applicationBusinessTypesNodeModule,
+    businessTypes,
+  );
 }
 
 async function overlayDevelopmentAssets() {
@@ -128,27 +176,162 @@ async function overlayDevelopmentAssets() {
   );
 }
 
+async function rewriteBusinessImports(directory) {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = resolve(directory, entry.name);
+
+    if (entry.isDirectory()) {
+      await rewriteBusinessImports(path);
+      continue;
+    }
+
+    if (!/\.(?:json|ts|tsx)$/.test(entry.name)) {
+      continue;
+    }
+
+    const current = await readFile(path, "utf8");
+    let updated = current.replaceAll(
+      "@voyzu/modules/",
+      "@voyzu-modules/all-modules/",
+    );
+
+    for (const moduleName of retainedPlatformModules) {
+      updated = updated.replaceAll(
+        `@voyzu-modules/all-modules/${moduleName}`,
+        `@voyzu/modules/${moduleName}`,
+      );
+    }
+
+    if (updated !== current) {
+      await writeFile(path, updated);
+    }
+  }
+}
+
+async function configureGeneratedApplication() {
+  const rootPackageJsonPath = resolve(applicationRoot, "package.json");
+  const rootPackageJson = JSON.parse(
+    await readFile(rootPackageJsonPath, "utf8"),
+  );
+  const businessWorkspaces = [
+    "packages/@voyzu-modules/all-modules",
+    "packages/@voyzu-modules/types",
+  ];
+
+  if (
+    businessWorkspaces.some(
+      (workspace) => !rootPackageJson.workspaces.includes(workspace),
+    )
+  ) {
+    for (const workspace of businessWorkspaces) {
+      if (!rootPackageJson.workspaces.includes(workspace)) {
+        rootPackageJson.workspaces.push(workspace);
+      }
+    }
+    await writeFile(
+      rootPackageJsonPath,
+      `${JSON.stringify(rootPackageJson, null, 2)}\n`,
+    );
+  }
+
+  const webPackageJsonPath = resolve(applicationRoot, "apps/web/package.json");
+  const webPackageJson = JSON.parse(
+    await readFile(webPackageJsonPath, "utf8"),
+  );
+
+  let webPackageChanged = false;
+  for (const packageName of [
+    "@voyzu-modules/all-modules",
+    "@voyzu-modules/types",
+  ]) {
+    if (!webPackageJson.dependencies[packageName]) {
+      webPackageJson.dependencies[packageName] = "*";
+      webPackageChanged = true;
+    }
+  }
+
+  if (webPackageChanged) {
+    await writeFile(
+      webPackageJsonPath,
+      `${JSON.stringify(webPackageJson, null, 2)}\n`,
+    );
+  }
+
+  const webTsconfigPath = resolve(applicationRoot, "apps/web/tsconfig.json");
+  const webTsconfig = JSON.parse(await readFile(webTsconfigPath, "utf8"));
+
+  if (!webTsconfig.compilerOptions.preserveSymlinks) {
+    webTsconfig.compilerOptions.preserveSymlinks = true;
+    await writeFile(
+      webTsconfigPath,
+      `${JSON.stringify(webTsconfig, null, 2)}\n`,
+    );
+  }
+
+  await rewriteBusinessImports(resolve(applicationRoot, "apps"));
+}
+
 async function configureTurbopackRoot() {
   const nextConfigPath = resolve(
     applicationRoot,
     "apps/web/next.config.ts",
   );
   const currentConfig = await readFile(nextConfigPath, "utf8");
+  let configured = currentConfig;
 
-  if (currentConfig.includes("turbopack:")) {
-    return;
+  if (!configured.includes('"@voyzu-modules/all-modules"')) {
+    configured = configured.replace(
+      '"@voyzu/modules",',
+      '"@voyzu/modules",\n    "@voyzu-modules/all-modules",',
+    );
   }
 
-  const configured = currentConfig.replace(
-    "const nextConfig: NextConfig = {",
-    [
+  if (!configured.includes('"@voyzu-modules/types",')) {
+    configured = configured.replace(
+      '"@voyzu-modules/all-modules",',
+      '"@voyzu-modules/all-modules",\n    "@voyzu-modules/types",',
+    );
+  }
+
+  if (!configured.includes("turbopack:")) {
+    configured = configured.replace(
       "const nextConfig: NextConfig = {",
+      [
+        "const nextConfig: NextConfig = {",
+        "  turbopack: {",
+        `    root: ${JSON.stringify(resolve(repositoryRoot, ".."))},`,
+        "    resolveAlias: {",
+        `      "@voyzu-modules/all-modules": ${JSON.stringify(businessPackage)},`,
+        `      "@voyzu-modules/types": ${JSON.stringify(businessTypes)},`,
+        "    },",
+        "  },",
+      ].join("\n"),
+    );
+  } else if (!configured.includes("resolveAlias:")) {
+    configured = configured.replace(
       `  turbopack: { root: ${JSON.stringify(resolve(repositoryRoot, ".."))} },`,
-    ].join("\n"),
-  );
+      [
+        "  turbopack: {",
+        `    root: ${JSON.stringify(resolve(repositoryRoot, ".."))},`,
+        "    resolveAlias: {",
+        `      "@voyzu-modules/all-modules": ${JSON.stringify(businessPackage)},`,
+        `      "@voyzu-modules/types": ${JSON.stringify(businessTypes)},`,
+        "    },",
+        "  },",
+      ].join("\n"),
+    );
+  } else if (!configured.includes('"@voyzu-modules/types":')) {
+    configured = configured.replace(
+      `      "@voyzu-modules/all-modules": ${JSON.stringify(businessPackage)},`,
+      [
+        `      "@voyzu-modules/all-modules": ${JSON.stringify(businessPackage)},`,
+        `      "@voyzu-modules/types": ${JSON.stringify(businessTypes)},`,
+      ].join("\n"),
+    );
+  }
 
   if (configured === currentConfig) {
-    throw new Error("Could not configure the generated Next.js application.");
+    return;
   }
 
   await writeFile(nextConfigPath, configured);
@@ -175,8 +358,14 @@ async function main() {
   console.log("Composing platform and business modules...");
   await composeModules();
 
+  console.log("Linking business-package development dependencies...");
+  await linkBusinessDevelopmentDependencies();
+
   console.log("Composing shared and business types...");
   await composeTypes();
+
+  console.log("Configuring the generated application package split...");
+  await configureGeneratedApplication();
 
   console.log("Overlaying business database and development scripts...");
   await overlayDevelopmentAssets();
