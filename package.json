@@ -1,16 +1,17 @@
 {
-  "name": "voyzu-modules",
+  "name": "voyzu-packages",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/@voyzu-modules/*",
+    "voyzu-packages/*",
     ".dev/voyzu/packages/@voyzu/*"
   ],
   "scripts": {
     "create-dev": "npm exec --yes --package=github:chrisjameslennon/create-voyzu#main -- create-voyzu dev",
     "re-install": "npm run create-dev -- --force",
-    "compose": "npm --prefix .dev/voyzu run compose -- --modules ../..",
+    "voyzu": "npm --prefix .dev run voyzu --",
+    "compose": "npm --prefix .dev run compose",
     "dev": "npm --prefix .dev run dev",
     "build": "npm --prefix .dev run build",
     "typecheck": "npm --prefix .dev run typecheck"

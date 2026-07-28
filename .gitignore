@@ -1,3 +1,6 @@
 /apps/
 /.dev/
 /node_modules/
+/.env.development
+/.env.local
+/voyzu.instance.config.ts
