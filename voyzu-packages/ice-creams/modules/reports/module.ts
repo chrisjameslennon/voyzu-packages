@@ -10,13 +10,24 @@ export const iceCreamReportsModule = {
   pageRoutes: {
     all: {
       id: "voyzu-packages.ice-creams.reports.page.all",
+      path: "/ice-creams/reports/all",
+      Page: AllIceCreamsReportPage,
       pageTitle: "All Ice Creams",
       helpUrl: "packages/ice-creams/reports/all",
+      breadcrumbBase: [
+        { label: "Ice Creams", href: "/ice-creams" },
+        { label: "Reports" },
+      ],
+      auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
     allPrintable: {
       id: "voyzu-packages.ice-creams.reports.page.all.printable",
+      path: "/ice-creams/reports/all/printable",
+      Page: AllIceCreamsReportPage,
       pageTitle: "All Ice Creams",
       helpUrl: "packages/ice-creams/reports/all",
+      unframed: true,
+      auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
   },
   apiDefinitions: {
@@ -40,9 +51,6 @@ export const iceCreamReportsModule = {
         },
       },
     },
-  },
-  pages: {
-    all: AllIceCreamsReportPage,
   },
 } as const;
 

@@ -7,6 +7,7 @@ VALUES
   ('HOKEY_POKEY', 'Hokey Pokey'),
   ('MATCHA', 'Matcha'),
   ('BLACK_SESAME', 'Black Sesame'),
+  ('UBE', 'Ube'),
   ('LAVENDER_HONEY', 'Lavender Honey'),
   ('GOAT_CHEESE_FIG', 'Goat Cheese and Fig'),
   ('WASABI', 'Wasabi'),

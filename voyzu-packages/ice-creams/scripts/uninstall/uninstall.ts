@@ -5,9 +5,9 @@ import { withTransaction } from "@voyzu/capability/db";
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const scripts = [
-  "001-remove-ice-cream-audit.sql",
-  "002-drop-ice-cream.sql",
-  "003-drop-ice-cream-flavor.sql",
+  "remove-ice-cream-audit.sql",
+  "drop-ice-cream.sql",
+  "drop-ice-cream-flavor.sql",
 ] as const;
 
 /**

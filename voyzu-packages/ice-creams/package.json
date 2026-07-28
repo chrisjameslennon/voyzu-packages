@@ -1,0 +1,57 @@
+{
+  "name": "@voyzu-packages/ice-creams",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "voyzu": {
+    "voyzu-package": true,
+    "isActive": true
+  },
+  "exports": {
+    "./voyzu-package": {
+      "types": "./voyzu.package.ts",
+      "import": "./voyzu.package.ts"
+    },
+    "./navigation/top-nav": {
+      "types": "./navigation/top-nav.topnav.ts",
+      "import": "./navigation/top-nav.topnav.ts"
+    },
+    "./navigation/left-nav": {
+      "types": "./navigation/left-nav.leftnav.ts",
+      "import": "./navigation/left-nav.leftnav.ts"
+    },
+    "./modules/ice-creams": {
+      "types": "./modules/ice-creams/module.ts",
+      "import": "./modules/ice-creams/module.ts"
+    },
+    "./modules/reports": {
+      "types": "./modules/reports/module.ts",
+      "import": "./modules/reports/module.ts"
+    },
+    "./modules/audit": {
+      "types": "./modules/audit/module.ts",
+      "import": "./modules/audit/module.ts"
+    },
+    "./types": {
+      "types": "./modules/types/index.ts",
+      "import": "./modules/types/index.ts"
+    },
+    "./modules/ice-creams/server": {
+      "types": "./modules/ice-creams/server/index.ts",
+      "import": "./modules/ice-creams/server/index.ts"
+    }
+  },
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "@voyzu/audit": "^0.1.0",
+    "@voyzu/capability": "^0.1.0",
+    "@voyzu/types": "^0.1.0",
+    "@voyzu/ui-components": "^0.1.0",
+    "@voyzu/ui-layout": "^0.1.0",
+    "@voyzu/ui-style": "^0.1.0",
+    "@voyzu/ui-surface": "^0.1.0",
+    "next": "^16",
+    "react": "^19"
+  }
+}

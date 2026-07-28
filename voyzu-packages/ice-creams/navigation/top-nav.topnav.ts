@@ -1,4 +1,4 @@
-import { iceCreamsModule } from "../module";
+import { iceCreamsModule } from "../modules/ice-creams/module";
 
 export const iceCreamsTopNav = {
   label: "Ice Creams",

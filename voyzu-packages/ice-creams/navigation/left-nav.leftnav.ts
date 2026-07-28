@@ -1,4 +1,6 @@
-import { iceCreamsModule } from "../module";
+import { iceCreamAuditModule } from "../modules/audit/module";
+import { iceCreamsModule } from "../modules/ice-creams/module";
+import { iceCreamReportsModule } from "../modules/reports/module";
 
 export const iceCreamsLeftNav = [
   {
@@ -16,7 +18,7 @@ export const iceCreamsLeftNav = [
       {
         label: "All Ice Creams",
         icon: "summarize",
-        routeId: iceCreamsModule.pageRoutes.reportAll.id,
+        routeId: iceCreamReportsModule.pageRoutes.all.id,
       },
     ],
   },
@@ -26,7 +28,7 @@ export const iceCreamsLeftNav = [
       {
         label: "Audit Log",
         icon: "history",
-        routeId: iceCreamsModule.pageRoutes.auditList.id,
+        routeId: iceCreamAuditModule.pageRoutes.list.id,
       },
     ],
   },

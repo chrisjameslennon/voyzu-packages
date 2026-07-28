@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { OrganizationAuditPanel } from "@voyzu-modules/core/organization-audit/client";
+import { OrganizationAuditPanel } from "@voyzu/audit/organization/client";
 import {
   Badge,
   Breadcrumbs,

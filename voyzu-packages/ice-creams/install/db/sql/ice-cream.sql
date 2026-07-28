@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS ice_cream (
     name                     TEXT NOT NULL,
     flavor_id                BIGINT NOT NULL,
     supplier                 TEXT NOT NULL,
-    status                   entity_status NOT NULL DEFAULT 'ACTIVE',
+    status                   TEXT NOT NULL DEFAULT 'ACTIVE',
 
     creation_date            audit_timestamp,
     creation_actor_type      actor_type,
@@ -28,7 +28,9 @@ CREATE TABLE IF NOT EXISTS ice_cream (
     CONSTRAINT ck_ice_cream_name
       CHECK (btrim(name) <> ''),
     CONSTRAINT ck_ice_cream_supplier
-      CHECK (btrim(supplier) <> '')
+      CHECK (btrim(supplier) <> ''),
+    CONSTRAINT ck_ice_cream_status
+      CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 
 CREATE INDEX IF NOT EXISTS ix_ice_cream_flavor_id

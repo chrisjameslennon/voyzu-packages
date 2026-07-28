@@ -3,7 +3,7 @@ export {
   handleExportAll,
   handleGetById,
   handleList,
-} from "@voyzu-modules/core/organization-audit/server";
+} from "@voyzu/audit/organization/server";
 export {
   IceCreamAuditEventDetailPage,
   IceCreamAuditEventsPage,

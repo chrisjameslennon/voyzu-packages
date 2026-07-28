@@ -5,15 +5,15 @@ self-contained: its only business dependency is Voyzu auditing.
 
 ## Package contents
 
-- `voyzu.package.ts` — package manifest, navigation and install assets.
-- `module.ts` — the package's authoritative page-route and API-route registry.
+- `voyzu.package.ts` — intermediary exporting modules, dependencies, installation assets and scripts.
+- `modules/*/module.ts` — authoritative page-route and API-route registries.
 - `install/db/sql` — ordered, idempotent schema installation.
 - `install/db/seed` — idempotent reference-flavour seeds.
 - `modules/ice-creams` — owning CRUD module, APIs, UI, policy and tests.
 - `modules/reports` — the All Ice Creams report and report API.
-- `modules/audit` — isolated adapter to the current Voyzu audit implementation.
+- `modules/audit` — package-specific routes backed by the preinstalled `@voyzu/audit` package.
 - `modules/types` — package-owned DTO contracts; it is not an installable module.
-- `navigation` — the package's single top-nav item and grouped left navigation.
+- `navigation` — convention-discovered top and left navigation.
 - `scripts/sample-data` — optional repeatable demonstration-data installation.
 - `scripts/uninstall` — explicit destructive removal, separated from installation.
 

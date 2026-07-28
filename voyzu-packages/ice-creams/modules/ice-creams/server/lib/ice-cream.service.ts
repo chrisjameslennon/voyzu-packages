@@ -12,7 +12,7 @@ import {
   withAuditActors,
   withCreationAudit,
   withUpdateAudit,
-} from "@voyzu-modules/core/common/server";
+} from "@voyzu/audit/stamps";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import type { Status } from "@voyzu/types/modules/core";
 

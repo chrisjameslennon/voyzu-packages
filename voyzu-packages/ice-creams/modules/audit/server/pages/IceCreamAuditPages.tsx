@@ -3,7 +3,7 @@ import "server-only";
 import {
   OrganizationAuditEventDetailPage,
   OrganizationAuditEventsPage,
-} from "@voyzu-modules/core/organization-audit/server";
+} from "@voyzu/audit/organization/server";
 
 export async function IceCreamAuditEventsPage({
   surface,

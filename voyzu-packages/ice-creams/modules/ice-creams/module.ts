@@ -18,6 +18,8 @@ import {
   handlePatch,
   handleSearch,
   handleUpdate,
+  IceCreamDetailPage,
+  IceCreamsListPage,
 } from "./server";
 
 const tag = ["Ice Creams"];
@@ -40,13 +42,21 @@ export const iceCreamsModule = {
   pageRoutes: {
     list: {
       id: "voyzu-packages.ice-creams.page.list",
+      path: "/ice-creams",
+      Page: IceCreamsListPage,
       pageTitle: "Ice Creams",
       helpUrl: "packages/ice-creams/ice-creams",
+      breadcrumbBase: [],
+      auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
     detail: {
       id: "voyzu-packages.ice-creams.page.detail",
+      path: "/ice-creams/[code]",
+      Page: IceCreamDetailPage,
       pageTitle: "Ice Cream",
       helpUrl: "packages/ice-creams/ice-creams",
+      breadcrumbBase: [{ label: "Ice Creams", href: "/ice-creams" }],
+      auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
   },
   apiDefinitions: {
