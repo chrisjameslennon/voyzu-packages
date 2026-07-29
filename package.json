@@ -5,16 +5,22 @@
   "type": "module",
   "workspaces": [
     "voyzu-packages/*",
-    ".dev/voyzu/packages/@voyzu/*"
+    ".run/voyzu/packages/@voyzu/*"
   ],
   "scripts": {
     "create-dev": "npm exec --yes --package=github:chrisjameslennon/create-voyzu#main -- create-voyzu dev",
     "re-install": "npm run create-dev -- --force",
-    "voyzu": "npm --prefix .dev run voyzu --",
-    "compose": "npm --prefix .dev run compose",
-    "dev": "npm --prefix .dev run dev",
-    "build": "npm --prefix .dev run build",
-    "typecheck": "npm --prefix .dev run typecheck"
+    "voyzu:add-repo": "npm --prefix .run run voyzu:add-repo --",
+    "voyzu:install": "npm --prefix .run run voyzu:install --",
+    "voyzu:refresh-repos": "npm --prefix .run run voyzu:refresh-repos",
+    "voyzu:refresh-repo": "npm --prefix .run run voyzu:refresh-repo --",
+    "voyzu:initialize": "npm --prefix .run run voyzu:initialize",
+    "voyzu:install-package": "npm --prefix .run run voyzu:install-package --",
+    "voyzu:compose": "npm --prefix .run run voyzu:compose",
+    "voyzu:run": "npm --prefix .run run voyzu:run --",
+    "dev": "npm --prefix .run run dev",
+    "build": "npm --prefix .run run build",
+    "typecheck": "npm --prefix .run run typecheck"
   },
   "devDependencies": {
     "@types/react": "^19.2.2",

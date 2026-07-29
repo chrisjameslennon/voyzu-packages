@@ -1,4 +1,5 @@
 /apps/
+/.run/
 /.dev/
 /node_modules/
 /.env.development
