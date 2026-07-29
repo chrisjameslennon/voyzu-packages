@@ -18,6 +18,8 @@
     "packages/@voyzu-modules/*/modules/**/*.tsx",
     "packages/@voyzu-modules/*/types/**/*.ts",
     "packages/@voyzu-modules/*/ui-domain/**/*.ts",
-    "packages/@voyzu-modules/*/ui-domain/**/*.tsx"
+    "packages/@voyzu-modules/*/ui-domain/**/*.tsx",
+    "packages/@voyzu/ice-creams/**/*.ts",
+    "packages/@voyzu/ice-creams/**/*.tsx"
   ]
 }

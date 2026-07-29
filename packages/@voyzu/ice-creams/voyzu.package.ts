@@ -12,7 +12,7 @@ import { uninstall } from "./scripts/uninstall/uninstall";
  * will be updated separately to consume this contract.
  */
 export const iceCreamsPackage = {
-  id: "voyzu-packages.ice-creams",
+  id: "voyzu.ice-creams",
   name: "Ice Creams",
   version: "0.1.0",
   description: "A best-practice, self-contained ice-cream management package.",

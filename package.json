@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "voyzu-packages/*",
+    "packages/*",
+    "packages/@*/*",
     ".run/voyzu/packages/@voyzu/*"
   ],
   "scripts": {

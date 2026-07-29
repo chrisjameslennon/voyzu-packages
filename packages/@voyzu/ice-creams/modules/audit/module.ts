@@ -9,11 +9,11 @@ import {
 } from "./server";
 
 export const iceCreamAuditModule = {
-  id: "voyzu-packages.ice-creams.audit",
+  id: "voyzu.ice-creams.audit",
   name: "Ice Cream Audit",
   pageRoutes: {
     list: {
-      id: "voyzu-packages.ice-creams.audit.page.list",
+      id: "voyzu.ice-creams.audit.page.list",
       path: "/ice-creams/audit",
       Page: IceCreamAuditEventsPage,
       pageTitle: "Ice Cream Audit Log",
@@ -22,7 +22,7 @@ export const iceCreamAuditModule = {
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
     detail: {
-      id: "voyzu-packages.ice-creams.audit.page.detail",
+      id: "voyzu.ice-creams.audit.page.detail",
       path: "/ice-creams/audit/[id]",
       Page: IceCreamAuditEventDetailPage,
       pageTitle: "Ice Cream Audit Event",

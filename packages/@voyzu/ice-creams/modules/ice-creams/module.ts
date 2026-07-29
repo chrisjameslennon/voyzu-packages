@@ -37,11 +37,11 @@ const codePathParameter = {
 } as const;
 
 export const iceCreamsModule = {
-  id: "voyzu-packages.ice-creams",
+  id: "voyzu.ice-creams",
   name: "Ice Creams",
   pageRoutes: {
     list: {
-      id: "voyzu-packages.ice-creams.page.list",
+      id: "voyzu.ice-creams.page.list",
       path: "/ice-creams",
       Page: IceCreamsListPage,
       pageTitle: "Ice Creams",
@@ -50,7 +50,7 @@ export const iceCreamsModule = {
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
     detail: {
-      id: "voyzu-packages.ice-creams.page.detail",
+      id: "voyzu.ice-creams.page.detail",
       path: "/ice-creams/[code]",
       Page: IceCreamDetailPage,
       pageTitle: "Ice Cream",

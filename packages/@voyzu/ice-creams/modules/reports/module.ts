@@ -5,11 +5,11 @@ import {
 } from "./server";
 
 export const iceCreamReportsModule = {
-  id: "voyzu-packages.ice-creams.reports",
+  id: "voyzu.ice-creams.reports",
   name: "Ice Cream Reports",
   pageRoutes: {
     all: {
-      id: "voyzu-packages.ice-creams.reports.page.all",
+      id: "voyzu.ice-creams.reports.page.all",
       path: "/ice-creams/reports/all",
       Page: AllIceCreamsReportPage,
       pageTitle: "All Ice Creams",
@@ -21,7 +21,7 @@ export const iceCreamReportsModule = {
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
     allPrintable: {
-      id: "voyzu-packages.ice-creams.reports.page.all.printable",
+      id: "voyzu.ice-creams.reports.page.all.printable",
       path: "/ice-creams/reports/all/printable",
       Page: AllIceCreamsReportPage,
       pageTitle: "All Ice Creams",
