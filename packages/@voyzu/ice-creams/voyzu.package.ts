@@ -8,9 +8,7 @@ import { uninstall } from "./scripts/uninstall/uninstall";
 /**
  * Golden Voyzu package manifest.
  *
- * This deliberately uses the new package structure. The installer and composer
- * will be updated separately to consume this contract.
- */
+ **/
 export const iceCreamsPackage = {
   id: "voyzu.ice-creams",
   name: "Ice Creams",
