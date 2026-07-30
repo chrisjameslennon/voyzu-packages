@@ -1,12 +1,15 @@
 import { arrayOf, dtoRef } from "@voyzu/types/api";
+import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 import {
   handleCount,
   handleExportAll,
   handleGetById,
   handleList,
+} from "./server";
+import {
   IceCreamAuditEventDetailPage,
   IceCreamAuditEventsPage,
-} from "./server";
+} from "./server/pages/IceCreamAuditPages";
 
 export const iceCreamAuditModule = {
   id: "voyzu.ice-creams.audit",
@@ -37,7 +40,7 @@ export const iceCreamAuditModule = {
   apiDefinitions: {
     list: {
       method: "GET",
-      path: "/ice-creams/audit",
+      path: "/ice-cream-audit-events",
       handler: (request: any) => handleList(request),
       apiDoc: {
         summary: "List",
@@ -51,7 +54,7 @@ export const iceCreamAuditModule = {
     },
     count: {
       method: "GET",
-      path: "/ice-creams/audit/count",
+      path: "/ice-cream-audit-event-count",
       handler: (request: any) => handleCount(request),
       apiDoc: {
         summary: "Count",
@@ -65,7 +68,7 @@ export const iceCreamAuditModule = {
     },
     export: {
       method: "GET",
-      path: "/ice-creams/audit/export",
+      path: "/ice-cream-audit-exports",
       handler: (request: any) => handleExportAll(request),
       apiDoc: {
         summary: "Export",
@@ -79,7 +82,7 @@ export const iceCreamAuditModule = {
     },
     get: {
       method: "GET",
-      path: "/ice-creams/audit/[id]",
+      path: "/ice-cream-audit-events/[id]",
       handler: (request: any, context: any) => handleGetById(request, context),
       apiDoc: {
         summary: "Get",
@@ -96,6 +99,6 @@ export const iceCreamAuditModule = {
       },
     },
   },
-} as const;
+} as const satisfies VoyzuPackageModuleDefinition;
 
 export default iceCreamAuditModule;

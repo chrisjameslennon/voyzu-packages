@@ -1,4 +1,5 @@
 import { arrayOf, dtoRef } from "@voyzu/types/api";
+import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 import {
   handleActivate,
   handleBatchActivate,
@@ -18,9 +19,9 @@ import {
   handlePatch,
   handleSearch,
   handleUpdate,
-  IceCreamDetailPage,
-  IceCreamsListPage,
 } from "./server";
+import { IceCreamDetailPage } from "./server/pages/IceCreamDetailPage";
+import { IceCreamsListPage } from "./server/pages/IceCreamsListPage";
 
 const tag = ["Ice Creams"];
 const commonResponses = {
@@ -95,7 +96,7 @@ export const iceCreamsModule = {
     },
     flavors: {
       method: "GET",
-      path: "/ice-creams/flavors",
+      path: "/ice-cream-flavors",
       handler: (request: any) => handleListFlavors(request),
       apiDoc: {
         summary: "List Flavours",
@@ -109,7 +110,7 @@ export const iceCreamsModule = {
     },
     filter: {
       method: "POST",
-      path: "/ice-creams/filter",
+      path: "/ice-cream-queries",
       handler: (request: any) => handleFilter(request),
       apiDoc: {
         summary: "Filter",
@@ -125,7 +126,7 @@ export const iceCreamsModule = {
     },
     search: {
       method: "GET",
-      path: "/ice-creams/search",
+      path: "/ice-cream-search-results",
       handler: (request: any) => handleSearch(request),
       apiDoc: {
         summary: "Search",
@@ -143,7 +144,7 @@ export const iceCreamsModule = {
     },
     batchGet: {
       method: "POST",
-      path: "/ice-creams/batch/get",
+      path: "/ice-cream-selections",
       handler: (request: any) => handleBatchGet(request),
       apiDoc: {
         summary: "Batch Get",
@@ -159,7 +160,7 @@ export const iceCreamsModule = {
     },
     batchCreate: {
       method: "POST",
-      path: "/ice-creams/batch",
+      path: "/ice-cream-batches",
       handler: (request: any) => handleBatchCreate(request),
       apiDoc: {
         summary: "Batch Create",
@@ -178,7 +179,7 @@ export const iceCreamsModule = {
     },
     batchUpdate: {
       method: "PUT",
-      path: "/ice-creams/batch",
+      path: "/ice-cream-batches",
       handler: (request: any) => handleBatchUpdate(request),
       apiDoc: {
         summary: "Batch Update",
@@ -196,7 +197,7 @@ export const iceCreamsModule = {
     },
     batchPatch: {
       method: "PATCH",
-      path: "/ice-creams/batch",
+      path: "/ice-cream-batches",
       handler: (request: any) => handleBatchPatch(request),
       apiDoc: {
         summary: "Batch Patch",
@@ -214,7 +215,7 @@ export const iceCreamsModule = {
     },
     batchDelete: {
       method: "DELETE",
-      path: "/ice-creams/batch",
+      path: "/ice-cream-batches",
       handler: (request: any) => handleBatchDelete(request),
       apiDoc: {
         summary: "Batch Delete",
@@ -231,8 +232,8 @@ export const iceCreamsModule = {
       },
     },
     batchActivate: {
-      method: "POST",
-      path: "/ice-creams/batch-activate",
+      method: "PUT",
+      path: "/ice-cream-batches/activation",
       handler: (request: any) => handleBatchActivate(request),
       apiDoc: {
         summary: "Batch Activate",
@@ -249,8 +250,8 @@ export const iceCreamsModule = {
       },
     },
     batchDeactivate: {
-      method: "POST",
-      path: "/ice-creams/batch-deactivate",
+      method: "DELETE",
+      path: "/ice-cream-batches/activation",
       handler: (request: any) => handleBatchDeactivate(request),
       apiDoc: {
         summary: "Batch Deactivate",
@@ -338,8 +339,8 @@ export const iceCreamsModule = {
       },
     },
     activate: {
-      method: "POST",
-      path: "/ice-creams/[code]/activate",
+      method: "PUT",
+      path: "/ice-creams/[code]/activation",
       handler: (request: any, context: any) => handleActivate(request, context),
       apiDoc: {
         summary: "Activate",
@@ -355,8 +356,8 @@ export const iceCreamsModule = {
       },
     },
     deactivate: {
-      method: "POST",
-      path: "/ice-creams/[code]/deactivate",
+      method: "DELETE",
+      path: "/ice-creams/[code]/activation",
       handler: (request: any, context: any) => handleDeactivate(request, context),
       apiDoc: {
         summary: "Deactivate",
@@ -372,6 +373,6 @@ export const iceCreamsModule = {
       },
     },
   },
-} as const;
+} as const satisfies VoyzuPackageModuleDefinition;
 
 export default iceCreamsModule;

@@ -84,7 +84,10 @@ export function IceCreamDetail({
   };
 
   const transition = async (action: "activate" | "deactivate") => {
-    const response = await request(`/api/ice-creams/${encodeURIComponent(current.code)}/${action}`, { method: "POST" });
+    const response = await request(
+      `/api/ice-creams/${encodeURIComponent(current.code)}/activation`,
+      { method: action === "activate" ? "PUT" : "DELETE" },
+    );
     if (!response) return;
     setCurrent(await response.json() as IceCreamResponseDto);
   };

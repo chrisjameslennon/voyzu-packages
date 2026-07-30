@@ -42,6 +42,7 @@
     }
   },
   "dependencies": {
+    "server-only": "^0.0.1"
   },
   "peerDependencies": {
     "@voyzu/audit": "^0.1.0",

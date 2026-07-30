@@ -39,6 +39,3 @@ export {
   searchIceCreams,
   updateIceCream,
 } from "./lib/ice-cream.service";
-
-export { IceCreamDetailPage } from "./pages/IceCreamDetailPage";
-export { IceCreamsListPage } from "./pages/IceCreamsListPage";

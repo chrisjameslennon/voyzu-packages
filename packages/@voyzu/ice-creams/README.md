@@ -13,9 +13,9 @@ self-contained: its only business dependency is Voyzu auditing.
 - `modules/reports` — the All Ice Creams report and report API.
 - `modules/audit` — package-specific routes backed by the preinstalled `@voyzu/audit` package.
 - `modules/types` — package-owned DTO contracts; it is not an installable module.
-- `navigation` — convention-discovered top and left navigation.
+- `navigation` — optional top and left navigation exported by `package.json`.
 - `scripts/sample-data` — optional repeatable demonstration-data installation.
 - `scripts/uninstall` — explicit destructive removal, separated from installation.
 
-The package is intentionally ahead of the current installer and composer. It is
-the contract those tools will be changed to support.
+The package conforms to the current Voyzu package and module contracts and can
+be installed or linked with the standard Voyzu package commands.

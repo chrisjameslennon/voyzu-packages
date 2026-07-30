@@ -1,8 +1,9 @@
 import { arrayOf, dtoRef } from "@voyzu/types/api";
+import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 import {
-  AllIceCreamsReportPage,
   handleAllIceCreamsReport,
 } from "./server";
+import { AllIceCreamsReportPage } from "./server/pages/AllIceCreamsReportPage";
 
 export const iceCreamReportsModule = {
   id: "voyzu.ice-creams.reports",
@@ -33,7 +34,7 @@ export const iceCreamReportsModule = {
   apiDefinitions: {
     all: {
       method: "GET",
-      path: "/ice-creams/reports/all",
+      path: "/ice-cream-reports/all-ice-creams",
       handler: (request: any) => handleAllIceCreamsReport(request),
       apiDoc: {
         summary: "All Ice Creams Report",
@@ -52,6 +53,6 @@ export const iceCreamReportsModule = {
       },
     },
   },
-} as const;
+} as const satisfies VoyzuPackageModuleDefinition;
 
 export default iceCreamReportsModule;

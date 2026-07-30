@@ -142,8 +142,8 @@ export function IceCreamsList({
   };
 
   const transitionSelected = async (action: "activate" | "deactivate") => {
-    const response = await fetch(`/api/ice-creams/batch-${action}`, {
-      method: "POST",
+    const response = await fetch("/api/ice-cream-batches/activation", {
+      method: action === "activate" ? "PUT" : "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: selected.map(({ code }) => code) }),
     });
@@ -155,7 +155,7 @@ export function IceCreamsList({
   };
 
   const deleteSelected = async () => {
-    const response = await fetch("/api/ice-creams/batch", {
+    const response = await fetch("/api/ice-cream-batches", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: selected.map(({ code }) => code) }),
