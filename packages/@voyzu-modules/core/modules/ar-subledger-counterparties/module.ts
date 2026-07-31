@@ -6,12 +6,12 @@ export const arSubledgerCounterpartiesModule = {
     list: {
       id: "voyzu.ar-subledger-counterparties.page.list",
       pageTitle: "AR Counterparties",
-      helpUrl: "modules-help/company-ledger/ar-counterparties",
+      helpPath: "modules-help/company-ledger/ar-counterparties",
     },
     detail: {
       id: "voyzu.ar-subledger-counterparties.page.detail",
       pageTitle: "AR Counterparty",
-      helpUrl: "modules-help/company-ledger/ar-counterparties",
+      helpPath: "modules-help/company-ledger/ar-counterparties",
     },
   },
   apiDefinitions: {

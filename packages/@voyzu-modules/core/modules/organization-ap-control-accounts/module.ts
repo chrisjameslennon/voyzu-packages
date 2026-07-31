@@ -6,12 +6,12 @@ export const organizationApControlAccountsModule = {
     list: {
       id: "voyzu.organization-ap-control-accounts.page.list",
       pageTitle: "Accounts Payable Control Accounts",
-      helpUrl: "modules-help/organization-financial-settings/ap-control-accounts",
+      helpPath: "modules-help/organization-financial-settings/ap-control-accounts",
     },
     detail: {
       id: "voyzu.organization-ap-control-accounts.page.detail",
       pageTitle: "Accounts Payable Control Accounts",
-      helpUrl: "modules-help/organization-financial-settings/ap-control-accounts",
+      helpPath: "modules-help/organization-financial-settings/ap-control-accounts",
     },
   },
   apiDefinitions: {

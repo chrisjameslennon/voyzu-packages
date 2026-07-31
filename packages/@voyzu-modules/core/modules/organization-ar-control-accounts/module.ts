@@ -6,12 +6,12 @@ export const organizationArControlAccountsModule = {
     list: {
       id: "voyzu.organization-ar-control-accounts.page.list",
       pageTitle: "Accounts Receivable Control Accounts",
-      helpUrl: "modules-help/organization-financial-settings/ar-control-accounts",
+      helpPath: "modules-help/organization-financial-settings/ar-control-accounts",
     },
     detail: {
       id: "voyzu.organization-ar-control-accounts.page.detail",
       pageTitle: "Accounts Receivable Control Accounts",
-      helpUrl: "modules-help/organization-financial-settings/ar-control-accounts",
+      helpPath: "modules-help/organization-financial-settings/ar-control-accounts",
     },
   },
   apiDefinitions: {

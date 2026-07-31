@@ -6,12 +6,12 @@ export const organizationInventoryItemPostingProfilesModule = {
     list: {
       id: "voyzu.organization-inventory-item-posting-profiles.page.list",
       pageTitle: "Item Posting Profiles",
-      helpUrl: "modules-help/organization-financial-settings/item-posting-profiles",
+      helpPath: "modules-help/organization-financial-settings/item-posting-profiles",
     },
     detail: {
       id: "voyzu.organization-inventory-item-posting-profiles.page.detail",
       pageTitle: "Item Posting Profile",
-      helpUrl: "modules-help/organization-financial-settings/item-posting-profiles",
+      helpPath: "modules-help/organization-financial-settings/item-posting-profiles",
     },
   },
   apiDefinitions: {

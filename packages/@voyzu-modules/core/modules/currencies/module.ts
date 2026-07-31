@@ -6,12 +6,12 @@ export const currenciesModule = {
     list: {
       id: "voyzu.currencies.page.list",
       pageTitle: "Currencies",
-      helpUrl: "modules-help/organization-financial-settings/currency",
+      helpPath: "modules-help/organization-financial-settings/currency",
     },
     detail: {
       id: "voyzu.currencies.page.detail",
       pageTitle: "Currency",
-      helpUrl: "modules-help/organization-financial-settings/currency",
+      helpPath: "modules-help/organization-financial-settings/currency",
     },
   },
   apiDefinitions: {

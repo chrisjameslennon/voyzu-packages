@@ -6,12 +6,12 @@ export const taxLedgerModule = {
     list: {
       id: "voyzu.tax-ledger.page.list",
       pageTitle: "Tax Ledger Entries",
-      helpUrl: "modules-help/company-ledger/tax-ledger-entries",
+      helpPath: "modules-help/company-ledger/tax-ledger-entries",
     },
     detail: {
       id: "voyzu.tax-ledger.page.detail",
       pageTitle: "Tax Ledger Entry",
-      helpUrl: "modules-help/company-ledger/tax-ledger-entries",
+      helpPath: "modules-help/company-ledger/tax-ledger-entries",
     },
   },
   apiDefinitions: {

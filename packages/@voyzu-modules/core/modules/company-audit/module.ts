@@ -6,12 +6,12 @@ export const companyAuditModule = {
     list: {
       id: "voyzu.company-audit.page.list",
       pageTitle: "Audit Log",
-      helpUrl: "modules-help/company-ledger/audit-log",
+      helpPath: "modules-help/company-ledger/audit-log",
     },
     detail: {
       id: "voyzu.company-audit.page.detail",
       pageTitle: "Audit Event",
-      helpUrl: "modules-help/company-ledger/audit-log",
+      helpPath: "modules-help/company-ledger/audit-log",
     },
   },
   apiDefinitions: {

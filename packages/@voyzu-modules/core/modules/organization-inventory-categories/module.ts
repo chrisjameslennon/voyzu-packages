@@ -6,12 +6,12 @@ export const organizationInventoryCategoriesModule = {
     list: {
       id: "voyzu.organization-inventory-categories.page.list",
       pageTitle: "Inventory Categories",
-      helpUrl: "modules-help/organization-financial-settings/inventory-categories",
+      helpPath: "modules-help/organization-financial-settings/inventory-categories",
     },
     detail: {
       id: "voyzu.organization-inventory-categories.page.detail",
       pageTitle: "Inventory Category",
-      helpUrl: "modules-help/organization-financial-settings/inventory-categories",
+      helpPath: "modules-help/organization-financial-settings/inventory-categories",
     },
   },
   apiDefinitions: {

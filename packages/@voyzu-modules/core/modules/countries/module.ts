@@ -28,12 +28,12 @@ export const countriesModule = {
     list: {
       id: "voyzu.countries.page.list",
       pageTitle: "Countries",
-      helpUrl: "modules-help/organization-financial-settings/country",
+      helpPath: "modules-help/organization-financial-settings/country",
     },
     detail: {
       id: "voyzu.countries.page.detail",
       pageTitle: "Country",
-      helpUrl: "modules-help/organization-financial-settings/country",
+      helpPath: "modules-help/organization-financial-settings/country",
     },
   },
   apiDefinitions: {

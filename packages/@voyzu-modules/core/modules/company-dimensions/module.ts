@@ -6,12 +6,12 @@ export const companyDimensionsModule = {
     list: {
       id: "voyzu.company-dimensions.page.list",
       pageTitle: "Dimensions",
-      helpUrl: "modules-help/company-ledger/dimensions",
+      helpPath: "modules-help/company-ledger/dimensions",
     },
     detail: {
       id: "voyzu.company-dimensions.page.detail",
       pageTitle: "Dimension",
-      helpUrl: "modules-help/company-ledger/dimensions",
+      helpPath: "modules-help/company-ledger/dimensions",
     },
   },
   apiDefinitions: {

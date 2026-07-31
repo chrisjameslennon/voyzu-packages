@@ -12,7 +12,7 @@ export const iceCreamReportsModule = {
       path: "/ice-creams/reports/all",
       Page: AllIceCreamsReportPage,
       pageTitle: "All Ice Creams",
-      helpUrl: "packages/ice-creams/reports/all",
+      helpPath: "packages/ice-creams/reports/all",
       breadcrumbBase: [
         { label: "Ice Creams", href: "/ice-creams" },
         { label: "Reports" },
@@ -24,7 +24,7 @@ export const iceCreamReportsModule = {
       path: "/ice-creams/reports/all/printable",
       Page: AllIceCreamsReportPage,
       pageTitle: "All Ice Creams",
-      helpUrl: "packages/ice-creams/reports/all",
+      helpPath: "packages/ice-creams/reports/all",
       unframed: true,
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },

@@ -6,12 +6,12 @@ export const inventoryLedgerModule = {
     list: {
       id: "voyzu.inventory-ledger.page.list",
       pageTitle: "Inventory Ledger Entries",
-      helpUrl: "modules-help/company-ledger/inventory-ledger-entries",
+      helpPath: "modules-help/company-ledger/inventory-ledger-entries",
     },
     detail: {
       id: "voyzu.inventory-ledger.page.detail",
       pageTitle: "Inventory Ledger Entry",
-      helpUrl: "modules-help/company-ledger/inventory-ledger-entries",
+      helpPath: "modules-help/company-ledger/inventory-ledger-entries",
     },
   },
   apiDefinitions: {

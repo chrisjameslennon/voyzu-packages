@@ -6,12 +6,12 @@ export const arSubledgerLedgerEntriesModule = {
     list: {
       id: "voyzu.ar-subledger-ledger-entries.page.list",
       pageTitle: "AR Ledger Entries",
-      helpUrl: "modules-help/company-ledger/ar-ledger-entries",
+      helpPath: "modules-help/company-ledger/ar-ledger-entries",
     },
     detail: {
       id: "voyzu.ar-subledger-ledger-entries.page.detail",
       pageTitle: "AR Ledger Entry",
-      helpUrl: "modules-help/company-ledger/ar-ledger-entries",
+      helpPath: "modules-help/company-ledger/ar-ledger-entries",
     },
   },
   apiDefinitions: {

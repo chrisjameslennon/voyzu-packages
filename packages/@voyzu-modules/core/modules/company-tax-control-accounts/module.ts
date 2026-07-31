@@ -6,12 +6,12 @@ export const companyTaxControlAccountsModule = {
     list: {
       id: "voyzu.company-tax-control-accounts.page.list",
       pageTitle: "Tax Control Accounts",
-      helpUrl: "modules-help/company-ledger/tax-accounts",
+      helpPath: "modules-help/company-ledger/tax-accounts",
     },
     detail: {
       id: "voyzu.company-tax-control-accounts.page.detail",
       pageTitle: "Tax Control Accounts",
-      helpUrl: "modules-help/company-ledger/tax-accounts",
+      helpPath: "modules-help/company-ledger/tax-accounts",
     },
   },
   apiDefinitions: {

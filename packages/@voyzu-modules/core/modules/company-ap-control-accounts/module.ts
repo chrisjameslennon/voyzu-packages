@@ -6,12 +6,12 @@ export const companyApControlAccountsModule = {
     list: {
       id: "voyzu.company-ap-control-accounts.page.list",
       pageTitle: "Accounts Payable Control Accounts",
-      helpUrl: "modules-help/company-ledger/ap-control-accounts",
+      helpPath: "modules-help/company-ledger/ap-control-accounts",
     },
     detail: {
       id: "voyzu.company-ap-control-accounts.page.detail",
       pageTitle: "Accounts Payable Control Accounts",
-      helpUrl: "modules-help/company-ledger/ap-control-accounts",
+      helpPath: "modules-help/company-ledger/ap-control-accounts",
     },
   },
   apiDefinitions: {

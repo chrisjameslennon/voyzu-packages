@@ -25,13 +25,13 @@ export const companiesModule = {
     list: {
       id: "voyzu.companies.page.list",
       pageTitle: "Companies",
-      helpUrl: "modules-help/organization-financial-settings/company",
+      helpPath: "modules-help/organization-financial-settings/company",
       apiDocsUrl: "companies",
     },
     detail: {
       id: "voyzu.companies.page.detail",
       pageTitle: "Company",
-      helpUrl: "modules-help/organization-financial-settings/company",
+      helpPath: "modules-help/organization-financial-settings/company",
       apiDocsUrl: "companies",
     },
   },

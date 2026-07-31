@@ -6,12 +6,12 @@ export const organizationDimensionsModule = {
     list: {
       id: "voyzu.organization-dimensions.page.list",
       pageTitle: "Dimensions",
-      helpUrl: "modules-help/organization-financial-settings/dimensions",
+      helpPath: "modules-help/organization-financial-settings/dimensions",
     },
     detail: {
       id: "voyzu.organization-dimensions.page.detail",
       pageTitle: "Dimension",
-      helpUrl: "modules-help/organization-financial-settings/dimensions",
+      helpPath: "modules-help/organization-financial-settings/dimensions",
     },
   },
   apiDefinitions: {

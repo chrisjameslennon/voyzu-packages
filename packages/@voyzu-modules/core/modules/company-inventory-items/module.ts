@@ -6,7 +6,7 @@ export const companyInventoryItemsModule = {
     list: {
       id: "voyzu.company-inventory-items.page.list",
       pageTitle: "Items",
-      helpUrl: "modules-help/company-ledger/inventory-items",
+      helpPath: "modules-help/company-ledger/inventory-items",
     },
     filter: { method: "POST", path: "/finance/[companyCode]/inventory/items/filter", handler: (request: any) => handleFilterInventoryItems(request), apiDoc: { requestPathParams: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, summary: "Filter", description: "Filter Company Inventory Items.", tags: ["Company Inventory Items"], requestBody: { required: true, schema: dtoRef("FilterRequestDto") }, responses: { "200": { description: "Successful response.", schema: arrayOf(dtoRef("InventoryItemResponseDto")) } } } },
     search: { method: "GET", path: "/finance/[companyCode]/inventory/items/search", handler: (request: any) => handleSearchInventoryItems(request), apiDoc: { requestPathParams: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, summary: "Search", description: "Search Company Inventory Items.", tags: ["Company Inventory Items"], requestQuerystringParams: { q: { description: "Search text used to match inventory item records.", schema: { type: "string" } } }, responses: { "200": { description: "Successful response.", schema: arrayOf(dtoRef("InventoryItemResponseDto")) } } } },
@@ -18,7 +18,7 @@ export const companyInventoryItemsModule = {
     detail: {
       id: "voyzu.company-inventory-items.page.detail",
       pageTitle: "Item",
-      helpUrl: "modules-help/company-ledger/inventory-items",
+      helpPath: "modules-help/company-ledger/inventory-items",
     },
   },
   apiDefinitions: {

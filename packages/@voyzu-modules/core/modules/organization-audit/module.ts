@@ -6,12 +6,12 @@ export const organizationAuditModule = {
     list: {
       id: "voyzu.organization-audit.page.list",
       pageTitle: "Audit Log",
-      helpUrl: "modules-help/organization-financial-settings/audit-log",
+      helpPath: "modules-help/organization-financial-settings/audit-log",
     },
     detail: {
       id: "voyzu.organization-audit.page.detail",
       pageTitle: "Audit Event",
-      helpUrl: "modules-help/organization-financial-settings/audit-log",
+      helpPath: "modules-help/organization-financial-settings/audit-log",
     },
   },
   apiDefinitions: {

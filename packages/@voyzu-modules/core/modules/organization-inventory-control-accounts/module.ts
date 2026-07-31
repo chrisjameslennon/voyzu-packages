@@ -6,12 +6,12 @@ export const organizationInventoryControlAccountsModule = {
     list: {
       id: "voyzu.organization-inventory-control-accounts.page.list",
       pageTitle: "Inventory Control Accounts",
-      helpUrl: "modules-help/organization-financial-settings/inventory-control-accounts",
+      helpPath: "modules-help/organization-financial-settings/inventory-control-accounts",
     },
     detail: {
       id: "voyzu.organization-inventory-control-accounts.page.detail",
       pageTitle: "Inventory Control Accounts",
-      helpUrl: "modules-help/organization-financial-settings/inventory-control-accounts",
+      helpPath: "modules-help/organization-financial-settings/inventory-control-accounts",
     },
   },
   apiDefinitions: {

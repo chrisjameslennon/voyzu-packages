@@ -6,12 +6,12 @@ export const apSubledgerStatementsModule = {
     list: {
       id: "voyzu.ap-subledger-statements.page.list",
       pageTitle: "AP Statements",
-      helpUrl: "modules-help/company-ledger/ap-statements",
+      helpPath: "modules-help/company-ledger/ap-statements",
     },
     detail: {
       id: "voyzu.ap-subledger-statements.page.detail",
       pageTitle: "AP Statement",
-      helpUrl: "modules-help/company-ledger/ap-statements",
+      helpPath: "modules-help/company-ledger/ap-statements",
     },
   },
   apiDefinitions: {

@@ -6,12 +6,12 @@ export const financialYearsModule = {
     list: {
       id: "voyzu.financial-years.page.list",
       pageTitle: "Financial Periods",
-      helpUrl: "modules-help/company-ledger/financial-periods",
+      helpPath: "modules-help/company-ledger/financial-periods",
     },
     detail: {
       id: "voyzu.financial-years.page.detail",
       pageTitle: "Financial Year",
-      helpUrl: "modules-help/company-ledger/financial-periods",
+      helpPath: "modules-help/company-ledger/financial-periods",
     },
   },
   apiDefinitions: {

@@ -6,12 +6,12 @@ export const companyFinancialDocumentTypesModule = {
     list: {
       id: "voyzu.company-financial-document-types.page.list",
       pageTitle: "Financial Document Types",
-      helpUrl: "modules-help/company-ledger/financial-document-types",
+      helpPath: "modules-help/company-ledger/financial-document-types",
     },
     detail: {
       id: "voyzu.company-financial-document-types.page.detail",
       pageTitle: "Financial Document Type",
-      helpUrl: "modules-help/company-ledger/financial-document-types",
+      helpPath: "modules-help/company-ledger/financial-document-types",
     },
   },
   apiDefinitions: {

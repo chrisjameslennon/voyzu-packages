@@ -6,12 +6,12 @@ export const companyInventoryCategoriesModule = {
     list: {
       id: "voyzu.company-inventory-categories.page.list",
       pageTitle: "Inventory Categories",
-      helpUrl: "modules-help/company-ledger/inventory-categories",
+      helpPath: "modules-help/company-ledger/inventory-categories",
     },
     detail: {
       id: "voyzu.company-inventory-categories.page.detail",
       pageTitle: "Inventory Category",
-      helpUrl: "modules-help/company-ledger/inventory-categories",
+      helpPath: "modules-help/company-ledger/inventory-categories",
     },
   },
   apiDefinitions: {

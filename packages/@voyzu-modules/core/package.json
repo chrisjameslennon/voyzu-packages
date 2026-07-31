@@ -697,6 +697,9 @@
     "@types/archiver": "^8.0.0"
   },
   "voyzu": {
-    "voyzu-package": true
+    "voyzu-package": true,
+    "settings": {
+      "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
+    }
   }
 }

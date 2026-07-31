@@ -6,12 +6,12 @@ export const companyFinancialDocumentDefaultsModule = {
     list: {
       id: "voyzu.company-financial-document-defaults.page.list",
       pageTitle: "Financial Document Defaults",
-      helpUrl: "modules-help/company-ledger/financial-document-defaults",
+      helpPath: "modules-help/company-ledger/financial-document-defaults",
     },
     detail: {
       id: "voyzu.company-financial-document-defaults.page.detail",
       pageTitle: "Financial Document Default",
-      helpUrl: "modules-help/company-ledger/financial-document-defaults",
+      helpPath: "modules-help/company-ledger/financial-document-defaults",
     },
   },
   apiDefinitions: {

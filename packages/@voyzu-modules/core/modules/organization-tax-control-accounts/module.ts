@@ -6,12 +6,12 @@ export const organizationTaxControlAccountsModule = {
     list: {
       id: "voyzu.organization-tax-control-accounts.page.list",
       pageTitle: "Tax Control Accounts",
-      helpUrl: "modules-help/organization-financial-settings/tax-accounts",
+      helpPath: "modules-help/organization-financial-settings/tax-accounts",
     },
     detail: {
       id: "voyzu.organization-tax-control-accounts.page.detail",
       pageTitle: "Tax Control Accounts",
-      helpUrl: "modules-help/organization-financial-settings/tax-accounts",
+      helpPath: "modules-help/organization-financial-settings/tax-accounts",
     },
   },
   apiDefinitions: {

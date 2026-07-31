@@ -6,12 +6,12 @@ export const organizationInventoryItemsModule = {
     list: {
       id: "voyzu.organization-inventory-items.page.list",
       pageTitle: "Inventory Items",
-      helpUrl: "modules-help/organization-financial-settings/inventory-items",
+      helpPath: "modules-help/organization-financial-settings/inventory-items",
     },
     detail: {
       id: "voyzu.organization-inventory-items.page.detail",
       pageTitle: "Inventory Item",
-      helpUrl: "modules-help/organization-financial-settings/inventory-items",
+      helpPath: "modules-help/organization-financial-settings/inventory-items",
     },
   },
   apiDefinitions: {

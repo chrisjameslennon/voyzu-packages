@@ -6,12 +6,12 @@ export const organizationFinancialDocumentDefaultsModule = {
     list: {
       id: "voyzu.organization-financial-document-defaults.page.list",
       pageTitle: "Financial Document Defaults",
-      helpUrl: "modules-help/organization-financial-settings/financial-document-defaults",
+      helpPath: "modules-help/organization-financial-settings/financial-document-defaults",
     },
     detail: {
       id: "voyzu.organization-financial-document-defaults.page.detail",
       pageTitle: "Financial Document Default",
-      helpUrl: "modules-help/organization-financial-settings/financial-document-defaults",
+      helpPath: "modules-help/organization-financial-settings/financial-document-defaults",
     },
   },
   apiDefinitions: {

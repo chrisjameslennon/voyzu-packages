@@ -6,12 +6,12 @@ export const arSubledgerStatementsModule = {
     list: {
       id: "voyzu.ar-subledger-statements.page.list",
       pageTitle: "AR Statements",
-      helpUrl: "modules-help/company-ledger/ar-statements",
+      helpPath: "modules-help/company-ledger/ar-statements",
     },
     detail: {
       id: "voyzu.ar-subledger-statements.page.detail",
       pageTitle: "AR Statement",
-      helpUrl: "modules-help/company-ledger/ar-statements",
+      helpPath: "modules-help/company-ledger/ar-statements",
     },
   },
   apiDefinitions: {

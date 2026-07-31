@@ -6,12 +6,12 @@ export const companyGlAccountsModule = {
     list: {
       id: "voyzu.company-gl-accounts.page.list",
       pageTitle: "General Ledger Accounts",
-      helpUrl: "modules-help/company-ledger/gl-accounts",
+      helpPath: "modules-help/company-ledger/gl-accounts",
     },
     detail: {
       id: "voyzu.company-gl-accounts.page.detail",
       pageTitle: "General Ledger Account",
-      helpUrl: "modules-help/company-ledger/gl-accounts",
+      helpPath: "modules-help/company-ledger/gl-accounts",
     },
   },
   apiDefinitions: {

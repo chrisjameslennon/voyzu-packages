@@ -6,12 +6,12 @@ export const companyBankCashAccountsModule = {
     list: {
       id: "voyzu.company-bank-cash-accounts.page.list",
       pageTitle: "Bank / Cash Accounts",
-      helpUrl: "modules-help/company-ledger/bank-cash-accounts",
+      helpPath: "modules-help/company-ledger/bank-cash-accounts",
     },
     detail: {
       id: "voyzu.company-bank-cash-accounts.page.detail",
       pageTitle: "Bank / Cash Account",
-      helpUrl: "modules-help/company-ledger/bank-cash-accounts",
+      helpPath: "modules-help/company-ledger/bank-cash-accounts",
     },
   },
   apiDefinitions: {

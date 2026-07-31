@@ -6,12 +6,12 @@ export const organizationBankCashAccountsModule = {
     list: {
       id: "voyzu.organization-bank-cash-accounts.page.list",
       pageTitle: "Bank / Cash Accounts",
-      helpUrl: "modules-help/organization-financial-settings/bank-cash-accounts",
+      helpPath: "modules-help/organization-financial-settings/bank-cash-accounts",
     },
     detail: {
       id: "voyzu.organization-bank-cash-accounts.page.detail",
       pageTitle: "Bank / Cash Account",
-      helpUrl: "modules-help/organization-financial-settings/bank-cash-accounts",
+      helpPath: "modules-help/organization-financial-settings/bank-cash-accounts",
     },
   },
   apiDefinitions: {

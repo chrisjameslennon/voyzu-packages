@@ -6,12 +6,12 @@ export const organizationGlAccountCategoriesModule = {
     list: {
       id: "voyzu.organization-gl-account-categories.page.list",
       pageTitle: "Reporting Categories",
-      helpUrl: "modules-help/organization-financial-settings/reporting-categories",
+      helpPath: "modules-help/organization-financial-settings/reporting-categories",
     },
     detail: {
       id: "voyzu.organization-gl-account-categories.page.detail",
       pageTitle: "Reporting Category",
-      helpUrl: "modules-help/organization-financial-settings/reporting-categories",
+      helpPath: "modules-help/organization-financial-settings/reporting-categories",
     },
   },
   apiDefinitions: {

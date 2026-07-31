@@ -6,12 +6,12 @@ export const companyArControlAccountsModule = {
     list: {
       id: "voyzu.company-ar-control-accounts.page.list",
       pageTitle: "Accounts Receivable Control Accounts",
-      helpUrl: "modules-help/company-ledger/ar-control-accounts",
+      helpPath: "modules-help/company-ledger/ar-control-accounts",
     },
     detail: {
       id: "voyzu.company-ar-control-accounts.page.detail",
       pageTitle: "Accounts Receivable Control Accounts",
-      helpUrl: "modules-help/company-ledger/ar-control-accounts",
+      helpPath: "modules-help/company-ledger/ar-control-accounts",
     },
   },
   apiDefinitions: {

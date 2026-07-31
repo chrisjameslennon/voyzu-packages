@@ -6,7 +6,7 @@ export const organizationModule = {
     detail: {
       id: "voyzu.organization.page.detail",
       pageTitle: "Organization",
-      helpUrl: "modules-help/organization-financial-settings/organization",
+      helpPath: "modules-help/organization-financial-settings/organization",
     },
   },
   apiDefinitions: {

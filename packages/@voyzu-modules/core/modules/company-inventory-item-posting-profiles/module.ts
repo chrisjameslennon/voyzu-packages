@@ -6,12 +6,12 @@ export const companyInventoryItemPostingProfilesModule = {
     list: {
       id: "voyzu.company-inventory-item-posting-profiles.page.list",
       pageTitle: "Item Posting Profiles",
-      helpUrl: "modules-help/company-ledger/inventory-item-posting-profiles",
+      helpPath: "modules-help/company-ledger/inventory-item-posting-profiles",
     },
     detail: {
       id: "voyzu.company-inventory-item-posting-profiles.page.detail",
       pageTitle: "Item Posting Profile",
-      helpUrl: "modules-help/company-ledger/inventory-item-posting-profiles",
+      helpPath: "modules-help/company-ledger/inventory-item-posting-profiles",
     },
   },
   apiDefinitions: {

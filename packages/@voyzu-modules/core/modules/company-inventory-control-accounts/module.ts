@@ -6,12 +6,12 @@ export const companyInventoryControlAccountsModule = {
     list: {
       id: "voyzu.company-inventory-control-accounts.page.list",
       pageTitle: "Inventory Control Accounts",
-      helpUrl: "modules-help/company-ledger/inventory-control-accounts",
+      helpPath: "modules-help/company-ledger/inventory-control-accounts",
     },
     detail: {
       id: "voyzu.company-inventory-control-accounts.page.detail",
       pageTitle: "Inventory Control Accounts",
-      helpUrl: "modules-help/company-ledger/inventory-control-accounts",
+      helpPath: "modules-help/company-ledger/inventory-control-accounts",
     },
   },
   apiDefinitions: {

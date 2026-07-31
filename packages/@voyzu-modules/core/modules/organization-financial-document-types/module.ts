@@ -6,12 +6,12 @@ export const organizationFinancialDocumentTypesModule = {
     list: {
       id: "voyzu.organization-financial-document-types.page.list",
       pageTitle: "Financial Document Types",
-      helpUrl: "modules-help/organization-financial-settings/financial-document-types",
+      helpPath: "modules-help/organization-financial-settings/financial-document-types",
     },
     detail: {
       id: "voyzu.organization-financial-document-types.page.detail",
       pageTitle: "Financial Document Type",
-      helpUrl: "modules-help/organization-financial-settings/financial-document-types",
+      helpPath: "modules-help/organization-financial-settings/financial-document-types",
     },
   },
   apiDefinitions: {

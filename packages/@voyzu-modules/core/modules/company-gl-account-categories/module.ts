@@ -6,12 +6,12 @@ export const companyGlAccountCategoriesModule = {
     list: {
       id: "voyzu.company-gl-account-categories.page.list",
       pageTitle: "Reporting Categories",
-      helpUrl: "modules-help/company-ledger/reporting-categories",
+      helpPath: "modules-help/company-ledger/reporting-categories",
     },
     detail: {
       id: "voyzu.company-gl-account-categories.page.detail",
       pageTitle: "Reporting Category",
-      helpUrl: "modules-help/company-ledger/reporting-categories",
+      helpPath: "modules-help/company-ledger/reporting-categories",
     },
   },
   apiDefinitions: {
