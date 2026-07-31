@@ -10,11 +10,7 @@ import { uninstall } from "./scripts/uninstall/uninstall";
  *
  **/
 export const iceCreamsPackage = {
-  id: "voyzu.ice-creams",
-  name: "Ice Creams",
-  version: "0.1.0",
-  description: "A best-practice, self-contained ice-cream management package.",
-  dependencies: ["@voyzu/audit"],
+  dependencies: [],
   modules: [
     iceCreamsModule,
     iceCreamReportsModule,

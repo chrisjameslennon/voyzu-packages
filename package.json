@@ -18,6 +18,7 @@
     "voyzu:refresh-repo": "npm --prefix .run run voyzu:refresh-repo --",
     "voyzu:initialize": "npm --prefix .run run voyzu:initialize",
     "voyzu:install-package": "npm --prefix .run run voyzu:install-package --",
+    "voyzu:list-packages": "npm --prefix .run run voyzu:list-packages",
     "voyzu:link-package": "npm --prefix .run run voyzu:link-package --",
     "voyzu:link-packages": "npm --prefix .run run voyzu:link-packages",
     "voyzu:compose": "npm --prefix .run run voyzu:compose",

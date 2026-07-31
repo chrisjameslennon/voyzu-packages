@@ -1,6 +1,7 @@
 {
   "name": "@voyzu/ice-creams",
   "version": "0.1.0",
+  "description": "A best-practice, self-contained ice-cream management package.",
   "private": true,
   "type": "module",
   "voyzu": {
