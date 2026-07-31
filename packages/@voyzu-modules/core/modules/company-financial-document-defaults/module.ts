@@ -2,8 +2,6 @@ import { handleActivate as handleActivateFinancialDocumentDefault, handleBatchAc
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyFinancialDocumentDefaultsModule = {
-  id: "voyzu.company-financial-document-defaults",
-  name: "Financial Document Defaults",
   pageRoutes: {
     list: {
       id: "voyzu.company-financial-document-defaults.page.list",

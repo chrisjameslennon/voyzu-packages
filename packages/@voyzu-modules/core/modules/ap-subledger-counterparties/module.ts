@@ -2,8 +2,6 @@ import { handleGetApCounterparty, handleListApCounterparties } from "@voyzu-modu
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const apSubledgerCounterpartiesModule = {
-  id: "voyzu.ap-subledger-counterparties",
-  name: "AP Counterparties",
   pageRoutes: {
     list: {
       id: "voyzu.ap-subledger-counterparties.page.list",

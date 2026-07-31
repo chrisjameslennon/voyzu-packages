@@ -1,6 +1,4 @@
 export const organizationReportsModule = {
-  id: "voyzu.organizationReports",
-  name: "Organization Reports",
   pageRoutes: {
     companies: {
       id: "voyzu.organizationReports.page.companies",

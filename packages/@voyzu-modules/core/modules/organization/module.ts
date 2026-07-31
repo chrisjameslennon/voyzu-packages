@@ -2,8 +2,6 @@ import { handleGetOrganization, handleUpdateOrganization } from "@voyzu-modules/
 import { dtoRef } from "@voyzu/types/api";
 
 export const organizationModule = {
-  id: "voyzu.organization",
-  name: "Organization",
   pageRoutes: {
     detail: {
       id: "voyzu.organization.page.detail",

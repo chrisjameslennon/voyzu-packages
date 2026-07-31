@@ -1,6 +1,4 @@
 export const apSubledgerBillsModule = {
-  id: "voyzu.ap-subledger-bills",
-  name: "AP Bills",
   pageRoutes: {
     list: {
       id: "voyzu.ap-subledger-bills.page.list",

@@ -14,8 +14,6 @@ import { handleGetBalanceSheet, handleListFinancialYears, handleGetBalanceSheetP
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyReportsModule = {
-  id: "voyzu.companyReports",
-  name: "Company Reports",
   pageRoutes: {
     balanceSheet: {
       id: "voyzu.companyReports.page.balanceSheet",

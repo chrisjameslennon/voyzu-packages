@@ -2,8 +2,6 @@ import { handleGetInventoryEntry, handleListInventoryEntries } from "@voyzu-modu
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const inventoryLedgerModule = {
-  id: "voyzu.inventory-ledger",
-  name: "Inventory Ledger",
   pageRoutes: {
     list: {
       id: "voyzu.inventory-ledger.page.list",

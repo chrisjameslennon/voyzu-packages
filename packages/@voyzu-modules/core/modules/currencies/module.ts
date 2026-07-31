@@ -2,8 +2,6 @@ import { handleActivate as handleCurrenciesActivate, handleBatchActivate as hand
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const currenciesModule = {
-  id: "voyzu.currencies",
-  name: "Currencies",
   pageRoutes: {
     list: {
       id: "voyzu.currencies.page.list",

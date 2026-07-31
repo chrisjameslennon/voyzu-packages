@@ -2,8 +2,6 @@ import { handleProcessApBill, handleProcessApBillCancellation, handleProcessApCr
 import { dtoRef } from "@voyzu/types/api";
 
 export const financialDocumentProcessingEngineModule = {
-  id: "voyzu.financial-document-processing-engine",
-  name: "Financial Document Processing Engine",
   apiDefinitions: {
     apBill: {
       method: "POST",

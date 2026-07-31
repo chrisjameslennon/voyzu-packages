@@ -24,8 +24,6 @@ const commonResponses = {
 } as const;
 
 export const countriesModule = {
-  id: "voyzu.countries",
-  name: "Countries",
   pageRoutes: {
     list: {
       id: "voyzu.countries.page.list",

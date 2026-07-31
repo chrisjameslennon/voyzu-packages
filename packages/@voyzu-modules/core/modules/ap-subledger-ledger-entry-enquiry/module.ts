@@ -1,6 +1,4 @@
 export const apSubledgerLedgerEntryEnquiryModule = {
-  id: "voyzu.ap-subledger-ledger-entry-enquiry",
-  name: "AP Ledger Entry Enquiry",
   pageRoutes: {
     list: {
       id: "voyzu.ap-subledger-ledger-entry-enquiry.page.list",

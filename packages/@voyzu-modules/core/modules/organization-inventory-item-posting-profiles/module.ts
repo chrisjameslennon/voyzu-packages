@@ -2,8 +2,6 @@ import { handleActivate as handleItemPostingProfilesActivate, handleBatchActivat
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const organizationInventoryItemPostingProfilesModule = {
-  id: "voyzu.organization-inventory-item-posting-profiles",
-  name: "Item Posting Profiles",
   pageRoutes: {
     list: {
       id: "voyzu.organization-inventory-item-posting-profiles.page.list",

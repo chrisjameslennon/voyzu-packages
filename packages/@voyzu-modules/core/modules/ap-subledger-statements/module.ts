@@ -2,8 +2,6 @@ import { handleListApCounterpartySummaries } from "@voyzu-modules/core/ap-subled
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const apSubledgerStatementsModule = {
-  id: "voyzu.ap-subledger-statements",
-  name: "AP Statements",
   pageRoutes: {
     list: {
       id: "voyzu.ap-subledger-statements.page.list",

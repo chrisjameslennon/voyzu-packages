@@ -2,8 +2,6 @@ import { handleActivate as handleActivateInventoryItem, handleBatchActivate as h
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyInventoryItemsModule = {
-  id: "voyzu.company-inventory-items",
-  name: "Inventory Items",
   pageRoutes: {
     list: {
       id: "voyzu.company-inventory-items.page.list",

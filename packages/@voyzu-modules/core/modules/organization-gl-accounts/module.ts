@@ -2,8 +2,6 @@ import { handleActivate as handleGlAccountsActivate, handleBatchCreate as handle
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const organizationGlAccountsModule = {
-  id: "voyzu.organization-gl-accounts",
-  name: "Organization General Ledger Accounts",
   pageRoutes: {
     list: {
       id: "voyzu.organization-gl-accounts.page.list",

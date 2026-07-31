@@ -2,8 +2,6 @@ import { handleBatchGet as handleFinancialDocumentTypeBatchGet, handleFilter as 
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyFinancialDocumentTypesModule = {
-  id: "voyzu.company-financial-document-types",
-  name: "Financial Document Types",
   pageRoutes: {
     list: {
       id: "voyzu.company-financial-document-types.page.list",

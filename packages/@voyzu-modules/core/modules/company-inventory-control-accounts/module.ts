@@ -2,8 +2,6 @@ import { handleListInventoryControlAccounts, handlePatchInventoryControlAccount 
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyInventoryControlAccountsModule = {
-  id: "voyzu.company-inventory-control-accounts",
-  name: "Inventory Control Accounts",
   pageRoutes: {
     list: {
       id: "voyzu.company-inventory-control-accounts.page.list",

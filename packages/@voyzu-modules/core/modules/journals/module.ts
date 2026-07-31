@@ -1,6 +1,4 @@
 export const journalsModule = {
-  id: "voyzu.journals",
-  name: "Journals",
   pageRoutes: {
     list: {
       id: "voyzu.journals.page.list",

@@ -1,6 +1,4 @@
 export const arSubledgerInvoicesModule = {
-  id: "voyzu.ar-subledger-invoices",
-  name: "AR Invoices",
   pageRoutes: {
     list: {
       id: "voyzu.ar-subledger-invoices.page.list",

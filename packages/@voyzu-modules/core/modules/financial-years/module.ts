@@ -2,8 +2,6 @@ import { handleClose as handleCloseFinancialYear, handleCloseFinancialPeriod, ha
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const financialYearsModule = {
-  id: "voyzu.financial-years",
-  name: "Financial Periods",
   pageRoutes: {
     list: {
       id: "voyzu.financial-years.page.list",

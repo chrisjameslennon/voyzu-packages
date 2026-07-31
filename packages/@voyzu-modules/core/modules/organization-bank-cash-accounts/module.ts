@@ -2,8 +2,6 @@ import { handleActivate as handleBankCashAccountsActivate, handleBatchActivate a
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const organizationBankCashAccountsModule = {
-  id: "voyzu.organization-bank-cash-accounts",
-  name: "Bank / Cash Accounts",
   pageRoutes: {
     list: {
       id: "voyzu.organization-bank-cash-accounts.page.list",

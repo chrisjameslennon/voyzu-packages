@@ -2,8 +2,6 @@ import { handleActivate as handleActivateGlAccountCategory, handleBatchActivate 
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyGlAccountCategoriesModule = {
-  id: "voyzu.company-gl-account-categories",
-  name: "Reporting Categories",
   pageRoutes: {
     list: {
       id: "voyzu.company-gl-account-categories.page.list",

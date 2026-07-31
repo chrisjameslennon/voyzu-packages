@@ -38,8 +38,6 @@ const codePathParameter = {
 } as const;
 
 export const iceCreamsModule = {
-  id: "voyzu.ice-creams",
-  name: "Ice Creams",
   pageRoutes: {
     list: {
       id: "voyzu.ice-creams.page.list",

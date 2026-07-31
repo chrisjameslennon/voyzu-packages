@@ -6,8 +6,6 @@ import {
 import { dtoRef } from "@voyzu/types/api";
 
 export const companySwitcherModule = {
-  id: "voyzu.companySwitcher",
-  name: "Company Switcher",
   apiDefinitions: {
     getSelection: {
       method: "GET",

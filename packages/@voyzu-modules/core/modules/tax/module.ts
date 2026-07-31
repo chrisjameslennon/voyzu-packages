@@ -2,8 +2,6 @@ import { handleGetTaxAuthority, handleListTaxAuthorities } from "@voyzu-modules/
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const taxModule = {
-  id: "voyzu.tax",
-  name: "Tax",
   apiDefinitions: {
     authoritiesList: {
       method: "GET",

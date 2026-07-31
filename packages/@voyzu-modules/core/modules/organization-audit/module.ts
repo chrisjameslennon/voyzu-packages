@@ -2,8 +2,6 @@ import { handleCount as handleAuditCount, handleExportAll as handleAuditExportAl
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const organizationAuditModule = {
-  id: "voyzu.organization-audit",
-  name: "Audit",
   pageRoutes: {
     list: {
       id: "voyzu.organization-audit.page.list",

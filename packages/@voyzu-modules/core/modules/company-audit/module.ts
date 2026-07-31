@@ -2,8 +2,6 @@ import { handleFinanceCount, handleFinanceExportAll, handleFinanceGetById, handl
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyAuditModule = {
-  id: "voyzu.company-audit",
-  name: "Audit",
   pageRoutes: {
     list: {
       id: "voyzu.company-audit.page.list",

@@ -2,8 +2,6 @@ import { handleListTaxControlAccounts, handlePatchTaxControlAccount } from "@voy
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyTaxControlAccountsModule = {
-  id: "voyzu.company-tax-control-accounts",
-  name: "Tax Control Accounts",
   pageRoutes: {
     list: {
       id: "voyzu.company-tax-control-accounts.page.list",

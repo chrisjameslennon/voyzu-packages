@@ -1,6 +1,4 @@
 export const arSubledgerLedgerEntryEnquiryModule = {
-  id: "voyzu.ar-subledger-ledger-entry-enquiry",
-  name: "AR Ledger Entry Enquiry",
   pageRoutes: {
     list: {
       id: "voyzu.ar-subledger-ledger-entry-enquiry.page.list",

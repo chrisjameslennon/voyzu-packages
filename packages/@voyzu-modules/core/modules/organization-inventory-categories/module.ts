@@ -2,8 +2,6 @@ import { handleActivate as handleInventoryCategoriesActivate, handleBatchActivat
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const organizationInventoryCategoriesModule = {
-  id: "voyzu.organization-inventory-categories",
-  name: "Inventory Categories",
   pageRoutes: {
     list: {
       id: "voyzu.organization-inventory-categories.page.list",

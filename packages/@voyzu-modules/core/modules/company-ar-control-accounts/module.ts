@@ -2,8 +2,6 @@ import { handleGet as handleGetControlAccount, handleListAr as handleListArContr
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyArControlAccountsModule = {
-  id: "voyzu.company-ar-control-accounts",
-  name: "Accounts Receivable Control Accounts",
   pageRoutes: {
     list: {
       id: "voyzu.company-ar-control-accounts.page.list",

@@ -2,8 +2,6 @@ import { handleGetTaxEntry, handleListTaxEntries } from "@voyzu-modules/core/tax
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const taxLedgerModule = {
-  id: "voyzu.tax-ledger",
-  name: "Tax Ledger",
   pageRoutes: {
     list: {
       id: "voyzu.tax-ledger.page.list",

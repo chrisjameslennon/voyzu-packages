@@ -21,8 +21,6 @@ import {
 } from "./server/api/company.http.handlers";
 
 export const companiesModule = {
-  id: "voyzu.companies",
-  name: "Companies",
   pageRoutes: {
     list: {
       id: "voyzu.companies.page.list",

@@ -2,8 +2,6 @@ import { handleGetArEntry, handleListArEntries } from "@voyzu-modules/core/ar-su
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const arSubledgerLedgerEntriesModule = {
-  id: "voyzu.ar-subledger-ledger-entries",
-  name: "AR Ledger Entries",
   pageRoutes: {
     list: {
       id: "voyzu.ar-subledger-ledger-entries.page.list",

@@ -2,8 +2,6 @@ import { handleGetApEntry, handleListApEntries } from "@voyzu-modules/core/ap-su
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const apSubledgerLedgerEntriesModule = {
-  id: "voyzu.ap-subledger-ledger-entries",
-  name: "AP Ledger Entries",
   pageRoutes: {
     list: {
       id: "voyzu.ap-subledger-ledger-entries.page.list",

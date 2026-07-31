@@ -1,6 +1,4 @@
 export const helloModule = {
-  id: "voyzu.hello-module",
-  name: "Hello Module",
   pageRoutes: {
     home: {
       id: "voyzu.hello-module.page.home",

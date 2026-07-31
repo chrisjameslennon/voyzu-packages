@@ -6,8 +6,6 @@ import {
 import { AllIceCreamsReportPage } from "./server/pages/AllIceCreamsReportPage";
 
 export const iceCreamReportsModule = {
-  id: "voyzu.ice-creams.reports",
-  name: "Ice Cream Reports",
   pageRoutes: {
     all: {
       id: "voyzu.ice-creams.reports.page.all",

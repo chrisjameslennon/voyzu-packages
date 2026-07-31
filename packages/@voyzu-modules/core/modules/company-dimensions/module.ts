@@ -2,8 +2,6 @@ import { handleActivate as handleActivateDimension, handleBatchActivate as handl
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const companyDimensionsModule = {
-  id: "voyzu.company-dimensions",
-  name: "Dimensions",
   pageRoutes: {
     list: {
       id: "voyzu.company-dimensions.page.list",

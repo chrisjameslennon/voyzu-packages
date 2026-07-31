@@ -2,8 +2,6 @@ import { handleListArCounterpartySummaries } from "@voyzu-modules/core/ar-subled
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 
 export const arSubledgerStatementsModule = {
-  id: "voyzu.ar-subledger-statements",
-  name: "AR Statements",
   pageRoutes: {
     list: {
       id: "voyzu.ar-subledger-statements.page.list",

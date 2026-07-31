@@ -12,8 +12,6 @@ import {
 } from "./server/pages/IceCreamAuditPages";
 
 export const iceCreamAuditModule = {
-  id: "voyzu.ice-creams.audit",
-  name: "Ice Cream Audit",
   pageRoutes: {
     list: {
       id: "voyzu.ice-creams.audit.page.list",
