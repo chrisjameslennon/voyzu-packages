@@ -1,17 +1,7 @@
 {
   "name": "voyzu-packages",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "workspaces": [
-    "packages/*",
-    "packages/@*/*",
-    ".run/voyzu/lib/*",
-    ".run/voyzu/packages/@voyzu/*"
-  ],
+  "description": "Voyzu package development",
   "scripts": {
-    "create-dev": "npm exec --yes --package=github:chrisjameslennon/create-voyzu#main -- create-voyzu dev",
-    "re-install": "npm run create-dev -- --force",
     "voyzu:add-repo": "npm --prefix .run run voyzu:add-repo --",
     "voyzu:install": "npm --prefix .run run voyzu:install --",
     "voyzu:refresh": "npm --prefix .run run voyzu:refresh",
@@ -32,13 +22,5 @@
     "build": "npm --prefix .run run build",
     "prestart": "npm run build",
     "start": "npm --prefix .run run start"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.4",
-    "next": "^16.2.10",
-    "react": "^19.2.0",
-    "server-only": "^0.0.1",
-    "typescript": "^6.0.3"
   }
 }
