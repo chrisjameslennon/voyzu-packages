@@ -23,6 +23,7 @@
     "voyzu:link-package": "npm --prefix .run run voyzu:link-package --",
     "voyzu:link-packages": "npm --prefix .run run voyzu:link-packages",
     "voyzu:compose": "npm --prefix .run run voyzu:compose",
+    "voyzu:build-api-reference": "npm --prefix .run run voyzu:build-api-reference",
     "voyzu:run-script": "npm --prefix .run run voyzu:run-script --",
     "voyzu:dev": "npm run dev",
     "voyzu:build": "npm run build",
