@@ -1,0 +1,43 @@
+import type { EntryType } from "@voyzu/core/types/modules/core";
+export interface ApSubledgerEntryRow {
+  id: number;
+  code: string;
+  journal_header_id: number;
+  journal_code: string;
+  has_bank_cash_details: boolean;
+  tax_ledger_entry_code: string | null;
+  posting_date: string;
+  document_date: string;
+  base_currency_code: string;
+  entry_type: EntryType;
+  base_currency_amount: number;
+  memo: string | null;
+  status: string;
+  document_type_code: string;
+  document_type_label: string;
+  document_id: string;
+  description: string;
+  applied_to_document_id: string | null;
+  counterparty_code: string;
+  counterparty_name: string;
+  control_account_code: string;
+  control_account_name: string;
+  gl_account_code: string;
+  gl_account_name: string;
+  payment_status: "UNPAID" | "PART_PAID" | "SETTLED" | null;
+  applied_amount: number | null;
+  payment_applied_amount: number | null;
+  other_credit_applied_amount: number | null;
+  open_balance: number | null;
+  control_account_balances_json: Array<{
+    controlAccountCode: string;
+    controlAccountName: string;
+    glAccountCode: string;
+    glAccountName: string;
+    balance: number;
+  }>;
+  creation_date: string;
+  updated_date: string;
+  document_snapshot_json: Record<string, unknown>;
+  detailed_document_snapshot_json: Record<string, unknown>;
+}

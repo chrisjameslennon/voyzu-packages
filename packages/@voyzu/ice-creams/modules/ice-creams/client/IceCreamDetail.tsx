@@ -110,10 +110,14 @@ export function IceCreamDetail({
           </div>
         </div>
         <div className={layout.slotActions}>
-          <DetailBackButton fallbackHref="/ice-creams" />
-          <Button variant="secondary" icon="check_circle" disabled={current.status === "ACTIVE"} onClick={() => { void transition("activate"); }}>Activate</Button>
-          <Button variant="secondary" icon="block" disabled={current.status === "INACTIVE"} onClick={() => { void transition("deactivate"); }}>Deactivate</Button>
-          <Button variant="danger" icon="delete" onClick={() => setShowDelete(true)} />
+          <div className={detailStyles.headerActions}>
+            <DetailBackButton fallbackHref="/ice-creams" />
+            <div className={detailStyles.headerActionSeparator} />
+            <Button variant="secondary" icon="check_circle" disabled={current.status === "ACTIVE"} onClick={() => { void transition("activate"); }}>Activate</Button>
+            <Button variant="secondary" icon="block" disabled={current.status === "INACTIVE"} onClick={() => { void transition("deactivate"); }}>Deactivate</Button>
+            <div className={detailStyles.headerActionSeparator} />
+            <Button variant="danger" icon="delete" onClick={() => setShowDelete(true)} />
+          </div>
         </div>
         <div className={layout.slotAlert}><ValidationAlert errors={[...validation.errors, ...(error ? [error] : [])]} visible={validation.showErrors || !!error} onDismiss={() => { validation.dismiss(); setError(""); }} /></div>
       </header>
@@ -138,12 +142,17 @@ export function IceCreamDetail({
 
       <main className={layout.mainSection}>
         <section className={detailStyles.card}>
+          <div className={detailStyles.cardHeader}>
+            <h2 className={`${typography.sectionHeading} ${detailStyles.cardHeaderTitle}`}>Ice Cream Details</h2>
+            <div className={detailStyles.cardHeaderActions}>
+              <Button variant="secondary" icon="save" disabled={saving} onClick={() => { void save(); }}>Save</Button>
+            </div>
+          </div>
           <div className={styles.detailFields}>
             <div className={styles.field}><label className={typography.fieldLabel}>Code</label><Input value={current.code} disabled /></div>
             <div className={styles.field}><label className={typography.fieldLabel}>Name</label><Input value={name} onChange={(event) => setName(event.target.value)} /></div>
             <div className={styles.field}><label className={typography.fieldLabel}>Flavour</label><SearchableSelect value={flavorCode} onChange={setFlavorCode} options={flavors.filter((flavor) => flavor.status === "ACTIVE" || flavor.code === flavorCode).map((flavor) => ({ value: flavor.code, label: flavor.name, code: flavor.code }))} /></div>
             <div className={styles.field}><label className={typography.fieldLabel}>Supplier</label><Input value={supplier} onChange={(event) => setSupplier(event.target.value)} /></div>
-            <div className={`${styles.formActions} ${styles.fullWidth}`}><Button variant="primary" icon="save" disabled={saving} onClick={() => { void save(); }}>Save</Button></div>
           </div>
         </section>
       </main>

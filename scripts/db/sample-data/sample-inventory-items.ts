@@ -4,12 +4,12 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { getCompany } from "../../../packages/@voyzu-modules/core/modules/companies/server/lib/company.service";
+import { getCompany } from "../../../packages/@voyzu/core/modules/companies/server/lib/company.service";
 import {
   createInventoryItem,
   getInventoryItem,
-} from "../../../packages/@voyzu-modules/core/modules/common/inventory-items/server/lib/inventory-item.service";
-import type { InventoryItemCreateRequestDto } from "@voyzu-modules/core/types/modules/inventory-items";
+} from "../../../packages/@voyzu/core/modules/common/inventory-items/server/lib/inventory-item.service";
+import type { InventoryItemCreateRequestDto } from "@voyzu/core/types/modules/inventory-items";
 
 const COMPANY_CODE = "SAMP-NZ";
 

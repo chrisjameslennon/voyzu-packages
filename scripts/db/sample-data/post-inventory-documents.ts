@@ -2,19 +2,19 @@ import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
 
-import type { ApBillRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine";
-import type { ArInvoiceRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine";
-import type { InventoryAdjustmentRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine";
-import type { InventoryIssueRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine";
-import type { InventoryReceiptRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine";
+import type { ApBillRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine";
+import type { ArInvoiceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine";
+import type { InventoryAdjustmentRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine";
+import type { InventoryIssueRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine";
+import type { InventoryReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine";
 import { getPool } from "@voyzu/capability/db";
-import { processApBill } from "@voyzu-modules/core/financial-document-processing-engine/ap_bill/lib/ap-bill.service";
-import { processArInvoice } from "@voyzu-modules/core/financial-document-processing-engine/ar_invoice/lib/ar-invoice.service";
+import { processApBill } from "@voyzu/core/financial-document-processing-engine/ap_bill/lib/ap-bill.service";
+import { processArInvoice } from "@voyzu/core/financial-document-processing-engine/ar_invoice/lib/ar-invoice.service";
 import {
   processInventoryAdjustment,
   processInventoryIssue,
   processInventoryReceipt,
-} from "@voyzu-modules/core/financial-document-processing-engine/inventory/lib/inventory-processing.service";
+} from "@voyzu/core/financial-document-processing-engine/inventory/lib/inventory-processing.service";
 
 const COMPANY_CODE = "SAMP-NZ";
 const INVENTORY_ITEM_BILL_ID = "SAMP-BILL-ITEM-001";

@@ -3,7 +3,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { getPostingCodeAllowedAccountTypes } from "@voyzu-modules/core/financial-document-processing-engine/posting-code-metadata";
+import { getPostingCodeAllowedAccountTypes } from "@voyzu/core/financial-document-processing-engine/posting-code-metadata";
 
 type AccountTypeCode = "ASSET" | "LIABILITY" | "EQUITY" | "REVENUE" | "EXPENSE";
 type TargetType = "GENERAL_LEDGER" | "BANK_CASH_ACCOUNT";

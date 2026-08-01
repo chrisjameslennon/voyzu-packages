@@ -1,0 +1,691 @@
+{
+  "name": "@voyzu/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./voyzu-package": {
+      "types": "./voyzu.package.ts",
+      "import": "./voyzu.package.ts"
+    },
+    "./navigation/domains": {
+      "types": "./navigation/domains.ts",
+      "import": "./navigation/domains.ts"
+    },
+    "./types/modules/*.dto": {
+      "types": "./types/modules/*.dto.ts",
+      "import": "./types/modules/*.dto.ts"
+    },
+    "./types/modules/*": {
+      "types": "./types/modules/*/index.ts",
+      "import": "./types/modules/*/index.ts"
+    },
+    "./ap-subledger-bills": "./modules/ap-subledger-bills/module.ts",
+    "./ap-subledger-bills/client": {
+      "types": "./modules/ap-subledger-bills/client/index.ts",
+      "import": "./modules/ap-subledger-bills/client/index.ts"
+    },
+    "./ap-subledger-bills/server": "./modules/ap-subledger-bills/server/index.ts",
+    "./ap-subledger-counterparties": "./modules/ap-subledger-counterparties/module.ts",
+    "./ap-subledger-counterparties/client": {
+      "types": "./modules/ap-subledger-counterparties/client/index.ts",
+      "import": "./modules/ap-subledger-counterparties/client/index.ts"
+    },
+    "./ap-subledger-counterparties/server": "./modules/ap-subledger-counterparties/server/index.ts",
+    "./ap-subledger-ledger-entries": "./modules/ap-subledger-ledger-entries/module.ts",
+    "./ap-subledger-ledger-entries/client": {
+      "types": "./modules/ap-subledger-ledger-entries/client/index.ts",
+      "import": "./modules/ap-subledger-ledger-entries/client/index.ts"
+    },
+    "./ap-subledger-ledger-entries/server": "./modules/ap-subledger-ledger-entries/server/index.ts",
+    "./ap-subledger-ledger-entry-enquiry": "./modules/ap-subledger-ledger-entry-enquiry/module.ts",
+    "./ap-subledger-ledger-entry-enquiry/server": "./modules/ap-subledger-ledger-entry-enquiry/server/index.ts",
+    "./ap-subledger-statements": "./modules/ap-subledger-statements/module.ts",
+    "./ap-subledger-statements/client": {
+      "types": "./modules/ap-subledger-statements/client/index.ts",
+      "import": "./modules/ap-subledger-statements/client/index.ts"
+    },
+    "./ap-subledger-statements/server": "./modules/ap-subledger-statements/server/index.ts",
+    "./ar-subledger-counterparties": "./modules/ar-subledger-counterparties/module.ts",
+    "./ar-subledger-counterparties/client": {
+      "types": "./modules/ar-subledger-counterparties/client/index.ts",
+      "import": "./modules/ar-subledger-counterparties/client/index.ts"
+    },
+    "./ar-subledger-counterparties/server": "./modules/ar-subledger-counterparties/server/index.ts",
+    "./ar-subledger-invoices": "./modules/ar-subledger-invoices/module.ts",
+    "./ar-subledger-invoices/client": {
+      "types": "./modules/ar-subledger-invoices/client/index.ts",
+      "import": "./modules/ar-subledger-invoices/client/index.ts"
+    },
+    "./ar-subledger-invoices/server": "./modules/ar-subledger-invoices/server/index.ts",
+    "./ar-subledger-ledger-entries": "./modules/ar-subledger-ledger-entries/module.ts",
+    "./ar-subledger-ledger-entries/client": {
+      "types": "./modules/ar-subledger-ledger-entries/client/index.ts",
+      "import": "./modules/ar-subledger-ledger-entries/client/index.ts"
+    },
+    "./ar-subledger-ledger-entries/server": "./modules/ar-subledger-ledger-entries/server/index.ts",
+    "./ar-subledger-ledger-entry-enquiry": "./modules/ar-subledger-ledger-entry-enquiry/module.ts",
+    "./ar-subledger-ledger-entry-enquiry/server": "./modules/ar-subledger-ledger-entry-enquiry/server/index.ts",
+    "./ar-subledger-statements": "./modules/ar-subledger-statements/module.ts",
+    "./ar-subledger-statements/client": {
+      "types": "./modules/ar-subledger-statements/client/index.ts",
+      "import": "./modules/ar-subledger-statements/client/index.ts"
+    },
+    "./ar-subledger-statements/server": "./modules/ar-subledger-statements/server/index.ts",
+    "./common/bank-cash-accounts/client": {
+      "types": "./modules/common/bank-cash-accounts/client/index.ts",
+      "import": "./modules/common/bank-cash-accounts/client/index.ts"
+    },
+    "./common/bank-cash-accounts/domain/operation-policy": {
+      "types": "./modules/common/bank-cash-accounts/domain/operation-policy.ts",
+      "import": "./modules/common/bank-cash-accounts/domain/operation-policy.ts"
+    },
+    "./common/bank-cash-accounts/server": {
+      "types": "./modules/common/bank-cash-accounts/server/index.ts",
+      "import": "./modules/common/bank-cash-accounts/server/index.ts"
+    },
+    "./common/client": {
+      "types": "./modules/common/client/index.ts",
+      "import": "./modules/common/client/index.ts"
+    },
+    "./common/control-accounts/client": {
+      "types": "./modules/common/control-accounts/client/index.ts",
+      "import": "./modules/common/control-accounts/client/index.ts"
+    },
+    "./common/control-accounts/domain/operation-policy": {
+      "types": "./modules/common/control-accounts/domain/operation-policy.ts",
+      "import": "./modules/common/control-accounts/domain/operation-policy.ts"
+    },
+    "./common/control-accounts/server": {
+      "types": "./modules/common/control-accounts/server/index.ts",
+      "import": "./modules/common/control-accounts/server/index.ts"
+    },
+    "./common/domain/operation-policy": {
+      "types": "./modules/common/domain/operation-policy.ts",
+      "import": "./modules/common/domain/operation-policy.ts"
+    },
+    "./common/dimensions/client": {
+      "types": "./modules/common/dimensions/client/index.ts",
+      "import": "./modules/common/dimensions/client/index.ts"
+    },
+    "./common/dimensions/domain/operation-policy": {
+      "types": "./modules/common/dimensions/domain/operation-policy.ts",
+      "import": "./modules/common/dimensions/domain/operation-policy.ts"
+    },
+    "./common/dimensions/server": {
+      "types": "./modules/common/dimensions/server/index.ts",
+      "import": "./modules/common/dimensions/server/index.ts"
+    },
+    "./common/financial-document-defaults/server": "./modules/common/financial-document-defaults/server/index.ts",
+    "./common/financial-document-defaults/types": {
+      "types": "./modules/common/financial-document-defaults/types/index.ts",
+      "import": "./modules/common/financial-document-defaults/types/index.ts"
+    },
+    "./common/financial-document-defaults/domain/operation-policy": {
+      "types": "./modules/common/financial-document-defaults/domain/operation-policy.ts",
+      "import": "./modules/common/financial-document-defaults/domain/operation-policy.ts"
+    },
+    "./common/financial-document-types/client": "./modules/common/financial-document-types/client/index.ts",
+    "./common/financial-document-types/server": "./modules/common/financial-document-types/server/index.ts",
+    "./common/gl-account-categories/client": {
+      "types": "./modules/common/gl-account-categories/client/index.ts",
+      "import": "./modules/common/gl-account-categories/client/index.ts"
+    },
+    "./common/gl-account-categories/server": {
+      "types": "./modules/common/gl-account-categories/server/index.ts",
+      "import": "./modules/common/gl-account-categories/server/index.ts"
+    },
+    "./common/gl-accounts/client": {
+      "types": "./modules/common/gl-accounts/client/index.ts",
+      "import": "./modules/common/gl-accounts/client/index.ts"
+    },
+    "./common/gl-accounts/domain/operation-policy": {
+      "types": "./modules/common/gl-accounts/domain/operation-policy.ts",
+      "import": "./modules/common/gl-accounts/domain/operation-policy.ts"
+    },
+    "./common/gl-account-categories/domain/operation-policy": {
+      "types": "./modules/common/gl-account-categories/domain/operation-policy.ts",
+      "import": "./modules/common/gl-account-categories/domain/operation-policy.ts"
+    },
+    "./common/gl-accounts/server": {
+      "types": "./modules/common/gl-accounts/server/index.ts",
+      "import": "./modules/common/gl-accounts/server/index.ts"
+    },
+    "./common/inventory-categories/client": {
+      "types": "./modules/common/inventory-categories/client/index.ts",
+      "import": "./modules/common/inventory-categories/client/index.ts"
+    },
+    "./common/inventory-categories/domain/operation-policy": {
+      "types": "./modules/common/inventory-categories/domain/operation-policy.ts",
+      "import": "./modules/common/inventory-categories/domain/operation-policy.ts"
+    },
+    "./common/inventory-categories/server": {
+      "types": "./modules/common/inventory-categories/server/index.ts",
+      "import": "./modules/common/inventory-categories/server/index.ts"
+    },
+    "./common/inventory-control-accounts/client": {
+      "types": "./modules/common/inventory-control-accounts/client/index.ts",
+      "import": "./modules/common/inventory-control-accounts/client/index.ts"
+    },
+    "./common/inventory-control-accounts/domain/operation-policy": {
+      "types": "./modules/common/inventory-control-accounts/domain/operation-policy.ts",
+      "import": "./modules/common/inventory-control-accounts/domain/operation-policy.ts"
+    },
+    "./common/inventory-control-accounts/server": {
+      "types": "./modules/common/inventory-control-accounts/server/index.ts",
+      "import": "./modules/common/inventory-control-accounts/server/index.ts"
+    },
+    "./common/inventory-item-posting-profiles/client": {
+      "types": "./modules/common/inventory-item-posting-profiles/client/index.ts",
+      "import": "./modules/common/inventory-item-posting-profiles/client/index.ts"
+    },
+    "./common/inventory-item-posting-profiles/domain/operation-policy": {
+      "types": "./modules/common/inventory-item-posting-profiles/domain/operation-policy.ts",
+      "import": "./modules/common/inventory-item-posting-profiles/domain/operation-policy.ts"
+    },
+    "./common/inventory-item-posting-profiles/server": {
+      "types": "./modules/common/inventory-item-posting-profiles/server/index.ts",
+      "import": "./modules/common/inventory-item-posting-profiles/server/index.ts"
+    },
+    "./common/inventory-items/client": "./modules/common/inventory-items/client/index.ts",
+    "./common/inventory-items/domain/operation-policy": {
+      "types": "./modules/common/inventory-items/domain/operation-policy.ts",
+      "import": "./modules/common/inventory-items/domain/operation-policy.ts"
+    },
+    "./common/inventory-items/server": "./modules/common/inventory-items/server/index.ts",
+    "./common/server": {
+      "types": "./modules/common/server/index.ts",
+      "import": "./modules/common/server/index.ts"
+    },
+    "./common/tax-control-accounts/client": {
+      "types": "./modules/common/tax-control-accounts/client/index.ts",
+      "import": "./modules/common/tax-control-accounts/client/index.ts"
+    },
+    "./common/tax-control-accounts/domain/operation-policy": {
+      "types": "./modules/common/tax-control-accounts/domain/operation-policy.ts",
+      "import": "./modules/common/tax-control-accounts/domain/operation-policy.ts"
+    },
+    "./common/tax-control-accounts/server": {
+      "types": "./modules/common/tax-control-accounts/server/index.ts",
+      "import": "./modules/common/tax-control-accounts/server/index.ts"
+    },
+    "./companies": {
+      "types": "./modules/companies/module.ts",
+      "import": "./modules/companies/module.ts"
+    },
+    "./companies/domain/operation-policy": {
+      "types": "./modules/companies/domain/operation-policy.ts",
+      "import": "./modules/companies/domain/operation-policy.ts"
+    },
+    "./countries/domain/operation-policy": {
+      "types": "./modules/countries/domain/operation-policy.ts",
+      "import": "./modules/countries/domain/operation-policy.ts"
+    },
+    "./currencies/domain/operation-policy": {
+      "types": "./modules/currencies/domain/operation-policy.ts",
+      "import": "./modules/currencies/domain/operation-policy.ts"
+    },
+    "./companies/client": {
+      "types": "./modules/companies/client/index.ts",
+      "import": "./modules/companies/client/index.ts"
+    },
+    "./companies/server": {
+      "types": "./modules/companies/server/index.ts",
+      "import": "./modules/companies/server/index.ts"
+    },
+    "./company-ap-control-accounts": {
+      "types": "./modules/company-ap-control-accounts/module.ts",
+      "import": "./modules/company-ap-control-accounts/module.ts"
+    },
+    "./company-ap-control-accounts/client": {
+      "types": "./modules/company-ap-control-accounts/client/index.ts",
+      "import": "./modules/company-ap-control-accounts/client/index.ts"
+    },
+    "./company-ap-control-accounts/server": {
+      "types": "./modules/company-ap-control-accounts/server/index.ts",
+      "import": "./modules/company-ap-control-accounts/server/index.ts"
+    },
+    "./company-ar-control-accounts": {
+      "types": "./modules/company-ar-control-accounts/module.ts",
+      "import": "./modules/company-ar-control-accounts/module.ts"
+    },
+    "./company-ar-control-accounts/client": {
+      "types": "./modules/company-ar-control-accounts/client/index.ts",
+      "import": "./modules/company-ar-control-accounts/client/index.ts"
+    },
+    "./company-ar-control-accounts/server": {
+      "types": "./modules/company-ar-control-accounts/server/index.ts",
+      "import": "./modules/company-ar-control-accounts/server/index.ts"
+    },
+    "./company-audit": {
+      "types": "./modules/company-audit/module.ts",
+      "import": "./modules/company-audit/module.ts"
+    },
+    "./company-audit/client": {
+      "types": "./modules/company-audit/client/index.ts",
+      "import": "./modules/company-audit/client/index.ts"
+    },
+    "./company-audit/server": {
+      "types": "./modules/company-audit/server/index.ts",
+      "import": "./modules/company-audit/server/index.ts"
+    },
+    "./company-bank-cash-accounts": {
+      "types": "./modules/company-bank-cash-accounts/module.ts",
+      "import": "./modules/company-bank-cash-accounts/module.ts"
+    },
+    "./company-bank-cash-accounts/client": {
+      "types": "./modules/company-bank-cash-accounts/client/index.ts",
+      "import": "./modules/company-bank-cash-accounts/client/index.ts"
+    },
+    "./company-bank-cash-accounts/server": {
+      "types": "./modules/company-bank-cash-accounts/server/index.ts",
+      "import": "./modules/company-bank-cash-accounts/server/index.ts"
+    },
+    "./company-dimensions": {
+      "types": "./modules/company-dimensions/module.ts",
+      "import": "./modules/company-dimensions/module.ts"
+    },
+    "./company-dimensions/client": {
+      "types": "./modules/company-dimensions/client/index.ts",
+      "import": "./modules/company-dimensions/client/index.ts"
+    },
+    "./company-dimensions/server": {
+      "types": "./modules/company-dimensions/server/index.ts",
+      "import": "./modules/company-dimensions/server/index.ts"
+    },
+    "./company-financial-document-defaults": "./modules/company-financial-document-defaults/module.ts",
+    "./company-financial-document-defaults/client": {
+      "types": "./modules/company-financial-document-defaults/client/index.ts",
+      "import": "./modules/company-financial-document-defaults/client/index.ts"
+    },
+    "./company-financial-document-defaults/server": "./modules/company-financial-document-defaults/server/index.ts",
+    "./company-financial-document-types": "./modules/company-financial-document-types/module.ts",
+    "./company-financial-document-types/client": {
+      "types": "./modules/company-financial-document-types/client/index.ts",
+      "import": "./modules/company-financial-document-types/client/index.ts"
+    },
+    "./company-financial-document-types/server": "./modules/company-financial-document-types/server/index.ts",
+    "./company-gl-account-categories": {
+      "types": "./modules/company-gl-account-categories/module.ts",
+      "import": "./modules/company-gl-account-categories/module.ts"
+    },
+    "./company-gl-account-categories/client": {
+      "types": "./modules/company-gl-account-categories/client/index.ts",
+      "import": "./modules/company-gl-account-categories/client/index.ts"
+    },
+    "./company-gl-account-categories/server": {
+      "types": "./modules/company-gl-account-categories/server/index.ts",
+      "import": "./modules/company-gl-account-categories/server/index.ts"
+    },
+    "./company-gl-accounts": "./modules/company-gl-accounts/module.ts",
+    "./company-gl-accounts/client": {
+      "types": "./modules/company-gl-accounts/client/index.ts",
+      "import": "./modules/company-gl-accounts/client/index.ts"
+    },
+    "./company-gl-accounts/server": "./modules/company-gl-accounts/server/index.ts",
+    "./company-inventory-categories": {
+      "types": "./modules/company-inventory-categories/module.ts",
+      "import": "./modules/company-inventory-categories/module.ts"
+    },
+    "./company-inventory-categories/client": {
+      "types": "./modules/company-inventory-categories/client/index.ts",
+      "import": "./modules/company-inventory-categories/client/index.ts"
+    },
+    "./company-inventory-categories/server": {
+      "types": "./modules/company-inventory-categories/server/index.ts",
+      "import": "./modules/company-inventory-categories/server/index.ts"
+    },
+    "./company-inventory-control-accounts": {
+      "types": "./modules/company-inventory-control-accounts/module.ts",
+      "import": "./modules/company-inventory-control-accounts/module.ts"
+    },
+    "./company-inventory-control-accounts/client": {
+      "types": "./modules/company-inventory-control-accounts/client/index.ts",
+      "import": "./modules/company-inventory-control-accounts/client/index.ts"
+    },
+    "./company-inventory-control-accounts/server": {
+      "types": "./modules/company-inventory-control-accounts/server/index.ts",
+      "import": "./modules/company-inventory-control-accounts/server/index.ts"
+    },
+    "./company-inventory-item-posting-profiles": {
+      "types": "./modules/company-inventory-item-posting-profiles/module.ts",
+      "import": "./modules/company-inventory-item-posting-profiles/module.ts"
+    },
+    "./company-inventory-item-posting-profiles/client": {
+      "types": "./modules/company-inventory-item-posting-profiles/client/index.ts",
+      "import": "./modules/company-inventory-item-posting-profiles/client/index.ts"
+    },
+    "./company-inventory-item-posting-profiles/server": {
+      "types": "./modules/company-inventory-item-posting-profiles/server/index.ts",
+      "import": "./modules/company-inventory-item-posting-profiles/server/index.ts"
+    },
+    "./company-inventory-items": "./modules/company-inventory-items/module.ts",
+    "./company-inventory-items/client": {
+      "types": "./modules/company-inventory-items/client/index.ts",
+      "import": "./modules/company-inventory-items/client/index.ts"
+    },
+    "./company-inventory-items/server": "./modules/company-inventory-items/server/index.ts",
+    "./company-reports": {
+      "types": "./modules/company-reports/module.ts",
+      "import": "./modules/company-reports/module.ts"
+    },
+    "./company-reports/account-activity/server": {
+      "types": "./modules/company-reports/account-activity/server/index.ts",
+      "import": "./modules/company-reports/account-activity/server/index.ts"
+    },
+    "./company-reports/ap-subledger-entries-audit/server": "./modules/company-reports/ap-subledger-entries-audit/server/index.ts",
+    "./company-reports/ar-subledger-entries-audit/server": "./modules/company-reports/ar-subledger-entries-audit/server/index.ts",
+    "./company-reports/balance-sheet/client": {
+      "types": "./modules/company-reports/balance-sheet/client/index.ts",
+      "import": "./modules/company-reports/balance-sheet/client/index.ts"
+    },
+    "./company-reports/balance-sheet/server": {
+      "types": "./modules/company-reports/balance-sheet/server/index.ts",
+      "import": "./modules/company-reports/balance-sheet/server/index.ts"
+    },
+    "./company-reports/bank-cash-movement/server": "./modules/company-reports/bank-cash-movement/server/index.ts",
+    "./company-reports/financial-integrity/server": "./modules/company-reports/financial-integrity/server/index.ts",
+    "./company-reports/inventory-ledger-entries-audit/server": "./modules/company-reports/inventory-ledger-entries-audit/server/index.ts",
+    "./company-reports/journal-entries/server": "./modules/company-reports/journal-entries/server/index.ts",
+    "./company-reports/profit-loss/server": "./modules/company-reports/profit-loss/server/index.ts",
+    "./company-reports/tax-activity-reconciliation/server": "./modules/company-reports/tax-activity-reconciliation/server/index.ts",
+    "./company-reports/tax-activity/server": "./modules/company-reports/tax-activity/server/index.ts",
+    "./company-reports/tax-ledger-entries-audit/server": "./modules/company-reports/tax-ledger-entries-audit/server/index.ts",
+    "./company-reports/tax-position/server": "./modules/company-reports/tax-position/server/index.ts",
+    "./company-reports/trial-balance/server": "./modules/company-reports/trial-balance/server/index.ts",
+    "./company-switcher": {
+      "types": "./modules/company-switcher/module.ts",
+      "import": "./modules/company-switcher/module.ts"
+    },
+    "./company-switcher/client": {
+      "types": "./modules/company-switcher/client/index.ts",
+      "import": "./modules/company-switcher/client/index.ts"
+    },
+    "./company-switcher/server": {
+      "types": "./modules/company-switcher/server/index.ts",
+      "import": "./modules/company-switcher/server/index.ts"
+    },
+    "./company-switcher/types": {
+      "types": "./modules/company-switcher/types/index.ts",
+      "import": "./modules/company-switcher/types/index.ts"
+    },
+    "./company-tax-control-accounts": {
+      "types": "./modules/company-tax-control-accounts/module.ts",
+      "import": "./modules/company-tax-control-accounts/module.ts"
+    },
+    "./company-tax-control-accounts/client": {
+      "types": "./modules/company-tax-control-accounts/client/index.ts",
+      "import": "./modules/company-tax-control-accounts/client/index.ts"
+    },
+    "./company-tax-control-accounts/server": {
+      "types": "./modules/company-tax-control-accounts/server/index.ts",
+      "import": "./modules/company-tax-control-accounts/server/index.ts"
+    },
+    "./countries": {
+      "types": "./modules/countries/module.ts",
+      "import": "./modules/countries/module.ts"
+    },
+    "./countries/client": {
+      "types": "./modules/countries/client/index.ts",
+      "import": "./modules/countries/client/index.ts"
+    },
+    "./countries/server": {
+      "types": "./modules/countries/server/index.ts",
+      "import": "./modules/countries/server/index.ts"
+    },
+    "./currencies": {
+      "types": "./modules/currencies/module.ts",
+      "import": "./modules/currencies/module.ts"
+    },
+    "./currencies/client": {
+      "types": "./modules/currencies/client/index.ts",
+      "import": "./modules/currencies/client/index.ts"
+    },
+    "./currencies/server": {
+      "types": "./modules/currencies/server/index.ts",
+      "import": "./modules/currencies/server/index.ts"
+    },
+    "./financial-document-processing-engine": {
+      "types": "./modules/financial-document-processing-engine/module.ts",
+      "import": "./modules/financial-document-processing-engine/module.ts"
+    },
+    "./financial-document-processing-engine/posting-code-metadata": {
+      "types": "./modules/financial-document-processing-engine/posting-code-metadata.ts",
+      "import": "./modules/financial-document-processing-engine/posting-code-metadata.ts"
+    },
+    "./financial-document-processing-engine/server": {
+      "types": "./modules/financial-document-processing-engine/server/index.ts",
+      "import": "./modules/financial-document-processing-engine/server/index.ts"
+    },
+    "./financial-years": {
+      "types": "./modules/financial-years/module.ts",
+      "import": "./modules/financial-years/module.ts"
+    },
+    "./financial-years/client": {
+      "types": "./modules/financial-years/client/index.ts",
+      "import": "./modules/financial-years/client/index.ts"
+    },
+    "./financial-years/server": {
+      "types": "./modules/financial-years/server/index.ts",
+      "import": "./modules/financial-years/server/index.ts"
+    },
+    "./financial-years/types": {
+      "types": "./modules/financial-years/types/index.ts",
+      "import": "./modules/financial-years/types/index.ts"
+    },
+    "./inventory-ledger": "./modules/inventory-ledger/module.ts",
+    "./inventory-ledger/client": {
+      "types": "./modules/inventory-ledger/client/index.ts",
+      "import": "./modules/inventory-ledger/client/index.ts"
+    },
+    "./inventory-ledger/server": "./modules/inventory-ledger/server/index.ts",
+    "./journals": {
+      "types": "./modules/journals/module.ts",
+      "import": "./modules/journals/module.ts"
+    },
+    "./journals/client": {
+      "types": "./modules/journals/client/index.ts",
+      "import": "./modules/journals/client/index.ts"
+    },
+    "./journals/server": {
+      "types": "./modules/journals/server/index.ts",
+      "import": "./modules/journals/server/index.ts"
+    },
+    "./organization": {
+      "types": "./modules/organization/module.ts",
+      "import": "./modules/organization/module.ts"
+    },
+    "./organization/domain/operation-policy": {
+      "types": "./modules/organization/domain/operation-policy.ts",
+      "import": "./modules/organization/domain/operation-policy.ts"
+    },
+    "./financial-years/domain/operation-policy": {
+      "types": "./modules/financial-years/domain/operation-policy.ts",
+      "import": "./modules/financial-years/domain/operation-policy.ts"
+    },
+    "./organization-ap-control-accounts": {
+      "types": "./modules/organization-ap-control-accounts/module.ts",
+      "import": "./modules/organization-ap-control-accounts/module.ts"
+    },
+    "./organization-ap-control-accounts/client": {
+      "types": "./modules/organization-ap-control-accounts/client/index.ts",
+      "import": "./modules/organization-ap-control-accounts/client/index.ts"
+    },
+    "./organization-ap-control-accounts/server": {
+      "types": "./modules/organization-ap-control-accounts/server/index.ts",
+      "import": "./modules/organization-ap-control-accounts/server/index.ts"
+    },
+    "./organization-ar-control-accounts": {
+      "types": "./modules/organization-ar-control-accounts/module.ts",
+      "import": "./modules/organization-ar-control-accounts/module.ts"
+    },
+    "./organization-ar-control-accounts/client": {
+      "types": "./modules/organization-ar-control-accounts/client/index.ts",
+      "import": "./modules/organization-ar-control-accounts/client/index.ts"
+    },
+    "./organization-ar-control-accounts/server": {
+      "types": "./modules/organization-ar-control-accounts/server/index.ts",
+      "import": "./modules/organization-ar-control-accounts/server/index.ts"
+    },
+    "./organization-bank-cash-accounts": {
+      "types": "./modules/organization-bank-cash-accounts/module.ts",
+      "import": "./modules/organization-bank-cash-accounts/module.ts"
+    },
+    "./organization-bank-cash-accounts/client": {
+      "types": "./modules/organization-bank-cash-accounts/client/index.ts",
+      "import": "./modules/organization-bank-cash-accounts/client/index.ts"
+    },
+    "./organization-bank-cash-accounts/server": {
+      "types": "./modules/organization-bank-cash-accounts/server/index.ts",
+      "import": "./modules/organization-bank-cash-accounts/server/index.ts"
+    },
+    "./organization-dimensions": {
+      "types": "./modules/organization-dimensions/module.ts",
+      "import": "./modules/organization-dimensions/module.ts"
+    },
+    "./organization-dimensions/client": {
+      "types": "./modules/organization-dimensions/client/index.ts",
+      "import": "./modules/organization-dimensions/client/index.ts"
+    },
+    "./organization-dimensions/server": {
+      "types": "./modules/organization-dimensions/server/index.ts",
+      "import": "./modules/organization-dimensions/server/index.ts"
+    },
+    "./organization-financial-document-defaults": "./modules/organization-financial-document-defaults/module.ts",
+    "./organization-financial-document-defaults/client": {
+      "types": "./modules/organization-financial-document-defaults/client/index.ts",
+      "import": "./modules/organization-financial-document-defaults/client/index.ts"
+    },
+    "./organization-financial-document-defaults/server": "./modules/organization-financial-document-defaults/server/index.ts",
+    "./organization-financial-document-types": "./modules/organization-financial-document-types/module.ts",
+    "./organization-financial-document-types/client": {
+      "types": "./modules/organization-financial-document-types/client/index.ts",
+      "import": "./modules/organization-financial-document-types/client/index.ts"
+    },
+    "./organization-financial-document-types/server": "./modules/organization-financial-document-types/server/index.ts",
+    "./organization-gl-account-categories": {
+      "types": "./modules/organization-gl-account-categories/module.ts",
+      "import": "./modules/organization-gl-account-categories/module.ts"
+    },
+    "./organization-gl-account-categories/client": {
+      "types": "./modules/organization-gl-account-categories/client/index.ts",
+      "import": "./modules/organization-gl-account-categories/client/index.ts"
+    },
+    "./organization-gl-account-categories/server": {
+      "types": "./modules/organization-gl-account-categories/server/index.ts",
+      "import": "./modules/organization-gl-account-categories/server/index.ts"
+    },
+    "./organization-gl-accounts": "./modules/organization-gl-accounts/module.ts",
+    "./organization-gl-accounts/client": {
+      "types": "./modules/organization-gl-accounts/client/index.ts",
+      "import": "./modules/organization-gl-accounts/client/index.ts"
+    },
+    "./organization-gl-accounts/server": "./modules/organization-gl-accounts/server/index.ts",
+    "./organization-inventory-categories": {
+      "types": "./modules/organization-inventory-categories/module.ts",
+      "import": "./modules/organization-inventory-categories/module.ts"
+    },
+    "./organization-inventory-categories/client": {
+      "types": "./modules/organization-inventory-categories/client/index.ts",
+      "import": "./modules/organization-inventory-categories/client/index.ts"
+    },
+    "./organization-inventory-categories/server": {
+      "types": "./modules/organization-inventory-categories/server/index.ts",
+      "import": "./modules/organization-inventory-categories/server/index.ts"
+    },
+    "./organization-inventory-control-accounts": {
+      "types": "./modules/organization-inventory-control-accounts/module.ts",
+      "import": "./modules/organization-inventory-control-accounts/module.ts"
+    },
+    "./organization-inventory-control-accounts/client": {
+      "types": "./modules/organization-inventory-control-accounts/client/index.ts",
+      "import": "./modules/organization-inventory-control-accounts/client/index.ts"
+    },
+    "./organization-inventory-control-accounts/server": {
+      "types": "./modules/organization-inventory-control-accounts/server/index.ts",
+      "import": "./modules/organization-inventory-control-accounts/server/index.ts"
+    },
+    "./organization-inventory-item-posting-profiles": {
+      "types": "./modules/organization-inventory-item-posting-profiles/module.ts",
+      "import": "./modules/organization-inventory-item-posting-profiles/module.ts"
+    },
+    "./organization-inventory-item-posting-profiles/client": {
+      "types": "./modules/organization-inventory-item-posting-profiles/client/index.ts",
+      "import": "./modules/organization-inventory-item-posting-profiles/client/index.ts"
+    },
+    "./organization-inventory-item-posting-profiles/server": {
+      "types": "./modules/organization-inventory-item-posting-profiles/server/index.ts",
+      "import": "./modules/organization-inventory-item-posting-profiles/server/index.ts"
+    },
+    "./organization-inventory-items": "./modules/organization-inventory-items/module.ts",
+    "./organization-inventory-items/client": {
+      "types": "./modules/organization-inventory-items/client/index.ts",
+      "import": "./modules/organization-inventory-items/client/index.ts"
+    },
+    "./organization-inventory-items/server": "./modules/organization-inventory-items/server/index.ts",
+    "./organization-reports": "./modules/organization-reports/module.ts",
+    "./organization-reports/server": "./modules/organization-reports/server/index.ts",
+    "./organization-tax-control-accounts": {
+      "types": "./modules/organization-tax-control-accounts/module.ts",
+      "import": "./modules/organization-tax-control-accounts/module.ts"
+    },
+    "./organization-tax-control-accounts/client": {
+      "types": "./modules/organization-tax-control-accounts/client/index.ts",
+      "import": "./modules/organization-tax-control-accounts/client/index.ts"
+    },
+    "./organization-tax-control-accounts/server": {
+      "types": "./modules/organization-tax-control-accounts/server/index.ts",
+      "import": "./modules/organization-tax-control-accounts/server/index.ts"
+    },
+    "./organization/client": {
+      "types": "./modules/organization/client/index.ts",
+      "import": "./modules/organization/client/index.ts"
+    },
+    "./organization/server": {
+      "types": "./modules/organization/server/index.ts",
+      "import": "./modules/organization/server/index.ts"
+    },
+    "./tax": {
+      "types": "./modules/tax/module.ts",
+      "import": "./modules/tax/module.ts"
+    },
+    "./tax-ledger": "./modules/tax-ledger/module.ts",
+    "./tax-ledger/client": {
+      "types": "./modules/tax-ledger/client/index.ts",
+      "import": "./modules/tax-ledger/client/index.ts"
+    },
+    "./tax-ledger/server": "./modules/tax-ledger/server/index.ts",
+    "./tax/server": {
+      "types": "./modules/tax/server/index.ts",
+      "import": "./modules/tax/server/index.ts"
+    }
+  },
+  "dependencies": {
+    "archiver": "^8.0.0",
+    "server-only": "^0.0.1"
+  },
+  "peerDependencies": {
+    "@voyzu/api": "^0.1.0",
+    "@voyzu/audit": "^0.1.0",
+    "@voyzu/auth": "^0.1.0",
+    "@voyzu/capability": "^0.1.0",
+    "@voyzu/types": "^0.1.0",
+    "@voyzu/ui-components": "^0.1.0",
+    "@voyzu/ui-layout": "^0.1.0",
+    "@voyzu/ui-style": "^0.1.0",
+    "@voyzu/ui-surface": "^0.1.0",
+    "next": "^16",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/archiver": "^8.0.0",
+    "@types/react-dom": "^19.2.4"
+  },
+  "voyzu": {
+    "voyzu-package": true,
+    "isActive": true,
+    "settings": {
+      "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
+    }
+  }
+}

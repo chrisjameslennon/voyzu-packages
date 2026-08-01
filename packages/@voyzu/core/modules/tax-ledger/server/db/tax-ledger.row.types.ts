@@ -1,0 +1,44 @@
+import type { DrCr, EntryType } from "@voyzu/core/types/modules/core";
+export interface TaxSubledgerEntryRow {
+  id: number;
+  code: string;
+  journal_header_id: number;
+  journal_code: string;
+  has_bank_cash_details: boolean;
+  ar_subledger_entry_code: string | null;
+  ap_subledger_entry_code: string | null;
+  posting_date: string;
+  document_date: string;
+  base_currency_code: string;
+  entry_type: EntryType;
+  base_currency_amount: number;
+  status: string;
+  document_type_code: string;
+  document_type_label: string;
+  document_id: string;
+  description: string;
+  tax_rule_code: string;
+  tax_movement_type_code: string | null;
+  tax_movement_type_name: string | null;
+  tax_authority_code: string;
+  tax_authority_name: string;
+  scheme_label: string | null;
+  tax_rate: number | null;
+  tax_lines_json: Array<{
+    lineNumber: number;
+    taxRuleCode: string;
+    taxControlAccountCode: string;
+    taxControlAccountName: string | null;
+    taxAuthorityCode: string;
+    taxAuthorityName: string;
+    schemeLabel: string | null;
+    taxRate: number | null;
+    taxableBaseCurrencyAmount: number;
+    drCr: DrCr;
+    baseCurrencyAmount: number;
+  }>;
+  creation_date: string;
+  updated_date: string;
+  document_snapshot_json: Record<string, unknown>;
+  detailed_document_snapshot_json: Record<string, unknown>;
+}

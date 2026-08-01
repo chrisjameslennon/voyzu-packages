@@ -2,8 +2,8 @@ import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
 
-import type { ApBillCancellationRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine";
-import { processApDocument } from "@voyzu-modules/core/financial-document-processing-engine/core/ap_processing/ap-processing.service";
+import type { ApBillCancellationRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine";
+import { processApDocument } from "@voyzu/core/financial-document-processing-engine/core/ap_processing/ap-processing.service";
 import { skipExistingSampleDocument } from "./sample-document";
 import { SAMPLE_POSTING_COMPANIES, type SampleCompanyConfig } from "./sample-company-config";
 
