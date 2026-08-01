@@ -22,6 +22,7 @@ import {
 } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
+import modalStyles from "@voyzu/ui-style/css-modules/modal.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 
 import type {
@@ -182,23 +183,38 @@ export function IceCreamsList({
       </header>
 
       {showCreate ? (
-        <section className={styles.createPanel}>
-          <div className={styles.field}><label className={typography.fieldLabel}>Code</label><Input value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} /></div>
-          <div className={styles.field}><label className={typography.fieldLabel}>Name</label><Input value={name} onChange={(event) => setName(event.target.value)} /></div>
-          <div className={styles.field}><label className={typography.fieldLabel}>Flavour</label><SearchableSelect value={flavorCode} onChange={setFlavorCode} options={activeFlavors.map((flavor) => ({ value: flavor.code, label: flavor.name, code: flavor.code }))} /></div>
-          <div className={styles.field}><label className={typography.fieldLabel}>Supplier</label><Input value={supplier} onChange={(event) => setSupplier(event.target.value)} /></div>
-          <div className={styles.formActions}><Button variant="secondary" onClick={() => { resetCreate(); setShowCreate(false); }}>Cancel</Button><Button variant="primary" disabled={saving} onClick={() => { void createIceCream(); }}>Create</Button></div>
-          <div className={styles.fullWidth}><ValidationAlert errors={[...validation.errors, ...(serverError ? [serverError] : [])]} visible={validation.showErrors || !!serverError} onDismiss={() => { validation.dismiss(); setServerError(""); }} /></div>
-        </section>
+        <div className={modalStyles.backdrop}>
+          <div className={modalStyles.modal} onClick={(event) => event.stopPropagation()}>
+            <div className={modalStyles.header}>
+              <h3 className={typography.contentTitle}>Add Ice Cream</h3>
+              <Button variant="plain" icon="close" type="button" title="Close" onClick={() => { resetCreate(); setShowCreate(false); }} />
+            </div>
+            <div className={modalStyles.body}>
+              <ValidationAlert errors={[...validation.errors, ...(serverError ? [serverError] : [])]} visible={validation.showErrors || !!serverError} onDismiss={() => { validation.dismiss(); setServerError(""); }} />
+              <div className={styles.createFields}>
+                <div className={styles.field}><label className={typography.fieldLabel}>Code</label><Input value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} /></div>
+                <div className={styles.field}><label className={typography.fieldLabel}>Name</label><Input value={name} onChange={(event) => setName(event.target.value)} /></div>
+                <div className={styles.field}><label className={typography.fieldLabel}>Flavour</label><SearchableSelect value={flavorCode} onChange={setFlavorCode} options={activeFlavors.map((flavor) => ({ value: flavor.code, label: flavor.name, code: flavor.code }))} /></div>
+                <div className={styles.field}><label className={typography.fieldLabel}>Supplier</label><Input value={supplier} onChange={(event) => setSupplier(event.target.value)} /></div>
+              </div>
+            </div>
+            <div className={modalStyles.footer}>
+              <Button variant="secondary" onClick={() => { resetCreate(); setShowCreate(false); }}>Cancel</Button>
+              <Button variant="primary" disabled={saving} onClick={() => { void createIceCream(); }}>{saving ? "Creating..." : "Create"}</Button>
+            </div>
+          </div>
+        </div>
       ) : null}
 
       <div className={layout.listToolbar}>
         <div className={layout.slotToolbarLeft}><FilterPanel tabs={filterTabs} filters={filters} onApply={setFilters} onClear={() => setFilters({})} onRemoveFilter={(key) => setFilters((current) => { const next = { ...current }; delete next[key]; return next; })} showChips={false} /></div>
         <div className={layout.slotToolbarSearch}><Input search placeholder="Search ice creams..." value={search} onChange={(event) => setSearch(event.target.value)} /></div>
         <div className={layout.slotToolbarRight}>
-          <Button variant="secondary" icon="check_circle" disabled={!selected.some(({ status }) => status === "INACTIVE")} onClick={() => { void transitionSelected("activate"); }}>Activate</Button>
-          <Button variant="secondary" icon="block" disabled={!selected.some(({ status }) => status === "ACTIVE")} onClick={() => { void transitionSelected("deactivate"); }}>Deactivate</Button>
-          <Button variant="secondary-destructive" icon="delete" disabled={!selected.length} onClick={() => setShowDelete(true)} />
+          <div className={listStyles.toolbarActions}>
+            <Button variant="secondary" icon="check_circle" disabled={!selected.some(({ status }) => status === "INACTIVE")} onClick={() => { void transitionSelected("activate"); }}>Activate</Button>
+            <Button variant="secondary" icon="block" disabled={!selected.some(({ status }) => status === "ACTIVE")} onClick={() => { void transitionSelected("deactivate"); }}>Deactivate</Button>
+            <Button variant="secondary-destructive" icon="delete" disabled={!selected.length} onClick={() => setShowDelete(true)} />
+          </div>
         </div>
       </div>
 
