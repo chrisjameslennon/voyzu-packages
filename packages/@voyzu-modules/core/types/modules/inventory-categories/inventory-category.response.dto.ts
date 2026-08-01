@@ -1,4 +1,4 @@
-import type { AuditMetadataDto, OperationReference } from "@voyzu/types/modules/core";
+import type { AuditMetadataDto, OperationReference } from "@voyzu-modules/core/types/modules/core";
 
 export interface InventoryCategoryResponseDto {
   id: number;

@@ -1,4 +1,4 @@
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 import type { ArReceiptDetailedReceiptDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/ar-receipt.response.dto";
 import {
   AR_RECEIPT_AR_RECEIVABLE_COMPONENT,

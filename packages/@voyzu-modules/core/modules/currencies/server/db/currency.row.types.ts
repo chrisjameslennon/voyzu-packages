@@ -1,4 +1,4 @@
-import type { ActorType, OperationReference } from "@voyzu/types/modules/core";
+import type { ActorType, OperationReference } from "@voyzu-modules/core/types/modules/core";
 export interface CurrencyRow {
   code: string;
   name: string;

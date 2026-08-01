@@ -1,4 +1,4 @@
-import type { AccountType } from "@voyzu/types/modules/core";
+import type { AccountType } from "@voyzu-modules/core/types/modules/core";
 import type { InventoryControlAccountPatchRequestDto } from "@voyzu-modules/core/types/modules/inventory-control-accounts";
 import type { InventoryControlAccountSettingResponseDto } from "@voyzu-modules/core/types/modules/inventory-control-accounts";
 import { getDb, withTransaction } from "@voyzu/capability/db";

@@ -1,4 +1,4 @@
-import type { AccountType, ActorType, OperationReference } from "@voyzu/types/modules/core";
+import type { AccountType, ActorType, OperationReference } from "@voyzu-modules/core/types/modules/core";
 export interface InsertGlAccountCategoryRow {
   company_id: number;
   code: string;

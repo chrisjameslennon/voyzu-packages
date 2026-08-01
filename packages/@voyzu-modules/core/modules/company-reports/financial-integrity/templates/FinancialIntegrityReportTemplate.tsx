@@ -6,7 +6,7 @@ import type {
   FinancialIntegritySourceLineDto,
   FinancialIntegritySubledgerEntryDto,
 } from "@voyzu-modules/core/types/modules/company-reports";
-import type { AccountType } from "@voyzu/types/modules/core";
+import type { AccountType } from "@voyzu-modules/core/types/modules/core";
 
 import { financialIntegrityReportCss } from "./financial-integrity-report.css";
 

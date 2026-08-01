@@ -1,5 +1,5 @@
 import { DataError } from "@voyzu/capability/errors";
-import type { ActorType } from "@voyzu/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
 import type { Filter } from "@voyzu/types/params";
 import type { ListOptions } from "@voyzu/types/params";
 

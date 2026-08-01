@@ -1,4 +1,4 @@
-import type { AccountType } from "@voyzu/types/modules/core";
+import type { AccountType } from "@voyzu-modules/core/types/modules/core";
 
 export interface GlAccountCreateRequestDto {
   /** Business code for the new GL account (up to 14 characters, uppercase letters, numbers, dash, underscore). */

@@ -4,7 +4,7 @@ import type {
   JournalResponseDto,
   JournalStatus,
 } from "@voyzu-modules/core/types/modules/journals";
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 
 import type { JournalHeaderRow, JournalLineDimensionRow, JournalLineRow } from "../db/journal.row.types";
 

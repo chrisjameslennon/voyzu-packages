@@ -1,4 +1,4 @@
-import type { Ledger } from "@voyzu/types/modules/core";
+import type { Ledger } from "@voyzu-modules/core/types/modules/core";
 
 const LEDGER_NAMES: Record<Ledger, string> = {
   ACCOUNTS_PAYABLE: "Accounts Payable",

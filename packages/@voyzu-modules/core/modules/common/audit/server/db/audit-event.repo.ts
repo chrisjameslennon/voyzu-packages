@@ -1,5 +1,5 @@
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { ActorType } from "@voyzu/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
 import type { AuditEventRow, AuditChangeRow } from "./audit-event.row.types";
 
 const PAGE_SIZE = 50;

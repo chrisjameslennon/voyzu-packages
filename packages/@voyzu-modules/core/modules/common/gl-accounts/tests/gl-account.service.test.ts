@@ -5,7 +5,7 @@ import type { GlAccountCreateRequestDto } from "@voyzu-modules/core/types/module
 import type { GlAccountPatchRequestDto } from "@voyzu-modules/core/types/modules/gl-accounts/gl-account.patch.request.dto";
 import type { GlAccountResponseDto } from "@voyzu-modules/core/types/modules/gl-accounts/gl-account.response.dto";
 import type { GlAccountUpdateRequestDto } from "@voyzu-modules/core/types/modules/gl-accounts/gl-account.update.request.dto";
-import type { AccountType } from "@voyzu/types/modules/core";
+import type { AccountType } from "@voyzu-modules/core/types/modules/core";
 
 import { getPool } from "@voyzu/capability/db";
 import {

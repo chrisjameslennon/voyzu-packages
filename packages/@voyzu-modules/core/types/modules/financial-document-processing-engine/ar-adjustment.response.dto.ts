@@ -1,4 +1,4 @@
-import type { DrCr, EntryType } from "@voyzu/types/modules/core";
+import type { DrCr, EntryType } from "@voyzu-modules/core/types/modules/core";
 import type { ArInvoiceDetailedTaxComponentDto } from "./ar-invoice.response.dto";
 import type { BankCashJournalDetailsDto } from "./bank-cash-details.dto";
 

@@ -1,4 +1,4 @@
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 import type { BankCashDetailsRequestDto } from "./bank-cash-details.dto";
 
 export interface LedgerJournalLineRequestDto {

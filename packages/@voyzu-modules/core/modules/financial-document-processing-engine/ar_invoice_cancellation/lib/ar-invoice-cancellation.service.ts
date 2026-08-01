@@ -1,4 +1,4 @@
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 import type { ArInvoiceCancellationRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto";
 import type {
   ArInvoiceCancellationArSubledgerDetailDto,

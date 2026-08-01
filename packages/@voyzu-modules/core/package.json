@@ -680,6 +680,7 @@
   },
   "dependencies": {
     "@voyzu/api": "*",
+    "@voyzu/auth": "*",
     "@voyzu/capability": "*",
     "@voyzu/types": "*",
     "@voyzu/ui-components": "*",

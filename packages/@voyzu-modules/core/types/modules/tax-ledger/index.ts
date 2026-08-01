@@ -1,4 +1,4 @@
-import type { AuditMetadataDto, DrCr, EntryType } from "@voyzu/types/modules/core";
+import type { AuditMetadataDto, DrCr, EntryType } from "@voyzu-modules/core/types/modules/core";
 export interface TaxSubledgerEntryLineResponseDto {
   lineNumber: number;
   taxRuleCode: string;

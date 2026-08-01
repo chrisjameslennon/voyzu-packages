@@ -1,4 +1,4 @@
-import type { EntryType } from "@voyzu/types/modules/core";
+import type { EntryType } from "@voyzu-modules/core/types/modules/core";
 import type { DbExecutor } from "@voyzu/capability/db";
 import type {
   TaxActivityReconciliationAuthorityOptionDto,

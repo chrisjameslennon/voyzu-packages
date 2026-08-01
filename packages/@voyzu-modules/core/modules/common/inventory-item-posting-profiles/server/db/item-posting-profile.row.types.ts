@@ -1,5 +1,5 @@
-import type { ActorType } from "@voyzu/types/modules/core";
-import type { OperationReference } from "@voyzu/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
+import type { OperationReference } from "@voyzu-modules/core/types/modules/core";
 
 export interface ItemPostingProfileRow {
   id: number;

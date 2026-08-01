@@ -3,7 +3,7 @@ import type {
   TaxComponentResponseDto,
   TaxRuleResponseDto,
 } from "@voyzu-modules/core/types/modules/tax";
-import type { ActorType, Status } from "@voyzu/types/modules/core";
+import type { ActorType, Status } from "@voyzu-modules/core/types/modules/core";
 
 import type {
   TaxAuthorityRow,

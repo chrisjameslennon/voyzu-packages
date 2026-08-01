@@ -1,4 +1,4 @@
-import type { AuditMetadataDto, Status } from "@voyzu/types/modules/core";
+import type { AuditMetadataDto, Status } from "@voyzu-modules/core/types/modules/core";
 
 export interface CompanyResponseDto {
   /** Unique numeric identifier for the company. */

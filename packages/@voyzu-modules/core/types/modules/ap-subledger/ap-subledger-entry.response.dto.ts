@@ -1,5 +1,5 @@
-import type { AuditMetadataDto } from "@voyzu/types/modules/core";
-import type { EntryType } from "@voyzu/types/modules/core";
+import type { AuditMetadataDto } from "@voyzu-modules/core/types/modules/core";
+import type { EntryType } from "@voyzu-modules/core/types/modules/core";
 export interface ApSubledgerControlAccountBalanceDto {
   controlAccountCode: string;
   controlAccountName: string;
@@ -50,4 +50,3 @@ export interface ApSubledgerEntryResponseDto {
   documentSnapshot?: Record<string, unknown>;
   detailedDocumentSnapshot?: Record<string, unknown>;
 }
-

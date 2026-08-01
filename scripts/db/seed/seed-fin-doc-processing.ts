@@ -3,7 +3,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import type { Ledger } from "@voyzu/types/modules/core";
+import type { Ledger } from "@voyzu-modules/core/types/modules/core";
 
 interface DocProcessingSeed {
   code: string;

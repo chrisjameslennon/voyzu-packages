@@ -1,4 +1,4 @@
-import type { EntryType } from "@voyzu/types/modules/core";
+import type { EntryType } from "@voyzu-modules/core/types/modules/core";
 import type { CompanyResponseDto } from "../companies/company.response.dto";
 
 export interface ApCounterpartyStatementApplicationDto {

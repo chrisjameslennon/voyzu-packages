@@ -1,4 +1,4 @@
-import type { EntryType } from "@voyzu/types/modules/core";
+import type { EntryType } from "@voyzu-modules/core/types/modules/core";
 import type { ArReceiptApplicationRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/ar-receipt-application.request.dto";
 import type {
   ArReceiptApplicationArSubledgerDetailDto,

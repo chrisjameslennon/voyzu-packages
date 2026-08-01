@@ -1,4 +1,4 @@
-import type { DrCr, EntryType } from "@voyzu/types/modules/core";
+import type { DrCr, EntryType } from "@voyzu-modules/core/types/modules/core";
 import type { ArCreditNoteRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
 import type { ArOpeningBalanceRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/ar-opening-balance.request.dto";
 import type { ArRefundRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/ar-refund.request.dto";

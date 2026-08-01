@@ -1,8 +1,8 @@
-import type { UserAuditActorDto } from "@voyzu/types/modules/users";
+import type { AuditUserDto } from "@voyzu-modules/core/types/modules/core";
 import { getDb } from "@voyzu/capability/db";
 import { UserRepo } from "@voyzu/modules/users/server";
 
-export async function getAuditActor(userId: string | null | undefined): Promise<UserAuditActorDto | null> {
+export async function getAuditActor(userId: string | null | undefined): Promise<AuditUserDto | null> {
   if (!userId) return null;
   const parsed = Number(userId);
   if (!Number.isInteger(parsed)) return null;
@@ -20,8 +20,8 @@ export async function getAuditActors(row: {
   creation_user_id?: string | null;
   updated_user_id?: string | null;
 }): Promise<{
-  creationUser: UserAuditActorDto | null;
-  updatedUser: UserAuditActorDto | null;
+  creationUser: AuditUserDto | null;
+  updatedUser: AuditUserDto | null;
 }> {
   const [creationUser, updatedUser] = await Promise.all([
     getAuditActor(row.creation_user_id),
@@ -32,8 +32,8 @@ export async function getAuditActors(row: {
 
 export async function withAuditActors<T extends {
   audit: {
-    created: { user?: UserAuditActorDto | null };
-    updated: { user?: UserAuditActorDto | null };
+    created: { user?: AuditUserDto | null };
+    updated: { user?: AuditUserDto | null };
   };
 }>(dto: T, row: {
   creation_user_id?: string | null;

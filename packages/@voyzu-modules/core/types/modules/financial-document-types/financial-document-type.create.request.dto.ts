@@ -1,4 +1,4 @@
-import type { Ledger } from "@voyzu/types/modules/core";
+import type { Ledger } from "@voyzu-modules/core/types/modules/core";
 
 export interface FinancialDocumentTypeCreateRequestDto {
   code: string;

@@ -1,5 +1,5 @@
 import type { CompanyResponseDto } from "@voyzu-modules/core/types/modules/companies";
-import type { UserResponseDto } from "@voyzu/types/modules/users";
+import type { UserResponseDto } from "@voyzu/auth/types";
 import { listCompanies } from "@voyzu-modules/core/companies/server";
 import { getCurrentUser } from "@voyzu/modules/users/server";
 

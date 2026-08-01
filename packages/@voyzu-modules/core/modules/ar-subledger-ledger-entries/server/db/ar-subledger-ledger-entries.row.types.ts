@@ -1,4 +1,4 @@
-import type { EntryType } from "@voyzu/types/modules/core";
+import type { EntryType } from "@voyzu-modules/core/types/modules/core";
 export interface ArSubledgerEntryRow {
   id: number;
   code: string;

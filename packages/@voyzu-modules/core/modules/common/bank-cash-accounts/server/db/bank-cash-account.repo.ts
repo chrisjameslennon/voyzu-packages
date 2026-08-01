@@ -1,4 +1,4 @@
-import type { AccountType } from "@voyzu/types/modules/core";
+import type { AccountType } from "@voyzu-modules/core/types/modules/core";
 import { DataError } from "@voyzu/capability/errors";
 import { parsePostgresTextArray, type DbExecutor } from "@voyzu/capability/db";
 import type { Filter, ListOptions } from "@voyzu/types/params";

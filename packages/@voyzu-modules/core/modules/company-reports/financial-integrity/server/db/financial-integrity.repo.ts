@@ -1,5 +1,5 @@
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { AccountType, DrCr } from "@voyzu/types/modules/core";
+import type { AccountType, DrCr } from "@voyzu-modules/core/types/modules/core";
 import type {
   FinancialIntegrityDocumentTypeDto,
   FinancialIntegrityInventoryLedgerLineDto,

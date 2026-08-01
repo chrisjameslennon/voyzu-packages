@@ -1,5 +1,5 @@
-import type { AuditMetadataDto, OperationReference } from "@voyzu/types/modules/core";
-import type { Status } from "@voyzu/types/modules/core";
+import type { AuditMetadataDto, OperationReference } from "@voyzu-modules/core/types/modules/core";
+import type { Status } from "@voyzu-modules/core/types/modules/core";
 
 export interface CountryTaxAuthorityResponseDto {
   /** Internal identifier for the tax authority. */

@@ -1,4 +1,4 @@
-import type { AccountType } from "@voyzu/types/modules/core";
+import type { AccountType } from "@voyzu-modules/core/types/modules/core";
 import type { GlAccountCreateRequestDto } from "@voyzu-modules/core/types/modules/gl-accounts";
 import type { GlAccountPatchRequestDto } from "@voyzu-modules/core/types/modules/gl-accounts";
 import type { GlAccountResponseDto, GlAccountStatus } from "@voyzu-modules/core/types/modules/gl-accounts";

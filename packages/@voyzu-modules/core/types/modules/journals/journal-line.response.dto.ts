@@ -1,5 +1,5 @@
 import type { JournalLineDimensionResponseDto } from "./journal-line-dimension.response.dto";
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 
 export interface JournalLineResponseDto {
   id: number;

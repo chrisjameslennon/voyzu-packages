@@ -1,4 +1,4 @@
-import type { AccountType, ActorType, GlAccountPointerReference } from "@voyzu/types/modules/core";
+import type { AccountType, ActorType, GlAccountPointerReference } from "@voyzu-modules/core/types/modules/core";
 export interface GlAccountRow {
   id: number;
   company_id: number;

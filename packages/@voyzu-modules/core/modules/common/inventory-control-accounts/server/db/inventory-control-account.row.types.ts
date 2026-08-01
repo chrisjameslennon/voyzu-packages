@@ -1,5 +1,5 @@
-import type { AccountType, Status } from "@voyzu/types/modules/core";
-import type { ActorType } from "@voyzu/types/modules/core";
+import type { AccountType, Status } from "@voyzu-modules/core/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
 export interface InventoryControlAccountRow {
   company_id: number;
   code: string;

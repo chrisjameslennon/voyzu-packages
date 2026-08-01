@@ -1,6 +1,6 @@
-import type { OperationBlocker } from "@voyzu/types/modules/core";
+import type { OperationBlocker } from "@voyzu-modules/core/types/modules/core";
 
-export type { OperationBlocker } from "@voyzu/types/modules/core";
+export type { OperationBlocker } from "@voyzu-modules/core/types/modules/core";
 
 export interface LinkedReference {
   type: string;

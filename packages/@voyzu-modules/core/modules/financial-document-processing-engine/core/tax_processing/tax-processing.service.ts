@@ -1,4 +1,4 @@
-import type { DrCr, EntryType } from "@voyzu/types/modules/core";
+import type { DrCr, EntryType } from "@voyzu-modules/core/types/modules/core";
 import type { BankCashJournalDetailsDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/bank-cash-details.dto";
 import type {
   TaxAdjustmentEffect,

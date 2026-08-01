@@ -1,5 +1,5 @@
-import type { AuditMetadataDto } from "@voyzu/types/modules/core";
-import type { AccountType, GlAccountPointerReference, Status } from "@voyzu/types/modules/core";
+import type { AuditMetadataDto } from "@voyzu-modules/core/types/modules/core";
+import type { AccountType, GlAccountPointerReference, Status } from "@voyzu-modules/core/types/modules/core";
 
 export type BankCashAccountType = "BANK" | "CASH" | "OTHER";
 

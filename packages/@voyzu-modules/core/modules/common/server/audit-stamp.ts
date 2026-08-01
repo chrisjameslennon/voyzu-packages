@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import type { ActorType } from "@voyzu/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
 import { getCurrentActorType, getCurrentUser } from "@voyzu/modules/users/server";
 
 export interface UpdateAuditStamp {

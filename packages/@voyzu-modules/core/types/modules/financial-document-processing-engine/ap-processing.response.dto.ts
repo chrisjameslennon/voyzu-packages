@@ -1,4 +1,4 @@
-import type { DrCr, EntryType } from "@voyzu/types/modules/core";
+import type { DrCr, EntryType } from "@voyzu-modules/core/types/modules/core";
 export type ApProcessingDocumentType =
   | "AP_CREDIT_NOTE"
   | "AP_OPENING_BALANCE"

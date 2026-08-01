@@ -1,4 +1,4 @@
-import type { ActorType } from "@voyzu/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
 export interface CompanyRow {
   id: number;
   code: string;

@@ -3,7 +3,7 @@
 import { CompanyAuditPanel as AuditPanel } from "@voyzu-modules/core/company-audit/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 import type { JournalLineResponseDto, JournalResponseDto, JournalStatus } from "@voyzu-modules/core/types/modules/journals";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

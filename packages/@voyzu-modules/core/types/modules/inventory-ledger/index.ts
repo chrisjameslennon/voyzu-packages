@@ -1,4 +1,4 @@
-import type { AuditMetadataDto } from "@voyzu/types/modules/core";
+import type { AuditMetadataDto } from "@voyzu-modules/core/types/modules/core";
 
 export interface InventoryLedgerControlAccountBalanceDto {
   controlAccountCode: string;

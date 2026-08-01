@@ -1,4 +1,4 @@
-import type { ActorType } from "@voyzu/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
 export interface ControlAccountRow {
   company_id: number;
   ledger: "ACCOUNTS_RECEIVABLE" | "ACCOUNTS_PAYABLE";

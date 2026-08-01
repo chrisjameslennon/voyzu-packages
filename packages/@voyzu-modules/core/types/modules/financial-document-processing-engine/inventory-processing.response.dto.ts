@@ -1,4 +1,4 @@
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 export interface InventoryProcessingLineDimensionDto {
   dimension_code: string;
   dimension_name: string;

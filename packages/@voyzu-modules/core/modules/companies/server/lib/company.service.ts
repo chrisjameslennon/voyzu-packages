@@ -1,4 +1,4 @@
-import type { ActorType } from "@voyzu/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
 import { randomUUID } from "node:crypto";
 
 import type { Filter } from "@voyzu/types/params";

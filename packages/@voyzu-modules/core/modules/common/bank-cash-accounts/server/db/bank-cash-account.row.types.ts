@@ -1,4 +1,4 @@
-import type { AccountType, ActorType, GlAccountPointerName, Status } from "@voyzu/types/modules/core";
+import type { AccountType, ActorType, GlAccountPointerName, Status } from "@voyzu-modules/core/types/modules/core";
 import type { BankCashAccountType } from "@voyzu-modules/core/types/modules/bank-cash-accounts";
 export interface BankCashAccountRow {
   id: number;

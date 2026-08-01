@@ -1,6 +1,6 @@
 import { parsePostgresTextArray, type DbExecutor } from "@voyzu/capability/db";
-import type { AccountType } from "@voyzu/types/modules/core";
-import type { ActorType } from "@voyzu/types/modules/core";
+import type { AccountType } from "@voyzu-modules/core/types/modules/core";
+import type { ActorType } from "@voyzu-modules/core/types/modules/core";
 import type { UpdateAuditStamp } from "../../../server";
 
 import type { GlAccountLookupRow, InventoryControlAccountRow } from "./inventory-control-account.row.types";

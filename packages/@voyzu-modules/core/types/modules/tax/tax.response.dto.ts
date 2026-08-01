@@ -1,5 +1,5 @@
-import type { AuditMetadataDto } from "@voyzu/types/modules/core";
-import type { Status } from "@voyzu/types/modules/core";
+import type { AuditMetadataDto } from "@voyzu-modules/core/types/modules/core";
+import type { Status } from "@voyzu-modules/core/types/modules/core";
 
 export type TaxFamilyCode = "INDIRECT_TAX";
 export type TaxRuleCalculationMethod = "NO_TAX" | "CONFIGURED_COMPONENTS";

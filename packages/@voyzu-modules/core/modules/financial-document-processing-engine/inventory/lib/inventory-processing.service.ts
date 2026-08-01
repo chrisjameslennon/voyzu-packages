@@ -1,4 +1,4 @@
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 import type { InventoryAdjustmentRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/inventory-adjustment.request.dto";
 import type { InventoryIssueRequestDto } from "@voyzu-modules/core/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
 import type {

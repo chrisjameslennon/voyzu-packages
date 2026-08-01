@@ -1,4 +1,4 @@
-import type { DrCr } from "@voyzu/types/modules/core";
+import type { DrCr } from "@voyzu-modules/core/types/modules/core";
 import type { ArInvoiceDetailedInvoiceDto } from "./ar-invoice.response.dto";
 
 export interface ArInvoiceCancellationDetailedDocumentDto {

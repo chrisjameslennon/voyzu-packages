@@ -18,7 +18,7 @@ import { listItemPostingProfiles } from "@voyzu-modules/core/common/inventory-it
 import { listFinancialDocumentDefaults } from "@voyzu-modules/core/common/financial-document-defaults/server";
 import { listTaxControlAccounts } from "@voyzu-modules/core/common/tax-control-accounts/server";
 import { ledgerName } from "@voyzu-modules/core/common/server";
-import type { Ledger } from "@voyzu/types/modules/core";
+import type { Ledger } from "@voyzu-modules/core/types/modules/core";
 
 import { OrganizationListReport, type OrganizationListReportColumn } from "./OrganizationListReport";
 import { OrganizationListReportShell } from "../../client/OrganizationListReportShell";

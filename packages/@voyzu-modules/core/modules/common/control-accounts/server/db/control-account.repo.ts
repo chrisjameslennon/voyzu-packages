@@ -1,4 +1,4 @@
-import type { AccountType, Status } from "@voyzu/types/modules/core";
+import type { AccountType, Status } from "@voyzu-modules/core/types/modules/core";
 import type { UpdateAuditStamp } from "../../../server";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 

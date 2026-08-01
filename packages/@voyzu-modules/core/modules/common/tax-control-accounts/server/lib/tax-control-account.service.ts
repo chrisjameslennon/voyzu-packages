@@ -1,4 +1,4 @@
-import type { AccountType } from "@voyzu/types/modules/core";
+import type { AccountType } from "@voyzu-modules/core/types/modules/core";
 import type { TaxControlAccountPatchRequestDto } from "@voyzu-modules/core/types/modules/tax-control-accounts";
 import type { TaxControlAccountResponseDto } from "@voyzu-modules/core/types/modules/tax-control-accounts";
 import { getDb, withTransaction } from "@voyzu/capability/db";
