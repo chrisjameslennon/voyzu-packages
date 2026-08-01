@@ -19,8 +19,10 @@ The domains and their independent left-navigation definitions are exported from
 ## Installation
 
 Install Core through the standard Voyzu package workflow. Its package definition
-declares the schema, tables and triggers in their required execution order. The
-SQL is repeatable and relies on the preinstalled Voyzu Audit package for shared
+declares database objects under `install/db/objects` and reference/default seeds
+under `install/db/seed` in their required execution order. Both phases are
+repeatable; package installation executes the object phase first and the seed
+phase second. Core relies on the preinstalled Voyzu Audit package for shared
 audit infrastructure.
 
 ## Public API
@@ -30,4 +32,9 @@ server and type entry points intended for peer packages are declared explicitly
 in `package.json`. Consumers must use those exports rather than private source
 paths.
 
-Core currently exposes no callable package scripts.
+Core exports its optional sample-data installer as `@voyzu/core/scripts/sample-data`
+and exposes it through the `sampleData` package script:
+
+```shell
+npm run voyzu:run-script -- @voyzu/core sampleData
+```

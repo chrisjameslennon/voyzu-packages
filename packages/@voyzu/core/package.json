@@ -12,6 +12,10 @@
       "types": "./navigation/domains.ts",
       "import": "./navigation/domains.ts"
     },
+    "./scripts/sample-data": {
+      "types": "./scripts/sample-data/init.ts",
+      "import": "./scripts/sample-data/init.ts"
+    },
     "./types/modules/*.dto": {
       "types": "./types/modules/*.dto.ts",
       "import": "./types/modules/*.dto.ts"

@@ -1,0 +1,38 @@
+INSERT INTO financial_document_type (code, name, description, document_purpose, primary_supporting_ledger, supports_dimensions, cash_movement, supports_items, status, creation_actor_type, updated_actor_type)
+VALUES
+  ('AP_BILL', 'Supplier Bill', 'Creates supplier payable', 'Creates supplier payable', 'ACCOUNTS_PAYABLE', TRUE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AP_BILL_CANCELLATION', 'Bill Withdrawal', 'Withdraws a fully open supplier bill', 'Withdraws a fully open supplier bill', 'ACCOUNTS_PAYABLE', FALSE, FALSE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AP_CREDIT_NOTE', 'Supplier Credit Note', 'Reduces supplier payable', 'Reduces supplier payable', 'ACCOUNTS_PAYABLE', TRUE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AP_OPENING_BALANCE', 'AP Opening Balance', 'Seeds opening AP balances', 'Seeds opening AP balances', 'ACCOUNTS_PAYABLE', FALSE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AP_PAYMENT', 'Supplier Payment', 'Records supplier payment', 'Records supplier payment', 'ACCOUNTS_PAYABLE', FALSE, TRUE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AP_PAYMENT_APPLICATION', 'Supplier Payment Application', 'Applies unapplied supplier payment', 'Applies unapplied supplier payment', 'ACCOUNTS_PAYABLE', FALSE, FALSE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AP_REFUND', 'Supplier Refund', 'Records money received back from supplier', 'Records money received back from supplier', 'ACCOUNTS_PAYABLE', FALSE, TRUE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AP_WRITE_OFF', 'Payable Write-off', 'Writes off supplier balance', 'Writes off supplier balance', 'ACCOUNTS_PAYABLE', TRUE, FALSE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AR_CREDIT_NOTE', 'Customer Credit Note', 'Reduces customer receivable', 'Reduces customer receivable', 'ACCOUNTS_RECEIVABLE', TRUE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AR_INVOICE', 'Customer Invoice', '`AR_INVOICE` receives a customer invoice, validates and calculates line, tax and gross amounts, then posts revenue, tax output, and the receivable to the company ledger and AR subledger.', 'Creates customer receivable', 'ACCOUNTS_RECEIVABLE', TRUE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AR_INVOICE_CANCELLATION', 'Invoice Withdrawal', 'Reverses the receivable, revenue, and output tax effects of a posted fully open AR invoice.', 'Withdraws a fully open customer invoice', 'ACCOUNTS_RECEIVABLE', FALSE, FALSE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AR_OPENING_BALANCE', 'AR Opening Balance', 'Seeds opening AR balances', 'Seeds opening AR balances', 'ACCOUNTS_RECEIVABLE', FALSE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AR_RECEIPT', 'Customer Payment', 'Posts cash received from a customer and applies it to invoice open items or unapplied cash.', 'Records a customer payment', 'ACCOUNTS_RECEIVABLE', FALSE, TRUE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AR_RECEIPT_APPLICATION', 'Customer Receipt Application', 'Reclassifies unapplied customer receipt cash against one or more open AR invoices.', 'Applies unapplied receipt cash', 'ACCOUNTS_RECEIVABLE', FALSE, FALSE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AR_REFUND', 'Customer Refund', 'Pays money back to customer', 'Pays money back to customer', 'ACCOUNTS_RECEIVABLE', FALSE, TRUE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('AR_WRITE_OFF', 'Receivable Write-off', 'Writes off customer balance', 'Writes off customer balance', 'ACCOUNTS_RECEIVABLE', TRUE, FALSE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('INVENTORY_ADJUSTMENT', 'Inventory Adjustment', 'Records corrections to inventory quantity or book value.', 'Records inventory quantity or value corrections', 'INVENTORY', TRUE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('INVENTORY_ISSUE', 'Inventory Issue', 'Records inventory value and quantity leaving the inventory ledger.', 'Records inventory value and quantity issued', 'INVENTORY', TRUE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('INVENTORY_RECEIPT', 'Inventory Receipt', 'Records inventory value and quantity coming into the inventory ledger.', 'Records inventory value and quantity received', 'INVENTORY', TRUE, FALSE, TRUE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('LEDGER_JOURNAL', 'Ledger Journal', 'Used to post a balanced manual journal directly to the general ledger without creating a supporting ledger document.', 'Posts a manual journal to the general ledger', 'GENERAL', TRUE, TRUE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('LEDGER_JOURNAL_REVERSAL', 'Ledger Journal Reversal', 'Used to post a reversal of a previously posted manual general ledger journal while preserving the audit trail.', 'Reverses a manual general ledger journal', 'GENERAL', FALSE, TRUE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('TAX_ADJUSTMENT', 'Tax Adjustment', 'Used to accept an authority assessment or record a correction, penalty, interest, rounding difference, or other tax movement outside AR/AP source documents.', 'Records tax balance adjustments not sourced from AR/AP.', 'TAX', FALSE, FALSE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('TAX_PAYMENT', 'Tax Payment', 'Used when the business pays a tax authority to settle a filed return, assessment, outstanding balance, penalty, interest, or other tax amount owed.', 'Records a payment made to a tax authority.', 'TAX', FALSE, TRUE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM'),
+  ('TAX_REFUND', 'Tax Refund', 'Used when the business receives money from a tax authority for an overpayment, credit balance, refundable tax position, or authority-issued refund.', 'Records a refund received from a tax authority.', 'TAX', FALSE, TRUE, FALSE, 'ACTIVE', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (code) DO UPDATE
+SET
+    name = EXCLUDED.name,
+    description = EXCLUDED.description,
+    document_purpose = EXCLUDED.document_purpose,
+    primary_supporting_ledger = EXCLUDED.primary_supporting_ledger,
+    supports_dimensions = EXCLUDED.supports_dimensions,
+    cash_movement = EXCLUDED.cash_movement,
+    supports_items = EXCLUDED.supports_items,
+    status = EXCLUDED.status,
+    updated_date = NOW(),
+    updated_actor_type = 'SYSTEM';

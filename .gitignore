@@ -1,7 +1,7 @@
 /apps/
 /.run/
 /.package-sources/
-/.dev/
+/.dev/  
 /node_modules/
 /.env.development
 /.env.local
