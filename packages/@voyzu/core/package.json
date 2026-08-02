@@ -1,5 +1,6 @@
 {
   "name": "@voyzu/core",
+  "description": "Official Voyzu core business package for organization, finance, inventory, tax, and reporting.",
   "version": "0.1.0",
   "private": true,
   "type": "module",
