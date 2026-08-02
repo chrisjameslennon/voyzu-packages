@@ -114,6 +114,7 @@ export const coreServiceModules = [
 
 export const corePackage = {
   dependencies: [],
+  rootPaths: ["/organization", "/finance"],
   modules: [
     organizationModule,
     companiesModule,
@@ -241,6 +242,7 @@ export const corePackage = {
       "./install/db/seed/financial-document-default.seed.sql",
       "./install/db/seed/fiscal-year.seed.sql",
       "./install/db/seed/fiscal-period.seed.sql",
+      "./install/db/seed/home-page.seed.sql",
     ],
   },
   scripts: {
