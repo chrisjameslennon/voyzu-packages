@@ -38,3 +38,14 @@ and exposes it through the `sampleData` package script:
 ```shell
 npm run voyzu:run-script -- @voyzu/core sampleData
 ```
+
+For disposable development databases, Core also exposes a destructive reset
+script which drops and recreates every Core-owned table before restoring Core
+seed data:
+
+```shell
+npm run voyzu:run-script -- @voyzu/core purgeAndRecreate
+```
+
+This command must not be run against a database containing data that needs to
+be retained.
