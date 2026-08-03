@@ -25,3 +25,4 @@ export {
 } from "./util/colors";
 export { ledgerName } from "../ledger";
 export { financeApiUrl } from "./finance-api";
+export { ScopedAuditPanel, type ScopedAuditPanelProps } from "./ScopedAuditPanel";

@@ -135,8 +135,14 @@ export function IceCreamDetail({
           creationUser={current.audit.created.user}
           updatedActorType={current.audit.updated.actorType}
           updatedUser={current.audit.updated.user}
-          auditHref={`/ice-creams/audit?entityType=ice_cream&entityId=${current.id}`}
-          mutationId={current.audit.updated.mutationId ?? current.audit.created.mutationId}
+          auditHref={(() => {
+            const mutationId = current.audit.updated.mutationId ?? current.audit.created.mutationId;
+            const filter = mutationId
+              ? `mutationId=${encodeURIComponent(mutationId)}`
+              : `entityType=ice_cream&entityId=${current.id}`;
+            return `/ice-creams/audit?${filter}&from=ice-cream&fromCode=${encodeURIComponent(current.code)}`;
+          })()}
+          onNavigate={(href) => router.push(href)}
         />
       </aside>
 

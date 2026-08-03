@@ -1,6 +1,6 @@
 "use client";
 
-import { AuditPanel } from "@voyzu/audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import {
   CompanyPageTitleBadges,

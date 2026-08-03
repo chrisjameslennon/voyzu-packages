@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { AuditEventListResponseDto, AuditEventResponseDto } from "@voyzu/audit/types";
 import { getAuditActionColor } from "@voyzu/audit/client";
 import { Badge, Breadcrumbs, DataTable, Input, type DataTableColumn } from "@voyzu/ui-components";
+import { DetailBackButton } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
@@ -31,6 +32,7 @@ export function IceCreamAuditEventList({ initialFilters = {} }: { initialFilters
   const [page, setPage] = useState(1);
   const [cursor, setCursor] = useState<string | null>(null);
   const cursors = useRef<(string | null)[]>([null]);
+  const backCode = initialFilters.from === "ice-cream" ? initialFilters.fromCode : undefined;
 
   const query = useMemo(() => {
     const params = new URLSearchParams({ packageCode: PACKAGE_CODE });
@@ -76,6 +78,7 @@ export function IceCreamAuditEventList({ initialFilters = {} }: { initialFilters
         <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>history</span></div>
         <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Ice Cream Audit Log</h1>
         <div className={layout.slotTitleByline}><p className={typography.headingByline}>Changes recorded by the Ice Creams package.</p></div>
+        {backCode ? <DetailBackButton fallbackHref={`/ice-creams/${encodeURIComponent(backCode)}`} /> : null}
       </div>
       <div className={styles.toolbar}>
         <Input search value={search} placeholder="Search audit log..." onChange={(event) => changeSearch(event.target.value)} />

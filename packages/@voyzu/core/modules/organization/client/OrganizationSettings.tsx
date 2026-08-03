@@ -1,6 +1,6 @@
 "use client";
 
-import { AuditPanel } from "@voyzu/audit/client";
+import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/organization-audit/client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
