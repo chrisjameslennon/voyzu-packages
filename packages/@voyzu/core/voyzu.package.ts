@@ -1,6 +1,7 @@
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
 import { coreInstall } from "./install/manifest";
+import { coreUninstall } from "./uninstall/manifest";
 import { purgeAndRecreate } from "./scripts/db/purge-and-recreate";
 import { install as installSampleData } from "./scripts/sample-data/init";
 
@@ -171,6 +172,7 @@ export const corePackage = {
     taxModule,
   ],
   install: coreInstall,
+  uninstall: coreUninstall,
   scripts: {
     purgeAndRecreate,
     sampleData: installSampleData,

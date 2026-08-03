@@ -3,7 +3,7 @@ import { iceCreamAuditModule } from "./modules/audit/module";
 import { iceCreamsModule } from "./modules/ice-creams/module";
 import { iceCreamReportsModule } from "./modules/reports/module";
 import { install as installSampleData } from "./scripts/sample-data/install";
-import { uninstall } from "./scripts/uninstall/uninstall";
+import { iceCreamsUninstall } from "./uninstall/manifest";
 
 /**
  * Golden Voyzu package manifest.
@@ -24,9 +24,9 @@ export const iceCreamsPackage = {
       "./install/db/seed/ice-cream-flavor.seed.sql",
     ],
   },
+  uninstall: iceCreamsUninstall,
   scripts: {
     sampleData: installSampleData,
-    uninstall,
   },
 } as const satisfies VoyzuPackageDefinition;
 

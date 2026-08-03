@@ -15,7 +15,7 @@ self-contained: its only business dependency is Voyzu auditing.
 - `modules/types` — package-owned DTO contracts; it is not an installable module.
 - `navigation` — optional top and left navigation exported by `package.json`.
 - `scripts/sample-data` — optional repeatable demonstration-data installation.
-- `scripts/uninstall` — explicit destructive removal, separated from installation.
+- `uninstall` — ordered database removal artifacts used by `voyzu:uninstall-package`.
 
 The package conforms to the current Voyzu package and module contracts and can
 be installed or linked with the standard Voyzu package commands.
