@@ -1,9 +1,19 @@
 {
   "name": "@voyzu/core",
+  "repository": "https://github.com/chrisjameslennon/voyzu-packages.git",
   "description": "Official Voyzu core business package for organization, finance, inventory, tax, and reporting.",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "voyzu": {
+    "voyzu-package": true,
+    "allowInstall": true,
+    "dependencies": [],
+    "rootPaths": ["/organization", "/finance"],
+    "settings": {
+      "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
+    }
+  },
   "exports": {
     "./voyzu-package": {
       "types": "./voyzu.package.ts",
@@ -685,12 +695,5 @@
   "devDependencies": {
     "@types/archiver": "^8.0.0",
     "@types/react-dom": "^19.2.4"
-  },
-  "voyzu": {
-    "voyzu-package": true,
-    "isActive": true,
-    "settings": {
-      "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
-    }
   }
 }

@@ -115,8 +115,6 @@ export const coreServiceModules = [
 ] as const;
 
 export const corePackage = {
-  dependencies: [],
-  rootPaths: ["/organization", "/finance"],
   modules: [
     organizationModule,
     companiesModule,

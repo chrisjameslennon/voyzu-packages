@@ -10,8 +10,6 @@ import { uninstall } from "./scripts/uninstall/uninstall";
  *
  **/
 export const iceCreamsPackage = {
-  dependencies: [],
-  rootPaths: ["/ice-creams"],
   modules: [
     iceCreamsModule,
     iceCreamReportsModule,
