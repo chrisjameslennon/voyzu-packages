@@ -17,7 +17,7 @@ export function UglyHomePage() {
           <h2>No shared design system here</h2>
           <p>
             No Voyzu controls. No Voyzu layout helpers. No Voyzu styling. Just package-owned HTML and CSS,
-            questionable colour choices, and entirely too many exclamation marks.
+            questionable colour choices, and entirely too many exclamation marks!!!!!
           </p>
         </section>
       </main>
