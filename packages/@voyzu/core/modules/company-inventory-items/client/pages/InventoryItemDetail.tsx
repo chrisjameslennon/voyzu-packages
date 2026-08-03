@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { CompanyPageTitleBadges, financeApiUrl, getHasPostingsColor, getStatusSemanticColor } from "@voyzu/core/common/client";
@@ -166,3 +166,4 @@ export function InventoryItemDetail({ item, categories, listPath = "/finance/inv
     </div>
   );
 }
+

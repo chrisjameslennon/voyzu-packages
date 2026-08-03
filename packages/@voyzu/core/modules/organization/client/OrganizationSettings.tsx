@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/audit/organization/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -227,3 +227,4 @@ export function OrganizationSettings({
     </div>
   );
 }
+

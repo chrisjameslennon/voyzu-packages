@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/audit/organization/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { getStatusSemanticColor } from "@voyzu/core/common/client";
@@ -181,3 +181,4 @@ export function OrganizationInventoryCategoryDetail({
     </div>
   );
 }
+

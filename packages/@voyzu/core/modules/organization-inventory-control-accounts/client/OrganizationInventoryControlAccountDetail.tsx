@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/audit/organization/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useState } from "react";
@@ -32,3 +32,4 @@ export function OrganizationInventoryControlAccountDetail({ account, glAccounts,
     <main className={layoutStyles.mainSection}><OrganizationInventoryControlAccountDetailsForm account={currentAccount} glAccounts={selectableGlAccounts} glAccountId={glAccountId} disabled={!canSelectAlternative} onGlAccountChange={setGlAccountId} /></main><Toast isVisible={toastVisible} onClose={() => setToastVisible(false)} message={`Control account ${currentAccount.code} saved`} />
   </div>;
 }
+

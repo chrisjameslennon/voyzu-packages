@@ -1,10 +1,10 @@
 "use client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
-import { CompanyPageTitleBadges, financeApiUrl, getAuditActionColor } from "@voyzu/core/common/client";
+import { CompanyPageTitleBadges, getAuditActionColor } from "@voyzu/core/common/client";
 import type { AuditEventListResponseDto } from "@voyzu/audit/types";
 import type { AuditEventResponseDto } from "@voyzu/audit/types";
-import type { CompanyAuditCountResponseDto } from "@voyzu/audit/types";
+import type { AuditEventCountResponseDto } from "@voyzu/audit/types";
 import type { FinancialYearResponseDto } from "@voyzu/core/types/modules/financial-years";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
@@ -49,7 +49,7 @@ const ENTITY_TYPE_OPTIONS = [
 ];
 
 const ITEMS_PER_PAGE = 100;
-const API_BASE_PATH = "/audit";
+const API_BASE_PATH = "/api/audit";
 const ROUTE_BASE_PATH = "/finance/audit";
 
 function toIso(date: Date): string {
@@ -240,8 +240,9 @@ export function FinanceAuditEventList({
     const controller = new AbortController();
     void (async () => {
       try {
-        const res = await fetch(await financeApiUrl(`${API_BASE_PATH}/count`), { signal: controller.signal });
-        const response = (await res.json()) as CompanyAuditCountResponseDto;
+        const params = new URLSearchParams({ packageCode: "@voyzu/core", companyId });
+        const res = await fetch(`${API_BASE_PATH}/count?${params.toString()}`, { signal: controller.signal });
+        const response = (await res.json()) as AuditEventCountResponseDto;
         setTotalDbCount(response.count);
       } catch {
         // ignore abort
@@ -340,6 +341,7 @@ export function FinanceAuditEventList({
     const suppressDatesForFetch = dateFilterSuppressed || urlDateModeAll;
 
     const params = new URLSearchParams();
+    params.set("packageCode", "@voyzu/core");
     if (debouncedSearch) params.set("search", debouncedSearch);
     if (companyId) params.set("companyId", companyId);
     if (entityType) params.set("entityType", entityType);
@@ -355,7 +357,7 @@ export function FinanceAuditEventList({
 
     const doFetch = async () => {
       try {
-          const res = await fetch(await financeApiUrl(`${API_BASE_PATH}?${params.toString()}`), { signal: controller.signal });
+          const res = await fetch(`${API_BASE_PATH}?${params.toString()}`, { signal: controller.signal });
         if (res.ok) {
           const list = await res.json() as AuditEventListResponseDto;
           setItems(list.items);
@@ -421,6 +423,7 @@ export function FinanceAuditEventList({
 
   const handleExportAll = async () => {
     const params = new URLSearchParams();
+    params.set("packageCode", "@voyzu/core");
     if (debouncedSearch) params.set("search", debouncedSearch);
     if (companyId) params.set("companyId", companyId);
     if (entityType) params.set("entityType", entityType);
@@ -430,7 +433,7 @@ export function FinanceAuditEventList({
     if (debouncedActorId) params.set("actorId", debouncedActorId);
     if (!dateFilterSuppressed && dateFrom) params.set("dateFrom", dateFrom);
     if (!dateFilterSuppressed && dateTo) params.set("dateTo", dateTo);
-    const res = await fetch(await financeApiUrl(`${API_BASE_PATH}/export?${params.toString()}`));
+    const res = await fetch(`${API_BASE_PATH}/export?${params.toString()}`);
     if (!res.ok) return;
     const rows = await res.json() as AuditEventResponseDto[];
     await downloadCsv(rows, `${slug}_full_dataset`);

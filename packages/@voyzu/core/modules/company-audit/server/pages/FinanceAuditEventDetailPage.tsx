@@ -19,7 +19,7 @@ export async function FinanceAuditEventDetailPage({ id }: FinanceAuditEventDetai
     resolveServerCompanyApiContext(),
   ]);
 
-  if (!event || event.companyId !== company.companyId) {
+  if (!event || event.packageCode !== "@voyzu/core" || event.companyId !== company.companyId) {
     notFound();
   }
 

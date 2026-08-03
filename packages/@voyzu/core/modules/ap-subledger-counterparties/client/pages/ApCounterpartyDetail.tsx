@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
@@ -31,3 +31,4 @@ export function ApCounterpartyDetail({ counterparty }: { counterparty: ApCounter
     </div>
   );
 }
+

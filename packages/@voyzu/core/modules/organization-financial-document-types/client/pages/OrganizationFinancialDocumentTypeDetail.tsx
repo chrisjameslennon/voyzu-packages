@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/audit/organization/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
@@ -84,3 +84,4 @@ export function OrganizationFinancialDocumentTypeDetail({
     </div>
   );
 }
+

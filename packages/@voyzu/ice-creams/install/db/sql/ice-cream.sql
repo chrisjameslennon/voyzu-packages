@@ -43,4 +43,5 @@ DROP TRIGGER IF EXISTS ice_cream_audit_trigger ON ice_cream;
 CREATE TRIGGER ice_cream_audit_trigger
   BEFORE INSERT OR UPDATE OR DELETE ON ice_cream
   FOR EACH ROW
-  EXECUTE FUNCTION audit_trigger_fn();
+  EXECUTE FUNCTION audit_trigger_fn('@voyzu/ice-creams');
+

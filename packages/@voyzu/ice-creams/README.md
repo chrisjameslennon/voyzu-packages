@@ -11,7 +11,7 @@ self-contained: its only business dependency is Voyzu auditing.
 - `install/db/seed` — idempotent reference-flavour seeds.
 - `modules/ice-creams` — owning CRUD module, APIs, UI, policy and tests.
 - `modules/reports` — the All Ice Creams report and report API.
-- `modules/audit` — package-specific routes backed by the preinstalled `@voyzu/audit` package.
+- `modules/audit` — package-owned pages that query the single platform audit API with the Ice Creams package code.
 - `modules/types` — package-owned DTO contracts; it is not an installable module.
 - `navigation` — optional top and left navigation exported by `package.json`.
 - `scripts/sample-data` — optional repeatable demonstration-data installation.

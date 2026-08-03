@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useState } from "react";
@@ -32,3 +32,4 @@ export function CompanyTaxControlAccountDetail({ account, glAccounts, apiPath, l
     <main className={layoutStyles.mainSection}><CompanyTaxControlAccountDetailsForm account={currentAccount} glAccounts={selectableGlAccounts} glAccountId={glAccountId} disabled={readOnly || !canSelectAlternative} onGlAccountChange={setGlAccountId} /></main><Toast isVisible={toastVisible} onClose={() => setToastVisible(false)} message={`Control account ${currentAccount.code} saved`} />
   </div>;
 }
+

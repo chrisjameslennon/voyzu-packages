@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { CompanySettingsTitleBadges, financeApiUrl } from "@voyzu/core/common/client";
@@ -233,3 +233,4 @@ export function CompanyGlAccountDetail({ account, categories, readOnly = false, 
     </div>
   );
 }
+

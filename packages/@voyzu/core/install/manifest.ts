@@ -47,6 +47,7 @@ export const coreInstall = {
     "./install/db/objects/trigger.journal_validate.create.sql",
     "./install/db/objects/trigger.journal_line_validate.create.sql",
     "./install/db/objects/triggers.business.attach.sql",
+    "./install/db/objects/audit-company-reference.attach.sql",
     "./install/db/objects/audit-triggers.attach.sql",
   ],
   seedSql: [

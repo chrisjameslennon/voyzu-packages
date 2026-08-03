@@ -510,6 +510,18 @@
       "types": "./modules/organization/module.ts",
       "import": "./modules/organization/module.ts"
     },
+    "./organization-audit": {
+      "types": "./modules/organization-audit/module.ts",
+      "import": "./modules/organization-audit/module.ts"
+    },
+    "./organization-audit/client": {
+      "types": "./modules/organization-audit/client/index.ts",
+      "import": "./modules/organization-audit/client/index.ts"
+    },
+    "./organization-audit/server": {
+      "types": "./modules/organization-audit/server/index.ts",
+      "import": "./modules/organization-audit/server/index.ts"
+    },
     "./organization/domain/operation-policy": {
       "types": "./modules/organization/domain/operation-policy.ts",
       "import": "./modules/organization/domain/operation-policy.ts"

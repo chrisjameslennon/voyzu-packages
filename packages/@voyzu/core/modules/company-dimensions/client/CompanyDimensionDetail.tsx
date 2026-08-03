@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { AuditPanel } from "@voyzu/audit/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
@@ -466,3 +466,4 @@ function DimensionValueModal({
     </div>
   );
 }
+

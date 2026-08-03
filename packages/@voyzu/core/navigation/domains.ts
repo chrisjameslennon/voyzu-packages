@@ -1,4 +1,3 @@
-import { organizationAuditModule } from "@voyzu/audit/organization";
 import type {
   VoyzuPackageModuleDefinition,
   VoyzuPackageNavigationDomain,
@@ -19,7 +18,6 @@ function routeIds(modules: readonly VoyzuPackageModuleDefinition[]) {
 
 const organizationRouteIds = [
   ...routeIds(coreOrganizationModules),
-  ...routeIds([organizationAuditModule]),
 ];
 
 const financeRouteIds = routeIds(coreFinanceModules);

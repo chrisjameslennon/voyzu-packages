@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { OrganizationAuditPanel } from "@voyzu/audit/organization/client";
+import { AuditPanel } from "@voyzu/audit/client";
 import {
   Badge,
   Breadcrumbs,
@@ -127,7 +127,7 @@ export function IceCreamDetail({
           <label className={typography.fieldLabel}>Status</label>
           <Badge variant="soft" size="x-large" color={current.status === "ACTIVE" ? "success" : "neutral"}>{current.status}</Badge>
         </div>
-        <OrganizationAuditPanel
+        <AuditPanel
           id={current.id}
           creationDate={current.audit.created.date}
           updatedDate={current.audit.updated.date}

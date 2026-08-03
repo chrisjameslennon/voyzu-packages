@@ -15,7 +15,7 @@ import { organizationInventoryItemPostingProfilesModule } from "@voyzu/core/orga
 import { organizationDimensionsModule } from "@voyzu/core/organization-dimensions";
 import { organizationInventoryCategoriesModule } from "@voyzu/core/organization-inventory-categories";
 import { organizationInventoryItemsModule } from "@voyzu/core/organization-inventory-items";
-import { organizationAuditModule } from "@voyzu/audit/organization";
+import { organizationAuditModule } from "@voyzu/core/organization-audit";
 import { organizationReportsModule } from "@voyzu/core/organization-reports";
 
 export const organizationLeftNav = [

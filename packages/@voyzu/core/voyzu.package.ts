@@ -38,6 +38,7 @@ import { financialYearsModule } from "./modules/financial-years/module";
 import { inventoryLedgerModule } from "./modules/inventory-ledger/module";
 import { journalsModule } from "./modules/journals/module";
 import { organizationModule } from "./modules/organization/module";
+import { organizationAuditModule } from "./modules/organization-audit/module";
 import { organizationApControlAccountsModule } from "./modules/organization-ap-control-accounts/module";
 import { organizationArControlAccountsModule } from "./modules/organization-ar-control-accounts/module";
 import { organizationBankCashAccountsModule } from "./modules/organization-bank-cash-accounts/module";
@@ -57,6 +58,7 @@ import { taxLedgerModule } from "./modules/tax-ledger/module";
 
 export const coreOrganizationModules = [
   organizationModule,
+  organizationAuditModule,
   companiesModule,
   organizationBankCashAccountsModule,
   organizationApControlAccountsModule,
@@ -117,6 +119,7 @@ export const coreServiceModules = [
 export const corePackage = {
   modules: [
     organizationModule,
+    organizationAuditModule,
     companiesModule,
     organizationBankCashAccountsModule,
     organizationApControlAccountsModule,
