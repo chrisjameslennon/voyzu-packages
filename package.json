@@ -9,6 +9,7 @@
     "voyzu:update-repo": "npm --prefix .run run voyzu:update-repo --",
     "voyzu:initialize": "npm --prefix .run run voyzu:initialize",
     "voyzu:install-package": "npm --prefix .run run voyzu:install-package --",
+    "voyzu:uninstall": "npm --prefix .run/voyzu run voyzu:uninstall-package --",
     "voyzu:uninstall-package": "npm --prefix .run run voyzu:uninstall-package --",
     "voyzu:list-packages": "npm --prefix .run run voyzu:list-packages",
     "voyzu:link-package": "npm --prefix .run run voyzu:link-package --",
