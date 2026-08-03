@@ -23,6 +23,10 @@
       "types": "./navigation/domains.ts",
       "import": "./navigation/domains.ts"
     },
+    "./navigation/left-nav-header": {
+      "types": "./navigation/left-nav-header.tsx",
+      "import": "./navigation/left-nav-header.tsx"
+    },
     "./scripts/sample-data": {
       "types": "./scripts/sample-data/init.ts",
       "import": "./scripts/sample-data/init.ts"
