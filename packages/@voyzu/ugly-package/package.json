@@ -1,0 +1,31 @@
+{
+  "name": "@voyzu/ugly-package",
+  "version": "0.1.0",
+  "description": "A deliberately ugly demonstration of the freedom available to Voyzu package developers.",
+  "repository": "https://github.com/chrisjameslennon/voyzu-packages.git",
+  "private": true,
+  "type": "module",
+  "voyzu": {
+    "voyzu-package": true,
+    "allowInstall": true,
+    "dependencies": [],
+    "rootPaths": ["/ugly-package"],
+    "settings": {
+      "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
+    }
+  },
+  "exports": {
+    "./voyzu-package": {
+      "types": "./voyzu.package.ts",
+      "import": "./voyzu.package.ts"
+    },
+    "./navigation/top-nav": {
+      "types": "./navigation/top-nav.topnav.ts",
+      "import": "./navigation/top-nav.topnav.ts"
+    }
+  },
+  "peerDependencies": {
+    "@voyzu/types": "^0.1.0",
+    "react": "^19"
+  }
+}

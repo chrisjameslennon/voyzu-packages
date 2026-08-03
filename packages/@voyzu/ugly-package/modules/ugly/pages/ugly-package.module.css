@@ -1,0 +1,176 @@
+.everything {
+  min-height: 100%;
+  color: #302050;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
+.home {
+  background: #ffd9e8;
+}
+
+.freedom {
+  background: repeating-linear-gradient(135deg, #f7ff4a 0 28px, #62e6dc 28px 56px);
+}
+
+.ourOwnTopNav {
+  display: flex;
+  gap: 2.75rem;
+  min-height: 3.6rem;
+  align-items: center;
+  padding: 0 2rem;
+  background: #ffb300;
+  border-bottom: 7px dotted #e50067;
+  font-family: Arial, sans-serif;
+}
+
+.ourOwnTopNav a {
+  color: purple;
+  font-size: 1rem;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.ourOwnTopNav a[aria-current="page"] {
+  text-decoration: underline;
+}
+
+.homeContent,
+.freedomContent {
+  padding: 3rem clamp(1.5rem, 7vw, 7rem) 5rem;
+}
+
+.homeContent h1,
+.freedomContent h1 {
+  max-width: 58rem;
+  margin: 0;
+  color: #d10062;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 0.9;
+  text-shadow: 5px 5px 0 #fff36a, 9px 9px 0 #318cff;
+  transform: rotate(-1deg);
+}
+
+.tinyIntroduction {
+  display: inline-block;
+  margin: 0 0 1.5rem 4rem;
+  padding: 0.4rem 0.8rem;
+  background: #111;
+  color: #50ff50;
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.22em;
+}
+
+.loudParagraph {
+  max-width: 55rem;
+  margin: 3rem 0 1rem;
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+
+.warningBox {
+  width: fit-content;
+  margin: 2rem 0 4rem 9%;
+  padding: 1.3rem 2rem;
+  background: #7dff00;
+  border: 8px ridge #7600a8;
+  box-shadow: 14px 14px 0 #ff6c00;
+  font-family: Georgia, serif;
+  font-size: 1.25rem;
+  transform: rotate(1.5deg);
+}
+
+.crookedSection {
+  max-width: 47rem;
+  padding: 1.5rem 2.5rem;
+  background: #9ee9ff;
+  border: 5px dashed #ed0072;
+  transform: rotate(-0.7deg);
+}
+
+.crookedSection h2 {
+  color: #003eb8;
+  font-family: Impact, fantasy;
+  font-size: 2.4rem;
+  letter-spacing: 0.05em;
+}
+
+.freedomContent {
+  color: #111;
+}
+
+.ransomNote {
+  max-width: 70rem;
+  margin: 3.5rem 0 2rem;
+  padding: 1rem;
+  background: white;
+  color: #8c005f;
+  font-family: "Courier New", monospace;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: -12px 11px 0 #2444ff;
+}
+
+.badColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  gap: 1rem;
+  align-items: start;
+  margin-top: 4rem;
+}
+
+.badColumns section {
+  padding: 1.75rem;
+  background: #fff;
+  border: 6px double #111;
+}
+
+.badColumns section:last-child {
+  margin-top: 5rem;
+  background: #ff8ad8;
+  transform: rotate(2deg);
+}
+
+.badColumns h2 {
+  margin-top: 0;
+  color: #1500bd;
+  font-family: Impact, fantasy;
+  font-size: 2rem;
+}
+
+.badColumns li {
+  margin: 0.8rem 0;
+}
+
+.lastWord {
+  margin: 5rem 0 0;
+  color: #ec004c;
+  font-size: 2rem;
+  font-style: italic;
+  text-align: right;
+  text-decoration: underline wavy #3200ff;
+}
+
+@media (max-width: 700px) {
+  .ourOwnTopNav {
+    gap: 1.25rem;
+    padding: 0 1rem;
+  }
+
+  .homeContent,
+  .freedomContent {
+    padding: 2rem 1rem 4rem;
+  }
+
+  .tinyIntroduction,
+  .warningBox {
+    margin-left: 0;
+  }
+
+  .badColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .badColumns section:last-child {
+    margin-top: 0;
+  }
+}
