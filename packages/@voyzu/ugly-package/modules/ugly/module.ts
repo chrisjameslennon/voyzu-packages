@@ -1,6 +1,7 @@
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 
 import { DeveloperFreedomPage } from "./pages/DeveloperFreedomPage";
+import { ByoDependenciesPage } from "./pages/ByoDependenciesPage";
 import { UglyHomePage } from "./pages/UglyHomePage";
 
 export const uglyModule = {
@@ -16,7 +17,14 @@ export const uglyModule = {
       id: "voyzu.ugly-package.page.developer-freedom",
       path: "/ugly-package/developer-freedom",
       Page: DeveloperFreedomPage,
-      pageTitle: "Developer Freedom",
+      pageTitle: "the bare minimum",
+      auth: { required: true, minRole: "COMPANY_USER" },
+    },
+    byoDependencies: {
+      id: "voyzu.ugly-package.page.byo-dependencies",
+      path: "/ugly-package/byo-dependencies",
+      Page: ByoDependenciesPage,
+      pageTitle: "BYO Dependencies",
       auth: { required: true, minRole: "COMPANY_USER" },
     },
   },

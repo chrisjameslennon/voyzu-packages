@@ -5,25 +5,20 @@ export function DeveloperFreedomPage() {
   return (
     <UglyPackagePage active="freedom">
       <main className={styles.freedomContent}>
-        <h1>Developer Freedom</h1>
+        <h1>the bare minimum</h1>
         <p className={styles.ransomNote}>
-          Voyzu supplies the platform. The package developer still controls the experience inside the package.
+          Voyzu supplies the platform. The package developer controls the experience inside the package.
         </p>
         <div className={styles.badColumns}>
           <section>
             <h2>What Voyzu requires</h2>
             <ul>
-              <li>A valid package identity and manifest</li>
-              <li>A registered module with real page routes</li>
-              <li>Navigation that points to a registered route</li>
-            </ul>
-          </section>
-          <section>
-            <h2>What this package refuses</h2>
-            <ul>
-              <li>The shared component library</li>
-              <li>The shared visual language</li>
-              <li>A left navigation panel</li>
+              <li>
+                A valid <a href="https://voyzu.gitbook.io/docs/extending-voyzu/package-contract">package.json</a> and <a href="https://voyzu.gitbook.io/docs/extending-voyzu/package-contract">voyzu.package.ts</a>
+              </li>
+              <li>
+                At least one module. Modules must adhere to the <a href="https://voyzu.gitbook.io/docs/extending-voyzu/module-contract">module contract</a>.
+              </li>
             </ul>
           </section>
         </div>

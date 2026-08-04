@@ -49,3 +49,8 @@ npm run voyzu:run-script -- @voyzu/core purgeAndRecreate
 
 This command must not be run against a database containing data that needs to
 be retained.
+
+## Documentation
+
+Package documentation belongs under `docs`. Public-facing and online-help
+source begins at [`docs/public/README.md`](docs/public/README.md).

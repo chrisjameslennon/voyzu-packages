@@ -12,6 +12,10 @@
   background: repeating-linear-gradient(135deg, #f7ff4a 0 28px, #62e6dc 28px 56px);
 }
 
+.dependencies {
+  background: #e8e1dc;
+}
+
 .ourOwnTopNav {
   display: flex;
   gap: 2.75rem;
@@ -98,6 +102,91 @@
   color: #111;
 }
 
+.dependenciesContent {
+  min-height: calc(100vh - 7.1rem);
+  padding: 3.5rem clamp(1.5rem, 7vw, 7rem) 5rem;
+  background: #e8e1dc;
+  color: #3f3936;
+  font-family: Georgia, serif;
+}
+
+.dependenciesContent h1 {
+  margin: 0;
+  color: #654f65;
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.dependenciesIntroduction {
+  max-width: 48rem;
+  margin: 1.5rem 0 2.5rem;
+  color: #655d58;
+  font-size: 1.2rem;
+  line-height: 1.7;
+}
+
+.catCard {
+  display: grid;
+  grid-template-columns: minmax(15rem, 24rem) minmax(18rem, 30rem);
+  gap: 2.5rem;
+  width: fit-content;
+  padding: 1.5rem;
+  background: #f5f0ec;
+  border: 1px solid #b9aaa1;
+  box-shadow: 0 8px 24px rgba(57, 43, 37, 0.12);
+}
+
+.catPicture {
+  display: block;
+  width: 100%;
+  max-height: 22rem;
+  object-fit: cover;
+  filter: saturate(0.65) sepia(0.08);
+}
+
+.catControls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  line-height: 1.6;
+}
+
+.catControls a {
+  color: #66506e;
+  text-decoration: underline;
+}
+
+.catControls button {
+  width: fit-content;
+  padding: 0.7rem 1rem;
+  border: 1px solid #756775;
+  border-radius: 2px;
+  background: #ded3dc;
+  color: #403641;
+  font: inherit;
+  cursor: pointer;
+}
+
+.catControls button:hover {
+  background: #d2c3cf;
+}
+
+.catName {
+  min-height: 2.5rem;
+  color: #654f65;
+  font-size: 1.8rem;
+  font-style: italic;
+}
+
+.assetNote {
+  max-width: 54rem;
+  margin-top: 2rem;
+  color: #746b66;
+  line-height: 1.6;
+}
+
 .ransomNote {
   max-width: 70rem;
   margin: 3.5rem 0 2rem;
@@ -111,10 +200,7 @@
 }
 
 .badColumns {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
-  gap: 1rem;
-  align-items: start;
+  max-width: 52rem;
   margin-top: 4rem;
 }
 
@@ -122,12 +208,6 @@
   padding: 1.75rem;
   background: #fff;
   border: 6px double #111;
-}
-
-.badColumns section:last-child {
-  margin-top: 5rem;
-  background: #ff8ad8;
-  transform: rotate(2deg);
 }
 
 .badColumns h2 {
@@ -139,6 +219,11 @@
 
 .badColumns li {
   margin: 0.8rem 0;
+}
+
+.badColumns a {
+  color: purple;
+  text-decoration: underline;
 }
 
 .lastWord {
@@ -157,7 +242,8 @@
   }
 
   .homeContent,
-  .freedomContent {
+  .freedomContent,
+  .dependenciesContent {
     padding: 2rem 1rem 4rem;
   }
 
@@ -166,11 +252,9 @@
     margin-left: 0;
   }
 
-  .badColumns {
+  .catCard {
     grid-template-columns: 1fr;
+    width: auto;
   }
 
-  .badColumns section:last-child {
-    margin-top: 0;
-  }
 }

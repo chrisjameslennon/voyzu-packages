@@ -19,3 +19,8 @@ self-contained: its only business dependency is Voyzu auditing.
 
 The package conforms to the current Voyzu package and module contracts and can
 be installed or linked with the standard Voyzu package commands.
+
+## Documentation
+
+Package documentation belongs under `docs`. Public-facing and online-help
+source begins at [`docs/public/README.md`](docs/public/README.md).

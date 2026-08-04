@@ -24,6 +24,9 @@
       "import": "./navigation/top-nav.topnav.ts"
     }
   },
+  "dependencies": {
+    "cat-names": "^4.0.0"
+  },
   "peerDependencies": {
     "@voyzu/types": "^0.1.0",
     "react": "^19"
