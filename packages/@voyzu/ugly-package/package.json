@@ -25,7 +25,8 @@
     }
   },
   "dependencies": {
-    "cat-names": "^4.0.0"
+    "cat-names": "^4.0.0",
+    "shiki": "^4.4.1"
   },
   "peerDependencies": {
     "@voyzu/types": "^0.1.0",
