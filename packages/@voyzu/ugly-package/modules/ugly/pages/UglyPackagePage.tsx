@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import styles from "./ugly-package.module.css";
 
 interface UglyPackagePageProps {
-  active: "home" | "freedom" | "dependencies";
+  active: "home" | "freedom" | "dependencies" | "request-response";
   children: ReactNode;
 }
 
@@ -12,7 +12,9 @@ export function UglyPackagePage({ active, children }: UglyPackagePageProps) {
     ? styles.home
     : active === "freedom"
       ? styles.freedom
-      : styles.dependencies;
+      : active === "dependencies"
+        ? styles.dependencies
+        : styles.requestResponse;
 
   return (
     <div className={`${styles.everything} ${pageClass}`}>
@@ -29,6 +31,12 @@ export function UglyPackagePage({ active, children }: UglyPackagePageProps) {
           aria-current={active === "dependencies" ? "page" : undefined}
         >
           BYO Dependencies
+        </a>
+        <a
+          href="/ugly-package/raw-request-response"
+          aria-current={active === "request-response" ? "page" : undefined}
+        >
+          Raw request / response
         </a>
       </nav>
       {children}

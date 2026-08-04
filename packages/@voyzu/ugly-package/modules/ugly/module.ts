@@ -2,7 +2,9 @@ import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 
 import { DeveloperFreedomPage } from "./pages/DeveloperFreedomPage";
 import { ByoDependenciesPage } from "./pages/ByoDependenciesPage";
+import { RawRequestResponsePage } from "./pages/RawRequestResponsePage";
 import { UglyHomePage } from "./pages/UglyHomePage";
+import { handleRawRequestResponse } from "./server/api/raw-request-response.http.handlers";
 
 export const uglyModule = {
   pageRoutes: {
@@ -27,8 +29,21 @@ export const uglyModule = {
       pageTitle: "BYO Dependencies",
       auth: { required: true, minRole: "COMPANY_USER" },
     },
+    rawRequestResponse: {
+      id: "voyzu.ugly-package.page.raw-request-response",
+      path: "/ugly-package/raw-request-response",
+      Page: RawRequestResponsePage,
+      pageTitle: "Raw request / response",
+      auth: { required: true, minRole: "COMPANY_USER" },
+    },
   },
-  apiDefinitions: {},
+  apiDefinitions: {
+    rawRequestResponse: {
+      method: "GET",
+      path: "/ugly-package/raw-request-response",
+      handler: handleRawRequestResponse,
+    },
+  },
 } as const satisfies VoyzuPackageModuleDefinition;
 
 export default uglyModule;

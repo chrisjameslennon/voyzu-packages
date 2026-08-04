@@ -16,6 +16,10 @@
   background: #e8e1dc;
 }
 
+.requestResponse {
+  background: #eee9e1;
+}
+
 .ourOwnTopNav {
   display: flex;
   gap: 2.75rem;
@@ -222,6 +226,136 @@
   line-height: 1.6;
 }
 
+.rawExchangeContent {
+  min-height: calc(100vh - 7.1rem);
+  padding: 3rem clamp(1.5rem, 5vw, 5rem) 5rem;
+  background: #eee9e1;
+  color: #332f2a;
+  font-family: Arial, sans-serif;
+}
+
+.rawExchangeContent h1 {
+  margin: 0;
+  color: #4e4356;
+  font-family: Georgia, serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 400;
+}
+
+.pagesOverview {
+  display: grid;
+  grid-template-columns: minmax(20rem, 1fr) minmax(24rem, 0.9fr);
+  gap: 2rem;
+  align-items: start;
+  max-width: 76rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.requestResponseExplanation {
+  max-width: 65rem;
+  margin: 0 0 2rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.requestResponseExplanation h2 {
+  margin: 2rem 0 0.35rem;
+  color: #584b5c;
+  font-family: Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+}
+
+.pagesOverview .requestResponseExplanation h2 {
+  margin-top: 0;
+}
+
+.requestResponseExplanation p {
+  margin: 0.5rem 0;
+}
+
+.pageExample {
+  min-width: 0;
+  padding: 1rem;
+  overflow-x: auto;
+  background: #ded6cc;
+  border-left: 6px solid #8b7489;
+  box-shadow: 0 5px 16px rgba(57, 43, 37, 0.12);
+}
+
+.pageExample :global(.shiki) {
+  margin: 0;
+  padding: 1rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.tryItOut {
+  width: fit-content;
+  margin: 1rem 0 0.5rem;
+  color: #ec006c;
+  font-family: Impact, fantasy;
+  font-size: 2.8rem;
+  letter-spacing: 0.05em;
+  text-shadow: 3px 3px 0 #fff000, 6px 6px 0 #3f66ff;
+  transform: rotate(-1deg);
+}
+
+.tryItOutByline {
+  margin: 0 0 1rem;
+}
+
+.sendAgainButton {
+  padding: 0.65rem 1rem;
+  border: 1px solid #655a68;
+  background: #ded5df;
+  color: #302a33;
+  cursor: pointer;
+}
+
+.exchangeColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.exchangeColumns section {
+  min-width: 0;
+  padding: 1rem;
+  background: #e3ddd4;
+  border: 1px solid #bcb2a5;
+}
+
+.exchangeColumns h2 {
+  margin: 0 0 0.75rem;
+  color: #584b5c;
+  font-family: Georgia, serif;
+  font-weight: 400;
+}
+
+.exchangeColumns pre {
+  max-height: 34rem;
+  margin: 0;
+  padding: 1rem;
+  overflow: auto;
+  background: #191919;
+  color: #e7e2d8;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.exchangeError {
+  color: #8b1d2c;
+}
+
+.redactionNote {
+  color: #746c63;
+  font-size: 0.85rem;
+}
+
 .ransomNote {
   max-width: 70rem;
   margin: 3.5rem 0 2rem;
@@ -295,6 +429,14 @@
   .dependenciesOverview {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .exchangeColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .pagesOverview {
+    grid-template-columns: 1fr;
   }
 
 }
