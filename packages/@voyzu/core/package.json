@@ -692,8 +692,7 @@
     }
   },
   "dependencies": {
-    "archiver": "^8.0.0",
-    "server-only": "^0.0.1"
+    "archiver": "^8.0.0"
   },
   "peerDependencies": {
     "@voyzu/api": "^0.1.0",
@@ -705,8 +704,10 @@
     "@voyzu/ui-layout": "^0.1.0",
     "@voyzu/ui-style": "^0.1.0",
     "@voyzu/ui-surface": "^0.1.0",
+    "dotenv": "^17.4.2",
     "next": "^16",
-    "react": "^19"
+    "react": "^19",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/archiver": "^8.0.0",
