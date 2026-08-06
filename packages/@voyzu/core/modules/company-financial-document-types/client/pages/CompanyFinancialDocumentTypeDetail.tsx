@@ -58,13 +58,13 @@ export function CompanyFinancialDocumentTypeDetail({
             <div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>webhook</span></div>
             <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>{processor.name}</h1>
           </div>
-        </div>
-        <div className={layoutStyles.slotTitleMeta}>
-          <CompanySettingsTitleBadges
-            showOrganizationBaseSettings={showOrganizationBaseSettings}
-            showArchived={showArchived}
-            showReadOnly={readOnly}
-          />
+          <div className={layoutStyles.slotTitleMeta}>
+            <CompanySettingsTitleBadges
+              showOrganizationBaseSettings={showOrganizationBaseSettings}
+              showArchived={showArchived}
+              showReadOnly={readOnly}
+            />
+          </div>
         </div>
         <div className={layoutStyles.slotActions}>
           <div className={detailStyles.headerActions}><DetailBackButton fallbackHref={`${routePrefix}/financial-document-types`} /></div>

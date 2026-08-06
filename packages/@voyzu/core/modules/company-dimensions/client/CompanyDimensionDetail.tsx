@@ -256,13 +256,13 @@ export function CompanyDimensionDetail({
               {dimension.name}
             </h1>
           </div>
-        </div>
-        <div className={layoutStyles.slotTitleMeta}>
-          <CompanySettingsTitleBadges
-            showOrganizationBaseSettings={showOrganizationBaseSettings}
-            showArchived={showArchived}
-            showReadOnly={readOnly}
-          />
+          <div className={layoutStyles.slotTitleMeta}>
+            <CompanySettingsTitleBadges
+              showOrganizationBaseSettings={showOrganizationBaseSettings}
+              showArchived={showArchived}
+              showReadOnly={readOnly}
+            />
+          </div>
         </div>
         <div className={layoutStyles.slotActions}>
           <div className={detailStyles.headerActions}>

@@ -337,14 +337,14 @@ export function CompanyInventoryItemPostingProfilesListContent({
         <div className={layout.slotTitle}>
           <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>webhook</span></div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Item Posting Profiles</h1>
+          <div className={layout.slotTitleMeta}>
+            <CompanySettingsTitleBadges
+              showOrganizationBaseSettings={showOrganizationBaseSettings}
+              showArchived={showArchived}
+              showReadOnly={readOnly}
+            />
+          </div>
           <div className={layout.slotTitleByline}><p className={typography.headingByline}>Item posting profiles define default revenue, cost, purchase expense, consumption, and adjustment posting for item workflows.</p></div>
-        </div>
-        <div className={layout.slotTitleMeta}>
-          <CompanySettingsTitleBadges
-            showOrganizationBaseSettings={showOrganizationBaseSettings}
-            showArchived={showArchived}
-            showReadOnly={readOnly}
-          />
         </div>
         <div className={layout.slotActions}>
           <Button variant="primary" icon="add" className={layout.slotPrimaryAction} disabled={readOnly} onClick={() => setIsAddOpen(true)}>

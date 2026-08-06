@@ -168,13 +168,13 @@ export function CompanyInventoryItemPostingProfileDetail({
             <div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>webhook</span></div>
             <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{profile.profile_name}</h1>
           </div>
-        </div>
-        <div className={layout.slotTitleMeta}>
-          <CompanySettingsTitleBadges
-            showOrganizationBaseSettings={showOrganizationBaseSettings}
-            showArchived={showArchived}
-            showReadOnly={readOnly}
-          />
+          <div className={layout.slotTitleMeta}>
+            <CompanySettingsTitleBadges
+              showOrganizationBaseSettings={showOrganizationBaseSettings}
+              showArchived={showArchived}
+              showReadOnly={readOnly}
+            />
+          </div>
         </div>
         <div className={layout.slotActions}>
           <div className={detailStyles.headerActions}>
