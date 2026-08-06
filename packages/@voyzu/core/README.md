@@ -54,3 +54,7 @@ be retained.
 
 Package documentation belongs under `docs`. Public-facing and online-help
 source begins at [`docs/public/README.md`](docs/public/README.md).
+
+Core implementation patterns intended for Core maintainers rather than public
+online help belong under [`docs/patterns`](docs/patterns). See the
+[company-switcher pattern](docs/patterns/company-switcher.md).
