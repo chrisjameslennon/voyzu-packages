@@ -21,7 +21,8 @@ export const companyFinancialDocumentTypesModule = {
     detail: {
           id: "voyzu.company-financial-document-types.page.detail",
           pageTitle: "Financial Document Type",
-          helpPath: "modules-help/company-ledger/financial-document-types",
+          helpPathResolver: ({ params }: { params: Readonly<Record<string, string>> }) =>
+            `help-core/financial-documents/${params.code.toLowerCase()}`,
           path: "/finance/integration/financial-document-types/[code]",
           Page: CompanyFinancialDocumentTypeDetailPage,
           breadcrumbBase: [
