@@ -905,7 +905,7 @@ function postingDetails(context: ResolvedContext, generated: GeneratedPosting, h
       base_currency_amount: row.base_currency_amount,
       description: row.description,
       memo: row.memo,
-      dimensions: generated.journalLines.find((line) => line.line_number === row.line_number)?.dimensions?.map((dimension) => ({
+      dimensions: (generated.journalLines.find((line) => line.line_number === row.line_number)?.dimensions ?? []).map((dimension) => ({
         dimension_code: dimension.dimension_code,
         dimension_name: dimension.dimension_name,
         dimension_value_name: dimension.dimension_value_name,
@@ -923,7 +923,7 @@ function postingDetails(context: ResolvedContext, generated: GeneratedPosting, h
       base_currency_amount: line.base_currency_amount,
       description: line.description,
       memo: line.memo,
-      dimensions: line.dimensions?.map((dimension) => ({
+      dimensions: (line.dimensions ?? []).map((dimension) => ({
         dimension_code: dimension.dimension_code,
         dimension_name: dimension.dimension_name,
         dimension_value_name: dimension.dimension_value_name,

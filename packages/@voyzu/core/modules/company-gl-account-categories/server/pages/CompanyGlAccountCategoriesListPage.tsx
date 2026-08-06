@@ -25,18 +25,18 @@ export async function CompanyGlAccountCategoriesListPage() {
         <div className={layoutStyles.slotBreadcrumb}>
           <Breadcrumbs />
         </div>
-        <div className={layoutStyles.slotTitleMeta}>
-          <CompanySettingsTitleBadges
-            showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
-            showArchived={settingsUiState.isArchived}
-            showReadOnly={settingsUiState.readOnly}
-          />
-        </div>
         <div className={layoutStyles.slotTitle}>
           <div className={listStyles.titleIcon}>
             <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>account_balance</span>
           </div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Reporting Categories</h1>
+          <div className={layoutStyles.slotTitleMeta}>
+            <CompanySettingsTitleBadges
+              showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+              showArchived={settingsUiState.isArchived}
+              showReadOnly={settingsUiState.readOnly}
+            />
+          </div>
           <div className={layoutStyles.slotTitleByline}>
             <p className={typography.headingByline}>
               Reporting categories are system defined and cannot be added or deleted.

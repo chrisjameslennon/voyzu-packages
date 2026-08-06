@@ -516,7 +516,7 @@ function postingDetails(context: Context, generated: GeneratedPosting, header?: 
       base_currency_amount: row.base_currency_amount,
       description: row.description,
       document_memo: row.memo,
-      dimensions: generated.journalLines.find((line) => line.line_number === row.line_number)?.dimensions,
+      dimensions: generated.journalLines.find((line) => line.line_number === row.line_number)?.dimensions ?? [],
     }))
     : generated.journalLines.map((line) => ({
       id: null,
@@ -530,7 +530,7 @@ function postingDetails(context: Context, generated: GeneratedPosting, header?: 
       base_currency_amount: line.base_currency_amount,
       description: line.description,
       document_memo: line.memo,
-      dimensions: line.dimensions,
+      dimensions: line.dimensions ?? [],
     }));
 
   return {

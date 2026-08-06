@@ -13,6 +13,11 @@ CREATE TABLE IF NOT EXISTS journal_line_dimension (
     creation_user_id      TEXT,
     creation_mutation_id UUID,
 
+    updated_date audit_timestamp,
+    updated_actor_type actor_type,
+    updated_user_id TEXT,
+    updated_mutation_id UUID,
+
     deletion_date audit_timestamp,
     deletion_actor_type actor_type,
     deletion_user_id TEXT,

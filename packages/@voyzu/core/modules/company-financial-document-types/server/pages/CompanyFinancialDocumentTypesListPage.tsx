@@ -26,14 +26,14 @@ export async function CompanyFinancialDocumentTypesListPage() {
         <div className={layoutStyles.slotTitle}>
           <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>webhook</span></div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Financial Document Types</h1>
+          <div className={layoutStyles.slotTitleMeta}>
+            <CompanySettingsTitleBadges
+              showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+              showArchived={settingsUiState.isArchived}
+              showReadOnly={settingsUiState.readOnly}
+            />
+          </div>
           <div className={layoutStyles.slotTitleByline}><p className={typography.headingByline}>Financial document types define processor behavior for generated accounting documents.</p></div>
-        </div>
-        <div className={layoutStyles.slotTitleMeta}>
-          <CompanySettingsTitleBadges
-            showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
-            showArchived={settingsUiState.isArchived}
-            showReadOnly={settingsUiState.readOnly}
-          />
         </div>
       </header>
       <CompanyFinancialDocumentTypesListContent

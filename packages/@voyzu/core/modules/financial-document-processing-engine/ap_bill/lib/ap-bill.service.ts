@@ -497,7 +497,7 @@ function postingDetails(context: ResolvedContext, generated: GeneratedPosting, h
       base_currency_amount: row.base_currency_amount,
       description: row.description,
       memo: row.memo,
-      dimensions: generated.journalLines.find((line) => line.line_number === row.line_number)?.dimensions,
+      dimensions: generated.journalLines.find((line) => line.line_number === row.line_number)?.dimensions ?? [],
     }))
     : generated.journalLines.map((line) => ({
       id: null,
@@ -511,7 +511,7 @@ function postingDetails(context: ResolvedContext, generated: GeneratedPosting, h
       base_currency_amount: line.base_currency_amount,
       description: line.description,
       memo: line.memo,
-      dimensions: line.dimensions,
+      dimensions: line.dimensions ?? [],
     }));
 
   return {

@@ -208,7 +208,7 @@ function journalLineDto(line: LedgerJournalPostingLine, inserted?: JournalLineRo
     base_currency_amount: line.base_currency_amount,
     description: line.description,
     document_memo: line.memo ?? null,
-    dimensions: line.dimensions?.map((dimension) => ({
+    dimensions: (line.dimensions ?? []).map((dimension) => ({
       dimension_code: dimension.dimension_code,
       dimension_name: dimension.dimension_name,
       dimension_value_name: dimension.dimension_value_name,

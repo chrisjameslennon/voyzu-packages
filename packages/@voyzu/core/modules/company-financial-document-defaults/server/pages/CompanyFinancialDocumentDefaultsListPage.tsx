@@ -26,14 +26,14 @@ export async function CompanyFinancialDocumentDefaultsListPage() {
         <div className={layoutStyles.slotTitle}>
           <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>webhook</span></div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Financial Document Defaults</h1>
+          <div className={layoutStyles.slotTitleMeta}>
+            <CompanySettingsTitleBadges
+              showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+              showArchived={settingsUiState.isArchived}
+              showReadOnly={settingsUiState.readOnly}
+            />
+          </div>
           <div className={layoutStyles.slotTitleByline}><p className={typography.headingByline}>Financial document defaults map posting slots to general ledger or bank and cash accounts.</p></div>
-        </div>
-        <div className={layoutStyles.slotTitleMeta}>
-          <CompanySettingsTitleBadges
-            showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
-            showArchived={settingsUiState.isArchived}
-            showReadOnly={settingsUiState.readOnly}
-          />
         </div>
       </header>
       <CompanyFinancialDocumentDefaultsListContent
