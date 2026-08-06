@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb, type DbExecutor } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { BalanceSheetLineDto, BalanceSheetResponseDto } from "@voyzu/core/types/modules/company-reports/balance-sheet";
@@ -47,7 +48,7 @@ export async function getOrganizationName(): Promise<string> {
   return rows[0]?.organization_name != null ? String(rows[0].organization_name) : "";
 }
 
-export async function listFinancialYearsWithPostings(companyId: number): Promise<FinancialYearResponseDto[]> {
+async function listFinancialYearsWithPostingsUnchecked(companyId: number): Promise<FinancialYearResponseDto[]> {
   const { rows } = await getDb().query(
     `SELECT fy.*,
        EXISTS (
@@ -87,7 +88,7 @@ export async function listFinancialYearsWithPostings(companyId: number): Promise
   })).filter((year) => year.hasPostings);
 }
 
-export async function getBalanceSheet(
+async function getBalanceSheetUnchecked(
   companyId: number,
   asAtDate?: string | null,
 ): Promise<BalanceSheetResponseDto> {
@@ -154,3 +155,6 @@ export async function getBalanceSheet(
     totalLiabilitiesAndEquity: totalLiabilities + totalEquity,
   };
 }
+
+export const listFinancialYearsWithPostings = withResponseValidation(listFinancialYearsWithPostingsUnchecked, "listFinancialYearsWithPostings");
+export const getBalanceSheet = withResponseValidation(getBalanceSheetUnchecked, "getBalanceSheet");

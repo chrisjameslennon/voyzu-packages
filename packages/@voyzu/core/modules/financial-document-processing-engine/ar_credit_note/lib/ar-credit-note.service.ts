@@ -1,11 +1,14 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ArCreditNoteRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
 import type { ArAdjustmentPostingResponseDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
 
 import { processArAdjustment, type ProcessArAdjustmentOptions } from "../../core/ar_adjustments/lib/ar-adjustment.service";
 
-export async function processArCreditNote(
+async function processArCreditNoteUnchecked(
   input: ArCreditNoteRequestDto,
   options: ProcessArAdjustmentOptions = {},
 ): Promise<ArAdjustmentPostingResponseDto> {
   return processArAdjustment("AR_CREDIT_NOTE", input, options);
 }
+
+export const processArCreditNote = withResponseValidation(processArCreditNoteUnchecked, "processArCreditNote");

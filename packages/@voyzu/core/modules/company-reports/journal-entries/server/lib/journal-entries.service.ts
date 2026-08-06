@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { JournalEntriesResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -28,7 +29,7 @@ async function fetchCompany(companyId: number): Promise<{
   };
 }
 
-export async function getJournalEntries(
+async function getJournalEntriesUnchecked(
   companyId: number,
   fromDate: string,
   toDate: string,
@@ -51,3 +52,5 @@ export async function getJournalEntries(
     lines,
   };
 }
+
+export const getJournalEntries = withResponseValidation(getJournalEntriesUnchecked, "getJournalEntries");

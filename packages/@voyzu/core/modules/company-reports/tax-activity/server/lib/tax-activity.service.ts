@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { TaxActivityResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -35,7 +36,7 @@ async function fetchCompany(db: ReturnType<typeof getDb>, companyId: number): Pr
   };
 }
 
-export async function getTaxActivity(
+async function getTaxActivityUnchecked(
   companyId: number,
   periodStartDate: string,
   periodEndDate: string,
@@ -63,3 +64,5 @@ export async function getTaxActivity(
     trialBalanceReconciled: Math.abs(summary.closingTaxPositionImpact + trialBalanceTaxMovement) < 0.01,
   };
 }
+
+export const getTaxActivity = withResponseValidation(getTaxActivityUnchecked, "getTaxActivity");

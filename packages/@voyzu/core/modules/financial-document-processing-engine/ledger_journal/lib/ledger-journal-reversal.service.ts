@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type { BankCashJournalDetailsDto } from "@voyzu/core/types/modules/financial-document-processing-engine/bank-cash-details.dto";
 import type { LedgerJournalReversalRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ledger-journal-reversal.request.dto";
@@ -219,7 +220,7 @@ function postingDetails(context: ResolvedContext, postedJournal?: JournalHeaderR
   };
 }
 
-export async function processLedgerJournalReversal(
+async function processLedgerJournalReversalUnchecked(
   input: LedgerJournalReversalRequestDto,
   options: ProcessLedgerJournalReversalOptions = {},
 ): Promise<LedgerJournalReversalPostingResponseDto> {
@@ -293,3 +294,4 @@ export async function processLedgerJournalReversal(
   });
 }
 
+export const processLedgerJournalReversal = withResponseValidation(processLedgerJournalReversalUnchecked, "processLedgerJournalReversal");

@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import type {
   ApLedgerEntryDocumentReportApplicationDto,
@@ -59,7 +60,7 @@ function documentTotals(documentTypeCode: string, rows: ApDocumentLineRow[], tax
   return [{ label: "Amount", amount: total((line) => line.gross_amount) }];
 }
 
-export async function getApLedgerEntryDocumentReport(
+async function getApLedgerEntryDocumentReportUnchecked(
   company: CompanyResponseDto,
   entry: ApSubledgerEntryResponseDto,
 ): Promise<ApLedgerEntryDocumentReportResponseDto | null> {
@@ -116,3 +117,5 @@ export async function getApLedgerEntryDocumentReport(
     applications,
   };
 }
+
+export const getApLedgerEntryDocumentReport = withResponseValidation(getApLedgerEntryDocumentReportUnchecked, "getApLedgerEntryDocumentReport");

@@ -6,6 +6,7 @@ import type {
 } from "@voyzu/core/types/modules/tax";
 import { ConflictError, DataError, NotFoundError } from "@voyzu/capability/errors";
 import { getDb } from "@voyzu/capability/db";
+import { checkResponse } from "@voyzu/capability/validation";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../common/server";
 
 import type {
@@ -21,21 +22,25 @@ import type {
 } from "../db/tax.row.types";
 import { TaxRepo } from "../db/tax.repo";
 import { toTaxAuthorityDto, toTaxComponentDto, toTaxRuleDto } from "./tax.mapper";
+import { validateTaxAuthorityResponse, validateTaxComponentResponse, validateTaxRuleResponse } from "./tax.validator";
 
 function conflictMessage(entity: string): string {
   return `A ${entity} with this code already exists`;
 }
 
 async function enrichTaxAuthority(row: Parameters<typeof toTaxAuthorityDto>[0]): Promise<TaxAuthorityResponseDto> {
-  return withAuditActors(toTaxAuthorityDto(row), row);
+  const dto = await withAuditActors(toTaxAuthorityDto(row), row);
+  return checkResponse(dto, validateTaxAuthorityResponse(dto), `tax authority (id=${dto.id})`);
 }
 
 async function enrichTaxRule(row: Parameters<typeof toTaxRuleDto>[0]): Promise<TaxRuleResponseDto> {
-  return withAuditActors(toTaxRuleDto(row), row);
+  const dto = await withAuditActors(toTaxRuleDto(row), row);
+  return checkResponse(dto, validateTaxRuleResponse(dto), `tax rule (id=${dto.id})`);
 }
 
 async function enrichTaxComponent(row: Parameters<typeof toTaxComponentDto>[0]): Promise<TaxComponentResponseDto> {
-  return withAuditActors(toTaxComponentDto(row), row);
+  const dto = await withAuditActors(toTaxComponentDto(row), row);
+  return checkResponse(dto, validateTaxComponentResponse(dto), `tax component (id=${dto.id})`);
 }
 
 export async function createTaxAuthority(input: InsertTaxAuthorityRow): Promise<TaxAuthorityResponseDto> {

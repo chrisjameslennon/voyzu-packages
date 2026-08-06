@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ArInvoiceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
 import type { InventoryIssueRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
 import type {
@@ -594,7 +595,7 @@ function inventoryIssueRequest(context: ResolvedContext): InventoryIssueRequestD
   };
 }
 
-export async function processArInvoice(
+async function processArInvoiceUnchecked(
   input: ArInvoiceRequestDto,
   options: ProcessArInvoiceOptions = {},
 ): Promise<ArInvoicePostingResponseDto> {
@@ -781,3 +782,4 @@ export async function processArInvoice(
   });
 }
 
+export const processArInvoice = withResponseValidation(processArInvoiceUnchecked, "processArInvoice");

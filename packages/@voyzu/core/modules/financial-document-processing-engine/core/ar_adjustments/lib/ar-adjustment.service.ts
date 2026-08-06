@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr, EntryType } from "@voyzu/core/types/modules/core";
 import type { ArCreditNoteRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
 import type { ArOpeningBalanceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-opening-balance.request.dto";
@@ -1091,7 +1092,7 @@ async function insertTaxLines(repo: ArAdjustmentPostingRepo, context: ResolvedCo
   }));
 }
 
-export async function processArAdjustment(
+async function processArAdjustmentUnchecked(
   documentType: ArAdjustmentDocumentType,
   input: RequestDto,
   options: ProcessArAdjustmentOptions = {},
@@ -1194,3 +1195,4 @@ export async function processArAdjustment(
   });
 }
 
+export const processArAdjustment = withResponseValidation(processArAdjustmentUnchecked, "processArAdjustment");

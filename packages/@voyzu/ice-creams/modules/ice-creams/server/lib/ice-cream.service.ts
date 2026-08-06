@@ -6,6 +6,7 @@ import {
   InputValidationError,
   NotFoundError,
 } from "@voyzu/capability/errors";
+import { checkResponse } from "@voyzu/capability/validation";
 import {
   createCreationAuditStamp,
   createUpdateAuditStamp,
@@ -58,11 +59,7 @@ function throwIfBlocked(blockers: Array<{ message: string }>): void {
 
 async function checkedDto(row: IceCreamRow): Promise<IceCreamResponseDto> {
   const dto = await withAuditActors(toDto(row), row);
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    throw new Error(`Invalid ice-cream response (${row.code}): ${errors.join("; ")}`);
-  }
-  return dto;
+  return checkResponse(dto, validateResponse(dto), `ice cream (${row.code})`);
 }
 
 function checkedDtos(rows: IceCreamRow[]): Promise<IceCreamResponseDto[]> {

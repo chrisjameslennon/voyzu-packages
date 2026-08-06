@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type {
@@ -632,7 +633,7 @@ function buildTrialBalanceReconciliation(
   };
 }
 
-export async function getFinancialIntegrity(
+async function getFinancialIntegrityUnchecked(
   companyId: number,
   fromDate: string,
   toDate: string,
@@ -743,3 +744,5 @@ export async function getFinancialIntegrity(
     ],
   };
 }
+
+export const getFinancialIntegrity = withResponseValidation(getFinancialIntegrityUnchecked, "getFinancialIntegrity");

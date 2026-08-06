@@ -20,13 +20,10 @@ import type { CountryRow } from "../db/country.row.types";
 
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./country.mapper";
 import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./country.validator";
+import { checkResponse } from "@voyzu/capability/validation";
 
 function checkedResponse(dto: CountryResponseDto): CountryResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    throw new Error(`Invalid country response (code=${dto.code}): ${errors.join("; ")}`);
-  }
-  return dto;
+  return checkResponse(dto, validateResponse(dto), `country (code=${dto.code})`);
 }
 
 async function enrichRow(row: CountryRow): Promise<CountryResponseDto> {

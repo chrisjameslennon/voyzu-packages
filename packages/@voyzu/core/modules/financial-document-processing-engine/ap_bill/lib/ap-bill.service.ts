@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ApBillRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-bill.request.dto";
 import type { InventoryReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
 import type {
@@ -620,7 +621,7 @@ function inventoryReceiptRequest(context: ResolvedContext): InventoryReceiptRequ
   };
 }
 
-export async function processApBill(input: ApBillRequestDto, options: ProcessApBillOptions = {}): Promise<ApBillPostingResponseDto> {
+async function processApBillUnchecked(input: ApBillRequestDto, options: ProcessApBillOptions = {}): Promise<ApBillPostingResponseDto> {
   validateRequest(input);
   const rawRequest: ApBillRequestDto = input;
   const repo = new ApBillPostingRepo(getDb());
@@ -807,3 +808,4 @@ export async function processApBill(input: ApBillRequestDto, options: ProcessApB
   });
 }
 
+export const processApBill = withResponseValidation(processApBillUnchecked, "processApBill");

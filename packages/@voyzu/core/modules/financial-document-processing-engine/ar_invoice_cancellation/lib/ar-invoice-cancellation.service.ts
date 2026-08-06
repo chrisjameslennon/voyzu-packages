@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type { ArInvoiceCancellationRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto";
 import type {
@@ -710,7 +711,7 @@ function withDocumentId(request: ArInvoiceCancellationRequestDto, journalHeaderI
   return { ...request, document_id: `WD-${journalHeaderId}` };
 }
 
-export async function processArInvoiceCancellation(input: ArInvoiceCancellationRequestDto, options: ProcessOptions = {}): Promise<ArInvoiceCancellationPostingResponseDto> {
+async function processArInvoiceCancellationUnchecked(input: ArInvoiceCancellationRequestDto, options: ProcessOptions = {}): Promise<ArInvoiceCancellationPostingResponseDto> {
   validateRequest(input);
   const rawRequest: ArInvoiceCancellationRequestDto = input;
   const repo = new JournalRepo(getDb());
@@ -808,3 +809,4 @@ export async function processArInvoiceCancellation(input: ArInvoiceCancellationR
   });
 }
 
+export const processArInvoiceCancellation = withResponseValidation(processArInvoiceCancellationUnchecked, "processArInvoiceCancellation");

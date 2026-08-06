@@ -1,13 +1,24 @@
 import { getDb } from "@voyzu/capability";
+import { checkResponse } from "@voyzu/capability/validation";
 import { withAuditActors } from "@voyzu/core/common/server";
 import type { JournalResponseDto } from "@voyzu/core/types/modules/journals";
 
 import { JournalRepo } from "../db/journal.repo";
 import { toDto } from "./journal.mapper";
+import { validateResponse } from "./journal.validator";
+
+async function enrichRow(
+  row: Parameters<typeof toDto>[0],
+  lines?: Parameters<typeof toDto>[1],
+  dimensions?: Parameters<typeof toDto>[2],
+): Promise<JournalResponseDto> {
+  const dto = await withAuditActors(toDto(row, lines, dimensions), row);
+  return checkResponse(dto, validateResponse(dto), `journal (id=${dto.id})`);
+}
 
 export async function listJournals(companyId: number): Promise<JournalResponseDto[]> {
   const rows = await new JournalRepo(getDb()).listByCompany(companyId);
-  return Promise.all(rows.map(async (row) => withAuditActors(toDto(row), row)));
+  return Promise.all(rows.map((row) => enrichRow(row)));
 }
 
 export async function listJournalsWithLines(companyId: number): Promise<JournalResponseDto[]> {
@@ -22,9 +33,7 @@ export async function listJournalsWithLines(companyId: number): Promise<JournalR
     linesByJournalId.set(line.journal_header_id, journalLines);
   }
 
-  return Promise.all(rows.map(async (row) => (
-    withAuditActors(toDto(row, linesByJournalId.get(row.id) ?? []), row)
-  )));
+  return Promise.all(rows.map((row) => enrichRow(row, linesByJournalId.get(row.id) ?? [])));
 }
 
 export async function getJournal(companyId: number, code: string): Promise<JournalResponseDto | null> {
@@ -38,5 +47,5 @@ export async function getJournal(companyId: number, code: string): Promise<Journ
     lineDimensionsMap.set(line.id, await repo.listLineDimensions(line.id));
   }));
 
-  return withAuditActors(toDto(row, lines, lineDimensionsMap), row);
+  return enrichRow(row, lines, lineDimensionsMap);
 }

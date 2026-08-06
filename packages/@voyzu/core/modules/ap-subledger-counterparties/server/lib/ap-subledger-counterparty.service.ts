@@ -1,8 +1,10 @@
 import { getDb } from "@voyzu/capability/db";
+import { checkResponse } from "@voyzu/capability/validation";
 import { getAuditActors } from "@voyzu/core/common/server";
 import type { ApCounterpartyResponseDto } from "@voyzu/core/types/modules/ap-subledger";
 
 import { ApSubledgerCounterpartyRepo } from "../db/ap-subledger-counterparty.repo";
+import { validateResponse } from "./ap-subledger-counterparty.validator";
 
 function repo(): ApSubledgerCounterpartyRepo {
   return new ApSubledgerCounterpartyRepo(getDb());
@@ -10,7 +12,7 @@ function repo(): ApSubledgerCounterpartyRepo {
 
 async function toCounterpartyDto(row: Awaited<ReturnType<ApSubledgerCounterpartyRepo["listCounterparties"]>>[number]): Promise<ApCounterpartyResponseDto> {
   const auditActors = await getAuditActors(row);
-  return {
+  const dto: ApCounterpartyResponseDto = {
     id: row.id,
     companyId: row.company_id,
     code: row.code,
@@ -36,6 +38,7 @@ async function toCounterpartyDto(row: Awaited<ReturnType<ApSubledgerCounterparty
       },
     },
   };
+  return checkResponse(dto, validateResponse(dto), `AP counterparty (id=${dto.id})`);
 }
 
 export async function listApCounterparties(companyId: number): Promise<ApCounterpartyResponseDto[]> {

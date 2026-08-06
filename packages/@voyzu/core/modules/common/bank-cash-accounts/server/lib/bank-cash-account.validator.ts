@@ -1,6 +1,7 @@
 import type {
   BankCashAccountCreateRequestDto,
   BankCashAccountPatchRequestDto,
+  BankCashAccountResponseDto,
   BankCashAccountUpdateRequestDto,
 } from "@voyzu/core/types/modules/bank-cash-accounts";
 
@@ -85,4 +86,30 @@ function createPatchValidator() {
 
 export function validatePatch(input: BankCashAccountPatchRequestDto): string[] {
   return validateFields(input, createPatchValidator());
+}
+
+function createResponseValidator() {
+  return {
+    id: (value) => Number.isInteger(value) && value > 0 ? null : "id must be a positive integer",
+    code: validateCode,
+    ledger: (value) => value === "BANK_CASH" ? null : "ledger must be BANK_CASH",
+    type: validateType,
+    glAccountId: validateGlAccountId,
+    glAccount: (value) => value === null || Boolean(value.code?.trim() && value.name?.trim() && value.accountType) ? null : "glAccount is invalid",
+    bankName: (value) => optionalText(value, "bankName", 50),
+    bankBranchName: (value) => optionalText(value, "bankBranchName", 50),
+    bankAccountIdentifier: (value) => optionalText(value, "bankAccountIdentifier", 100),
+    cashAccountIdentifier: (value) => optionalText(value, "cashAccountIdentifier", 100),
+    status: (value) => value === "ACTIVE" || value === "INACTIVE" ? null : "status is invalid",
+    hasPostings: (value) => typeof value === "boolean" ? null : "hasPostings must be a boolean",
+    companiesWithPostings: (value) => Array.isArray(value) && value.every((code) => typeof code === "string") ? null : "companiesWithPostings is invalid",
+    linkedBy: (value) => Array.isArray(value) ? null : "linkedBy must be an array",
+    audit: (value) => value?.created?.date && value?.updated?.date ? null : "audit timestamps are required",
+  } satisfies {
+    [K in keyof BankCashAccountResponseDto]-?: FieldValidator<BankCashAccountResponseDto[K]>;
+  };
+}
+
+export function validateResponse(input: BankCashAccountResponseDto): string[] {
+  return validateFields(input, createResponseValidator());
 }

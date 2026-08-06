@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type {
   BankCashJournalDetailsDto,
@@ -239,7 +240,7 @@ function postingDetails(context: ResolvedContext, postedJournal?: JournalHeaderR
   };
 }
 
-export async function processLedgerJournal(
+async function processLedgerJournalUnchecked(
   input: LedgerJournalRequestDto,
   options: ProcessLedgerJournalOptions = {},
 ): Promise<LedgerJournalPostingResponseDto> {
@@ -316,3 +317,4 @@ export async function processLedgerJournal(
   });
 }
 
+export const processLedgerJournal = withResponseValidation(processLedgerJournalUnchecked, "processLedgerJournal");

@@ -3,12 +3,14 @@ import type { InventoryControlAccountPatchRequestDto } from "@voyzu/core/types/m
 import type { InventoryControlAccountSettingResponseDto } from "@voyzu/core/types/modules/inventory-control-accounts";
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
+import { checkResponse } from "@voyzu/capability/validation";
 import { UpdateGLAccount } from "@voyzu/core/common/inventory-control-accounts/domain/operation-policy";
 import { createUpdateAuditStamp, withAuditActors } from "../../../server";
 
 import { InventoryControlAccountRepo } from "../db/inventory-control-account.repo";
 import type { InventoryControlAccountRow } from "../db/inventory-control-account.row.types";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { validateResponse } from "./inventory-control-account.validator";
 
 const REQUIRED_ACCOUNT_TYPE: Record<string, AccountType | null> = {
   INVENTORY_CONTROL: "ASSET",
@@ -39,6 +41,11 @@ function toDto(row: InventoryControlAccountRow): InventoryControlAccountSettingR
   };
 }
 
+async function enrichRow(row: InventoryControlAccountRow): Promise<InventoryControlAccountSettingResponseDto> {
+  const dto = await withAuditActors(toDto(row), row);
+  return checkResponse(dto, validateResponse(dto), `inventory control account (${dto.code})`);
+}
+
 async function scopedCompanyId(companyId?: number): Promise<number> {
   return companyId === undefined
     ? (await resolveTemplateSettingsScope()).companyId
@@ -51,12 +58,12 @@ async function assertWritableScope(companyId?: number): Promise<void> {
 
 export async function listInventoryControlAccountSettings(companyId?: number): Promise<InventoryControlAccountSettingResponseDto[]> {
   const rows = await new InventoryControlAccountRepo(getDb()).list(await scopedCompanyId(companyId));
-  return Promise.all(rows.map((row) => withAuditActors(toDto(row), row)));
+  return Promise.all(rows.map(enrichRow));
 }
 
 export async function getInventoryControlAccountSetting(code: string, companyId?: number): Promise<InventoryControlAccountSettingResponseDto | null> {
   const row = await new InventoryControlAccountRepo(getDb()).get(await scopedCompanyId(companyId), code);
-  return row ? withAuditActors(toDto(row), row) : null;
+  return row ? enrichRow(row) : null;
 }
 
 export async function patchInventoryControlAccountSetting(
@@ -87,6 +94,6 @@ export async function patchInventoryControlAccountSetting(
     return repo.patchGlAccount(resolvedCompanyId, code, input.glAccountId as number, await createUpdateAuditStamp());
   });
 
-  return withAuditActors(toDto(row), row);
+  return enrichRow(row);
 }
 

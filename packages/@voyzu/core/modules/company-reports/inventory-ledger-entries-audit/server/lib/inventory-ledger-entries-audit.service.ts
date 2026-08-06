@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { InventoryLedgerEntriesAuditResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -28,7 +29,7 @@ async function fetchCompany(companyId: number): Promise<{
   };
 }
 
-export async function getInventoryLedgerEntriesAudit(
+async function getInventoryLedgerEntriesAuditUnchecked(
   companyId: number,
   fromDate: string,
   toDate: string,
@@ -52,5 +53,4 @@ export async function getInventoryLedgerEntriesAudit(
   };
 }
 
-
-
+export const getInventoryLedgerEntriesAudit = withResponseValidation(getInventoryLedgerEntriesAuditUnchecked, "getInventoryLedgerEntriesAudit");

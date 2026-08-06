@@ -2,6 +2,7 @@ import { InputValidationError } from "@voyzu/capability/errors";
 import type { InventoryItemCreateRequestDto } from "@voyzu/core/types/modules/inventory-items";
 import type { InventoryItemPatchRequestDto } from "@voyzu/core/types/modules/inventory-items";
 import type { InventoryItemUpdateRequestDto } from "@voyzu/core/types/modules/inventory-items";
+import type { InventoryItemResponseDto } from "@voyzu/core/types/modules/inventory-items";
 
 type FieldValidator<T> = (value: T) => string | null;
 
@@ -95,4 +96,34 @@ function createPatchValidator() {
 
 export function validatePatch(input: InventoryItemPatchRequestDto) {
   assertValid(input, createPatchValidator());
+}
+
+function createResponseValidator() {
+  return {
+    id: (value) => Number.isInteger(value) && value > 0 ? null : "id must be a positive integer",
+    item_code: (value) => validateCode("item_code", value),
+    item_name: (value) => requiredText(value, "item_name"),
+    description: (value) => typeof value === "string" ? null : "description must be text",
+    item_type: validateItemType,
+    category_code: (value) => validateCode("category_code", value),
+    unit_code: validateUnit,
+    status: (value) => value === "ACTIVE" || value === "INACTIVE" ? null : "status is invalid",
+    hasPostings: (value) => typeof value === "boolean" ? null : "hasPostings must be a boolean",
+    quantity_on_hand_derived: (value) => validateNumberOrNull("quantity_on_hand_derived", value),
+    book_value_derived: (value) => validateNumberOrNull("book_value_derived", value),
+    avg_unit_book_value_derived: (value) => validateNumberOrNull("avg_unit_book_value_derived", value),
+    audit: (value) => value?.created?.date && value?.updated?.date ? null : "audit timestamps are required",
+  } satisfies {
+    [K in keyof InventoryItemResponseDto]-?: FieldValidator<InventoryItemResponseDto[K]>;
+  };
+}
+
+export function validateResponse(input: InventoryItemResponseDto): string[] {
+  const errors: string[] = [];
+  const validators = createResponseValidator();
+  for (const key of Object.keys(validators) as Array<keyof InventoryItemResponseDto>) {
+    const error = validators[key](input[key] as never);
+    if (error) errors.push(error);
+  }
+  return errors;
 }

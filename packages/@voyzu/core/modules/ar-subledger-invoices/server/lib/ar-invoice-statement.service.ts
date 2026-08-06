@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import type { ArInvoiceStatementResponseDto, ArSubledgerEntryResponseDto } from "@voyzu/core/types/modules/ar-subledger";
 import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
@@ -111,7 +112,7 @@ async function buildInvoice(company: CompanyResponseDto, entry: ArSubledgerEntry
   };
 }
 
-export async function getArInvoiceStatement(company: CompanyResponseDto, documentId: string): Promise<ArInvoiceStatementResponseDto | null> {
+async function getArInvoiceStatementUnchecked(company: CompanyResponseDto, documentId: string): Promise<ArInvoiceStatementResponseDto | null> {
   const entries = await listArSubledgerEntries(company.id);
   const invoiceEntry = entries.find((entry) => entry.documentTypeCode === "AR_INVOICE" && entry.documentId === documentId && entry.entryType === "DEBIT");
   if (!invoiceEntry) return null;
@@ -147,3 +148,5 @@ export async function getArInvoiceStatement(company: CompanyResponseDto, documen
     transactions,
   };
 }
+
+export const getArInvoiceStatement = withResponseValidation(getArInvoiceStatementUnchecked, "getArInvoiceStatement");

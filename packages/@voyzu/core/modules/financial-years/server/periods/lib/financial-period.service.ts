@@ -1,17 +1,24 @@
 import type { FinancialPeriodResponseDto } from "@voyzu/core/types/modules/financial-periods";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import { getDb } from "@voyzu/capability/db";
+import { checkResponse } from "@voyzu/capability/validation";
 import { createUpdateAuditStamp } from "../../../../common/server";
 
 import { FinancialYearRepo } from "../../db/financial-year.repo";
 import { FinancialPeriodRepo } from "../db/financial-period.repo";
 import { toDto } from "./financial-period.mapper";
+import { validateResponse } from "./financial-period.validator";
+
+function checkedDto(row: Parameters<typeof toDto>[0]): FinancialPeriodResponseDto {
+  const dto = toDto(row);
+  return checkResponse(dto, validateResponse(dto), `financial period (id=${dto.id})`);
+}
 
 // ── List ──────────────────────────────────────────────────────
 
 export async function listPeriods(fiscalYearId: number): Promise<FinancialPeriodResponseDto[]> {
   const rows = await new FinancialPeriodRepo(getDb()).listByYear(fiscalYearId);
-  return rows.map((r) => toDto(r));
+  return rows.map(checkedDto);
 }
 
 // ── Close ─────────────────────────────────────────────────────
@@ -30,7 +37,7 @@ export async function closePeriod(
   const period = await periodRepo.getByCode(fy.id, periodCode);
   if (!period) throw new NotFoundError(`Financial period ${periodCode} not found in ${fyCode}`);
 
-  const periodDto = toDto(period);
+  const periodDto = checkedDto(period);
   if (periodDto.status !== "OPEN") {
     throw new BusinessRuleError(
       `Cannot close period: current status is ${periodDto.status}. Must be OPEN.`,
@@ -44,7 +51,7 @@ export async function closePeriod(
   await periodRepo.updateStatus(periodDto.id, "CLOSED", await createUpdateAuditStamp());
 
   const updated = await periodRepo.getByCode(fy.id, periodCode);
-  return toDto(updated ?? period);
+  return checkedDto(updated ?? period);
 }
 
 // ── Reopen ────────────────────────────────────────────────────
@@ -63,7 +70,7 @@ export async function reopenPeriod(
   const period = await periodRepo.getByCode(fy.id, periodCode);
   if (!period) throw new NotFoundError(`Financial period ${periodCode} not found in ${fyCode}`);
 
-  const periodDto = toDto(period);
+  const periodDto = checkedDto(period);
   if (periodDto.status !== "CLOSED") {
     throw new BusinessRuleError(
       `Cannot reopen period: current status is ${periodDto.status}. Must be CLOSED.`,
@@ -77,7 +84,7 @@ export async function reopenPeriod(
   await periodRepo.updateStatus(periodDto.id, "OPEN", await createUpdateAuditStamp());
 
   const updated = await periodRepo.getByCode(fy.id, periodCode);
-  return toDto(updated ?? period);
+  return checkedDto(updated ?? period);
 }
 
 // ── Seed ──────────────────────────────────────────────────────

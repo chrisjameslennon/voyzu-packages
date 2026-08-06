@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
 import type {
@@ -17,7 +18,7 @@ function roundMoney(value: number): number {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 }
 
-export async function listApCounterpartySummaries(companyId: number): Promise<ApCounterpartySummaryResponseDto[]> {
+async function listApCounterpartySummariesUnchecked(companyId: number): Promise<ApCounterpartySummaryResponseDto[]> {
   const rows = await repo().listCounterpartySummaries(companyId);
   return rows.map((row) => ({
     counterpartyCode: row.counterparty_code,
@@ -28,7 +29,7 @@ export async function listApCounterpartySummaries(companyId: number): Promise<Ap
   }));
 }
 
-export async function getApCounterpartyStatement(
+async function getApCounterpartyStatementUnchecked(
   company: CompanyResponseDto,
   counterpartyCode: string,
 ): Promise<ApCounterpartyStatementResponseDto | null> {
@@ -74,3 +75,6 @@ export async function getApCounterpartyStatement(
     groups,
   };
 }
+
+export const listApCounterpartySummaries = withResponseValidation(listApCounterpartySummariesUnchecked, "listApCounterpartySummaries");
+export const getApCounterpartyStatement = withResponseValidation(getApCounterpartyStatementUnchecked, "getApCounterpartyStatement");

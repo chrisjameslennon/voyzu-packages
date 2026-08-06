@@ -1,5 +1,6 @@
 import { getDb } from "@voyzu/capability/db";
 import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/errors";
+import { checkResponse } from "@voyzu/capability/validation";
 import { AssignGLAccount, ConfigurePostingAccounts, Deactivate, Delete } from "@voyzu/core/common/inventory-item-posting-profiles/domain/operation-policy";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
@@ -14,14 +15,15 @@ import type { ItemPostingProfileUpdateRequestDto } from "@voyzu/core/types/modul
 import { ItemPostingProfileRepo } from "../db/item-posting-profile.repo";
 import type { ItemPostingProfileRow } from "../db/item-posting-profile.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./item-posting-profile.mapper";
-import { validateCreate, validatePatch, validateUpdate } from "./item-posting-profile.validator";
+import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./item-posting-profile.validator";
 
 function repo() {
   return new ItemPostingProfileRepo(getDb());
 }
 
-function enrichRow(row: ItemPostingProfileRow): Promise<ItemPostingProfileResponseDto> {
-  return withAuditActors(toDto(row), row);
+async function enrichRow(row: ItemPostingProfileRow): Promise<ItemPostingProfileResponseDto> {
+  const dto = await withAuditActors(toDto(row), row);
+  return checkResponse(dto, validateResponse(dto), `item posting profile (id=${dto.id})`);
 }
 
 function enrichRows(rows: ItemPostingProfileRow[]): Promise<ItemPostingProfileResponseDto[]> {

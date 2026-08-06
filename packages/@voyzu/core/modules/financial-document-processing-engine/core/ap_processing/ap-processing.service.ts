@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr, EntryType } from "@voyzu/core/types/modules/core";
 import type { ApBillDetailedDocumentDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-bill.response.dto";
 import type {
@@ -780,7 +781,7 @@ async function taxControl(db: DbExecutor, companyId: number): Promise<Account> {
   return acc;
 }
 
-export async function processApDocument(documentType: ApProcessingDocumentType, input: RequestDto, options: { preview?: boolean } = {}): Promise<ApProcessingPostingResponseDto> {
+async function processApDocumentUnchecked(documentType: ApProcessingDocumentType, input: RequestDto, options: { preview?: boolean } = {}): Promise<ApProcessingPostingResponseDto> {
   if (!isRecord(input)) throw new InputValidationError("Request body must be an object");
   if (input.document_type !== undefined && input.document_type !== documentType) throw new InputValidationError(`document_type must be ${documentType}`);
   const { request, reservedId } = await reserveDocumentId(documentType, input);
@@ -882,3 +883,4 @@ async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: nu
   return rows;
 }
 
+export const processApDocument = withResponseValidation(processApDocumentUnchecked, "processApDocument");

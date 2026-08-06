@@ -18,11 +18,10 @@ import type { GlAccountCategoryRow } from "../db/gl-account-category.row.types";
 
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./gl-account-category.mapper";
 import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./gl-account-category.validator";
+import { checkResponse } from "@voyzu/capability/validation";
 
 function checkedResponse(dto: GlAccountCategoryResponseDto): GlAccountCategoryResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) throw new Error(`Invalid GL account category response (id=${dto.id}): ${errors.join("; ")}`);
-  return dto;
+  return checkResponse(dto, validateResponse(dto), `GL account category (id=${dto.id})`);
 }
 
 async function enrichRow(row: GlAccountCategoryRow): Promise<GlAccountCategoryResponseDto> {

@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { TaxActivityReconciliationResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -35,7 +36,7 @@ async function fetchCompany(db: ReturnType<typeof getDb>, companyId: number): Pr
   };
 }
 
-export async function getTaxActivityReconciliation(
+async function getTaxActivityReconciliationUnchecked(
   companyId: number,
   periodStartDate: string,
   periodEndDate: string,
@@ -79,3 +80,5 @@ export async function getTaxActivityReconciliation(
     trialBalanceReconciled: Math.abs(allAuthorityTotal + trialBalanceTaxMovement) < 0.01,
   };
 }
+
+export const getTaxActivityReconciliation = withResponseValidation(getTaxActivityReconciliationUnchecked, "getTaxActivityReconciliation");

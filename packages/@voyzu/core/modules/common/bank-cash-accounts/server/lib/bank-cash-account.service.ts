@@ -10,6 +10,7 @@ import type {
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { BusinessRuleError, ConflictError, DataError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
 import { getDb, withTransaction } from "@voyzu/capability/db";
+import { checkResponse } from "@voyzu/capability/validation";
 import {
   createCreationAuditStamp,
   createUpdateAuditStamp,
@@ -21,7 +22,12 @@ import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resol
 import { BankCashAccountRepo } from "../db/bank-cash-account.repo";
 import { AssignGLAccount, ChangeCode, ChangeType, Deactivate, Delete, UpdateGLAccount } from "../../domain/operation-policy";
 import { toDto, toInsertRow, toPatchRow, updateToPatch } from "./bank-cash-account.mapper";
-import { validateCreate, validatePatch, validateUpdate } from "./bank-cash-account.validator";
+import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./bank-cash-account.validator";
+
+async function enrichRow(row: Parameters<typeof toDto>[0]): Promise<BankCashAccountResponseDto> {
+  const dto = await withAuditActors(toDto(row), row);
+  return checkResponse(dto, validateResponse(dto), `bank/cash account (id=${dto.id})`);
+}
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
   return companyId === undefined
@@ -49,22 +55,22 @@ function throwIfBlocked(blockers: { message: string }[]): void {
 
 export async function listBankCashAccounts(companyId?: number): Promise<BankCashAccountResponseDto[]> {
   const rows = await new BankCashAccountRepo(getDb()).listAll(await scopedCompanyId(companyId));
-  return Promise.all(rows.map(async (row) => withAuditActors(toDto(row), row)));
+  return Promise.all(rows.map(enrichRow));
 }
 
 export async function filterBankCashAccounts(filters: Filter[], options?: ListOptions, companyId?: number): Promise<BankCashAccountResponseDto[]> {
   const rows = await new BankCashAccountRepo(getDb()).filter(await scopedCompanyId(companyId), filters, options);
-  return Promise.all(rows.map(async (row) => withAuditActors(toDto(row), row)));
+  return Promise.all(rows.map(enrichRow));
 }
 
 export async function searchBankCashAccounts(phrase: string, options?: ListOptions, companyId?: number): Promise<BankCashAccountResponseDto[]> {
   const rows = await new BankCashAccountRepo(getDb()).search(await scopedCompanyId(companyId), phrase, options);
-  return Promise.all(rows.map(async (row) => withAuditActors(toDto(row), row)));
+  return Promise.all(rows.map(enrichRow));
 }
 
 export async function getBankCashAccount(code: string, companyId?: number): Promise<BankCashAccountResponseDto | null> {
   const row = await new BankCashAccountRepo(getDb()).get(await scopedCompanyId(companyId), code);
-  return row ? withAuditActors(toDto(row), row) : null;
+  return row ? enrichRow(row) : null;
 }
 
 export async function createBankCashAccount(input: BankCashAccountCreateRequestDto, companyId?: number): Promise<BankCashAccountResponseDto> {
@@ -77,7 +83,7 @@ export async function createBankCashAccount(input: BankCashAccountCreateRequestD
       const repo = new BankCashAccountRepo(client);
       throwIfBlocked(AssignGLAccount(await loadGlAccountTarget(repo, resolvedCompanyId, input.glAccountId)));
       const row = await repo.insert(withCreationAudit(toInsertRow(input, resolvedCompanyId), await createCreationAuditStamp()));
-      return withAuditActors(toDto(row), row);
+      return enrichRow(row);
     });
   } catch (err) {
     if (err instanceof Error && err.message.includes("duplicate key value")) throw new ConflictError("A Bank / Cash Account with this code already exists");
@@ -126,7 +132,7 @@ export async function patchBankCashAccount(code: string, input: BankCashAccountP
         ? { ...input, cashAccountIdentifier: null }
         : { ...input, bankName: null, bankBranchName: null, bankAccountIdentifier: null };
       const row = await repo.patch(resolvedCompanyId, code, withUpdateAudit(toPatchRow(normalizedInput), await createUpdateAuditStamp()));
-      return withAuditActors(toDto(row), row);
+      return enrichRow(row);
     });
   } catch (err) {
     if (err instanceof Error && err.message.includes("duplicate key value")) throw new ConflictError("A Bank / Cash Account with this code already exists");
@@ -165,7 +171,7 @@ export async function deleteBankCashAccount(code: string, companyId?: number): P
 
 export async function batchGetBankCashAccounts(codes: string[], companyId?: number): Promise<BankCashAccountResponseDto[]> {
   const rows = await new BankCashAccountRepo(getDb()).batchGet(await scopedCompanyId(companyId), normalizeCodes(codes));
-  return Promise.all(rows.map(async (row) => withAuditActors(toDto(row), row)));
+  return Promise.all(rows.map(enrichRow));
 }
 
 export async function batchCreateBankCashAccounts(inputs: BankCashAccountCreateRequestDto[], companyId?: number): Promise<BankCashAccountResponseDto[]> {
@@ -232,7 +238,7 @@ async function transitionBankCashAccountStatus(
         }));
       }
       const row = await repo.patch(resolvedCompanyId, code, withUpdateAudit({ status }, audit));
-      results.push(await withAuditActors(toDto(row), row));
+      results.push(await enrichRow(row));
     }
     return results;
   });

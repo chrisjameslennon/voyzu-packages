@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type { ArReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
 import type {
@@ -621,7 +622,7 @@ function withDocumentId(request: ArReceiptRequestDto, journalHeaderId: number): 
   return { ...request, document_id: `RCT-${journalHeaderId}` };
 }
 
-export async function processArReceipt(input: ArReceiptRequestDto, options: ProcessOptions = {}): Promise<ArReceiptPostingResponseDto> {
+async function processArReceiptUnchecked(input: ArReceiptRequestDto, options: ProcessOptions = {}): Promise<ArReceiptPostingResponseDto> {
   validateRequest(input);
   const rawRequest: ArReceiptRequestDto = input;
   const repo = new JournalRepo(getDb());
@@ -702,3 +703,4 @@ export async function processArReceipt(input: ArReceiptRequestDto, options: Proc
   });
 }
 
+export const processArReceipt = withResponseValidation(processArReceiptUnchecked, "processArReceipt");

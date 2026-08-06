@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { TaxPositionResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -20,7 +21,7 @@ async function fetchCompany(db: ReturnType<typeof getDb>, companyId: number): Pr
   };
 }
 
-export async function getTaxPosition(companyId: number, asAtDate: string): Promise<TaxPositionResponseDto> {
+async function getTaxPositionUnchecked(companyId: number, asAtDate: string): Promise<TaxPositionResponseDto> {
   const db = getDb();
   const repo = new TaxPositionRepo(db);
 
@@ -44,3 +45,4 @@ export async function getTaxPosition(companyId: number, asAtDate: string): Promi
   };
 }
 
+export const getTaxPosition = withResponseValidation(getTaxPositionUnchecked, "getTaxPosition");

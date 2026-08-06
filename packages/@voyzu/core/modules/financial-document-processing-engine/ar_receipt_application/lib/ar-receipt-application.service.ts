@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { EntryType } from "@voyzu/core/types/modules/core";
 import type { ArReceiptApplicationRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt-application.request.dto";
 import type {
@@ -400,7 +401,7 @@ function withDocumentId(request: ArReceiptApplicationRequestDto, journalHeaderId
   return { ...request, document_id: `APP-${journalHeaderId}` };
 }
 
-export async function processArReceiptApplication(input: ArReceiptApplicationRequestDto, options: ProcessOptions = {}): Promise<ArReceiptApplicationPostingResponseDto> {
+async function processArReceiptApplicationUnchecked(input: ArReceiptApplicationRequestDto, options: ProcessOptions = {}): Promise<ArReceiptApplicationPostingResponseDto> {
   validateRequest(input);
   const rawRequest: ArReceiptApplicationRequestDto = input;
   const repo = new JournalRepo(getDb());
@@ -478,3 +479,4 @@ export async function processArReceiptApplication(input: ArReceiptApplicationReq
   });
 }
 
+export const processArReceiptApplication = withResponseValidation(processArReceiptApplicationUnchecked, "processArReceiptApplication");

@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { BankCashMovementResponseDto } from "@voyzu/core/types/modules/company-reports";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
@@ -14,7 +15,7 @@ async function fetchCompany(companyId: number): Promise<{ name: string; baseCurr
   return { name: String(row.name), baseCurrencyCode: String(row.base_currency_code) };
 }
 
-export async function getBankCashMovement(companyId: number, fromDate: string, toDate: string, bankCashCode?: string | null): Promise<BankCashMovementResponseDto> {
+async function getBankCashMovementUnchecked(companyId: number, fromDate: string, toDate: string, bankCashCode?: string | null): Promise<BankCashMovementResponseDto> {
   const db = getDb();
   const repo = new BankCashMovementRepo(db);
   const settingsCompanyId = await resolveEffectiveSettingsCompanyId(companyId, db);
@@ -43,3 +44,4 @@ export async function getBankCashMovement(companyId: number, fromDate: string, t
   };
 }
 
+export const getBankCashMovement = withResponseValidation(getBankCashMovementUnchecked, "getBankCashMovement");

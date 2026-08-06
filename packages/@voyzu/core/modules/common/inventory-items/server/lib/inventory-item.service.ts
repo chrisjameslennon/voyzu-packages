@@ -5,6 +5,7 @@ import type { InventoryItemResponseDto } from "@voyzu/core/types/modules/invento
 import type { InventoryItemUpdateRequestDto } from "@voyzu/core/types/modules/inventory-items";
 import { getDb } from "@voyzu/capability/db";
 import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/errors";
+import { checkResponse } from "@voyzu/capability/validation";
 import { ChangeCode, Deactivate, Delete } from "@voyzu/core/common/inventory-items/domain/operation-policy";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { withAuditActors } from "@voyzu/audit/stamps";
@@ -19,14 +20,15 @@ import { resolveTemplateSettingsScope } from "../../../server/settings-scope";
 import { InventoryItemRepo } from "../db/inventory-item.repo";
 import type { InventoryItemRow } from "../db/inventory-item.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./inventory-item.mapper";
-import { validateCreate, validatePatch, validateUpdate } from "./inventory-item.validator";
+import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./inventory-item.validator";
 
 function repo() {
   return new InventoryItemRepo(getDb());
 }
 
-function enrichRow(row: InventoryItemRow): Promise<InventoryItemResponseDto> {
-  return withAuditActors(toDto(row), row);
+async function enrichRow(row: InventoryItemRow): Promise<InventoryItemResponseDto> {
+  const dto = await withAuditActors(toDto(row), row);
+  return checkResponse(dto, validateResponse(dto), `inventory item (id=${dto.id})`);
 }
 
 function enrichRows(rows: InventoryItemRow[]): Promise<InventoryItemResponseDto[]> {

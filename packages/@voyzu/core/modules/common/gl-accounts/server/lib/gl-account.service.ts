@@ -17,14 +17,10 @@ import { ChangeCode, Deactivate, Delete } from "../../domain/operation-policy";
 
 import { toDto, toInsertRow, toUpdateRow, toPatchRow } from "./gl-account.mapper";
 import { validateCreate, validateUpdate, validatePatch, validateResponse } from "./gl-account.validator";
+import { checkResponse } from "@voyzu/capability/validation";
 
 function checkedResponse(dto: GlAccountResponseDto): GlAccountResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid GL account response (id=${dto.id}): ${errors.join("; ")}`;
-    throw new Error(message);
-  }
-  return dto;
+  return checkResponse(dto, validateResponse(dto), `GL account (id=${dto.id})`);
 }
 
 async function getAuditActor(

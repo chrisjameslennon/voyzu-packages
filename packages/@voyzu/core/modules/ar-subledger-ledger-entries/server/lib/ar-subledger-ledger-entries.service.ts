@@ -7,6 +7,8 @@ import type {
 } from "@voyzu/core/types/modules/ar-subledger";
 import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
 import { getDb } from "@voyzu/capability/db";
+import { checkResponse } from "@voyzu/capability/validation";
+import { validateSubledgerEntryResponse } from "@voyzu/core/common/server";
 import { getAuditActors } from "@voyzu/core/common/server";
 
 import { ArSubledgerRepo } from "../db/ar-subledger-ledger-entries.repo";
@@ -15,7 +17,7 @@ export async function getArSubledgerEntry(companyId: number, code: string): Prom
   const row = await new ArSubledgerRepo(getDb()).getEntry(companyId, code);
   if (!row) return null;
   const auditActors = await getAuditActors(row);
-  return {
+  const dto: ArSubledgerEntryResponseDto = {
     id: row.id,
     code: row.code,
     journalHeaderId: row.journal_header_id,
@@ -65,13 +67,14 @@ export async function getArSubledgerEntry(companyId: number, code: string): Prom
     documentSnapshot: row.document_snapshot_json,
     detailedDocumentSnapshot: row.detailed_document_snapshot_json,
   };
+  return checkResponse(dto, validateSubledgerEntryResponse(dto), `AR subledger entry (id=${dto.id})`);
 }
 
 export async function listArSubledgerEntries(companyId: number): Promise<ArSubledgerEntryResponseDto[]> {
   const rows = await new ArSubledgerRepo(getDb()).listEntries(companyId);
   return Promise.all(rows.map(async (r) => {
     const auditActors = await getAuditActors(r);
-    return {
+    const dto: ArSubledgerEntryResponseDto = {
       id: r.id,
       code: r.code,
       journalHeaderId: r.journal_header_id,
@@ -119,6 +122,7 @@ export async function listArSubledgerEntries(companyId: number): Promise<ArSuble
         },
       },
     };
+    return checkResponse(dto, validateSubledgerEntryResponse(dto), `AR subledger entry (id=${dto.id})`);
   }));
 }
 

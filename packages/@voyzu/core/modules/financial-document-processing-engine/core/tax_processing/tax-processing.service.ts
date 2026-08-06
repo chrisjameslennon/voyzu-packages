@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr, EntryType } from "@voyzu/core/types/modules/core";
 import type { BankCashJournalDetailsDto } from "@voyzu/core/types/modules/financial-document-processing-engine/bank-cash-details.dto";
 import type {
@@ -571,7 +572,7 @@ async function assertDocumentCapabilities(db: DbExecutor, documentType: TaxProce
   }
 }
 
-export async function processTaxDocument(documentType: TaxProcessingDocumentType, input: TaxProcessingRequestDto, options: { preview?: boolean } = {}): Promise<TaxProcessingPostingResponseDto> {
+async function processTaxDocumentUnchecked(documentType: TaxProcessingDocumentType, input: TaxProcessingRequestDto, options: { preview?: boolean } = {}): Promise<TaxProcessingPostingResponseDto> {
   validateInput(documentType, input);
   await assertDocumentCapabilities(getDb(), documentType, input);
   const { request, reservedId } = await reserveDocumentId(documentType, input);
@@ -582,3 +583,4 @@ export async function processTaxDocument(documentType: TaxProcessingDocumentType
   return withTransaction(async (client) => persist(client, ctx));
 }
 
+export const processTaxDocument = withResponseValidation(processTaxDocumentUnchecked, "processTaxDocument");

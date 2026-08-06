@@ -2,6 +2,7 @@ import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
 import type { UserResponseDto } from "@voyzu/auth/types";
 import { listCompanies } from "@voyzu/core/companies/server";
 import { getCurrentUser } from "@voyzu/auth/users/server";
+import { withResponseValidation } from "@voyzu/capability/validation";
 
 function hasUiAccess(user: UserResponseDto | null): user is UserResponseDto {
   return user?.status === "ACTIVE" && (user.accessMode === "UI" || user.accessMode === "UI_AND_API");
@@ -43,15 +44,28 @@ export function resolveCompanySelection(
   return { companies: selectableCompanies, selectedCompany };
 }
 
-export async function listSelectableCompaniesForCurrentUser(): Promise<CompanyResponseDto[]> {
+async function listSelectableCompaniesForCurrentUserUnchecked(): Promise<CompanyResponseDto[]> {
   return filterSelectableCompanies(await listCompanies(), await getCurrentUser());
 }
 
-export async function listAccessibleCompaniesForCurrentUser(): Promise<CompanyResponseDto[]> {
+async function listAccessibleCompaniesForCurrentUserUnchecked(): Promise<CompanyResponseDto[]> {
   return filterAccessibleCompanies(await listCompanies(), await getCurrentUser());
 }
 
-export async function resolveCompanySelectionForCurrentUser(requestedCompanyId: number | null) {
+async function resolveCompanySelectionForCurrentUserUnchecked(requestedCompanyId: number | null) {
   const [companies, user] = await Promise.all([listCompanies(), getCurrentUser()]);
   return resolveCompanySelection(companies, user, requestedCompanyId);
 }
+
+export const listSelectableCompaniesForCurrentUser = withResponseValidation(
+  listSelectableCompaniesForCurrentUserUnchecked,
+  "selectable company list",
+);
+export const listAccessibleCompaniesForCurrentUser = withResponseValidation(
+  listAccessibleCompaniesForCurrentUserUnchecked,
+  "accessible company list",
+);
+export const resolveCompanySelectionForCurrentUser = withResponseValidation(
+  resolveCompanySelectionForCurrentUserUnchecked,
+  "company selection",
+);

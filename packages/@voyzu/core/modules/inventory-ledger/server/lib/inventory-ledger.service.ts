@@ -3,12 +3,14 @@ import type {
   InventoryLedgerEntryResponseDto,
 } from "@voyzu/core/types/modules/inventory-ledger";
 import { getDb } from "@voyzu/capability/db";
+import { checkResponse } from "@voyzu/capability/validation";
 
 import { InventoryLedgerRepo } from "../db/inventory-ledger.repo";
 import type { InventoryLedgerEntryRow } from "../db/inventory-ledger.row.types";
+import { validateDetailResponse, validateEntryResponse } from "./inventory-ledger.validator";
 
 function toDto(row: InventoryLedgerEntryRow): InventoryLedgerEntryResponseDto {
-  return {
+  const dto: InventoryLedgerEntryResponseDto = {
     id: row.line_id,
     code: row.code,
     journalHeaderId: row.journal_header_id,
@@ -41,6 +43,7 @@ function toDto(row: InventoryLedgerEntryRow): InventoryLedgerEntryResponseDto {
       },
     },
   };
+  return checkResponse(dto, validateEntryResponse(dto), `inventory ledger entry (id=${dto.id})`);
 }
 
 export async function listInventoryLedgerEntries(companyId: number): Promise<InventoryLedgerEntryResponseDto[]> {
@@ -50,7 +53,7 @@ export async function listInventoryLedgerEntries(companyId: number): Promise<Inv
 function toDetailDto(rows: InventoryLedgerEntryRow[]): InventoryLedgerEntryDetailResponseDto | null {
   const first = rows[0];
   if (!first) return null;
-  return {
+  const dto: InventoryLedgerEntryDetailResponseDto = {
     id: first.id,
     code: first.code,
     journalHeaderId: first.journal_header_id,
@@ -96,6 +99,7 @@ function toDetailDto(rows: InventoryLedgerEntryRow[]): InventoryLedgerEntryDetai
       memo: row.line_memo,
     })),
   };
+  return checkResponse(dto, validateDetailResponse(dto), `inventory ledger entry detail (id=${dto.id})`);
 }
 
 export async function getInventoryLedgerEntry(companyId: number, code: string): Promise<InventoryLedgerEntryDetailResponseDto | null> {

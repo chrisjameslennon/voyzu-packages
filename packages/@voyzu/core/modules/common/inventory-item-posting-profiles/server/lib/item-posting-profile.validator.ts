@@ -2,6 +2,7 @@ import { InputValidationError } from "@voyzu/capability/errors";
 import type { ItemPostingProfileCreateRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
 import type { ItemPostingProfilePatchRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
 import type { ItemPostingProfileUpdateRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
+import type { ItemPostingProfileResponseDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
 
 type FieldValidator<T> = (value: T) => string | null;
 
@@ -86,4 +87,41 @@ function createPatchValidator() {
 
 export function validatePatch(input: ItemPostingProfilePatchRequestDto) {
   assertValid(input, createPatchValidator());
+}
+
+function validGlReference(value: ItemPostingProfileResponseDto["revenue_code"]): boolean {
+  return value === null || Boolean(value.code?.trim() && value.name?.trim());
+}
+
+function createResponseValidator() {
+  return {
+    id: (value) => Number.isInteger(value) && value > 0 ? null : "id must be a positive integer",
+    profile_code: (value) => validateCode("profile_code", value),
+    profile_name: (value) => requiredText(value, "profile_name"),
+    description: (value) => typeof value === "string" ? null : "description must be text",
+    is_sold: (value) => validateBoolean("is_sold", value),
+    is_purchased: (value) => validateBoolean("is_purchased", value),
+    is_consumed: (value) => validateBoolean("is_consumed", value),
+    revenue_code: (value) => validGlReference(value) ? null : "revenue_code is invalid",
+    cogs_code: (value) => validGlReference(value) ? null : "cogs_code is invalid",
+    purchase_expense_code: (value) => validGlReference(value) ? null : "purchase_expense_code is invalid",
+    consumption_code: (value) => validGlReference(value) ? null : "consumption_code is invalid",
+    adjustment_gain_code: (value) => validGlReference(value) ? null : "adjustment_gain_code is invalid",
+    adjustment_loss_code: (value) => validGlReference(value) ? null : "adjustment_loss_code is invalid",
+    status: (value) => value === "ACTIVE" || value === "INACTIVE" ? null : "status is invalid",
+    linkedBy: (value) => Array.isArray(value) ? null : "linkedBy must be an array",
+    audit: (value) => value?.created?.date && value?.updated?.date ? null : "audit timestamps are required",
+  } satisfies {
+    [K in keyof ItemPostingProfileResponseDto]-?: FieldValidator<ItemPostingProfileResponseDto[K]>;
+  };
+}
+
+export function validateResponse(input: ItemPostingProfileResponseDto): string[] {
+  const errors: string[] = [];
+  const validators = createResponseValidator();
+  for (const key of Object.keys(validators) as Array<keyof ItemPostingProfileResponseDto>) {
+    const error = validators[key](input[key] as never);
+    if (error) errors.push(error);
+  }
+  return errors;
 }

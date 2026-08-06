@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { TrialBalanceResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -20,7 +21,7 @@ async function fetchCompany(db: ReturnType<typeof getDb>, companyId: number): Pr
   };
 }
 
-export async function getTrialBalance(
+async function getTrialBalanceUnchecked(
   companyId: number,
   asAtDate?: string | null,
 ): Promise<TrialBalanceResponseDto> {
@@ -49,3 +50,4 @@ export async function getTrialBalance(
   };
 }
 
+export const getTrialBalance = withResponseValidation(getTrialBalanceUnchecked, "getTrialBalance");

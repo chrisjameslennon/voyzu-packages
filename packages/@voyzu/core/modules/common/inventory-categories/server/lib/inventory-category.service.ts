@@ -1,5 +1,6 @@
 import { getDb } from "@voyzu/capability/db";
 import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/errors";
+import { checkResponse } from "@voyzu/capability/validation";
 import { Deactivate, Delete } from "@voyzu/core/common/inventory-categories/domain/operation-policy";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 import { assertCompanySettingsWritable, resolveTemplateSettingsScope } from "../../../server/settings-scope";
@@ -15,14 +16,15 @@ import type { InventoryCategoryUpdateRequestDto } from "@voyzu/core/types/module
 import { InventoryCategoryRepo } from "../db/inventory-category.repo";
 import type { InventoryCategoryRow } from "../db/inventory-category.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./inventory-category.mapper";
-import { validateCreate, validatePatch, validateUpdate } from "./inventory-category.validator";
+import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./inventory-category.validator";
 
 function repo() {
   return new InventoryCategoryRepo(getDb());
 }
 
-function enrichRow(row: InventoryCategoryRow): Promise<InventoryCategoryResponseDto> {
-  return withAuditActors(toDto(row), row);
+async function enrichRow(row: InventoryCategoryRow): Promise<InventoryCategoryResponseDto> {
+  const dto = await withAuditActors(toDto(row), row);
+  return checkResponse(dto, validateResponse(dto), `inventory category (id=${dto.id})`);
 }
 
 function enrichRows(rows: InventoryCategoryRow[]): Promise<InventoryCategoryResponseDto[]> {

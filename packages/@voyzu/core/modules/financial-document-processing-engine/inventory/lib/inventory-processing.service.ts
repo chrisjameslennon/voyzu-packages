@@ -1,3 +1,4 @@
+import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type { InventoryAdjustmentRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-adjustment.request.dto";
 import type { InventoryIssueRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
@@ -625,15 +626,18 @@ async function processInventoryDocument(input: InventoryProcessingRequestDto, do
   return withTransaction((client) => persistInventoryDocument(context, client, options));
 }
 
-export async function processInventoryReceipt(input: InventoryReceiptRequestDto, options: ProcessInventoryOptions = {}): Promise<InventoryProcessingPostingResponseDto> {
+async function processInventoryReceiptUnchecked(input: InventoryReceiptRequestDto, options: ProcessInventoryOptions = {}): Promise<InventoryProcessingPostingResponseDto> {
   return processInventoryDocument(input, "INVENTORY_RECEIPT", options);
 }
 
-export async function processInventoryIssue(input: InventoryIssueRequestDto, options: ProcessInventoryOptions = {}): Promise<InventoryProcessingPostingResponseDto> {
+async function processInventoryIssueUnchecked(input: InventoryIssueRequestDto, options: ProcessInventoryOptions = {}): Promise<InventoryProcessingPostingResponseDto> {
   return processInventoryDocument(input, "INVENTORY_ISSUE", options);
 }
 
-export async function processInventoryAdjustment(input: InventoryAdjustmentRequestDto, options: ProcessInventoryOptions = {}): Promise<InventoryProcessingPostingResponseDto> {
+async function processInventoryAdjustmentUnchecked(input: InventoryAdjustmentRequestDto, options: ProcessInventoryOptions = {}): Promise<InventoryProcessingPostingResponseDto> {
   return processInventoryDocument(input, "INVENTORY_ADJUSTMENT", options);
 }
 
+export const processInventoryReceipt = withResponseValidation(processInventoryReceiptUnchecked, "processInventoryReceipt");
+export const processInventoryIssue = withResponseValidation(processInventoryIssueUnchecked, "processInventoryIssue");
+export const processInventoryAdjustment = withResponseValidation(processInventoryAdjustmentUnchecked, "processInventoryAdjustment");
