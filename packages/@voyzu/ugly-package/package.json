@@ -1,6 +1,6 @@
 {
   "name": "@voyzu/ugly-package",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A deliberately ugly demonstration of the freedom available to Voyzu package developers.",
   "repository": "https://github.com/chrisjameslennon/voyzu-packages.git",
   "private": true,

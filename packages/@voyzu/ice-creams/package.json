@@ -1,6 +1,6 @@
 {
   "name": "@voyzu/ice-creams",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A best-practice, self-contained ice-cream management package.",
   "repository": "https://github.com/chrisjameslennon/voyzu-packages.git",
   "private": true,
