@@ -9,9 +9,9 @@ import { ApLedgerEntryEnquiryListPage, ApLedgerEntryEnquiryDetailPage } from "@v
           path: "/finance/subledgers/ap/ledger-entry-enquiry",
           Page: ApLedgerEntryEnquiryListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ap/ledger-entry-enquiry" },
-                { label: "Accounts Payable", href: "/finance/subledgers/ap/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "Accounts Payable" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -22,8 +22,8 @@ import { ApLedgerEntryEnquiryListPage, ApLedgerEntryEnquiryDetailPage } from "@v
           path: "/finance/subledgers/ap/ledger-entry-enquiry/[code]",
           Page: ApLedgerEntryEnquiryDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ap/ledger-entry-enquiry" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AP Ledger Entry Enquiry", href: "/finance/subledgers/ap/ledger-entry-enquiry" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

@@ -12,9 +12,9 @@ export const arSubledgerStatementsModule = {
           path: "/finance/subledgers/ar/statements",
           Page: ArStatementsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/statements" },
-                { label: "Accounts Receivable", href: "/finance/subledgers/ar/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "Accounts Receivable" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,8 +25,8 @@ export const arSubledgerStatementsModule = {
           path: "/finance/subledgers/ar/statements/[code]",
           Page: ArStatementDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/statements" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AR Statements", href: "/finance/subledgers/ar/statements" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

@@ -12,9 +12,9 @@ export const companyGlAccountsModule = {
           path: "/finance/settings/gl-accounts",
           Page: CompanyGlAccountsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/gl-accounts" },
-                { label: "General Ledger", href: "/finance/settings/gl-accounts" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "General Ledger" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,9 +25,9 @@ export const companyGlAccountsModule = {
           path: "/finance/settings/gl-accounts/[code]",
           Page: CompanyGlAccountDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/gl-accounts" },
-                { label: "General Ledger", href: "/finance/settings/gl-accounts" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "General Ledger" },
                 { label: "General Ledger Accounts", href: "/finance/settings/gl-accounts" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

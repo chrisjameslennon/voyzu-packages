@@ -385,9 +385,7 @@ export function CompanyGlAccountsListContent({
         </div>
         <div className={layoutStyles.slotTitle}>
           <div className={listStyles.titleIcon}>
-            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>
-              account_balance
-            </span>
+            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>account_balance</span>
           </div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>
             General Ledger Accounts

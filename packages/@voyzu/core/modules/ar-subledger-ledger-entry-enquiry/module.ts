@@ -9,9 +9,9 @@ import { ArLedgerEntryEnquiryListPage, ArLedgerEntryEnquiryDetailPage } from "@v
           path: "/finance/subledgers/ar/ledger-entry-enquiry",
           Page: ArLedgerEntryEnquiryListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/ledger-entry-enquiry" },
-                { label: "Accounts Receivable", href: "/finance/subledgers/ar/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "Accounts Receivable" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -22,8 +22,8 @@ import { ArLedgerEntryEnquiryListPage, ArLedgerEntryEnquiryDetailPage } from "@v
           path: "/finance/subledgers/ar/ledger-entry-enquiry/[code]",
           Page: ArLedgerEntryEnquiryDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/ledger-entry-enquiry" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AR Ledger Entry Enquiry", href: "/finance/subledgers/ar/ledger-entry-enquiry" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

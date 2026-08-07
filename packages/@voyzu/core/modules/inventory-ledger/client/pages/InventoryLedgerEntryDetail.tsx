@@ -120,7 +120,7 @@ export function InventoryLedgerEntryDetail({
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
         <div className={layout.slotTitle}>
           <div className={detailStyles.title}>
-            <div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>inventory_2</span></div>
+            <div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>receipt_long</span></div>
             <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{entry.code}</h1>
           </div>
           <div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div>

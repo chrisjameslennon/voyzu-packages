@@ -140,7 +140,7 @@ export function ApBillsListContent({ entries }: { entries: ApSubledgerEntryRespo
     <div className={`${layout.listView} vz-grid-12`}>
       <header className={layout.listHeader}>
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
-        <div className={`${layout.slotTitle} ${localStyles.titleSlot}`}><div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>request_quote</span></div><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Bills</h1><div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div><div className={layout.slotTitleByline}><p className={typography.headingByline}>Supplier bills posted to the Accounts Payable subledger, with the remaining open balance still outstanding on each document.</p></div></div>
+        <div className={`${layout.slotTitle} ${localStyles.titleSlot}`}><div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>receipt_long</span></div><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Bills</h1><div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div><div className={layout.slotTitleByline}><p className={typography.headingByline}>Supplier bills posted to the Accounts Payable subledger, with the remaining open balance still outstanding on each document.</p></div></div>
         <div className={`${layout.slotSearch} ${localStyles.balancesSlot}`}>
           <section className={localStyles.balancesCard} aria-label="Bill totals">
             <h2 className={localStyles.balancesTitle}>Totals</h2>

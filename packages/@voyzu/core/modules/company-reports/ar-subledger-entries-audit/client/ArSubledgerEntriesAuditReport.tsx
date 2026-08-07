@@ -302,7 +302,7 @@ export function ArSubledgerEntriesAuditReport({
         </div>
         <div className={layout.slotTitle}>
           <div className={listStyles.titleIcon}>
-            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>receipt_long</span>
+            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>manage_search</span>
           </div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{pageTitle}</h1>
         </div>

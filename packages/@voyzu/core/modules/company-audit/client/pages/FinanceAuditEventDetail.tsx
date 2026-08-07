@@ -39,7 +39,7 @@ export function FinanceAuditEventDetail({
           <div className={layoutStyles.title}>
             <div className={layoutStyles.titleIconAligner}>
               <div className={layoutStyles.titleIcon}>
-                <span className={layoutStyles.titleIconSymbol}>manage_search</span>
+                <span className={layoutStyles.titleIconSymbol}>history</span>
               </div>
             </div>
             <div>

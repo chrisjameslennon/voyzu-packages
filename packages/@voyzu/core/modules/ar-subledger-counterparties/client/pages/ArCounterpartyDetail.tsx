@@ -96,7 +96,7 @@ export function ArCounterpartyDetail({
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
         <div className={layout.slotTitle}>
           <div className={detailStyles.title}>
-            <div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>groups</span></div>
+            <div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>receipt_long</span></div>
             <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{counterparty.name}</h1>
           </div>
           <div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div>

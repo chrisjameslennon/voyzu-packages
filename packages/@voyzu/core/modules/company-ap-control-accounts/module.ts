@@ -12,8 +12,8 @@ export const companyApControlAccountsModule = {
           path: "/finance/settings/control-accounts/ap",
           Page: CompanyApControlAccountsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/control-accounts/ap" },
+                { label: "Finance" },
+                { label: "Settings" },
                 { label: "Accounts Payable Control Accounts", href: "/finance/settings/control-accounts/ap" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
@@ -25,8 +25,8 @@ export const companyApControlAccountsModule = {
           path: "/finance/settings/control-accounts/ap/[code]",
           Page: CompanyApControlAccountDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/control-accounts/ap" },
+                { label: "Finance" },
+                { label: "Settings" },
                 { label: "Accounts Payable Control Accounts", href: "/finance/settings/control-accounts/ap" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

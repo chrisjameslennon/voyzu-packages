@@ -104,7 +104,7 @@ export function ArCounterpartyStatementReport({
       <header className={layout.reportHeader}>
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
         <div className={layout.slotTitle}>
-          <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>article</span></div>
+          <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>receipt_long</span></div>
           <div className={layout.slotTitleText}>
             <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Customer Statement</h1>
           </div>

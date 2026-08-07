@@ -12,9 +12,9 @@ export const arSubledgerCounterpartiesModule = {
           path: "/finance/subledgers/ar/counterparties",
           Page: ArCounterpartiesListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/counterparties" },
-                { label: "AR Subledger", href: "/finance/subledgers/ar/counterparties" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "AR Subledger" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,8 +25,8 @@ export const arSubledgerCounterpartiesModule = {
           path: "/finance/subledgers/ar/counterparties/[code]",
           Page: ArCounterpartyDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/counterparties" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AR Counterparties", href: "/finance/subledgers/ar/counterparties" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

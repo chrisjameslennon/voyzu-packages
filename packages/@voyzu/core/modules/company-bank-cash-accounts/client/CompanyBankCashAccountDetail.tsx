@@ -140,9 +140,7 @@ export function CompanyBankCashAccountDetail({
         <div className={layoutStyles.slotTitle}>
           <div className={detailStyles.title}>
             <div className={detailStyles.titleIcon}>
-              <span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>
-                account_balance
-              </span>
+              <span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>account_tree</span>
             </div>
             <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>
               {account.code}

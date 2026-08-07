@@ -12,9 +12,9 @@ export const companyInventoryControlAccountsModule = {
           path: "/finance/settings/control-accounts/inventory",
           Page: CompanyInventoryControlAccountsPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/control-accounts/inventory" },
-                { label: "Control Accounts", href: "/finance/settings/control-accounts/ap" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "Control Accounts" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,8 +25,8 @@ export const companyInventoryControlAccountsModule = {
           path: "/finance/settings/control-accounts/inventory/[code]",
           Page: CompanyInventoryControlAccountDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/control-accounts/inventory" },
+                { label: "Finance" },
+                { label: "Settings" },
                 { label: "Inventory Control Accounts", href: "/finance/settings/control-accounts/inventory" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

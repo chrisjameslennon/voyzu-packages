@@ -12,9 +12,9 @@ export const companyTaxControlAccountsModule = {
           path: "/finance/settings/control-accounts/tax",
           Page: CompanyTaxControlAccountsPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/control-accounts/tax" },
-                { label: "Control Accounts", href: "/finance/settings/control-accounts/ap" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "Control Accounts" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,8 +25,8 @@ export const companyTaxControlAccountsModule = {
           path: "/finance/settings/control-accounts/tax/[code]",
           Page: CompanyTaxControlAccountDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/control-accounts/tax" },
+                { label: "Finance" },
+                { label: "Settings" },
                 { label: "Tax Control Accounts", href: "/finance/settings/control-accounts/tax" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

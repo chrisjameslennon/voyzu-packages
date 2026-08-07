@@ -12,8 +12,8 @@ export const inventoryLedgerModule = {
           path: "/finance/inventory/ledger",
           Page: InventoryLedgerEntriesListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Inventory", href: "/finance/inventory/ledger" },
+                { label: "Finance" },
+                { label: "Inventory" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -24,8 +24,8 @@ export const inventoryLedgerModule = {
           path: "/finance/inventory/ledger/[code]",
           Page: InventoryLedgerEntryDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Inventory", href: "/finance/inventory/ledger" },
+                { label: "Finance" },
+                { label: "Inventory" },
                 { label: "Inventory Ledger Entries", href: "/finance/inventory/ledger" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

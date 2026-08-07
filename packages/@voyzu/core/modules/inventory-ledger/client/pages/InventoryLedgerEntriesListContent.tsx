@@ -208,7 +208,7 @@ export function InventoryLedgerEntriesListContent({ entries }: { entries: Invent
       <header className={layout.listHeader}>
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
         <div className={`${layout.slotTitle} ${localStyles.titleSlot}`}>
-          <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>inventory_2</span></div>
+          <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>receipt_long</span></div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Inventory Ledger Entries</h1>
           <div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div>
           <div className={layout.slotTitleByline}><p className={typography.headingByline}>Inventory ledger entries show posted inventory quantity and book value movements.</p></div>

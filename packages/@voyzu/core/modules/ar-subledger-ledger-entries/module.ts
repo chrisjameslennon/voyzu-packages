@@ -15,9 +15,9 @@ export const arSubledgerLedgerEntriesModule = {
           path: "/finance/subledgers/ar/ledger-entries",
           Page: ArLedgerEntriesListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/ledger-entries" },
-                { label: "AR Subledger", href: "/finance/subledgers/ar/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "AR Subledger" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -28,8 +28,8 @@ export const arSubledgerLedgerEntriesModule = {
           path: "/finance/subledgers/ar/ledger-entries/[code]",
           Page: ArLedgerEntryDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AR Ledger Entries", href: "/finance/subledgers/ar/ledger-entries" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

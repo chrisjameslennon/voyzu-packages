@@ -12,9 +12,9 @@ export const apSubledgerLedgerEntriesModule = {
           path: "/finance/subledgers/ap/ledger-entries",
           Page: ApLedgerEntriesListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ap/ledger-entries" },
-                { label: "AP Subledger", href: "/finance/subledgers/ap/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "AP Subledger" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,8 +25,8 @@ export const apSubledgerLedgerEntriesModule = {
           path: "/finance/subledgers/ap/ledger-entries/[code]",
           Page: ApLedgerEntryDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ap/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AP Ledger Entries", href: "/finance/subledgers/ap/ledger-entries" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

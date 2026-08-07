@@ -12,9 +12,9 @@ export const taxLedgerModule = {
           path: "/finance/subledgers/tax/ledger-entries",
           Page: TaxLedgerEntriesListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/tax/ledger-entries" },
-                { label: "Tax Ledger", href: "/finance/subledgers/tax/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "Tax Ledger" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,8 +25,8 @@ export const taxLedgerModule = {
           path: "/finance/subledgers/tax/ledger-entries/[code]",
           Page: TaxLedgerEntryDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/tax/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "Tax Ledger Entries", href: "/finance/subledgers/tax/ledger-entries" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

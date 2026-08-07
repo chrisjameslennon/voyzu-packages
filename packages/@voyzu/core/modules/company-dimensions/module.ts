@@ -12,8 +12,8 @@ export const companyDimensionsModule = {
           path: "/finance/settings/dimensions",
           Page: CompanyDimensionsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/dimensions" },
+                { label: "Finance" },
+                { label: "Settings" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -24,8 +24,8 @@ export const companyDimensionsModule = {
           path: "/finance/settings/dimensions/[code]",
           Page: CompanyDimensionDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/dimensions" },
+                { label: "Finance" },
+                { label: "Settings" },
                 { label: "Dimensions", href: "/finance/settings/dimensions" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

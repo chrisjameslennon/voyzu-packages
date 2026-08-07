@@ -248,9 +248,7 @@ export function CompanyDimensionDetail({
         <div className={layoutStyles.slotTitle}>
           <div className={detailStyles.title}>
             <div className={detailStyles.titleIcon}>
-              <span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>
-                category
-              </span>
+              <span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>category</span>
             </div>
             <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>
               {dimension.name}

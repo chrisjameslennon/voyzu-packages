@@ -29,7 +29,7 @@ export async function CompanyBankCashAccountsListPage() {
         </div>
         <div className={layoutStyles.slotTitle}>
           <div className={listStyles.titleIcon}>
-            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>account_balance</span>
+            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>account_tree</span>
           </div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Bank / Cash Accounts</h1>
           <div className={layoutStyles.slotTitleMeta}>

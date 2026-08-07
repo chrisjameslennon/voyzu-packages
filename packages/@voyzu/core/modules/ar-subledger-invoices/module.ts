@@ -9,9 +9,9 @@ import { ArInvoicesListPage, ArInvoiceDetailPage } from "@voyzu/core/ar-subledge
           path: "/finance/subledgers/ar/invoices",
           Page: ArInvoicesListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/invoices" },
-                { label: "Accounts Receivable", href: "/finance/subledgers/ar/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "Accounts Receivable" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -22,8 +22,8 @@ import { ArInvoicesListPage, ArInvoiceDetailPage } from "@voyzu/core/ar-subledge
           path: "/finance/subledgers/ar/invoices/[documentId]",
           Page: ArInvoiceDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ar/invoices" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AR Invoices", href: "/finance/subledgers/ar/invoices" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

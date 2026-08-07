@@ -12,9 +12,9 @@ export const companyGlAccountCategoriesModule = {
           path: "/finance/settings/reporting-categories",
           Page: CompanyGlAccountCategoriesListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/reporting-categories" },
-                { label: "General Ledger", href: "/finance/settings/gl-accounts" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "General Ledger" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,9 +25,9 @@ export const companyGlAccountCategoriesModule = {
           path: "/finance/settings/reporting-categories/[code]",
           Page: CompanyGlAccountCategoryDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/reporting-categories" },
-                { label: "General Ledger", href: "/finance/settings/gl-accounts" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "General Ledger" },
                 { label: "Reporting Categories", href: "/finance/settings/reporting-categories" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

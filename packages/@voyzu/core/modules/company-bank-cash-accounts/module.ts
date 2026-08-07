@@ -12,9 +12,9 @@ export const companyBankCashAccountsModule = {
           path: "/finance/settings/bank-cash-accounts",
           Page: CompanyBankCashAccountsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/bank-cash-accounts" },
-                { label: "Control Accounts", href: "/finance/settings/control-accounts/ap" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "Control Accounts" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,9 +25,9 @@ export const companyBankCashAccountsModule = {
           path: "/finance/settings/bank-cash-accounts/[code]",
           Page: CompanyBankCashAccountDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/bank-cash-accounts" },
-                { label: "Control Accounts", href: "/finance/settings/control-accounts/ap" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "Control Accounts" },
                 { label: "Bank / Cash Accounts", href: "/finance/settings/bank-cash-accounts" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

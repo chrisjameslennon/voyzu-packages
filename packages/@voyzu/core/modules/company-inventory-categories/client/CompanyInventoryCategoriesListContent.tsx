@@ -252,7 +252,7 @@ export function CompanyInventoryCategoriesListContent({
       <header className={layout.listHeader}>
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
         <div className={layout.slotTitle}>
-          <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>category</span></div>
+          <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>package_2</span></div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Categories</h1>
           <div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div>
           <div className={layout.slotTitleByline}><p className={typography.headingByline}>Item categories group inventory, non-inventory, and service items and provide a default posting profile.</p></div>

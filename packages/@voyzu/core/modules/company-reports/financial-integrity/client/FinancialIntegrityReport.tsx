@@ -329,7 +329,7 @@ export function FinancialIntegrityReport({
         </div>
         <div className={layout.slotTitle}>
           <div className={listStyles.titleIcon}>
-            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>verified</span>
+            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>manage_search</span>
           </div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{pageTitle}</h1>
         </div>

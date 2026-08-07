@@ -9,9 +9,9 @@ import { ApBillsListPage, ApBillDetailPage } from "@voyzu/core/ap-subledger-bill
           path: "/finance/subledgers/ap/bills",
           Page: ApBillsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ap/bills" },
-                { label: "Accounts Payable", href: "/finance/subledgers/ap/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "Accounts Payable" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -22,8 +22,8 @@ import { ApBillsListPage, ApBillDetailPage } from "@voyzu/core/ap-subledger-bill
           path: "/finance/subledgers/ap/bills/[documentId]",
           Page: ApBillDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ap/bills" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AP Bills", href: "/finance/subledgers/ap/bills" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

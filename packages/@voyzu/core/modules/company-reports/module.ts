@@ -37,8 +37,8 @@ export const companyReportsModule = {
           path: "/finance/reports/balance-sheet",
           Page: BalanceSheetReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/balance-sheet" },
+                { label: "Finance" },
+                { label: "Reports" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -49,8 +49,8 @@ export const companyReportsModule = {
           path: "/finance/reports/trial-balance",
           Page: TrialBalanceReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/trial-balance" },
+                { label: "Finance" },
+                { label: "Reports" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -61,8 +61,8 @@ export const companyReportsModule = {
           path: "/finance/reports/tax-position",
           Page: TaxPositionReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/tax-position" },
+                { label: "Finance" },
+                { label: "Reports" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -73,8 +73,8 @@ export const companyReportsModule = {
           path: "/finance/reports/bank-cash-movement",
           Page: BankCashMovementReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/bank-cash-movement" },
+                { label: "Finance" },
+                { label: "Reports" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -85,9 +85,9 @@ export const companyReportsModule = {
           path: "/finance/reports/journal-entries",
           Page: JournalEntriesReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/journal-entries" },
-                { label: "Audit", href: "/finance/reports/journal-entries" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Audit" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -110,9 +110,9 @@ export const companyReportsModule = {
           path: "/finance/reports/financial-integrity",
           Page: FinancialIntegrityReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/financial-integrity" },
-                { label: "Audit", href: "/finance/reports/financial-integrity" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Audit" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -123,9 +123,9 @@ export const companyReportsModule = {
           path: "/finance/reports/profit-loss",
           Page: ProfitLossReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/profit-loss" },
-                { label: "Movement", href: "/finance/reports/profit-loss" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Movement" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -136,9 +136,9 @@ export const companyReportsModule = {
           path: "/finance/reports/profit-loss-analysis",
           Page: ProfitLossAnalysisReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/profit-loss-analysis" },
-                { label: "Movement", href: "/finance/reports/profit-loss-analysis" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Movement" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -149,9 +149,9 @@ export const companyReportsModule = {
           path: "/finance/reports/tax-activity",
           Page: TaxActivityReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/tax-activity" },
-                { label: "Movement", href: "/finance/reports/tax-activity" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Movement" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -162,9 +162,9 @@ export const companyReportsModule = {
           path: "/finance/reports/tax-activity-reconciliation",
           Page: TaxActivityReconciliationReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/tax-activity-reconciliation" },
-                { label: "Reconciliation", href: "/finance/reports/tax-activity-reconciliation" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Reconciliation" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -175,9 +175,9 @@ export const companyReportsModule = {
           path: "/finance/reports/ar-subledger-entries-audit",
           Page: ArSubledgerEntriesAuditReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/ar-subledger-entries-audit" },
-                { label: "Audit", href: "/finance/reports/ar-subledger-entries-audit" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Audit" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -188,9 +188,9 @@ export const companyReportsModule = {
           path: "/finance/reports/ap-subledger-entries-audit",
           Page: ApSubledgerEntriesAuditReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/ap-subledger-entries-audit" },
-                { label: "Audit", href: "/finance/reports/ap-subledger-entries-audit" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Audit" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -201,9 +201,9 @@ export const companyReportsModule = {
           path: "/finance/reports/inventory-ledger-entries-audit",
           Page: InventoryLedgerEntriesAuditReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/inventory-ledger-entries-audit" },
-                { label: "Audit", href: "/finance/reports/inventory-ledger-entries-audit" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Audit" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -214,9 +214,9 @@ export const companyReportsModule = {
           path: "/finance/reports/tax-ledger-entries-audit",
           Page: TaxLedgerEntriesAuditReportPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Reports", href: "/finance/reports/tax-ledger-entries-audit" },
-                { label: "Audit", href: "/finance/reports/tax-ledger-entries-audit" },
+                { label: "Finance" },
+                { label: "Reports" },
+                { label: "Audit" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },

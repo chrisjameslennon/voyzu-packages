@@ -12,9 +12,9 @@ export const companyArControlAccountsModule = {
           path: "/finance/settings/control-accounts/ar",
           Page: CompanyArControlAccountsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/control-accounts/ar" },
-                { label: "Control Accounts", href: "/finance/settings/control-accounts/ap" },
+                { label: "Finance" },
+                { label: "Settings" },
+                { label: "Control Accounts" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,8 +25,8 @@ export const companyArControlAccountsModule = {
           path: "/finance/settings/control-accounts/ar/[code]",
           Page: CompanyArControlAccountDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Settings", href: "/finance/settings/control-accounts/ar" },
+                { label: "Finance" },
+                { label: "Settings" },
                 { label: "Accounts Receivable Control Accounts", href: "/finance/settings/control-accounts/ar" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

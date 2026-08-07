@@ -57,7 +57,7 @@ export function ApStatementDetail({ statement, from, fromCode }: { statement: Ap
     <div className={layout.reportView}>
       <header className={layout.reportHeader}>
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
-        <div className={layout.slotTitle}><div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>article</span></div><div className={layout.slotTitleText}><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Supplier Statement</h1></div></div>
+        <div className={layout.slotTitle}><div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>receipt_long</span></div><div className={layout.slotTitleText}><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Supplier Statement</h1></div></div>
         <div className={layout.slotTitleActions}><DetailBackButton fallbackHref="/finance/subledgers/ap/statements" from={from} fromCode={fromCode} /></div>
       </header>
       <div className={layout.slotDocument}><TabGroup tabs={tabs} defaultKey="document" /></div>

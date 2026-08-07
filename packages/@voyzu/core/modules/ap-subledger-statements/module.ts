@@ -12,9 +12,9 @@ export const apSubledgerStatementsModule = {
           path: "/finance/subledgers/ap/statements",
           Page: ApStatementsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ap/statements" },
-                { label: "Accounts Payable", href: "/finance/subledgers/ap/ledger-entries" },
+                { label: "Finance" },
+                { label: "Subledgers" },
+                { label: "Accounts Payable" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -25,8 +25,8 @@ export const apSubledgerStatementsModule = {
           path: "/finance/subledgers/ap/statements/[code]",
           Page: ApStatementDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Subledgers", href: "/finance/subledgers/ap/statements" },
+                { label: "Finance" },
+                { label: "Subledgers" },
                 { label: "AP Statements", href: "/finance/subledgers/ap/statements" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

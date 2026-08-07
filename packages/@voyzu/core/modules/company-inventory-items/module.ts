@@ -12,8 +12,8 @@ export const companyInventoryItemsModule = {
           path: "/finance/inventory/items",
           Page: InventoryItemsListPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Inventory", href: "/finance/inventory/items" },
+                { label: "Finance" },
+                { label: "Inventory" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
         },
@@ -24,8 +24,8 @@ export const companyInventoryItemsModule = {
           path: "/finance/inventory/items/[code]",
           Page: InventoryItemDetailPage,
           breadcrumbBase: [
-                { label: "Finance", href: "/finance/journals" },
-                { label: "Inventory", href: "/finance/inventory/items" },
+                { label: "Finance" },
+                { label: "Inventory" },
                 { label: "Items", href: "/finance/inventory/items" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }

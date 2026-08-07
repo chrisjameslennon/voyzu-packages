@@ -108,9 +108,7 @@ export function FinancialDocumentDefaultDetail({
         <div className={layoutStyles.slotTitle}>
           <div className={detailStyles.title}>
             <div className={detailStyles.titleIcon}>
-              <span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>
-                webhook
-              </span>
+              <span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>webhook</span>
             </div>
             <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>
               {financialDocumentDefault.name}

@@ -384,7 +384,7 @@ export function ProfitLossReport({
         </div>
         <div className={layout.slotTitle}>
           <div className={styles.titleIcon}>
-            <span className={`material-symbols-outlined ${styles.titleIconSymbol}`}>monitoring</span>
+            <span className={`material-symbols-outlined ${styles.titleIconSymbol}`}>trending_up</span>
           </div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{pageTitle}</h1>
         </div>

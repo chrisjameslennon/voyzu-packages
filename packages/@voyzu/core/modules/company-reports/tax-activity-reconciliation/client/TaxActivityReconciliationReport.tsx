@@ -224,7 +224,7 @@ export function TaxActivityReconciliationReport({
         </div>
         <div className={layout.slotTitle}>
           <div className={styles.titleIcon}>
-            <span className={`material-symbols-outlined ${styles.titleIconSymbol}`}>receipt_long</span>
+            <span className={`material-symbols-outlined ${styles.titleIconSymbol}`}>rule</span>
           </div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{pageTitle}</h1>
         </div>
