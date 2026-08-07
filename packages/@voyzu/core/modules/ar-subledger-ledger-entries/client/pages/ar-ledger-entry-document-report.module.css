@@ -1,10 +1,3 @@
-.checkboxOption {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-}
-
 .reportTab {
   display: flex;
   flex-direction: column;
@@ -20,19 +13,18 @@
   border-bottom: 1px solid var(--voyzu-color-surface-secondary);
 }
 
-.divider {
-  width: 1px;
-  height: 1.75rem;
-  background: var(--voyzu-color-border);
-  margin: 0 0.25rem;
-}
-
 .documentShell {
   display: flex;
   justify-content: center;
   min-width: 0;
   overflow-x: auto;
   padding: 1.75rem 0 0;
+}
+
+.portraitDocument {
+  box-sizing: border-box;
+  width: 210mm;
+  flex: 0 0 210mm;
 }
 
 .statusRailStack {
@@ -93,10 +85,6 @@
   .toolbar {
     justify-content: flex-start;
     flex-wrap: wrap;
-  }
-
-  .divider {
-    display: none;
   }
 
   .documentShell {

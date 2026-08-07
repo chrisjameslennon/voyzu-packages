@@ -1,3 +1,4 @@
+export const arInvoiceReportCss = `
 .reportPage {
   --report-font: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --text-main: #1f1f1f;
@@ -382,3 +383,53 @@
     page-break-inside: avoid;
   }
 }
+
+`;
+
+export const arInvoiceReportStyles = {
+  addressBlock: "addressBlock",
+  appLabel: "appLabel",
+  applicationRow: "applicationRow",
+  code: "code",
+  firstAppCell: "firstAppCell",
+  fullWidth: "fullWidth",
+  grid12: "grid12",
+  label: "label",
+  line: "line",
+  metaRow: "metaRow",
+  metaSlot: "metaSlot",
+  metaValue: "metaValue",
+  metaWideSlot: "metaWideSlot",
+  muted: "muted",
+  name: "name",
+  number: "number",
+  payableLabel: "payableLabel",
+  payableLine: "payableLine",
+  payableValue: "payableValue",
+  reportCompanyName: "reportCompanyName",
+  reportFooter: "reportFooter",
+  reportHeader: "reportHeader",
+  reportHeaderLine: "reportHeaderLine",
+  reportHeaderLineStrong: "reportHeaderLineStrong",
+  reportOrgNameCentered: "reportOrgNameCentered",
+  reportPage: "reportPage",
+  reportSection: "reportSection",
+  rootRow: "rootRow",
+  rowBordered: "rowBordered",
+  section: "section",
+  sectionTitle: "sectionTitle",
+  statementMetaSlot: "statementMetaSlot",
+  table: "table",
+  topCompany: "topCompany",
+  topCounterparty: "topCounterparty",
+  totalAmountCell: "totalAmountCell",
+  totalLine: "totalLine",
+  totalRow: "totalRow",
+  totals: "totals",
+  totalsItem: "totalsItem",
+  totalsLabel: "totalsLabel",
+  totalsOwing: "totalsOwing",
+  totalsRow: "totalsRow",
+  totalsValue: "totalsValue",
+} as const;
+

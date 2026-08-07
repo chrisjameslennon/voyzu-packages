@@ -50,7 +50,11 @@ export function FinancialDocumentDefaultDetail({
       },
       { kind: "GENERAL_LEDGER", id: account.id, status: account.status, accountType: account.accountType },
     ).length === 0)
-    .map((account) => ({ value: String(account.id), label: account.code })),
+    .map((account) => ({
+      value: String(account.id),
+      label: account.name,
+      code: account.code,
+    })),
   [financialDocumentDefault, glAccounts]);
   const bankCashAccountOptions = useMemo(() => bankCashAccounts
     .filter((account) => AssignTarget(

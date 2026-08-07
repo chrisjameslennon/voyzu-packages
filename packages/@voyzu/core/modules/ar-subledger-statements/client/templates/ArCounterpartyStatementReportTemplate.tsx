@@ -2,7 +2,10 @@
 
 import type { ArCounterpartyStatementResponseDto } from "@voyzu/core/types/modules/ar-subledger";
 
-import localStyles from "./ar-document-report-template.module.css";
+import {
+  arStatementReportCss,
+  arStatementReportStyles as localStyles,
+} from "./ar-document-report-template.css";
 
 function formatAmount(value: number): string {
   if (value === 0) return "-";
@@ -43,11 +46,11 @@ export function ArCounterpartyStatementReportTemplate({
   const { company } = statement;
   let runningBalance = 0;
   const statementRows = statement.groups
-    .flatMap((group) => [
-      { kind: "group" as const, key: `group-${group.code}`, row: group, appliedTo: "" },
+    .flatMap((group, groupIndex) => [
+      { kind: "group" as const, key: `group-${groupIndex}-${group.code}-${group.documentId}`, row: group, appliedTo: "" },
       ...group.applications.map((application, index) => ({
         kind: "application" as const,
-        key: `application-${group.code}-${application.code}-${index}`,
+        key: `application-${groupIndex}-${group.code}-${application.code}-${application.documentId}-${index}`,
         row: application,
         appliedTo: group.documentId,
       })),
@@ -64,7 +67,7 @@ export function ArCounterpartyStatementReportTemplate({
 
   return (
     <div className={localStyles.reportPage}>
-      <style>{"@media print { @page { size: A4 landscape; } }"}</style>
+      <style>{`${arStatementReportCss}\n@media print { @page { size: A4 landscape; } }`}</style>
 
       <header className={localStyles.reportHeader}>
         {showOrganization && organizationName && (

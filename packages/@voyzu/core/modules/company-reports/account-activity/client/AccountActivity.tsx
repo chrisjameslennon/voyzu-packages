@@ -166,9 +166,9 @@ export function AccountActivity({ journals, financialYears, periods: initialPeri
   const rangeItems: DropdownMenuItem[] = [
     { value: "this-month", label: "Month to date", onSelect: () => applyPreset("this-month", "Month to date", selectedYear) },
     { value: "last-month", label: "Previous month", onSelect: () => applyPreset("last-month", "Previous month", selectedYear) },
-    { value: "previous-2-complete-months", label: "Previous 2 complete months", onSelect: () => applyPreset("previous-2-complete-months", "Previous 2 complete months", selectedYear) },
-    { value: "previous-3-complete-months", label: "Previous 3 complete months", onSelect: () => applyPreset("previous-3-complete-months", "Previous 3 complete months", selectedYear) },
-    { value: "previous-6-complete-months", label: "Previous 6 complete months", onSelect: () => applyPreset("previous-6-complete-months", "Previous 6 complete months", selectedYear) },
+    { value: "previous-2-complete-months", label: "Previous 2 full months", onSelect: () => applyPreset("previous-2-complete-months", "Previous 2 full months", selectedYear) },
+    { value: "previous-3-complete-months", label: "Previous 3 full months", onSelect: () => applyPreset("previous-3-complete-months", "Previous 3 full months", selectedYear) },
+    { value: "previous-6-complete-months", label: "Previous 6 full months", onSelect: () => applyPreset("previous-6-complete-months", "Previous 6 full months", selectedYear) },
     { value: "previous-90-days", label: "Previous 90 days", onSelect: () => applyPreset("previous-90-days", "Previous 90 days", selectedYear) },
     { value: "entire-financial-year", label: "Financial year", onSelect: () => applyPreset("entire-financial-year", "Financial year", selectedYear) },
     { value: "period", label: "Period", disabled: periodItems.length === 0, children: periodItems },

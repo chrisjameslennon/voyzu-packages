@@ -1,45 +1,66 @@
 "use client";
 
+import { useMemo } from "react";
 
-import { DetailBackButton } from "@voyzu/ui-surface/client";
-import { CompanyPageTitleBadges, type DetailBackSource } from "@voyzu/core/common/client";
+import { type DetailBackSource } from "@voyzu/core/common/client";
 import type { ApCounterpartyStatementResponseDto } from "@voyzu/core/types/modules/ap-subledger";
-import { Breadcrumbs, DataTable, type DataTableColumn } from "@voyzu/ui-components";
-import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
+import { DetailBackButton } from "@voyzu/ui-surface/client";
+import { Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
+import layout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 
-const moneyFormat = new Intl.NumberFormat("en-NZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const money = (value: number) => value === 0 ? "-" : moneyFormat.format(value);
+import { ApCounterpartyStatementReportTemplate } from "../templates/ApCounterpartyStatementReportTemplate";
+import localStyles from "./ap-statement-detail.module.css";
 
-type StatementLine = ApCounterpartyStatementResponseDto["groups"][number] & { id: string };
+function formatAmount(value: number): string {
+  return value.toLocaleString("en-NZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
-const columns: DataTableColumn<StatementLine>[] = [
-  { key: "postingDate", label: "Date", width: "8rem" },
-  { key: "documentTypeLabel", label: "Document", width: "12rem" },
-  { key: "documentId", label: "Document ID", width: "12rem", render: (row) => <span className={listStyles.codeCell}>{row.documentId}</span> },
-  { key: "description", label: "Description", width: "20rem" },
-  { key: "debit", label: "Debit", width: "9rem", align: "right", render: (row) => money(row.debit) },
-  { key: "credit", label: "Credit", width: "9rem", align: "right", render: (row) => money(row.credit) },
-  { key: "openBalance", label: "Open", width: "9rem", align: "right", render: (row) => money(row.openBalance) },
-];
+function ReadOnlyField({ label, value }: { label: string; value: string | number }) {
+  return <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>{label}</span><Input value={String(value)} disabled /></label>;
+}
 
-export function ApStatementDetail({
-  statement,
-  from,
-  fromCode,
-}: {
-  statement: ApCounterpartyStatementResponseDto;
-  from?: DetailBackSource;
-  fromCode?: string;
-}) {
-  const rows = statement.groups.map((group) => ({ ...group, id: group.code }));
+export function ApStatementDetail({ statement, from, fromCode }: { statement: ApCounterpartyStatementResponseDto; from?: DetailBackSource; fromCode?: string }) {
+  const generatedAt = useMemo(() => new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }), []);
+  const printablePath = `/finance/subledgers/ap/statements/${encodeURIComponent(statement.counterpartyCode)}/printable`;
+  const pdfParams = new URLSearchParams({ orientation: "landscape", path: printablePath, filename: `ap-statement-${statement.counterpartyCode}` });
+  const pdfViewPath = `/api/capability/pdf-view?${pdfParams.toString()}`;
+  const pdfDownloadPath = `/api/capability/pdf?${pdfParams.toString()}`;
+  const applicationCount = statement.groups.reduce((total, group) => total + group.applications.length, 0);
+  const tabs: TabDef[] = [
+    {
+      key: "document", label: "Document", content: (
+        <div className={localStyles.tabContent}>
+          <div className={localStyles.toolbar}>
+            <Button variant="secondary" icon="open_in_new" title="Printable Page" onClick={() => window.open(printablePath, "_blank", "noopener,noreferrer")} />
+            <Button variant="secondary" icon="picture_as_pdf" title="View PDF" onClick={() => window.open(pdfViewPath, "_blank", "noopener,noreferrer")} />
+            <Button variant="secondary" icon="download" title="Download PDF" onClick={() => { window.location.href = pdfDownloadPath; }} />
+          </div>
+          <div className={localStyles.documentShell}><div className={`${layout.document} ${localStyles.landscapeDocument}`}><ApCounterpartyStatementReportTemplate statement={statement} generatedAt={generatedAt} /></div></div>
+        </div>
+      ),
+    },
+    {
+      key: "details", label: "Details", content: (
+        <section className={detailStyles.card}><h2 className={typography.sectionHeading}>Statement Details</h2><div className={detailStyles.formGrid}>
+          <ReadOnlyField label="Supplier Code" value={statement.counterpartyCode} /><ReadOnlyField label="Supplier Name" value={statement.counterpartyName} />
+          <ReadOnlyField label="Statement Date" value={statement.asAtDate} /><ReadOnlyField label="Currency" value={statement.baseCurrencyCode} />
+          <ReadOnlyField label="Total Debit" value={formatAmount(statement.totalDebit)} /><ReadOnlyField label="Total Credit" value={formatAmount(statement.totalCredit)} />
+          <ReadOnlyField label="Total Owing" value={formatAmount(statement.totalOwing)} /><ReadOnlyField label="Documents" value={statement.groups.length} /><ReadOnlyField label="Applications" value={applicationCount} />
+        </div></section>
+      ),
+    },
+  ];
   return (
-    <div className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}>
-      <header className={layout.detailHeader}><div className={layout.slotBreadcrumb}><Breadcrumbs /></div><div className={layout.slotTitle}><div className={detailStyles.title}><div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>summarize</span></div><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{statement.counterpartyName}</h1></div><div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div></div><div className={layout.slotActions}><div className={detailStyles.headerActions}><DetailBackButton fallbackHref={"/finance/subledgers/ap/statements"} from={from} fromCode={fromCode} /></div></div></header>
-      <aside className={layout.statusSection}><section className={detailStyles.card}><h2 className={typography.sectionHeading}>Statement Totals</h2><p>Debit <strong>{money(statement.totalDebit)}</strong></p><p>Credit <strong>{money(statement.totalCredit)}</strong></p><p>Total Owing <strong>{money(statement.totalOwing)}</strong></p></section></aside>
-      <main className={layout.mainSection}><section className={detailStyles.card}><h2 className={typography.sectionHeading}>Statement</h2><p className={typography.headingByline}>As at {statement.asAtDate} - {statement.baseCurrencyCode}</p><DataTable<StatementLine, string> columns={columns} rows={rows} selectedIds={new Set<string>()} isAllSelected={false} isSomeSelected={false} onSelectAll={() => undefined} onSelectOne={() => undefined} noSelectionColumn currentPage={1} totalPages={1} onPageChange={() => undefined} totalCount={rows.length} filteredCount={rows.length} itemLabel="lines" hasData={rows.length > 0} emptyIcon="summarize" emptyTitle="No statement lines found" emptyText="No statement activity exists for this counterparty" /></section></main>
+    <div className={layout.reportView}>
+      <header className={layout.reportHeader}>
+        <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
+        <div className={layout.slotTitle}><div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>article</span></div><div className={layout.slotTitleText}><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Supplier Statement</h1></div></div>
+        <div className={layout.slotTitleActions}><DetailBackButton fallbackHref="/finance/subledgers/ap/statements" from={from} fromCode={fromCode} /></div>
+      </header>
+      <div className={layout.slotDocument}><TabGroup tabs={tabs} defaultKey="document" /></div>
     </div>
   );
 }

@@ -15,7 +15,6 @@ import {
     Badge,
     Breadcrumbs,
     Button,
-    Checkbox,
     DropdownMenu,
     Input,
     TabGroup,
@@ -33,7 +32,6 @@ import localStyles from "./ar-ledger-entry-document-report.module.css";
 interface ArLedgerEntryDocumentReportProps {
   entry: ArSubledgerEntryResponseDto;
   report: ArLedgerEntryDocumentReportResponseDto;
-  organizationName?: string;
   from?: DetailBackSource;
   fromCode?: string;
 }
@@ -73,14 +71,12 @@ function ReadOnlyField({ label, value }: { label: string; value: string | number
 }
 
 function DocumentTab({
+  code,
   report,
-  organizationName,
 }: {
+  code: string;
   report: ArLedgerEntryDocumentReportResponseDto;
-  organizationName: string;
 }) {
-  const [showOrganization, setShowOrganization] = useState(false);
-
   const generatedAt = useMemo(
     () =>
       new Date().toLocaleString("en-GB", {
@@ -92,41 +88,42 @@ function DocumentTab({
       }),
     [],
   );
-
-  const optionItems: DropdownMenuItem[] = [
-    {
-      value: "show-organization",
-      label: (
-        <span className={localStyles.checkboxOption}>
-          <Checkbox checked={showOrganization} onChange={() => undefined} tabIndex={-1} />
-          <span>Show organization name</span>
-        </span>
-      ),
-      onSelect: () => setShowOrganization((value) => !value),
-    },
-  ];
+  const printablePath = `/finance/subledgers/ar/ledger-entries/${encodeURIComponent(code)}/document-printable`;
+  const pdfParams = new URLSearchParams({
+    orientation: "portrait",
+    path: printablePath,
+    filename: `ar-ledger-entry-${code}`,
+  });
+  const pdfViewPath = `/api/capability/pdf-view?${pdfParams.toString()}`;
+  const pdfDownloadPath = `/api/capability/pdf?${pdfParams.toString()}`;
 
   return (
     <div className={localStyles.reportTab}>
       <div className={localStyles.toolbar}>
-        <DropdownMenu
-          trigger={<Button variant="plain" icon="tune" title="Options" />}
-          items={optionItems}
-          alignment="right"
-          closeOnSelect={false}
+        <Button
+          variant="secondary"
+          icon="open_in_new"
+          title="Printable Page"
+          onClick={() => window.open(printablePath, "_blank", "noopener,noreferrer")}
         />
-        <div className={localStyles.divider} />
-        <Button variant="secondary" icon="open_in_new" title="Printable Page" disabled />
-        <Button variant="secondary" icon="picture_as_pdf" title="View PDF" disabled />
-        <Button variant="secondary" icon="download" title="Download PDF" disabled />
+        <Button
+          variant="secondary"
+          icon="picture_as_pdf"
+          title="View PDF"
+          onClick={() => window.open(pdfViewPath, "_blank", "noopener,noreferrer")}
+        />
+        <Button
+          variant="secondary"
+          icon="download"
+          title="Download PDF"
+          onClick={() => { window.location.href = pdfDownloadPath; }}
+        />
       </div>
       <div className={localStyles.documentShell}>
-        <div className={reportLayout.document} style={{ maxWidth: "210mm" }}>
+        <div className={`${reportLayout.document} ${localStyles.portraitDocument}`}>
           <ArLedgerEntryDocumentReportTemplate
             report={report}
             generatedAt={generatedAt}
-            organizationName={organizationName}
-            showOrganization={showOrganization}
           />
         </div>
       </div>
@@ -162,7 +159,6 @@ function DetailsTab({ entry }: { entry: ArSubledgerEntryResponseDto }) {
 export function ArLedgerEntryDocumentReport({
   entry,
   report,
-  organizationName = "",
   from,
   fromCode,
 }: ArLedgerEntryDocumentReportProps) {
@@ -175,7 +171,7 @@ export function ArLedgerEntryDocumentReport({
     {
       key: "document",
       label: "Document",
-      content: <DocumentTab report={report} organizationName={organizationName} />,
+      content: <DocumentTab code={entry.code} report={report} />,
     },
     {
       key: "details",

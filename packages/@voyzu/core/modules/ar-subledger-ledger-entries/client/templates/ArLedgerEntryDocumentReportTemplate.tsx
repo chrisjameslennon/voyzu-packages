@@ -2,7 +2,10 @@
 
 import type { ArLedgerEntryDocumentReportResponseDto } from "@voyzu/core/types/modules/ar-subledger";
 
-import localStyles from "./ar-document-report-template.module.css";
+import {
+  arDocumentReportCss,
+  arDocumentReportStyles as localStyles,
+} from "./ar-document-report-template.css";
 
 function formatAmount(value: number): string {
   const formatted = Math.abs(value).toLocaleString("en-NZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -51,7 +54,7 @@ export function ArLedgerEntryDocumentReportTemplate({
 
   return (
     <div className={localStyles.reportPage}>
-      <style>{"@media print { @page { size: A4 portrait; } }"}</style>
+      <style>{`${arDocumentReportCss}\n@media print { @page { size: A4 portrait; } }`}</style>
 
       <header className={localStyles.reportHeader}>
         {showOrganization && organizationName && (

@@ -1,7 +1,10 @@
 import { handleGetArEntry, handleListArEntries } from "@voyzu/core/ar-subledger-ledger-entries/server";
 import { arrayOf, dtoRef } from "@voyzu/types/api";
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
-import { ArLedgerEntriesListPage, ArLedgerEntryDetailPage } from "@voyzu/core/ar-subledger-ledger-entries/server";
+import {
+  ArLedgerEntriesListPage,
+  ArLedgerEntryDetailPage,
+} from "@voyzu/core/ar-subledger-ledger-entries/server";
 
 export const arSubledgerLedgerEntriesModule = {
   pageRoutes: {

@@ -27,6 +27,14 @@ import { ApBillsListPage, ApBillDetailPage } from "@voyzu/core/ap-subledger-bill
                 { label: "AP Bills", href: "/finance/subledgers/ap/bills" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
+        },
+    detailPrintable: {
+          id: "voyzu.ap-subledger-bills.page.detail.printable",
+          pageTitle: "AP Bill",
+          path: "/finance/subledgers/ap/bills/[documentId]/printable",
+          Page: ApBillDetailPage,
+          unframed: true,
+          auth: { required: true, minRole: "COMPANY_USER" }
         }
   },
 

@@ -10,19 +10,24 @@ import {
 
 import { type DetailBackSource } from "@voyzu/core/common/client";
 import type { ApSubledgerEntryResponseDto } from "@voyzu/core/types/modules/ap-subledger";
+import type { ApLedgerEntryDocumentReportResponseDto } from "@voyzu/core/types/modules/ap-subledger";
 import {
   Badge,
   Breadcrumbs,
   Button,
   DropdownMenu,
   Input,
+  TabGroup,
   type DropdownMenuItem,
+  type TabDef,
 } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
+import reportLayout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { ApLedgerEntryDocumentReportTemplate } from "../../../ap-subledger-bills/client/templates/ApLedgerEntryDocumentReportTemplate";
 import localStyles from "./ap-ledger-entry-detail.module.css";
 
 const moneyFormat = new Intl.NumberFormat("en-NZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -36,16 +41,28 @@ function value(value: string | number | boolean | null | undefined) {
 
 export function ApLedgerEntryDetail({
   entry,
+  report,
   from,
   fromCode,
 }: {
   entry: ApSubledgerEntryResponseDto;
+  report: ApLedgerEntryDocumentReportResponseDto;
   from?: DetailBackSource;
   fromCode?: string;
 }) {
   const router = useRouter();
   const [documentVisible, setDocumentVisible] = useState(false);
   const [calculationsVisible, setCalculationsVisible] = useState(false);
+  const generatedAt = useMemo(
+    () => new Date().toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    [],
+  );
   const debit = entry.entryType === "DEBIT" ? entry.baseCurrencyAmount : 0;
   const credit = entry.entryType === "CREDIT" ? entry.baseCurrencyAmount : 0;
   const fields: Array<{ label: string; value: string }> = [
@@ -117,6 +134,44 @@ export function ApLedgerEntryDetail({
       onSelect: () => setCalculationsVisible(true),
     },
   ];
+  const printablePath = `/finance/subledgers/ap/ledger-entries/${encodeURIComponent(entry.code)}/document-printable`;
+  const pdfParams = new URLSearchParams({
+    orientation: "portrait",
+    path: printablePath,
+    filename: `ap-ledger-entry-${entry.code}`,
+  });
+  const pdfViewPath = `/api/capability/pdf-view?${pdfParams.toString()}`;
+  const pdfDownloadPath = `/api/capability/pdf?${pdfParams.toString()}`;
+  const tabs: TabDef[] = [
+    {
+      key: "document",
+      label: "Document",
+      content: (
+        <div className={localStyles.reportTab}>
+          <div className={localStyles.toolbar}>
+            <Button variant="secondary" icon="open_in_new" title="Printable Page" onClick={() => window.open(printablePath, "_blank", "noopener,noreferrer")} />
+            <Button variant="secondary" icon="picture_as_pdf" title="View PDF" onClick={() => window.open(pdfViewPath, "_blank", "noopener,noreferrer")} />
+            <Button variant="secondary" icon="download" title="Download PDF" onClick={() => { window.location.href = pdfDownloadPath; }} />
+          </div>
+          <div className={localStyles.documentShell}>
+            <div className={`${reportLayout.document} ${localStyles.portraitDocument}`}>
+              <ApLedgerEntryDocumentReportTemplate report={report} generatedAt={generatedAt} />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "details",
+      label: "Details",
+      content: (
+        <section className={detailStyles.card}>
+          <h2 className={typography.sectionHeading}>AP Ledger Entry</h2>
+          <div className={detailStyles.formGrid}>{fields.map((field) => <label key={field.label} className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>{field.label}</span><Input value={field.value} disabled /></label>)}</div>
+        </section>
+      ),
+    },
+  ];
 
   return (
     <div className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}>
@@ -174,7 +229,7 @@ export function ApLedgerEntryDetail({
           />
         </div>
       </aside>
-      <main className={layout.mainSection}><section className={detailStyles.card}><h2 className={typography.sectionHeading}>AP Ledger Entry</h2><div className={detailStyles.formGrid}>{fields.map((field) => <label key={field.label} className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>{field.label}</span><Input value={field.value} disabled /></label>)}</div></section></main>
+      <main className={layout.mainSection}><TabGroup tabs={tabs} defaultKey="document" /></main>
 
       {documentVisible && (
         <JsonModal

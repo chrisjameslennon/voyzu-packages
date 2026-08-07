@@ -1,6 +1,6 @@
 
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
-import { ArInvoicesListPage, ArInvoiceDetailPage, ArInvoicePrintablePage } from "@voyzu/core/ar-subledger-invoices/server";export const arSubledgerInvoicesModule = {
+import { ArInvoicesListPage, ArInvoiceDetailPage } from "@voyzu/core/ar-subledger-invoices/server";export const arSubledgerInvoicesModule = {
   pageRoutes: {
     list: {
           id: "voyzu.ar-subledger-invoices.page.list",
@@ -32,7 +32,7 @@ import { ArInvoicesListPage, ArInvoiceDetailPage, ArInvoicePrintablePage } from 
           id: "voyzu.ar-subledger-invoices.page.detail.printable",
           pageTitle: "AR Invoice",
           path: "/finance/subledgers/ar/invoices/[documentId]/printable",
-          Page: ArInvoicePrintablePage,
+          Page: ArInvoiceDetailPage,
           unframed: true,
           auth: { required: true, minRole: "COMPANY_USER" }
         }

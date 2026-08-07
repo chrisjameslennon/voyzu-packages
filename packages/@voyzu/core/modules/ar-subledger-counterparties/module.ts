@@ -30,6 +30,14 @@ export const arSubledgerCounterpartiesModule = {
                 { label: "AR Counterparties", href: "/finance/subledgers/ar/counterparties" },
               ],
           auth: { required: true, minRole: "COMPANY_USER" }
+        },
+    detailPrintable: {
+          id: "voyzu.ar-subledger-counterparties.page.detail.printable",
+          pageTitle: "AR Counterparty",
+          path: "/finance/subledgers/ar/counterparties/[code]/printable",
+          Page: ArCounterpartyDetailPage,
+          unframed: true,
+          auth: { required: true, minRole: "COMPANY_USER" }
         }
   },
   apiDefinitions: {
