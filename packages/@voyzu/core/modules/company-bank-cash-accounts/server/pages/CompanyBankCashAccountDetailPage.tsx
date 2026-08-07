@@ -7,12 +7,14 @@ import { getBankCashAccount } from "../../../common/bank-cash-accounts/server";
 import { listGlAccounts } from "../../../common/gl-accounts/server";
 import { getCompanySettingsUiState } from "../../../common/server/company-standard-settings";
 import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../common/server/settings-scope";
+import { normalizeDetailBackSource } from "../../../common/server";
 
 interface CompanyBankCashAccountDetailPageProps {
   code?: string;
+  surface?: { searchParams?: Record<string, string> };
 }
 
-export async function CompanyBankCashAccountDetailPage({ code }: CompanyBankCashAccountDetailPageProps) {
+export async function CompanyBankCashAccountDetailPage({ code, surface }: CompanyBankCashAccountDetailPageProps) {
   if (!code) notFound();
   const scope = await resolveServerSettingsScope("selected");
   const companyApiContext = await resolveServerCompanyApiContext();
@@ -22,6 +24,7 @@ export async function CompanyBankCashAccountDetailPage({ code }: CompanyBankCash
     getCompanySettingsUiState(scope.companyId),
   ]);
   if (!account) notFound();
+  const searchParams = surface?.searchParams ?? {};
 
   return (
     <CompanyBankCashAccountDetail
@@ -33,6 +36,8 @@ export async function CompanyBankCashAccountDetailPage({ code }: CompanyBankCash
       readOnly={settingsState.readOnly}
       usesOrganizationStandardSettings={settingsState.usesOrganizationStandardSettings}
       isArchived={settingsState.isArchived}
+      from={normalizeDetailBackSource(searchParams.from)}
+      fromCode={searchParams.fromCode}
     />
   );
 }

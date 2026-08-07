@@ -16,6 +16,7 @@ function toEntryDto(row: Awaited<ReturnType<ApSubledgerRepo["listEntries"]>>[num
     journalHeaderId: row.journal_header_id,
     journalCode: row.journal_code,
     hasBankCashDetails: row.has_bank_cash_details,
+    bankCashCode: row.bank_cash_code,
     taxLedgerEntryCode: row.tax_ledger_entry_code,
     postingDate: row.posting_date,
     documentDate: row.document_date,

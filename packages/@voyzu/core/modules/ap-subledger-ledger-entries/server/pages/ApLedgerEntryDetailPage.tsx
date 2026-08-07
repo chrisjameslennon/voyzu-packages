@@ -12,9 +12,13 @@ import { getApSubledgerEntry } from "../lib/ap-subledger-ledger-entries.service"
 export async function ApLedgerEntryDetailPage({
   code,
   surface,
+  fallbackHref,
+  returnSource,
 }: {
   code?: string;
   surface?: { searchParams?: Record<string, string>; unframed?: boolean };
+  fallbackHref?: string;
+  returnSource?: "apLedgerEntry" | "apLedgerEntryEnquiry";
 }) {
   if (!code) notFound();
   const company = await getSelectedCompany();
@@ -44,6 +48,8 @@ export async function ApLedgerEntryDetailPage({
       report={report}
       from={normalizeDetailBackSource(searchParams.from)}
       fromCode={searchParams.fromCode}
+      fallbackHref={fallbackHref}
+      returnSource={returnSource}
     />
   );
 }

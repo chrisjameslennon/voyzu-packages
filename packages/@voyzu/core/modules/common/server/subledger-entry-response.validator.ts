@@ -15,6 +15,7 @@ function validators() {
     journalHeaderId: (value) => Number.isInteger(value) && value > 0 ? null : "journalHeaderId must be a positive integer",
     journalCode: text,
     hasBankCashDetails: (value) => typeof value === "boolean" ? null : "hasBankCashDetails must be a boolean",
+    bankCashCode: nullableText,
     taxLedgerEntryCode: nullableText,
     postingDate: text,
     documentDate: text,

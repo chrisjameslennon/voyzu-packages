@@ -11,9 +11,13 @@ import { getArLedgerEntryDocumentReport, getArSubledgerEntry } from "../lib/ar-s
 export async function ArLedgerEntryDetailPage({
   code,
   surface,
+  fallbackHref,
+  returnSource,
 }: {
   code?: string;
   surface?: { searchParams?: Record<string, string>; unframed?: boolean };
+  fallbackHref?: string;
+  returnSource?: "arLedgerEntry" | "arLedgerEntryEnquiry";
 }) {
   if (!code) notFound();
   const company = await getSelectedCompany();
@@ -43,6 +47,8 @@ export async function ArLedgerEntryDetailPage({
       report={report}
       from={normalizeDetailBackSource(searchParams.from)}
       fromCode={searchParams.fromCode}
+      fallbackHref={fallbackHref}
+      returnSource={returnSource}
     />
   );
 }

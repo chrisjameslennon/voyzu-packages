@@ -14,6 +14,7 @@ export interface ApSubledgerEntryResponseDto {
   journalHeaderId: number;
   journalCode: string;
   hasBankCashDetails: boolean;
+  bankCashCode: string | null;
   taxLedgerEntryCode: string | null;
   postingDate: string;
   documentDate: string;

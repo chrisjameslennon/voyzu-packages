@@ -6,7 +6,7 @@ import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-import { CompanySettingsTitleBadges, getHasPostingsColor, getStatusSemanticColor } from "@voyzu/core/common/client";
+import { CompanySettingsTitleBadges, getHasPostingsColor, getStatusSemanticColor, type DetailBackSource } from "@voyzu/core/common/client";
 import { ChangeCodeAvailability, ChangeTypeAvailability, Deactivate, Delete, UpdateGLAccount } from "@voyzu/core/common/bank-cash-accounts/domain/operation-policy";
 import type { BankCashAccountPatchRequestDto, BankCashAccountResponseDto } from "@voyzu/core/types/modules/bank-cash-accounts";
 import type { GlAccountResponseDto } from "@voyzu/core/types/modules/gl-accounts";
@@ -28,6 +28,8 @@ interface CompanyBankCashAccountDetailProps {
   readOnly?: boolean;
   usesOrganizationStandardSettings?: boolean;
   isArchived?: boolean;
+  from?: DetailBackSource;
+  fromCode?: string;
 }
 
 export function CompanyBankCashAccountDetail({
@@ -39,6 +41,8 @@ export function CompanyBankCashAccountDetail({
   readOnly = false,
   usesOrganizationStandardSettings = false,
   isArchived = false,
+  from,
+  fromCode,
 }: CompanyBankCashAccountDetailProps) {
   const router = useRouter();
   const [code, setCode] = useState(account.code);
@@ -152,7 +156,7 @@ export function CompanyBankCashAccountDetail({
         </div>
         <div className={layoutStyles.slotActions}>
           <div className={detailStyles.headerActions}>
-            <DetailBackButton fallbackHref={listPath} />
+            <DetailBackButton fallbackHref={listPath} from={from} fromCode={fromCode} />
             <Button variant="secondary" icon="check_circle" disabled={readOnly || account.status === "ACTIVE"} onClick={() => { void transitionStatus("activate"); }}>Activate</Button>
             <Button variant="secondary" icon="block" disabled={readOnly || account.status === "INACTIVE" || deactivateBlockers.length > 0} onClick={() => { void transitionStatus("deactivate"); }}>Deactivate</Button>
             <Button variant="danger" icon="delete" disabled={readOnly || deleteBlockers.length > 0} onClick={() => { void deleteAccount(); }} />

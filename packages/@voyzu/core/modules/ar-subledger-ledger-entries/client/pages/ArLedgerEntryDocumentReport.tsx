@@ -34,6 +34,8 @@ interface ArLedgerEntryDocumentReportProps {
   report: ArLedgerEntryDocumentReportResponseDto;
   from?: DetailBackSource;
   fromCode?: string;
+  fallbackHref?: string;
+  returnSource?: "arLedgerEntry" | "arLedgerEntryEnquiry";
 }
 
 const moneyFormat = new Intl.NumberFormat("en-NZ", {
@@ -161,6 +163,8 @@ export function ArLedgerEntryDocumentReport({
   report,
   from,
   fromCode,
+  fallbackHref = "/finance/subledgers/ar/ledger-entries",
+  returnSource = "arLedgerEntry",
 }: ArLedgerEntryDocumentReportProps) {
   const router = useRouter();
   const [documentVisible, setDocumentVisible] = useState(false);
@@ -194,7 +198,17 @@ export function ArLedgerEntryDocumentReport({
       value: "bank-cash",
       label: "View Bank / Cash Details",
       icon: "account_balance",
-      disabled: !entry.hasBankCashDetails,
+      disabled: !entry.bankCashCode,
+      onSelect: () => {
+        if (!entry.bankCashCode) return;
+        router.push(
+          detailLinkWithBackContext(
+            `/finance/settings/bank-cash-accounts/${encodeURIComponent(entry.bankCashCode)}`,
+            returnSource,
+            entry.code,
+          ),
+        );
+      },
     },
     {
       value: "tax",
@@ -244,7 +258,7 @@ export function ArLedgerEntryDocumentReport({
         </div>
         <div className={detailLayout.slotActions}>
           <div className={detailStyles.headerActions}>
-            <DetailBackButton fallbackHref={"/finance/subledgers/ar/ledger-entries"} from={from} fromCode={fromCode} />
+            <DetailBackButton fallbackHref={fallbackHref} from={from} fromCode={fromCode} />
           </div>
         </div>
       </header>

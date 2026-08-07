@@ -44,11 +44,15 @@ export function ApLedgerEntryDetail({
   report,
   from,
   fromCode,
+  fallbackHref = "/finance/subledgers/ap/ledger-entries",
+  returnSource = "apLedgerEntry",
 }: {
   entry: ApSubledgerEntryResponseDto;
   report: ApLedgerEntryDocumentReportResponseDto;
   from?: DetailBackSource;
   fromCode?: string;
+  fallbackHref?: string;
+  returnSource?: "apLedgerEntry" | "apLedgerEntryEnquiry";
 }) {
   const router = useRouter();
   const [documentVisible, setDocumentVisible] = useState(false);
@@ -101,7 +105,17 @@ export function ApLedgerEntryDetail({
       value: "bank-cash",
       label: "View Bank / Cash Details",
       icon: "account_balance",
-      disabled: !entry.hasBankCashDetails,
+      disabled: !entry.bankCashCode,
+      onSelect: () => {
+        if (!entry.bankCashCode) return;
+        router.push(
+          detailLinkWithBackContext(
+            `/finance/settings/bank-cash-accounts/${encodeURIComponent(entry.bankCashCode)}`,
+            returnSource,
+            entry.code,
+          ),
+        );
+      },
     },
     {
       value: "tax",
@@ -175,7 +189,7 @@ export function ApLedgerEntryDetail({
 
   return (
     <div className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}>
-      <header className={layout.detailHeader}><div className={layout.slotBreadcrumb}><Breadcrumbs /></div><div className={layout.slotTitle}><div className={detailStyles.title}><div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>receipt_long</span></div><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{entry.code}</h1></div><div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div></div><div className={layout.slotActions}><div className={detailStyles.headerActions}><DetailBackButton fallbackHref={"/finance/subledgers/ap/ledger-entries"} from={from} fromCode={fromCode} /></div></div></header>
+      <header className={layout.detailHeader}><div className={layout.slotBreadcrumb}><Breadcrumbs /></div><div className={layout.slotTitle}><div className={detailStyles.title}><div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>receipt_long</span></div><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{entry.code}</h1></div><div className={layout.slotTitleMeta}><CompanyPageTitleBadges /></div></div><div className={layout.slotActions}><div className={detailStyles.headerActions}><DetailBackButton fallbackHref={fallbackHref} from={from} fromCode={fromCode} /></div></div></header>
       <aside className={layout.statusSection}>
         <div className={localStyles.statusRailStack}>
           <div className={detailStyles.card}>

@@ -5,6 +5,7 @@ export interface ArSubledgerEntryRow {
   journal_header_id: number;
   journal_code: string;
   has_bank_cash_details: boolean;
+  bank_cash_code: string | null;
   tax_ledger_entry_code: string | null;
   posting_date: string;
   document_date: string;

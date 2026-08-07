@@ -17,6 +17,7 @@ const AP_ENTRY_COLUMNS = `
   e.journal_header_id::int          AS journal_header_id,
   h.code                            AS journal_code,
   (h.bank_cash_code IS NOT NULL)     AS has_bank_cash_details,
+  h.bank_cash_code                   AS bank_cash_code,
   tax_entry.code                    AS tax_ledger_entry_code,
   e.posting_date::text              AS posting_date,
   h.document_date::text             AS document_date,

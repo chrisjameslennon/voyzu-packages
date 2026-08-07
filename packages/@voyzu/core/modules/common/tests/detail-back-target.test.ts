@@ -54,6 +54,28 @@ describe("detail back navigation", () => {
     );
   });
 
+  it("returns to an AR ledger entry enquiry detail", () => {
+    assert.equal(
+      detailBackHref({
+        from: "arLedgerEntryEnquiry",
+        fromCode: "AR 001",
+        fallbackHref: "/finance/settings/bank-cash-accounts",
+      }),
+      "/finance/subledgers/ar/ledger-entry-enquiry/AR%20001",
+    );
+  });
+
+  it("returns to an AP ledger entry enquiry detail", () => {
+    assert.equal(
+      detailBackHref({
+        from: "apLedgerEntryEnquiry",
+        fromCode: "AP 001",
+        fallbackHref: "/finance/settings/bank-cash-accounts",
+      }),
+      "/finance/subledgers/ap/ledger-entry-enquiry/AP%20001",
+    );
+  });
+
   it("rejects an external organization audit return target", () => {
     assert.equal(
       detailBackHref({
