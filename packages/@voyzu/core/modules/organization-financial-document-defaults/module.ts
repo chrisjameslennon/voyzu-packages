@@ -57,6 +57,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "List",
         description: "List Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        responses: { "200": { description: "Successful response.", schema: arrayOf(dtoRef("FinancialDocumentDefaultResponseDto")) } },
       },
     },
     create: {
@@ -67,6 +68,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Create",
         description: "Create Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: dtoRef("FinancialDocumentDefaultCreateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -87,6 +89,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Filter",
         description: "Filter Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: dtoRef("FilterRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -127,6 +130,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Batch Create",
         description: "Batch Create Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("FinancialDocumentDefaultCreateRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -147,6 +151,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Batch Get",
         description: "Batch Get Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: dtoRef("FinancialDocumentDefaultKeysRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -165,6 +170,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Batch Update",
         description: "Batch Update Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("FinancialDocumentDefaultBatchUpdateRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -186,6 +192,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Batch Patch",
         description: "Batch Patch Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("FinancialDocumentDefaultBatchPatchRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -207,6 +214,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Batch Delete",
         description: "Batch Delete Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: dtoRef("FinancialDocumentDefaultKeysRequestDto") },
         responses: {
           "204": { description: "Successful response." },
           "422": { description: "Business rule failed.", schema: dtoRef("BusinessRuleErrorResponseDto") },
@@ -257,6 +265,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Get",
         description: "Get Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        responses: { "200": { description: "Successful response.", schema: dtoRef("FinancialDocumentDefaultResponseDto") }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
     update: {
@@ -267,6 +276,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Update",
         description: "Update Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: dtoRef("FinancialDocumentDefaultUpdateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -288,6 +298,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Patch",
         description: "Patch Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        requestBody: { required: true, schema: dtoRef("FinancialDocumentDefaultPatchRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -309,6 +320,7 @@ export const organizationFinancialDocumentDefaultsModule = {
         summary: "Delete",
         description: "Delete Organization Financial Document Defaults.",
         tags: ["Organization Financial Document Defaults"],
+        responses: { "204": { description: "Successful response." }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
     activate: {

@@ -14,7 +14,7 @@ import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { GlAccountCategoryDetailsForm } from "../../common/gl-account-categories/client";
 
-const TOAST_KEY = "voyzu:gl-account-categories:toast";
+const TOAST_KEY = "voyzu:organization-gl-account-categories:toast";
 
 interface OrganizationGlAccountCategoryDetailProps {
   category: GlAccountCategoryResponseDto;

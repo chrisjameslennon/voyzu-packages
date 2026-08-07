@@ -42,6 +42,7 @@ export const companyGlAccountsModule = {
         summary: "List",
         description: "List Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        responses: { "200": { description: "Successful response.", schema: arrayOf(dtoRef("GlAccountResponseDto")) } },
       },
     },
     filter: {
@@ -52,6 +53,7 @@ export const companyGlAccountsModule = {
         summary: "Filter",
         description: "Filter Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: dtoRef("FilterRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -92,6 +94,7 @@ export const companyGlAccountsModule = {
         summary: "Create",
         description: "Create Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: dtoRef("GlAccountCreateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -112,6 +115,7 @@ export const companyGlAccountsModule = {
         summary: "Batch Create",
         description: "Batch Create Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("GlAccountCreateRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -132,6 +136,7 @@ export const companyGlAccountsModule = {
         summary: "Batch Get",
         description: "Batch Get Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -150,6 +155,7 @@ export const companyGlAccountsModule = {
         summary: "Batch Update",
         description: "Batch Update Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("GlAccountBatchUpdateRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -171,6 +177,7 @@ export const companyGlAccountsModule = {
         summary: "Batch Patch",
         description: "Batch Patch Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("GlAccountBatchPatchRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -192,6 +199,7 @@ export const companyGlAccountsModule = {
         summary: "Batch Delete",
         description: "Batch Delete Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "204": { description: "Successful response." },
           "400": { description: "Validation failed.", schema: dtoRef("InputValidationErrorResponseDto") },
@@ -207,6 +215,7 @@ export const companyGlAccountsModule = {
         summary: "Batch Activate",
         description: "Batch Activate Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -226,6 +235,7 @@ export const companyGlAccountsModule = {
         summary: "Batch Deactivate",
         description: "Batch Deactivate Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -279,6 +289,7 @@ export const companyGlAccountsModule = {
         summary: "Get",
         description: "Get Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        responses: { "200": { description: "Successful response.", schema: dtoRef("GlAccountResponseDto") }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
     update: {
@@ -289,6 +300,7 @@ export const companyGlAccountsModule = {
         summary: "Update",
         description: "Update Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: dtoRef("GlAccountUpdateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -310,6 +322,7 @@ export const companyGlAccountsModule = {
         summary: "Patch",
         description: "Patch Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        requestBody: { required: true, schema: dtoRef("GlAccountPatchRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -331,6 +344,7 @@ export const companyGlAccountsModule = {
         summary: "Delete",
         description: "Delete Company GL Accounts.",
         tags: ["Company GL Accounts"],
+        responses: { "204": { description: "Successful response." }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
   }

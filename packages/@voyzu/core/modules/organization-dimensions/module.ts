@@ -51,6 +51,7 @@ export const organizationDimensionsModule = {
         summary: "List",
         description: "List Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        responses: { "200": { description: "Successful response.", schema: arrayOf(dtoRef("DimensionResponseDto")) } },
       },
     },
     create: {
@@ -61,6 +62,7 @@ export const organizationDimensionsModule = {
         summary: "Create",
         description: "Create Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("DimensionCreateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -81,6 +83,7 @@ export const organizationDimensionsModule = {
         summary: "Filter",
         description: "Filter Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("FilterRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -121,6 +124,7 @@ export const organizationDimensionsModule = {
         summary: "Batch Create",
         description: "Batch Create Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("DimensionCreateRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -141,6 +145,7 @@ export const organizationDimensionsModule = {
         summary: "Batch Get",
         description: "Batch Get Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -159,6 +164,7 @@ export const organizationDimensionsModule = {
         summary: "Batch Update",
         description: "Batch Update Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("DimensionBatchUpdateRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -180,6 +186,7 @@ export const organizationDimensionsModule = {
         summary: "Batch Patch",
         description: "Batch Patch Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("DimensionBatchPatchRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -201,6 +208,7 @@ export const organizationDimensionsModule = {
         summary: "Batch Delete",
         description: "Batch Delete Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "204": { description: "Successful response." },
           "400": { description: "Validation failed.", schema: dtoRef("InputValidationErrorResponseDto") },
@@ -216,6 +224,7 @@ export const organizationDimensionsModule = {
         summary: "Batch Activate",
         description: "Batch Activate Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -235,6 +244,7 @@ export const organizationDimensionsModule = {
         summary: "Batch Deactivate",
         description: "Batch Deactivate Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -287,6 +297,7 @@ export const organizationDimensionsModule = {
         summary: "List Values",
         description: "List Values Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        responses: { "200": { description: "Successful response.", schema: arrayOf(dtoRef("DimensionValueResponseDto")) } },
       },
     },
     createValue: {
@@ -297,6 +308,7 @@ export const organizationDimensionsModule = {
         summary: "Create Value",
         description: "Create Value Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("DimensionValueCreateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -318,6 +330,7 @@ export const organizationDimensionsModule = {
         summary: "Patch Value",
         description: "Patch Value Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("DimensionValuePatchRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -337,6 +350,7 @@ export const organizationDimensionsModule = {
         summary: "Delete Value",
         description: "Delete Value Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        responses: { "204": { description: "Successful response." }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
     get: {
@@ -347,6 +361,7 @@ export const organizationDimensionsModule = {
         summary: "Get",
         description: "Get Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        responses: { "200": { description: "Successful response.", schema: dtoRef("DimensionResponseDto") }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
     update: {
@@ -357,6 +372,7 @@ export const organizationDimensionsModule = {
         summary: "Update",
         description: "Update Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("DimensionUpdateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -378,6 +394,7 @@ export const organizationDimensionsModule = {
         summary: "Patch",
         description: "Patch Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        requestBody: { required: true, schema: dtoRef("DimensionPatchRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -399,6 +416,7 @@ export const organizationDimensionsModule = {
         summary: "Delete",
         description: "Delete Organization Dimensions.",
         tags: ["Organization Dimensions"],
+        responses: { "204": { description: "Successful response." }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
   }

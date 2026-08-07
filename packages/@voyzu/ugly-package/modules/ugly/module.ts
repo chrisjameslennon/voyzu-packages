@@ -42,6 +42,14 @@ export const uglyModule = {
       method: "GET",
       path: "/ugly-package/raw-request-response",
       handler: handleRawRequestResponse,
+      apiDoc: {
+        summary: "Raw Request / Response",
+        description: "Returns a demonstration snapshot of the raw Next.js request and response.",
+        tags: ["Ugly Package"],
+        responses: {
+          "200": { description: "The request and response demonstration snapshot." },
+        },
+      },
     },
   },
 } as const satisfies VoyzuPackageModuleDefinition;

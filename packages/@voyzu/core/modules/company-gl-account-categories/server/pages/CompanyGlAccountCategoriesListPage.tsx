@@ -39,7 +39,7 @@ export async function CompanyGlAccountCategoriesListPage() {
           </div>
           <div className={layoutStyles.slotTitleByline}>
             <p className={typography.headingByline}>
-              Reporting categories are system defined and cannot be added or deleted.
+              Reporting categories are system defined and cannot be added or deleted. Click on a reporting category to change the name.
             </p>
           </div>
         </div>

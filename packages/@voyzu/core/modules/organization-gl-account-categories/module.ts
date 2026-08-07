@@ -57,6 +57,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "List",
         description: "List Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        responses: { "200": { description: "Successful response.", schema: arrayOf(dtoRef("GlAccountCategoryResponseDto")) } },
       },
     },
     create: {
@@ -67,6 +68,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Create",
         description: "Create Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: dtoRef("GlAccountCategoryCreateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -86,6 +88,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Filter",
         description: "Filter Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: dtoRef("FilterRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -126,6 +129,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Batch Create",
         description: "Batch Create Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("GlAccountCategoryCreateRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -145,6 +149,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Batch Get",
         description: "Batch Get Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -163,6 +168,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Batch Update",
         description: "Batch Update Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("GlAccountCategoryBatchUpdateRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -180,6 +186,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Batch Patch",
         description: "Batch Patch Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: arrayOf(dtoRef("GlAccountCategoryBatchPatchRequestDto")) },
         responses: {
           "200": {
             description: "Successful response.",
@@ -197,6 +204,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Batch Delete",
         description: "Batch Delete Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "204": { description: "Successful response." },
           "422": { description: "Business rule failed.", schema: dtoRef("BusinessRuleErrorResponseDto") },
@@ -214,6 +222,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Batch Activate",
         description: "Batch Activate Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -233,6 +242,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Batch Deactivate",
         description: "Batch Deactivate Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: dtoRef("CodesRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -285,6 +295,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Get",
         description: "Get Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        responses: { "200": { description: "Successful response.", schema: dtoRef("GlAccountCategoryResponseDto") }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
     update: {
@@ -295,6 +306,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Update",
         description: "Update Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: dtoRef("GlAccountCategoryUpdateRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -316,6 +328,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Patch",
         description: "Patch Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        requestBody: { required: true, schema: dtoRef("GlAccountCategoryPatchRequestDto") },
         responses: {
           "200": {
             description: "Successful response.",
@@ -337,6 +350,7 @@ export const organizationGlAccountCategoriesModule = {
         summary: "Delete",
         description: "Delete Organization GL Account Categories.",
         tags: ["Organization GL Account Categories"],
+        responses: { "204": { description: "Successful response." }, "404": { description: "Entity not found.", schema: dtoRef("EntityNotFoundErrorResponseDto") } },
       },
     },
   }
