@@ -1,4 +1,6 @@
 .page { display: grid; gap: 24px; padding: 24px 32px; }
+.detailTitleRow { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.detailTitleRow h1 { margin: 0; }
 .toolbar { display: flex; justify-content: flex-end; max-width: 420px; }
 .card { padding: 24px; border: 1px solid var(--color-border, #d9dde3); border-radius: 12px; background: var(--color-surface, #fff); }
 .details { display: grid; grid-template-columns: 140px 1fr; gap: 12px 20px; margin: 0; }

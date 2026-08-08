@@ -3,13 +3,17 @@
 import type { AuditEventResponseDto } from "@voyzu/audit/types";
 import { Badge, Breadcrumbs } from "@voyzu/ui-components";
 import { getAuditActionColor } from "@voyzu/audit/client";
+import { DetailBackButton } from "@voyzu/ui-surface/client";
 import styles from "./ice-cream-audit.module.css";
 
 export function IceCreamAuditEventDetail({ event }: { event: AuditEventResponseDto }) {
   return (
     <div className={styles.page}>
       <Breadcrumbs />
-      <h1>Audit Event {event.code}</h1>
+      <div className={styles.detailTitleRow}>
+        <h1>Audit Event {event.code}</h1>
+        <DetailBackButton fallbackHref="/ice-creams/audit" preserveSearchParams />
+      </div>
       <section className={styles.card}>
         <dl className={styles.details}>
           <dt>Package</dt><dd>{event.packageCode}</dd>

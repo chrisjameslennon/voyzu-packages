@@ -44,6 +44,15 @@ export function IceCreamAuditEventList({ initialFilters = {} }: { initialFilters
     return params.toString();
   }, [cursor, initialFilters, search]);
 
+  const detailQuery = useMemo(() => {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    for (const key of ["entityType", "entityCode", "entityId", "mutationId", "actorId", "dateFrom", "dateTo", "from", "fromCode"] as const) {
+      if (initialFilters[key]) params.set(key, initialFilters[key]);
+    }
+    return params.toString();
+  }, [initialFilters, search]);
+
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);
@@ -91,7 +100,7 @@ export function IceCreamAuditEventList({ initialFilters = {} }: { initialFilters
         isSomeSelected={false}
         onSelectAll={() => {}}
         onSelectOne={() => {}}
-        onRowClick={(event) => router.push(`/ice-creams/audit/${event.id}`)}
+        onRowClick={(event) => router.push(`/ice-creams/audit/${event.id}${detailQuery ? `?${detailQuery}` : ""}`)}
         currentPage={page}
         totalPages={Math.max(1, Math.ceil(totalMatching / PAGE_SIZE))}
         onPageChange={changePage}

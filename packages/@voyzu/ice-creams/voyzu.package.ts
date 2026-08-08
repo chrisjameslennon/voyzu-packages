@@ -11,9 +11,9 @@ import { iceCreamsUninstall } from "./uninstall/manifest";
  **/
 export const iceCreamsPackage = {
   modules: [
+    iceCreamAuditModule,
     iceCreamsModule,
     iceCreamReportsModule,
-    iceCreamAuditModule,
   ],
   install: {
     sql: [
