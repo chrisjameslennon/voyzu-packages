@@ -1,36 +1,142 @@
 "use client";
 
+import { getAuditActionColor } from "@voyzu/audit/client";
 import type { AuditEventResponseDto } from "@voyzu/audit/types";
 import { Badge, Breadcrumbs } from "@voyzu/ui-components";
-import { getAuditActionColor } from "@voyzu/audit/client";
+import layoutStyles from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
+import typography from "@voyzu/ui-style/css-modules/typography.module.css";
+
 import styles from "./ice-cream-audit.module.css";
+
+function formatValue(value: unknown): string {
+  if (value === null || value === undefined) return "-";
+  if (typeof value === "string") return value;
+  return JSON.stringify(value);
+}
+
+function formatDate(value: string): string {
+  try {
+    return new Date(value).toLocaleString();
+  } catch {
+    return value;
+  }
+}
 
 export function IceCreamAuditEventDetail({ event }: { event: AuditEventResponseDto }) {
   return (
     <div className={styles.page}>
-      <Breadcrumbs />
-      <div className={styles.detailTitleRow}>
-        <h1>Audit Event {event.code}</h1>
-        <DetailBackButton fallbackHref="/ice-creams/audit" preserveSearchParams />
+      <header className={layoutStyles.pageHeaderGrid}>
+        <Breadcrumbs />
+
+        <div className={layoutStyles.pageTitle}>
+          <div className={layoutStyles.title}>
+            <div className={layoutStyles.titleIconAligner}>
+              <div className={layoutStyles.titleIcon}>
+                <span className={layoutStyles.titleIconSymbol}>history</span>
+              </div>
+            </div>
+            <div>
+              <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>
+                {event.code}
+              </h1>
+              <p className={styles.headerSub}>
+                {event.entityType} - {event.entityCode ?? event.entityId}
+              </p>
+            </div>
+          </div>
+          <div className={layoutStyles.headerActions}>
+            <DetailBackButton fallbackHref="/ice-creams/audit" preserveSearchParams />
+          </div>
+        </div>
+      </header>
+
+      <div className={styles.contentGrid}>
+        <div className={styles.changesCard}>
+          <h2 className={styles.changesTitle}>Field Changes</h2>
+          {!event.changes || event.changes.length === 0 ? (
+            <p className={styles.noChanges}>No field-level changes recorded for this event.</p>
+          ) : (
+            <table className={styles.changesTable}>
+              <thead>
+                <tr>
+                  <th className={styles.th}>Field</th>
+                  <th className={styles.th}>Before</th>
+                  <th className={styles.th}>After</th>
+                </tr>
+              </thead>
+              <tbody>
+                {event.changes.map((change) => (
+                  <tr key={change.id} className={styles.tr}>
+                    <td className={`${styles.td} ${styles.tdField}`}>{change.fieldPath}</td>
+                    <td className={`${styles.td} ${styles.tdOld}`}>{formatValue(change.oldValue)}</td>
+                    <td className={`${styles.td} ${styles.tdNew}`}>{formatValue(change.newValue)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <div className={styles.sidebar}>
+          <div className={styles.infoCard}>
+            <h3 className={styles.infoTitle}>
+              <span className="material-symbols-outlined">info</span>
+              Event Details
+            </h3>
+            <div className={styles.infoBody}>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Action</span>
+                <Badge variant="soft" size="small" color={getAuditActionColor(event.action)}>
+                  {event.action}
+                </Badge>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Entity Type</span>
+                <span className={styles.infoValue}>{event.entityType}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Entity Code</span>
+                <span className={styles.infoValue}>{event.entityCode ?? "-"}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Entity ID</span>
+                <span className={styles.infoValue}>{event.entityId}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Actor Type</span>
+                <span className={styles.infoValue}>{event.actorType}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>User ID</span>
+                <span className={styles.infoValue}>{event.actorId ?? "-"}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>User Name</span>
+                <span className={styles.infoValue}>{event.actorDisplayName ?? "-"}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>User Code</span>
+                <span className={styles.infoValue}>{event.actorCode ?? "-"}</span>
+              </div>
+              {event.companyId != null && (
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Company ID</span>
+                  <span className={styles.infoValue}>{event.companyId}</span>
+                </div>
+              )}
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>Timestamp</span>
+                <span className={styles.infoValue}>{formatDate(event.creationDate)}</span>
+              </div>
+              <div className={`${styles.infoRow} ${styles.infoRowStacked}`}>
+                <span className={styles.infoLabel}>Mutation ID</span>
+                <span className={styles.infoValue}>{event.mutationId ?? "-"}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <section className={styles.card}>
-        <dl className={styles.details}>
-          <dt>Package</dt><dd>{event.packageCode}</dd>
-          <dt>Timestamp</dt><dd>{new Date(event.creationDate).toLocaleString()}</dd>
-          <dt>Action</dt><dd><Badge variant="soft" size="small" color={getAuditActionColor(event.action)}>{event.action}</Badge></dd>
-          <dt>Entity</dt><dd>{event.entityType} — {event.entityCode ?? event.entityId}</dd>
-          <dt>User</dt><dd>{event.actorDisplayName ?? event.actorCode ?? event.actorId ?? `(${event.actorType})`}</dd>
-          <dt>Mutation</dt><dd>{event.mutationId ?? "-"}</dd>
-        </dl>
-      </section>
-      <section className={styles.card}>
-        <h2>Changes</h2>
-        <table className={styles.changes}>
-          <thead><tr><th>Field</th><th>Old value</th><th>New value</th></tr></thead>
-          <tbody>{event.changes?.map((change) => <tr key={change.id}><td>{change.fieldPath}</td><td>{JSON.stringify(change.oldValue)}</td><td>{JSON.stringify(change.newValue)}</td></tr>)}</tbody>
-        </table>
-      </section>
     </div>
   );
 }

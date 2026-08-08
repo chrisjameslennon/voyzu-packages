@@ -14,7 +14,7 @@ export const iceCreamReportsModule = {
       pageTitle: "All Ice Creams",
       helpPath: "packages/ice-creams/reports/all",
       breadcrumbBase: [
-        { label: "Ice Creams", href: "/ice-creams" },
+        { label: "Ice Creams" },
         { label: "Reports" },
       ],
       auth: { required: true, minRole: "ORGANIZATION_USER" },
@@ -32,7 +32,7 @@ export const iceCreamReportsModule = {
   apiDefinitions: {
     all: {
       method: "GET",
-      path: "/ice-cream-reports/all-ice-creams",
+      path: "/ice-creams/reports/all-ice-creams",
       handler: (request: any) => handleAllIceCreamsReport(request),
       apiDoc: {
         summary: "All Ice Creams Report",

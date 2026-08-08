@@ -12,7 +12,7 @@ export const iceCreamAuditModule = {
       Page: IceCreamAuditEventsPage,
       pageTitle: "Ice Cream Audit Log",
       helpPath: "packages/ice-creams/audit",
-      breadcrumbBase: [{ label: "Ice Creams", href: "/ice-creams" }],
+      breadcrumbBase: [{ label: "Ice Creams" }],
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
     detail: {
@@ -22,7 +22,7 @@ export const iceCreamAuditModule = {
       pageTitle: "Ice Cream Audit Event",
       helpPath: "packages/ice-creams/audit",
       breadcrumbBase: [
-        { label: "Ice Creams", href: "/ice-creams" },
+        { label: "Ice Creams" },
         { label: "Audit Log", href: "/ice-creams/audit" },
       ],
       auth: { required: true, minRole: "ORGANIZATION_USER" },

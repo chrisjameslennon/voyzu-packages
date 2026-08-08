@@ -22,6 +22,7 @@ export const iceCreamsPackage = {
     ],
     seedSql: [
       "./install/db/seed/ice-cream-flavor.seed.sql",
+      "./install/db/seed/ice-cream.seed.sql",
     ],
   },
   uninstall: iceCreamsUninstall,

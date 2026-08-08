@@ -664,7 +664,7 @@ export function FinanceAuditEventList({
             <label className={styles.filterLabel}>User</label>
             <Input
               containerClassName={styles.filterInput}
-              placeholder="User ID"
+              placeholder="User Code"
               value={actorId}
               onChange={(e) => handleActorIdChange(e.target.value)}
             />

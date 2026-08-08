@@ -143,7 +143,7 @@ export function IceCreamsList({
   };
 
   const transitionSelected = async (action: "activate" | "deactivate") => {
-    const response = await fetch("/api/ice-cream-batches/activation", {
+    const response = await fetch("/api/ice-creams/batches/activation", {
       method: action === "activate" ? "PUT" : "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: selected.map(({ code }) => code) }),
@@ -156,7 +156,7 @@ export function IceCreamsList({
   };
 
   const deleteSelected = async () => {
-    const response = await fetch("/api/ice-cream-batches", {
+    const response = await fetch("/api/ice-creams/batches", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: selected.map(({ code }) => code) }),

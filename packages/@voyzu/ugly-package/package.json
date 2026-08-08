@@ -9,7 +9,8 @@
     "voyzu-package": true,
     "allowInstall": true,
     "dependencies": [],
-    "rootPaths": ["/ugly-package"],
+    "pageRootPaths": ["/ugly-package"],
+    "apiRootPaths": ["/ugly-package"],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }

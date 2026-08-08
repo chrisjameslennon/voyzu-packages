@@ -94,7 +94,7 @@ export const iceCreamsModule = {
     },
     flavors: {
       method: "GET",
-      path: "/ice-cream-flavors",
+      path: "/ice-creams/flavors",
       handler: (request: any) => handleListFlavors(request),
       apiDoc: {
         summary: "List Flavours",
@@ -108,7 +108,7 @@ export const iceCreamsModule = {
     },
     filter: {
       method: "POST",
-      path: "/ice-cream-queries",
+      path: "/ice-creams/queries",
       handler: (request: any) => handleFilter(request),
       apiDoc: {
         summary: "Filter",
@@ -124,7 +124,7 @@ export const iceCreamsModule = {
     },
     search: {
       method: "GET",
-      path: "/ice-cream-search-results",
+      path: "/ice-creams/search-results",
       handler: (request: any) => handleSearch(request),
       apiDoc: {
         summary: "Search",
@@ -142,7 +142,7 @@ export const iceCreamsModule = {
     },
     batchGet: {
       method: "POST",
-      path: "/ice-cream-selections",
+      path: "/ice-creams/selections",
       handler: (request: any) => handleBatchGet(request),
       apiDoc: {
         summary: "Batch Get",
@@ -158,7 +158,7 @@ export const iceCreamsModule = {
     },
     batchCreate: {
       method: "POST",
-      path: "/ice-cream-batches",
+      path: "/ice-creams/batches",
       handler: (request: any) => handleBatchCreate(request),
       apiDoc: {
         summary: "Batch Create",
@@ -177,7 +177,7 @@ export const iceCreamsModule = {
     },
     batchUpdate: {
       method: "PUT",
-      path: "/ice-cream-batches",
+      path: "/ice-creams/batches",
       handler: (request: any) => handleBatchUpdate(request),
       apiDoc: {
         summary: "Batch Update",
@@ -195,7 +195,7 @@ export const iceCreamsModule = {
     },
     batchPatch: {
       method: "PATCH",
-      path: "/ice-cream-batches",
+      path: "/ice-creams/batches",
       handler: (request: any) => handleBatchPatch(request),
       apiDoc: {
         summary: "Batch Patch",
@@ -213,7 +213,7 @@ export const iceCreamsModule = {
     },
     batchDelete: {
       method: "DELETE",
-      path: "/ice-cream-batches",
+      path: "/ice-creams/batches",
       handler: (request: any) => handleBatchDelete(request),
       apiDoc: {
         summary: "Batch Delete",
@@ -231,7 +231,7 @@ export const iceCreamsModule = {
     },
     batchActivate: {
       method: "PUT",
-      path: "/ice-cream-batches/activation",
+      path: "/ice-creams/batches/activation",
       handler: (request: any) => handleBatchActivate(request),
       apiDoc: {
         summary: "Batch Activate",
@@ -249,7 +249,7 @@ export const iceCreamsModule = {
     },
     batchDeactivate: {
       method: "DELETE",
-      path: "/ice-cream-batches/activation",
+      path: "/ice-creams/batches/activation",
       handler: (request: any) => handleBatchDeactivate(request),
       apiDoc: {
         summary: "Batch Deactivate",

@@ -13,22 +13,22 @@ export const iceCreamsLeftNav = [
     ],
   },
   {
-    label: "Reports",
-    items: [
-      {
-        label: "All Ice Creams",
-        icon: "summarize",
-        routeId: iceCreamReportsModule.pageRoutes.all.id,
-      },
-    ],
-  },
-  {
     label: "Audit",
     items: [
       {
         label: "Audit Log",
         icon: "history",
         routeId: iceCreamAuditModule.pageRoutes.list.id,
+      },
+    ],
+  },
+  {
+    label: "Reports",
+    items: [
+      {
+        label: "All Ice Creams",
+        icon: "summarize",
+        routeId: iceCreamReportsModule.pageRoutes.all.id,
       },
     ],
   },
