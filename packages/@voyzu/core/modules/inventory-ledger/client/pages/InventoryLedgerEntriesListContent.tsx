@@ -46,18 +46,18 @@ function balanceMoney(value: number) {
 }
 
 const columns: DataTableColumn<InventoryLedgerRow>[] = [
-  { key: "code", label: "Entry #", width: "11rem", render: (row) => <span className={listStyles.codeCell}>{row.code}</span> },
-  { key: "postingDate", label: "Date", width: "9rem" },
+  { key: "code", label: "Entry #", width: "10rem", render: (row) => <span className={listStyles.codeCell}>{row.code}</span> },
+  { key: "postingDate", label: "Date", width: "8rem" },
   { key: "sourceDocument", label: "Document", width: "10rem" },
-  { key: "documentId", label: "Document ID", width: "12rem" },
-  { key: "itemCode", label: "Item", width: "12rem", render: (row) => <span className={listStyles.codeCell}>{row.itemCode}</span> },
+  { key: "documentId", label: "Document ID", width: "11rem" },
+  { key: "itemCode", label: "Item", width: "10rem", render: (row) => <span className={listStyles.codeCell}>{row.itemCode}</span> },
   { key: "movement", label: "Movement", width: "10rem" },
-  { key: "qtyDelta", label: "Qty", width: "8rem", align: "right", render: (row) => formatNumber(row.qtyDelta) },
-  { key: "bookValueDelta", label: "Book Value", width: "10rem", align: "right", render: (row) => formatMoney(row.bookValueDelta) },
+  { key: "qtyDelta", label: "Qty", width: "7rem", align: "right", render: (row) => formatNumber(row.qtyDelta) },
+  { key: "bookValueDelta", label: "Book Value", width: "9rem", align: "right", render: (row) => formatMoney(row.bookValueDelta) },
   {
     key: "status",
     label: "Status",
-    width: "8rem",
+    width: "7rem",
     align: "center",
     render: (row) => <Badge variant="soft" size="x-small" color={getStatusSemanticColor(row.status)}>{row.status}</Badge>,
   },

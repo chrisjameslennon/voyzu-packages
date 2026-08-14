@@ -47,15 +47,15 @@ function value(value: string | number | null) {
 }
 
 const lineColumns: DataTableColumn<InventoryLedgerLine>[] = [
-  { key: "lineNumber", label: "Line", width: "6rem" },
-  { key: "itemCode", label: "Item", width: "12rem", render: (row) => <span className={listStyles.codeCell}>{row.itemCode}</span> },
-  { key: "itemName", label: "Name", width: "16rem" },
-  { key: "movement", label: "Movement", width: "10rem" },
-  { key: "qtyDelta", label: "Qty Delta", width: "9rem", align: "right", render: (row) => formatNumber(row.qtyDelta) },
-  { key: "unitValueSupplied", label: "Unit Value", width: "10rem", align: "right", render: (row) => formatMoney(row.unitValueSupplied) },
-  { key: "bookValueDelta", label: "Book Value", width: "10rem", align: "right", render: (row) => formatMoney(row.bookValueDelta) },
-  { key: "qtyBalance", label: "Qty Balance", width: "10rem", align: "right", render: (row) => formatNumber(row.qtyBalance) },
-  { key: "bookValueBalance", label: "Book Balance", width: "11rem", align: "right", render: (row) => formatMoney(row.bookValueBalance) },
+  { key: "lineNumber", label: "Line", width: "4rem" },
+  { key: "itemCode", label: "Item", width: "7rem", render: (row) => <span className={listStyles.codeCell}>{row.itemCode}</span> },
+  { key: "itemName", label: "Name", width: "9rem" },
+  { key: "movement", label: "Movement", width: "9rem" },
+  { key: "qtyDelta", label: "Qty Delta", header: <>Qty<br />Delta</>, width: "6rem", align: "right", render: (row) => formatNumber(row.qtyDelta) },
+  { key: "unitValueSupplied", label: "Unit Value", header: <>Unit<br />Value</>, width: "6.5rem", align: "right", render: (row) => formatMoney(row.unitValueSupplied) },
+  { key: "bookValueDelta", label: "Book Value", header: <>Book<br />Value</>, width: "7rem", align: "right", render: (row) => formatMoney(row.bookValueDelta) },
+  { key: "qtyBalance", label: "Qty Balance", header: <>Qty<br />Balance</>, width: "6.5rem", align: "right", render: (row) => formatNumber(row.qtyBalance) },
+  { key: "bookValueBalance", label: "Book Balance", header: <>Book<br />Balance</>, width: "8rem", align: "right", render: (row) => formatMoney(row.bookValueBalance) },
 ];
 
 export function InventoryLedgerEntryDetail({
@@ -193,6 +193,7 @@ export function InventoryLedgerEntryDetail({
           <DataTable
             columns={lineColumns}
             rows={entry.lines as InventoryLedgerLine[]}
+            noSelectionColumn
             selectedIds={new Set<number>()}
             isAllSelected={false}
             isSomeSelected={false}
