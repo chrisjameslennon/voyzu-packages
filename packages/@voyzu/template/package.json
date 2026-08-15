@@ -1,0 +1,64 @@
+{
+  "name": "@voyzu/template",
+  "version": "0.1.0",
+  "description": "A minimal, single-table reference package for Voyzu development.",
+  "repository": "https://github.com/chrisjameslennon/voyzu-packages.git",
+  "private": true,
+  "type": "module",
+  "voyzu": {
+    "voyzu-package": true,
+    "allowInstall": true,
+    "dependencies": [],
+    "pageRootPaths": ["/template"],
+    "apiRootPaths": ["/template"],
+    "settings": {
+      "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
+    }
+  },
+  "exports": {
+    "./voyzu-package": {
+      "types": "./voyzu.package.ts",
+      "import": "./voyzu.package.ts"
+    },
+    "./navigation/top-nav": {
+      "types": "./navigation/top-nav.topnav.ts",
+      "import": "./navigation/top-nav.topnav.ts"
+    },
+    "./navigation/left-nav": {
+      "types": "./navigation/left-nav.leftnav.ts",
+      "import": "./navigation/left-nav.leftnav.ts"
+    },
+    "./modules/template": {
+      "types": "./modules/template/module.ts",
+      "import": "./modules/template/module.ts"
+    },
+    "./modules/reports": {
+      "types": "./modules/reports/module.ts",
+      "import": "./modules/reports/module.ts"
+    },
+    "./modules/audit": {
+      "types": "./modules/audit/module.ts",
+      "import": "./modules/audit/module.ts"
+    },
+    "./types": {
+      "types": "./modules/types/index.ts",
+      "import": "./modules/types/index.ts"
+    },
+    "./modules/template/server": {
+      "types": "./modules/template/server/index.ts",
+      "import": "./modules/template/server/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "@voyzu/audit": "^0.1.0",
+    "@voyzu/capability": "^0.1.0",
+    "@voyzu/types": "^0.1.0",
+    "@voyzu/ui-components": "^0.1.0",
+    "@voyzu/ui-layout": "^0.1.0",
+    "@voyzu/ui-style": "^0.1.0",
+    "@voyzu/ui-surface": "^0.1.0",
+    "next": "^16",
+    "react": "^19",
+    "server-only": "^0.0.1"
+  }
+}

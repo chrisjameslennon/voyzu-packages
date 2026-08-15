@@ -13,5 +13,5 @@ The sleeping-cat image is `dofle.jpg` from the
 [cat-names project](https://github.com/sindresorhus/cat-names).
 
 The package still conforms to the Voyzu
-[package contract](https://voyzu.gitbook.io/docs/extending-voyzu/package-contract)
-and [module contract](https://voyzu.gitbook.io/docs/extending-voyzu/module-contract).
+[package contract](https://voyzu.gitbook.io/docs/voyzu-platform-guide/package-contract)
+and [module contract](https://voyzu.gitbook.io/docs/voyzu-platform-guide/module-contract).

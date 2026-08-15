@@ -11,7 +11,7 @@ export const iceCreamAuditModule = {
       path: "/ice-creams/audit",
       Page: IceCreamAuditEventsPage,
       pageTitle: "Ice Cream Audit Log",
-      helpPath: "packages/ice-creams/audit",
+      helpPath: "voyzu-platform-patterns/auditing-patterns",
       breadcrumbBase: [{ label: "Ice Creams" }],
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
@@ -20,7 +20,7 @@ export const iceCreamAuditModule = {
       path: "/ice-creams/audit/[id]",
       Page: IceCreamAuditEventDetailPage,
       pageTitle: "Ice Cream Audit Event",
-      helpPath: "packages/ice-creams/audit",
+      helpPath: "voyzu-platform-patterns/auditing-patterns",
       breadcrumbBase: [
         { label: "Ice Creams" },
         { label: "Audit Log", href: "/ice-creams/audit" },

@@ -56,9 +56,6 @@
 
 .actionsRow { justify-content: space-between; gap: 0.5rem; min-height: 36px; }
 .actionsRight { gap: 0.5rem; }
-.btnIcon { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--voyzu-color-surface); border: var(--voyzu-border-width) solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-control); color: var(--voyzu-color-text-secondary); cursor: pointer; box-shadow: var(--voyzu-shadow-surface); }
-.btnIcon:hover:not(:disabled) { color: var(--voyzu-color-text); background: var(--voyzu-color-surface-muted); }
-.btnIcon .material-symbols-outlined { font-size: 20px; }
 .toolbarDivider { width: 1px; height: 24px; background: var(--voyzu-color-border); margin: 0 0.25rem; }
 .clearAll { font: var(--voyzu-font-weight-action) var(--voyzu-font-size-caption) var(--voyzu-font-family); color: var(--voyzu-color-text-secondary); background: none; border: none; cursor: pointer; padding: 0.25rem 0.5rem; border-radius: var(--voyzu-radius-compact); }
 .clearAll:hover { color: var(--voyzu-color-text); background: var(--voyzu-color-surface-secondary); }

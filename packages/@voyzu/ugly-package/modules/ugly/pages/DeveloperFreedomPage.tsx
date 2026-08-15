@@ -14,10 +14,10 @@ export function DeveloperFreedomPage() {
             <h2>What Voyzu requires</h2>
             <ul>
               <li>
-                A valid <a href="https://voyzu.gitbook.io/docs/extending-voyzu/package-contract">package.json</a> and <a href="https://voyzu.gitbook.io/docs/extending-voyzu/package-contract">voyzu.package.ts</a>
+                A valid <a href="https://voyzu.gitbook.io/docs/voyzu-platform-guide/package-contract">package.json</a> and <a href="https://voyzu.gitbook.io/docs/voyzu-platform-guide/package-contract">voyzu.package.ts</a>
               </li>
               <li>
-                At least one module. Modules must adhere to the <a href="https://voyzu.gitbook.io/docs/extending-voyzu/module-contract">module contract</a>.
+                At least one module. Modules must adhere to the <a href="https://voyzu.gitbook.io/docs/voyzu-platform-guide/module-contract">module contract</a>.
               </li>
             </ul>
           </section>

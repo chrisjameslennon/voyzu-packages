@@ -12,7 +12,7 @@ export const iceCreamReportsModule = {
       path: "/ice-creams/reports/all",
       Page: AllIceCreamsReportPage,
       pageTitle: "All Ice Creams",
-      helpPath: "packages/ice-creams/reports/all",
+      helpPath: "voyzu-platform-patterns/pdf-generation",
       breadcrumbBase: [
         { label: "Ice Creams" },
         { label: "Reports" },
@@ -24,7 +24,7 @@ export const iceCreamReportsModule = {
       path: "/ice-creams/reports/all/printable",
       Page: AllIceCreamsReportPage,
       pageTitle: "All Ice Creams",
-      helpPath: "packages/ice-creams/reports/all",
+      helpPath: "voyzu-platform-patterns/pdf-generation",
       unframed: true,
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
