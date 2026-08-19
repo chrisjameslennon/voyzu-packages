@@ -5,6 +5,19 @@ import {
 } from "./server";
 import { AllIceCreamsReportPage } from "./server/pages/AllIceCreamsReportPage";
 
+const commonResponses = {
+  "401": {
+    description: "Authentication failed.",
+  },
+  "403": {
+    description: "Access is forbidden.",
+  },
+  "500": {
+    description: "An unexpected server error occurred.",
+    body: dtoRef("InternalServerErrorResponseDto"),
+  },
+} as const;
+
 export const iceCreamReportsModule = {
   pageRoutes: {
     all: {
@@ -34,21 +47,16 @@ export const iceCreamReportsModule = {
       method: "GET",
       path: "/ice-creams/reports/all-ice-creams",
       handler: (request: any) => handleAllIceCreamsReport(request),
-      apiDoc: {
-        summary: "All Ice Creams Report",
-        description: "Returns every ice cream for reporting.",
-        tags: ["Ice Cream Reports"],
-        responses: {
-          "200": {
-            description: "All ice creams in report form.",
-            schema: arrayOf(dtoRef("IceCreamReportRowDto")),
-          },
-          "500": {
-            description: "An unexpected server error occurred.",
-            schema: dtoRef("InternalServerErrorResponseDto"),
-          },
+      summary: "All Ice Creams Report",
+      description: "Returns every ice cream for reporting.",
+      tags: ["Ice Cream Reports"],
+      responses: {
+        ...commonResponses,
+        "200": {
+          description: "All ice creams in report form.",
+          body: arrayOf(dtoRef("IceCreamReportRowDto")),
         },
-      },
+      }
     },
   },
 } as const satisfies VoyzuPackageModuleDefinition;
