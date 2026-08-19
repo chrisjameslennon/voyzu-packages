@@ -3,10 +3,8 @@ import {
   BusinessRuleError,
   ConflictError,
   DataError,
-  InputValidationError,
   NotFoundError,
 } from "@voyzu/capability/errors";
-import { checkResponse } from "@voyzu/capability/validation";
 import {
   createCreationAuditStamp,
   createUpdateAuditStamp,
@@ -30,12 +28,6 @@ import { Activate, Deactivate, Delete } from "../../domain/operation-policy";
 import { IceCreamRepo } from "../db/ice-cream.repo";
 import type { IceCreamRow } from "../db/ice-cream.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./ice-cream.mapper";
-import {
-  validateCreate,
-  validatePatch,
-  validateResponse,
-  validateUpdate,
-} from "./ice-cream.validator";
 
 function normalizeCode(value: string): string {
   return value.trim().toUpperCase();
@@ -45,25 +37,18 @@ function normalizeCodes(values: string[]): string[] {
   return [...new Set(values.map(normalizeCode).filter(Boolean))];
 }
 
-function validateCodes(codes: string[]): string[] {
-  const normalized = normalizeCodes(codes);
-  if (!normalized.length) throw new InputValidationError("At least one ice-cream code is required");
-  return normalized;
-}
-
 function throwIfBlocked(blockers: Array<{ message: string }>): void {
   if (blockers.length) {
     throw new BusinessRuleError(blockers.map(({ message }) => message).join("; "));
   }
 }
 
-async function checkedDto(row: IceCreamRow): Promise<IceCreamResponseDto> {
-  const dto = await withAuditActors(toDto(row), row);
-  return checkResponse(dto, validateResponse(dto), `ice cream (${row.code})`);
+async function responseDto(row: IceCreamRow): Promise<IceCreamResponseDto> {
+  return withAuditActors(toDto(row), row);
 }
 
-function checkedDtos(rows: IceCreamRow[]): Promise<IceCreamResponseDto[]> {
-  return Promise.all(rows.map(checkedDto));
+function responseDtos(rows: IceCreamRow[]): Promise<IceCreamResponseDto[]> {
+  return Promise.all(rows.map(responseDto));
 }
 
 async function resolveActiveFlavor(
@@ -92,8 +77,6 @@ export async function listIceCreamFlavors(): Promise<IceCreamFlavorResponseDto[]
 export async function createIceCream(
   input: IceCreamCreateRequestDto,
 ): Promise<IceCreamResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   const repo = new IceCreamRepo(getDb());
   const flavor = await resolveActiveFlavor(repo, input.flavorCode);
   try {
@@ -101,7 +84,7 @@ export async function createIceCream(
       toInsertRow(input, flavor.id),
       await createCreationAuditStamp(),
     ));
-    return checkedDto(row);
+    return responseDto(row);
   } catch (error) {
     return translateDuplicate(error);
   }
@@ -109,38 +92,35 @@ export async function createIceCream(
 
 export async function getIceCream(code: string): Promise<IceCreamResponseDto | null> {
   const row = await new IceCreamRepo(getDb()).get(normalizeCode(code));
-  return row ? checkedDto(row) : null;
+  return row ? responseDto(row) : null;
 }
 
 export async function listIceCreams(options?: ListOptions): Promise<IceCreamResponseDto[]> {
-  return checkedDtos(await new IceCreamRepo(getDb()).list(options));
+  return responseDtos(await new IceCreamRepo(getDb()).list(options));
 }
 
 export async function filterIceCreams(
   filters: Filter[],
   options?: ListOptions,
 ): Promise<IceCreamResponseDto[]> {
-  return checkedDtos(await new IceCreamRepo(getDb()).filter(filters, options));
+  return responseDtos(await new IceCreamRepo(getDb()).filter(filters, options));
 }
 
 export async function searchIceCreams(
   phrase: string,
   options?: ListOptions,
 ): Promise<IceCreamResponseDto[]> {
-  if (!phrase.trim()) throw new InputValidationError("Search text is required");
-  return checkedDtos(await new IceCreamRepo(getDb()).search(phrase, options));
+  return responseDtos(await new IceCreamRepo(getDb()).search(phrase, options));
 }
 
 export async function updateIceCream(
   code: string,
   input: IceCreamUpdateRequestDto,
 ): Promise<IceCreamResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   const repo = new IceCreamRepo(getDb());
   const flavor = await resolveActiveFlavor(repo, input.flavorCode);
   try {
-    return checkedDto(await repo.update(
+    return responseDto(await repo.update(
       normalizeCode(code),
       withUpdateAudit(toUpdateRow(input, flavor.id), await createUpdateAuditStamp()),
     ));
@@ -154,14 +134,12 @@ export async function patchIceCream(
   code: string,
   input: IceCreamPatchRequestDto,
 ): Promise<IceCreamResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   const repo = new IceCreamRepo(getDb());
   const flavor = input.flavorCode === undefined
     ? undefined
     : await resolveActiveFlavor(repo, input.flavorCode);
   try {
-    return checkedDto(await repo.patch(
+    return responseDto(await repo.patch(
       normalizeCode(code),
       withUpdateAudit(toPatchRow(input, flavor?.id), await createUpdateAuditStamp()),
     ));
@@ -174,11 +152,6 @@ export async function patchIceCream(
 export async function batchCreateIceCreams(
   inputs: IceCreamCreateRequestDto[],
 ): Promise<IceCreamResponseDto[]> {
-  if (!inputs.length) throw new InputValidationError("At least one ice cream is required");
-  for (const input of inputs) {
-    const errors = validateCreate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   try {
     return await withTransaction(async (client) => {
       const repo = new IceCreamRepo(client);
@@ -188,7 +161,7 @@ export async function batchCreateIceCreams(
         const flavor = await resolveActiveFlavor(repo, input.flavorCode);
         rows.push(await repo.insert(withCreationAudit(toInsertRow(input, flavor.id), audit)));
       }
-      return checkedDtos(rows);
+      return responseDtos(rows);
     });
   } catch (error) {
     return translateDuplicate(error);
@@ -196,21 +169,18 @@ export async function batchCreateIceCreams(
 }
 
 export async function batchGetIceCreams(codes: string[]): Promise<IceCreamResponseDto[]> {
-  return checkedDtos(await new IceCreamRepo(getDb()).batchGet(validateCodes(codes)));
+  return responseDtos(await new IceCreamRepo(getDb()).batchGet(normalizeCodes(codes)));
 }
 
 export async function batchUpdateIceCreams(
   inputs: IceCreamBatchUpdateRequestDto[],
 ): Promise<IceCreamResponseDto[]> {
-  if (!inputs.length) throw new InputValidationError("At least one ice cream is required");
   return withTransaction(async (client) => {
     const repo = new IceCreamRepo(client);
     const audit = await createUpdateAuditStamp();
     const rows: IceCreamRow[] = [];
     for (const input of inputs) {
       const { code, ...update } = input;
-      const errors = validateUpdate(update);
-      if (errors.length) throw new InputValidationError(errors.join("; "));
       const flavor = await resolveActiveFlavor(repo, update.flavorCode);
       try {
         rows.push(await repo.update(normalizeCode(code), withUpdateAudit(toUpdateRow(update, flavor.id), audit)));
@@ -219,22 +189,19 @@ export async function batchUpdateIceCreams(
         throw error;
       }
     }
-    return checkedDtos(rows);
+    return responseDtos(rows);
   });
 }
 
 export async function batchPatchIceCreams(
   inputs: IceCreamBatchPatchRequestDto[],
 ): Promise<IceCreamResponseDto[]> {
-  if (!inputs.length) throw new InputValidationError("At least one ice cream is required");
   return withTransaction(async (client) => {
     const repo = new IceCreamRepo(client);
     const audit = await createUpdateAuditStamp();
     const rows: IceCreamRow[] = [];
     for (const input of inputs) {
       const { code, ...patch } = input;
-      const errors = validatePatch(patch);
-      if (errors.length) throw new InputValidationError(errors.join("; "));
       const flavor = patch.flavorCode
         ? await resolveActiveFlavor(repo, patch.flavorCode)
         : undefined;
@@ -245,7 +212,7 @@ export async function batchPatchIceCreams(
         throw error;
       }
     }
-    return checkedDtos(rows);
+    return responseDtos(rows);
   });
 }
 
@@ -262,7 +229,7 @@ export async function deleteIceCream(code: string): Promise<void> {
 }
 
 export async function batchDeleteIceCreams(codes: string[]): Promise<void> {
-  const normalized = validateCodes(codes);
+  const normalized = normalizeCodes(codes);
   await withTransaction(async (client) => {
     const repo = new IceCreamRepo(client);
     const rows = await requireRows(repo, normalized);
@@ -293,7 +260,7 @@ async function transitionIceCreamStatus(
   codes: string[],
   status: Status,
 ): Promise<IceCreamResponseDto[]> {
-  const normalized = validateCodes(codes);
+  const normalized = normalizeCodes(codes);
   return withTransaction(async (client) => {
     const repo = new IceCreamRepo(client);
     const rows = await requireRows(repo, normalized);
@@ -303,6 +270,6 @@ async function transitionIceCreamStatus(
     for (const row of rows) {
       updated.push(await repo.patch(row.code, withUpdateAudit({ status }, audit)));
     }
-    return checkedDtos(updated);
+    return responseDtos(updated);
   });
 }

@@ -1,5 +1,25 @@
-import { arrayOf, dtoRef } from "@voyzu/types/api";
+import Type from "typebox";
+import {
+  BusinessRuleErrorResponseDto,
+  CodesRequestDto,
+  ConflictErrorResponseDto,
+  EntityNotFoundErrorResponseDto,
+  FilterRequestDto,
+  ForbiddenErrorResponseDto,
+  InputValidationErrorResponseDto,
+  InternalServerErrorResponseDto,
+  UnauthorizedErrorResponseDto,
+} from "@voyzu/types";
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
+import {
+  IceCreamBatchPatchRequestDto,
+  IceCreamBatchUpdateRequestDto,
+  IceCreamCreateRequestDto,
+  IceCreamFlavorResponseDto,
+  IceCreamPatchRequestDto,
+  IceCreamResponseDto,
+  IceCreamUpdateRequestDto,
+} from "../types";
 import {
   handleActivate,
   handleBatchActivate,
@@ -27,21 +47,21 @@ const tag = ["Ice Creams"];
 const commonResponses = {
   "401": {
     description: "Authentication failed.",
-    body: dtoRef("UnauthorizedErrorResponseDto"),
+    body: UnauthorizedErrorResponseDto,
   },
   "403": {
     description: "Access is forbidden.",
-    body: dtoRef("ForbiddenErrorResponseDto"),
+    body: ForbiddenErrorResponseDto,
   },
   "500": {
     description: "An unexpected server error occurred.",
-    body: dtoRef("InternalServerErrorResponseDto"),
+    body: InternalServerErrorResponseDto,
   },
 } as const;
 const codePathParameter = {
   code: {
     description: "The globally unique ice-cream business code.",
-    schema: { type: "string" },
+    schema: Type.String({ pattern: "^[A-Z0-9][A-Z0-9_-]*$" }),
   },
 } as const;
 
@@ -75,7 +95,7 @@ export const iceCreamsModule = {
       description: "Lists all ice creams.",
       tags: tag,
       responses: {
-        "200": { description: "All ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
+        "200": { description: "All ice creams.", body: Type.Array(IceCreamResponseDto) },
         ...commonResponses,
       }
     },
@@ -83,16 +103,16 @@ export const iceCreamsModule = {
       method: "POST",
       path: "/ice-creams",
       handler: (request: any) => handleCreate(request),
-      request: { contentType: "application/json", body: dtoRef("IceCreamCreateRequestDto") },
+      request: { contentType: "application/json", body: IceCreamCreateRequestDto },
       summary: "Create",
       description: "Creates an active ice cream.",
       tags: tag,
       responses: {
-        "201": { description: "The created ice cream.", body: dtoRef("IceCreamResponseDto") },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "The selected flavour was not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "409": { description: "The code already exists.", body: dtoRef("ConflictErrorResponseDto") },
-        "422": { description: "The selected flavour is inactive.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "201": { description: "The created ice cream.", body: IceCreamResponseDto },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "The selected flavour was not found.", body: EntityNotFoundErrorResponseDto },
+        "409": { description: "The code already exists.", body: ConflictErrorResponseDto },
+        "422": { description: "The selected flavour is inactive.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -104,7 +124,7 @@ export const iceCreamsModule = {
       description: "Lists reference flavours available to ice creams.",
       tags: tag,
       responses: {
-        "200": { description: "Ice-cream flavours.", body: arrayOf(dtoRef("IceCreamFlavorResponseDto")) },
+        "200": { description: "Ice-cream flavours.", body: Type.Array(IceCreamFlavorResponseDto) },
         ...commonResponses,
       }
     },
@@ -112,13 +132,13 @@ export const iceCreamsModule = {
       method: "POST",
       path: "/ice-creams/queries",
       handler: (request: any) => handleFilter(request),
-      request: { contentType: "application/json", body: dtoRef("FilterRequestDto") },
+      request: { contentType: "application/json", body: FilterRequestDto },
       summary: "Filter",
       description: "Filters ice creams using the shared filter contract.",
       tags: tag,
       responses: {
-        "200": { description: "Filtered ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
+        "200": { description: "Filtered ice creams.", body: Type.Array(IceCreamResponseDto) },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -128,15 +148,18 @@ export const iceCreamsModule = {
       handler: (request: any) => handleSearch(request),
       request: {
         query: {
-          q: { description: "Search text.", required: true, schema: { type: "string" } },
-        }
+          parameters: {
+            q: { description: "Search text.", required: true },
+          },
+          schema: Type.Object({ q: Type.String({ pattern: "\\S" }) }),
+        },
       },
       summary: "Search",
       description: "Searches code, name, flavour and supplier.",
       tags: tag,
       responses: {
-        "200": { description: "Matching ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
-        "400": { description: "Search text was not supplied.", body: dtoRef("InputValidationErrorResponseDto") },
+        "200": { description: "Matching ice creams.", body: Type.Array(IceCreamResponseDto) },
+        "400": { description: "Search text was not supplied.", body: InputValidationErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -144,13 +167,13 @@ export const iceCreamsModule = {
       method: "POST",
       path: "/ice-creams/selections",
       handler: (request: any) => handleBatchGet(request),
-      request: { contentType: "application/json", body: dtoRef("CodesRequestDto") },
+      request: { contentType: "application/json", body: CodesRequestDto },
       summary: "Batch Get",
       description: "Gets ice creams by business code.",
       tags: tag,
       responses: {
-        "200": { description: "Requested ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
+        "200": { description: "Requested ice creams.", body: Type.Array(IceCreamResponseDto) },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -158,16 +181,16 @@ export const iceCreamsModule = {
       method: "POST",
       path: "/ice-creams/batches",
       handler: (request: any) => handleBatchCreate(request),
-      request: { contentType: "application/json", body: arrayOf(dtoRef("IceCreamCreateRequestDto")) },
+      request: { contentType: "application/json", body: Type.Array(IceCreamCreateRequestDto, { minItems: 1 }) },
       summary: "Batch Create",
       description: "Creates ice creams atomically with one audit mutation.",
       tags: tag,
       responses: {
-        "201": { description: "Created ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "A selected flavour was not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "409": { description: "One or more codes already exist.", body: dtoRef("ConflictErrorResponseDto") },
-        "422": { description: "A selected flavour is inactive.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "201": { description: "Created ice creams.", body: Type.Array(IceCreamResponseDto) },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "A selected flavour was not found.", body: EntityNotFoundErrorResponseDto },
+        "409": { description: "One or more codes already exist.", body: ConflictErrorResponseDto },
+        "422": { description: "A selected flavour is inactive.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -175,15 +198,15 @@ export const iceCreamsModule = {
       method: "PUT",
       path: "/ice-creams/batches",
       handler: (request: any) => handleBatchUpdate(request),
-      request: { contentType: "application/json", body: arrayOf(dtoRef("IceCreamBatchUpdateRequestDto")) },
+      request: { contentType: "application/json", body: Type.Array(IceCreamBatchUpdateRequestDto, { minItems: 1 }) },
       summary: "Batch Update",
       description: "Fully updates ice creams atomically.",
       tags: tag,
       responses: {
-        "200": { description: "Updated ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "An ice cream or flavour was not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "A selected flavour is inactive.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "200": { description: "Updated ice creams.", body: Type.Array(IceCreamResponseDto) },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "An ice cream or flavour was not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "A selected flavour is inactive.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -191,15 +214,15 @@ export const iceCreamsModule = {
       method: "PATCH",
       path: "/ice-creams/batches",
       handler: (request: any) => handleBatchPatch(request),
-      request: { contentType: "application/json", body: arrayOf(dtoRef("IceCreamBatchPatchRequestDto")) },
+      request: { contentType: "application/json", body: Type.Array(IceCreamBatchPatchRequestDto, { minItems: 1 }) },
       summary: "Batch Patch",
       description: "Partially updates ice creams atomically.",
       tags: tag,
       responses: {
-        "200": { description: "Patched ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "An ice cream or flavour was not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "A selected flavour is inactive.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "200": { description: "Patched ice creams.", body: Type.Array(IceCreamResponseDto) },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "An ice cream or flavour was not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "A selected flavour is inactive.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -207,15 +230,15 @@ export const iceCreamsModule = {
       method: "DELETE",
       path: "/ice-creams/batches",
       handler: (request: any) => handleBatchDelete(request),
-      request: { contentType: "application/json", body: dtoRef("CodesRequestDto") },
+      request: { contentType: "application/json", body: CodesRequestDto },
       summary: "Batch Delete",
       description: "Deletes ice creams atomically after stamping deletion audit metadata.",
       tags: tag,
       responses: {
         "204": { description: "Ice creams deleted." },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "One or more ice creams were not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "Deletion is blocked.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "One or more ice creams were not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "Deletion is blocked.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -223,15 +246,15 @@ export const iceCreamsModule = {
       method: "PUT",
       path: "/ice-creams/batches/activation",
       handler: (request: any) => handleBatchActivate(request),
-      request: { contentType: "application/json", body: dtoRef("CodesRequestDto") },
+      request: { contentType: "application/json", body: CodesRequestDto },
       summary: "Batch Activate",
       description: "Activates ice creams atomically.",
       tags: tag,
       responses: {
-        "200": { description: "Activated ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "One or more ice creams were not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "A transition is blocked.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "200": { description: "Activated ice creams.", body: Type.Array(IceCreamResponseDto) },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "One or more ice creams were not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "A transition is blocked.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -239,15 +262,15 @@ export const iceCreamsModule = {
       method: "DELETE",
       path: "/ice-creams/batches/activation",
       handler: (request: any) => handleBatchDeactivate(request),
-      request: { contentType: "application/json", body: dtoRef("CodesRequestDto") },
+      request: { contentType: "application/json", body: CodesRequestDto },
       summary: "Batch Deactivate",
       description: "Deactivates ice creams atomically.",
       tags: tag,
       responses: {
-        "200": { description: "Deactivated ice creams.", body: arrayOf(dtoRef("IceCreamResponseDto")) },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "One or more ice creams were not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "A transition is blocked.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "200": { description: "Deactivated ice creams.", body: Type.Array(IceCreamResponseDto) },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "One or more ice creams were not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "A transition is blocked.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -260,8 +283,8 @@ export const iceCreamsModule = {
       description: "Gets an ice cream by business code.",
       tags: tag,
       responses: {
-        "200": { description: "The requested ice cream.", body: dtoRef("IceCreamResponseDto") },
-        "404": { description: "Ice cream not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
+        "200": { description: "The requested ice cream.", body: IceCreamResponseDto },
+        "404": { description: "Ice cream not found.", body: EntityNotFoundErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -269,15 +292,15 @@ export const iceCreamsModule = {
       method: "PUT",
       path: "/ice-creams/[code]",
       handler: (request: any, context: any) => handleUpdate(request, context),
-      request: { path: codePathParameter, contentType: "application/json", body: dtoRef("IceCreamUpdateRequestDto") },
+      request: { path: codePathParameter, contentType: "application/json", body: IceCreamUpdateRequestDto },
       summary: "Update",
       description: "Fully updates the writable fields of an ice cream.",
       tags: tag,
       responses: {
-        "200": { description: "Updated ice cream.", body: dtoRef("IceCreamResponseDto") },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "Ice cream or flavour not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "The selected flavour is inactive.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "200": { description: "Updated ice cream.", body: IceCreamResponseDto },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "Ice cream or flavour not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "The selected flavour is inactive.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -285,15 +308,15 @@ export const iceCreamsModule = {
       method: "PATCH",
       path: "/ice-creams/[code]",
       handler: (request: any, context: any) => handlePatch(request, context),
-      request: { path: codePathParameter, contentType: "application/json", body: dtoRef("IceCreamPatchRequestDto") },
+      request: { path: codePathParameter, contentType: "application/json", body: IceCreamPatchRequestDto },
       summary: "Patch",
       description: "Partially updates the writable fields of an ice cream.",
       tags: tag,
       responses: {
-        "200": { description: "Patched ice cream.", body: dtoRef("IceCreamResponseDto") },
-        "400": { description: "Validation failed.", body: dtoRef("InputValidationErrorResponseDto") },
-        "404": { description: "Ice cream or flavour not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "The selected flavour is inactive.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "200": { description: "Patched ice cream.", body: IceCreamResponseDto },
+        "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+        "404": { description: "Ice cream or flavour not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "The selected flavour is inactive.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -307,8 +330,8 @@ export const iceCreamsModule = {
       tags: tag,
       responses: {
         "204": { description: "Ice cream deleted." },
-        "404": { description: "Ice cream not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "Deletion is blocked.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "404": { description: "Ice cream not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "Deletion is blocked.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -321,9 +344,9 @@ export const iceCreamsModule = {
       description: "Activates an ice cream.",
       tags: tag,
       responses: {
-        "200": { description: "Activated ice cream.", body: dtoRef("IceCreamResponseDto") },
-        "404": { description: "Ice cream not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "The ice cream is already active.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "200": { description: "Activated ice cream.", body: IceCreamResponseDto },
+        "404": { description: "Ice cream not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "The ice cream is already active.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },
@@ -336,9 +359,9 @@ export const iceCreamsModule = {
       description: "Deactivates an ice cream.",
       tags: tag,
       responses: {
-        "200": { description: "Deactivated ice cream.", body: dtoRef("IceCreamResponseDto") },
-        "404": { description: "Ice cream not found.", body: dtoRef("EntityNotFoundErrorResponseDto") },
-        "422": { description: "The ice cream is already inactive.", body: dtoRef("BusinessRuleErrorResponseDto") },
+        "200": { description: "Deactivated ice cream.", body: IceCreamResponseDto },
+        "404": { description: "Ice cream not found.", body: EntityNotFoundErrorResponseDto },
+        "422": { description: "The ice cream is already inactive.", body: BusinessRuleErrorResponseDto },
         ...commonResponses,
       }
     },

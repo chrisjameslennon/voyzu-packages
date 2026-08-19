@@ -1,22 +1,29 @@
-import { arrayOf, dtoRef } from "@voyzu/types/api";
+import Type from "typebox";
+import {
+  ForbiddenErrorResponseDto,
+  InternalServerErrorResponseDto,
+  UnauthorizedErrorResponseDto,
+} from "@voyzu/types";
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
+import { IceCreamReportRowDto } from "../types";
 import {
   handleAllIceCreamsReport,
 } from "./server";
 import { AllIceCreamsReportPage } from "./server/pages/AllIceCreamsReportPage";
 
+const apiDocsUrl = "/api-reference/@voyzu-ice-creams/ice-cream-reports";
 const commonResponses = {
   "401": {
     description: "Authentication failed.",
-    body: dtoRef("UnauthorizedErrorResponseDto"),
+    body: UnauthorizedErrorResponseDto,
   },
   "403": {
     description: "Access is forbidden.",
-    body: dtoRef("ForbiddenErrorResponseDto"),
+    body: ForbiddenErrorResponseDto,
   },
   "500": {
     description: "An unexpected server error occurred.",
-    body: dtoRef("InternalServerErrorResponseDto"),
+    body: InternalServerErrorResponseDto,
   },
 } as const;
 
@@ -32,6 +39,7 @@ export const iceCreamReportsModule = {
         { label: "Ice Creams" },
         { label: "Reports" },
       ],
+      apiDocsUrl,
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
     allPrintable: {
@@ -41,6 +49,7 @@ export const iceCreamReportsModule = {
       pageTitle: "All Ice Creams",
       helpPath: "voyzu-platform-patterns/pdf-generation",
       unframed: true,
+      apiDocsUrl,
       auth: { required: true, minRole: "ORGANIZATION_USER" },
     },
   },
@@ -56,7 +65,7 @@ export const iceCreamReportsModule = {
         ...commonResponses,
         "200": {
           description: "All ice creams in report form.",
-          body: arrayOf(dtoRef("IceCreamReportRowDto")),
+          body: Type.Array(IceCreamReportRowDto),
         },
       }
     },
