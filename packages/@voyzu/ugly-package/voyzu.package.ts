@@ -1,9 +1,9 @@
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
-import { uglyModule } from "./modules/ugly/module";
+import { uglyPackageModule } from "./modules/ugly/module";
 
 export const uglyPackage = {
-  modules: [uglyModule],
+  modules: [uglyPackageModule],
 } as const satisfies VoyzuPackageDefinition;
 
 export default uglyPackage;

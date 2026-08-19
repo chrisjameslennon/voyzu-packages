@@ -1,12 +1,18 @@
+import {
+  ForbiddenErrorResponseDto,
+  InternalServerErrorResponseDto,
+  UnauthorizedErrorResponseDto,
+} from "@voyzu/types";
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 
+import { RawRequestResponseDto } from "../types";
 import { DeveloperFreedomPage } from "./pages/DeveloperFreedomPage";
 import { ByoDependenciesPage } from "./pages/ByoDependenciesPage";
 import { RawRequestResponsePage } from "./pages/RawRequestResponsePage";
 import { UglyHomePage } from "./pages/UglyHomePage";
 import { handleRawRequestResponse } from "./server/api/raw-request-response.http.handlers";
 
-export const uglyModule = {
+export const uglyPackageModule = {
   pageRoutes: {
     home: {
       id: "voyzu.ugly-package.page.home",
@@ -42,16 +48,29 @@ export const uglyModule = {
       method: "GET",
       path: "/ugly-package/raw-request-response",
       handler: handleRawRequestResponse,
-      apiDoc: {
-        summary: "Raw Request / Response",
-        description: "Returns a demonstration snapshot of the raw Next.js request and response.",
-        tags: ["Ugly Package"],
-        responses: {
-          "200": { description: "The request and response demonstration snapshot." },
+      summary: "Raw Request / Response",
+      description: "Returns a demonstration snapshot of the raw Next.js request and response.",
+      tags: ["Ugly Package"],
+      responses: {
+        "200": {
+          description: "The request and response demonstration snapshot.",
+          body: RawRequestResponseDto,
+        },
+        "401": {
+          description: "Authentication failed.",
+          body: UnauthorizedErrorResponseDto,
+        },
+        "403": {
+          description: "Access is forbidden.",
+          body: ForbiddenErrorResponseDto,
+        },
+        "500": {
+          description: "An unexpected server error occurred.",
+          body: InternalServerErrorResponseDto,
         },
       },
     },
   },
 } as const satisfies VoyzuPackageModuleDefinition;
 
-export default uglyModule;
+export default uglyPackageModule;
