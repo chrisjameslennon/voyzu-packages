@@ -8,9 +8,11 @@ import { AllIceCreamsReportPage } from "./server/pages/AllIceCreamsReportPage";
 const commonResponses = {
   "401": {
     description: "Authentication failed.",
+    body: dtoRef("UnauthorizedErrorResponseDto"),
   },
   "403": {
     description: "Access is forbidden.",
+    body: dtoRef("ForbiddenErrorResponseDto"),
   },
   "500": {
     description: "An unexpected server error occurred.",
