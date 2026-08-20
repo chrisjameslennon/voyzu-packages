@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr, EntryType } from "@voyzu/core/types/modules/core";
 import type { ApBillDetailedDocumentDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-bill.response.dto";
 import type {
@@ -853,11 +852,11 @@ async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: nu
       JOIN tax_authority ta ON ta.country_code = tr.country_code AND ta.code = $3 AND ta.status = 'ACTIVE'
       WHERE tr.country_code = $1 AND tr.code = $2 AND tr.status = 'ACTIVE'
       LIMIT 1`, [ctx.company.country_code, detail.tax_rule, detail.tax_authority_code], (row) => ({
-        tax_rule_id: Number(row.tax_rule_id),
-        tax_authority_id: Number(row.tax_authority_id),
-        tax_authority_code: String(row.tax_authority_code),
-        tax_authority_name: String(row.tax_authority_name),
-      }));
+      tax_rule_id: Number(row.tax_rule_id),
+      tax_authority_id: Number(row.tax_authority_id),
+      tax_authority_code: String(row.tax_authority_code),
+      tax_authority_name: String(row.tax_authority_name),
+    }));
     if (!taxSetup) throw new BusinessRuleError(`Tax setup was not resolved for ${detail.tax_rule}/${detail.tax_authority_code}`);
     const lineNumber = index + 1;
     const inserted = await db.query(`INSERT INTO tax_ledger_entry_line
@@ -883,4 +882,4 @@ async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: nu
   return rows;
 }
 
-export const processApDocument = withResponseValidation(processApDocumentUnchecked, "processApDocument");
+export const processApDocument = processApDocumentUnchecked;

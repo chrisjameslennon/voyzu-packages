@@ -1,100 +1,113 @@
-import type { DrCr, EntryType } from "@voyzu/core/types/modules/core";
-export interface ArReceiptApplicationCompanySnapshotDto {
-  code: string;
-  base_currency_code: string;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { DrCr, EntryType } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface ArReceiptApplicationCounterpartySnapshotDto {
-  code: string;
-  name: string;
-}
+export const ArReceiptApplicationCompanySnapshotDto = StrictObject({
+  code: BusinessCode,
+  base_currency_code: CurrencyCode,
+});
+export type ArReceiptApplicationCompanySnapshotDto = Type.Static<typeof ArReceiptApplicationCompanySnapshotDto>;
 
-export interface ArReceiptApplicationDetailedLineDto {
-  source_receipt_document_id: string;
-  source_receipt_journal_code: string;
-  source_receipt_ar_subledger_entry_code: string;
-  source_receipt_ar_subledger_entry_id: number;
-  source_receipt_open_amount_before: number;
-  source_receipt_open_amount_after: number;
-  target_invoice_document_id: string;
-  target_invoice_journal_code: string;
-  target_invoice_ar_subledger_entry_code: string;
-  target_invoice_ar_subledger_entry_id: number;
-  target_invoice_open_amount_before: number;
-  target_invoice_open_amount_after: number;
-  amount: number;
-}
+export const ArReceiptApplicationCounterpartySnapshotDto = StrictObject({
+  code: BusinessCode,
+  name: NonBlankText,
+});
+export type ArReceiptApplicationCounterpartySnapshotDto = Type.Static<typeof ArReceiptApplicationCounterpartySnapshotDto>;
 
-export interface ArReceiptApplicationDetailedDto {
-  company: ArReceiptApplicationCompanySnapshotDto;
-  ar_counterparty: ArReceiptApplicationCounterpartySnapshotDto;
-  document_id: string;
-  document_memo: string | null;
-  generated_description: string;
-  application_date: string;
-  posting_date: string;
-  applications: ArReceiptApplicationDetailedLineDto[];
-  total_application_amount: number;
-}
+export const ArReceiptApplicationDetailedLineDto = StrictObject({
+  source_receipt_document_id: Type.String(),
+  source_receipt_journal_code: BusinessCode,
+  source_receipt_ar_subledger_entry_code: BusinessCode,
+  source_receipt_ar_subledger_entry_id: PositiveId,
+  source_receipt_open_amount_before: Type.Number(),
+  source_receipt_open_amount_after: Type.Number(),
+  target_invoice_document_id: Type.String(),
+  target_invoice_journal_code: BusinessCode,
+  target_invoice_ar_subledger_entry_code: BusinessCode,
+  target_invoice_ar_subledger_entry_id: PositiveId,
+  target_invoice_open_amount_before: Type.Number(),
+  target_invoice_open_amount_after: Type.Number(),
+  amount: Type.Number(),
+});
+export type ArReceiptApplicationDetailedLineDto = Type.Static<typeof ArReceiptApplicationDetailedLineDto>;
 
-export interface ArReceiptApplicationArSubledgerDetailDto {
-  id: number | null;
-  code: string | null;
-  company_code: string;
-  journal_header_id: number | null;
-  ar_counterparty_code: string;
-  control_account_code: "AR_TRADE_RECEIVABLES" | "AR_UNAPPLIED_CASH";
-  applied_to_ar_subledger_entry_id: number | null;
-  posting_date: string;
-  financial_year_code: string;
-  financial_period_code: string;
-  base_currency_code: string;
-  entry_type: EntryType;
-  base_currency_amount: number;
-  document_memo: string | null;
-  status: "POSTED" | "EPHEMERAL";
-}
+export const ArReceiptApplicationDetailedDto = StrictObject({
+  company: ArReceiptApplicationCompanySnapshotDto,
+  ar_counterparty: ArReceiptApplicationCounterpartySnapshotDto,
+  document_id: Type.String(),
+  document_memo: Type.Union([Type.String(), Type.Null()]),
+  generated_description: Type.String(),
+  application_date: IsoDate,
+  posting_date: IsoDate,
+  applications: Type.Array(ArReceiptApplicationDetailedLineDto),
+  total_application_amount: Type.Number(),
+});
+export type ArReceiptApplicationDetailedDto = Type.Static<typeof ArReceiptApplicationDetailedDto>;
 
-export interface ArReceiptApplicationJournalHeaderDto {
-  id: number | null;
-  code: string | null;
-  document_type_code: "AR_RECEIPT_APPLICATION";
-  document_id: string;
-  generated_description: string;
-  posting_engine_code: "AR_RECEIPT_APPLICATION";
-  company_code: string;
-  document_date: string;
-  posting_date: string;
-  financial_year_code: string;
-  financial_period_code: string;
-  base_currency_code: string;
-  total_debit_base_amount: number;
-  total_credit_base_amount: number;
-  document_memo: string | null;
-  status: "POSTED" | "EPHEMERAL";
-}
+export const ArReceiptApplicationArSubledgerDetailDto = StrictObject({
+  id: Type.Union([PositiveId, Type.Null()]),
+  code: Type.Union([BusinessCode, Type.Null()]),
+  company_code: BusinessCode,
+  journal_header_id: Type.Union([PositiveId, Type.Null()]),
+  ar_counterparty_code: BusinessCode,
+  control_account_code: Type.Union([Type.Literal("AR_TRADE_RECEIVABLES"), Type.Literal("AR_UNAPPLIED_CASH")]),
+  applied_to_ar_subledger_entry_id: Type.Union([PositiveId, Type.Null()]),
+  posting_date: IsoDate,
+  financial_year_code: BusinessCode,
+  financial_period_code: BusinessCode,
+  base_currency_code: CurrencyCode,
+  entry_type: EntryType,
+  base_currency_amount: Type.Number(),
+  document_memo: Type.Union([Type.String(), Type.Null()]),
+  status: Type.Union([Type.Literal("POSTED"), Type.Literal("EPHEMERAL")]),
+});
+export type ArReceiptApplicationArSubledgerDetailDto = Type.Static<typeof ArReceiptApplicationArSubledgerDetailDto>;
 
-export interface ArReceiptApplicationJournalLineDto {
-  id: number | null;
-  journal_header_id: number | null;
-  line_number: number;
-  gl_account_code: string;
-  gl_account_name: string;
-  source_ledger: string | null;
-  source_control_account: string | null;
-  dr_cr: DrCr;
-  base_currency_amount: number;
-  description: string;
-  document_memo: string | null;
-}
+export const ArReceiptApplicationJournalHeaderDto = StrictObject({
+  id: Type.Union([PositiveId, Type.Null()]),
+  code: Type.Union([BusinessCode, Type.Null()]),
+  document_type_code: Type.Literal("AR_RECEIPT_APPLICATION"),
+  document_id: Type.String(),
+  generated_description: Type.String(),
+  posting_engine_code: Type.Literal("AR_RECEIPT_APPLICATION"),
+  company_code: BusinessCode,
+  document_date: IsoDate,
+  posting_date: IsoDate,
+  financial_year_code: BusinessCode,
+  financial_period_code: BusinessCode,
+  base_currency_code: CurrencyCode,
+  total_debit_base_amount: Type.Number(),
+  total_credit_base_amount: Type.Number(),
+  document_memo: Type.Union([Type.String(), Type.Null()]),
+  status: Type.Union([Type.Literal("POSTED"), Type.Literal("EPHEMERAL")]),
+});
+export type ArReceiptApplicationJournalHeaderDto = Type.Static<typeof ArReceiptApplicationJournalHeaderDto>;
 
-export interface ArReceiptApplicationPostingDetailsDto {
-  journal_header: ArReceiptApplicationJournalHeaderDto;
-  journal_lines: ArReceiptApplicationJournalLineDto[];
-}
+export const ArReceiptApplicationJournalLineDto = StrictObject({
+  id: Type.Union([PositiveId, Type.Null()]),
+  journal_header_id: Type.Union([PositiveId, Type.Null()]),
+  line_number: PositiveId,
+  gl_account_code: BusinessCode,
+  gl_account_name: NonBlankText,
+  source_ledger: Type.Union([Type.String(), Type.Null()]),
+  source_control_account: Type.Union([Type.String(), Type.Null()]),
+  dr_cr: DrCr,
+  base_currency_amount: Type.Number(),
+  description: Type.String(),
+  document_memo: Type.Union([Type.String(), Type.Null()]),
+});
+export type ArReceiptApplicationJournalLineDto = Type.Static<typeof ArReceiptApplicationJournalLineDto>;
 
-export interface ArReceiptApplicationPostingResponseDto {
-  detailed_document: ArReceiptApplicationDetailedDto;
-  ar_subledger_details: ArReceiptApplicationArSubledgerDetailDto[];
-  posting_details: ArReceiptApplicationPostingDetailsDto;
-}
+export const ArReceiptApplicationPostingDetailsDto = StrictObject({
+  journal_header: ArReceiptApplicationJournalHeaderDto,
+  journal_lines: Type.Array(ArReceiptApplicationJournalLineDto),
+});
+export type ArReceiptApplicationPostingDetailsDto = Type.Static<typeof ArReceiptApplicationPostingDetailsDto>;
+
+export const ArReceiptApplicationPostingResponseDto = StrictObject({
+  detailed_document: ArReceiptApplicationDetailedDto,
+  ar_subledger_details: Type.Array(ArReceiptApplicationArSubledgerDetailDto),
+  posting_details: ArReceiptApplicationPostingDetailsDto,
+});
+export type ArReceiptApplicationPostingResponseDto = Type.Static<typeof ArReceiptApplicationPostingResponseDto>;

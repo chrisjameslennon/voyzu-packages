@@ -120,7 +120,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class DimensionRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insert(row: InsertDimensionRow): Promise<DimensionRow> {
     const cols: string[] = [];

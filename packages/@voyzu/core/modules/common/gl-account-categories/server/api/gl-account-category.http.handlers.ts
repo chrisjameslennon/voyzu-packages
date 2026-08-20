@@ -164,8 +164,7 @@ export async function handleBatchCreate(request: NextRequest): Promise<NextRespo
 export async function handleBatchGet(request: NextRequest): Promise<NextResponse<GlAccountCategoryResponseDto[] | InputValidationErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(request);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
-    return ok(await batchGetGlAccountCategories(codes.map(String), await scopedCompanyId(request)));
+    return ok(await batchGetGlAccountCategories(codes, await scopedCompanyId(request)));
   } catch (error) {
     return serverError(error);
   }
@@ -190,8 +189,7 @@ export async function handleBatchPatch(request: NextRequest): Promise<NextRespon
 export async function handleBatchActivate(request: NextRequest): Promise<NextResponse<GlAccountCategoryResponseDto[] | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(request);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
-    return ok(await activateGlAccountCategories(codes.map(String), await scopedCompanyId(request)));
+    return ok(await activateGlAccountCategories(codes, await scopedCompanyId(request)));
   } catch (error) {
     if (error instanceof InputValidationError) return inputValidationError(error.message);
     if (error instanceof NotFoundError) return notFoundError(error.message);
@@ -216,8 +214,7 @@ export async function handleActivate(
 export async function handleBatchDeactivate(request: NextRequest): Promise<NextResponse<GlAccountCategoryResponseDto[] | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(request);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
-    return ok(await deactivateGlAccountCategories(codes.map(String), await scopedCompanyId(request)));
+    return ok(await deactivateGlAccountCategories(codes, await scopedCompanyId(request)));
   } catch (error) {
     if (error instanceof InputValidationError) return inputValidationError(error.message);
     if (error instanceof BusinessRuleError) return businessRuleError(error.message);
@@ -243,8 +240,7 @@ export async function handleDeactivate(
 export async function handleBatchDelete(request: NextRequest): Promise<NextResponse<null | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(request);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
-    await batchDeleteGlAccountCategories(codes.map(String), await scopedCompanyId(request));
+    await batchDeleteGlAccountCategories(codes, await scopedCompanyId(request));
     return noContent();
   } catch (error) {
     if (error instanceof BusinessRuleError) return businessRuleError(error.message);

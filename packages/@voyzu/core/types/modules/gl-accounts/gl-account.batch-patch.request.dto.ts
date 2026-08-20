@@ -1,6 +1,10 @@
-import type { GlAccountPatchRequestDto } from "./gl-account.patch.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { GlAccountPatchRequestDto } from "./gl-account.patch.request.dto";
+import { BusinessCode14 } from "@voyzu/core/types/constraints";
 
-export interface GlAccountBatchPatchRequestDto extends GlAccountPatchRequestDto {
-  /** GL account business code identifying the account to patch. */
-  code: string;
-}
+export const GlAccountBatchPatchRequestDto = StrictObject({
+  ...GlAccountPatchRequestDto.properties,
+  code: BusinessCode14,
+});
+export type GlAccountBatchPatchRequestDto = Type.Static<typeof GlAccountBatchPatchRequestDto>;

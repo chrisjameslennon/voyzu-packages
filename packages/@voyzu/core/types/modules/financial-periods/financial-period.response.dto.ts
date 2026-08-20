@@ -1,26 +1,21 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { BusinessCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export type FinancialPeriodStatus = "OPEN" | "CLOSED";
+export const FinancialPeriodStatus = Type.Union([Type.Literal("OPEN"), Type.Literal("CLOSED")]);
+export type FinancialPeriodStatus = Type.Static<typeof FinancialPeriodStatus>;
 
-export interface FinancialPeriodResponseDto {
-  /** Unique numeric identifier of the financial period. */
-  id: number;
-  /** The Financial Year this period belongs to. */
-  financialYearId: number;
-  /** The company this period belongs to. */
-  companyId: number;
-  /** Month abbreviation code e.g. "APR", "MAY". Unique within its Financial Year. */
-  code: string;
-  /** Display name of the period. */
-  name: string;
-  /** First day of the period (ISO date string, inclusive). */
-  startDate: string;
-  /** Last day of the period (ISO date string, inclusive). */
-  endDate: string;
-  /** Current lifecycle status of the period. */
-  status: FinancialPeriodStatus;
-  /** True when a posted journal has a posting date within this financial period. */
-  hasPostings: boolean;
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const FinancialPeriodResponseDto = StrictObject({
+  id: PositiveId,
+  financialYearId: PositiveId,
+  companyId: PositiveId,
+  code: BusinessCode,
+  name: NonBlankText,
+  startDate: IsoDate,
+  endDate: IsoDate,
+  status: FinancialPeriodStatus,
+  hasPostings: Type.Boolean({ description: "True when a posted journal has a posting date within this financial period." }),
+  audit: AuditMetadataDto,
+});
+export type FinancialPeriodResponseDto = Type.Static<typeof FinancialPeriodResponseDto>;

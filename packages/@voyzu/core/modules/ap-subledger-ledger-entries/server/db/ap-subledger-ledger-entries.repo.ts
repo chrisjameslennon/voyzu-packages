@@ -72,7 +72,7 @@ const AP_ENTRY_COLUMNS = `
 `;
 
 export class ApSubledgerRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async listEntries(companyId: number): Promise<ApSubledgerEntryRow[]> {
     const settingsCompanyId = await resolveEffectiveSettingsCompanyId(companyId, this.db);

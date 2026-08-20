@@ -1,42 +1,51 @@
-export interface ArInvoiceCounterpartyInputDto {
-  code?: string | null;
-  name: string;
-  status: "ACTIVE" | "INACTIVE";
-  country_code: string;
-  state_or_province_code?: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, CountryCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export type ArInvoiceDimensionsDto = Record<string, string>;
+export const ArInvoiceCounterpartyInputDto = StrictObject({
+  code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  name: NonBlankText,
+  status: Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]),
+  country_code: CountryCode,
+  state_or_province_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+});
+export type ArInvoiceCounterpartyInputDto = Type.Static<typeof ArInvoiceCounterpartyInputDto>;
 
-export interface ArInvoiceCallerSuppliedTaxComponentDto {
-  tax_authority_code: string;
-  tax_rate: number;
-  invoice_label?: string | null;
-}
+export const ArInvoiceDimensionsDto = Type.Record(Type.String(), Type.String());
+export type ArInvoiceDimensionsDto = Type.Static<typeof ArInvoiceDimensionsDto>;
 
-export interface ArInvoiceLineRequestDto {
-  line_id?: number | null;
-  description: string;
-  quantity?: number | null;
-  net_unit_price?: number | null;
-  net_line_total?: number | null;
-  revenue_posting_code?: string | null;
-  inventory_item_code?: string | null;
-  tax_rule: string;
-  tax_components?: ArInvoiceCallerSuppliedTaxComponentDto[] | null;
-  dimensions?: ArInvoiceDimensionsDto | null;
-}
+export const ArInvoiceCallerSuppliedTaxComponentDto = StrictObject({
+  tax_authority_code: BusinessCode,
+  tax_rate: Type.Number(),
+  invoice_label: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+});
+export type ArInvoiceCallerSuppliedTaxComponentDto = Type.Static<typeof ArInvoiceCallerSuppliedTaxComponentDto>;
 
-export interface ArInvoiceRequestDto {
-  document_type?: "AR_INVOICE";
-  company_code?: string | null;
-  ar_counterparty_code?: string | null;
-  ar_counterparty?: ArInvoiceCounterpartyInputDto | null;
-  document_id?: string | null;
-  document_memo?: string | null;
-  invoice_date: string;
-  posting_date?: string | null;
-  revenue_posting_code?: string | null;
-  dimensions?: ArInvoiceDimensionsDto | null;
-  lines: ArInvoiceLineRequestDto[];
-}
+export const ArInvoiceLineRequestDto = StrictObject({
+  line_id: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  description: Type.String(),
+  quantity: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+  net_unit_price: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+  net_line_total: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+  revenue_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  inventory_item_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  tax_rule: Type.String(),
+  tax_components: Type.Optional(Type.Union([Type.Array(ArInvoiceCallerSuppliedTaxComponentDto), Type.Null()])),
+  dimensions: Type.Optional(Type.Union([ArInvoiceDimensionsDto, Type.Null()])),
+});
+export type ArInvoiceLineRequestDto = Type.Static<typeof ArInvoiceLineRequestDto>;
+
+export const ArInvoiceRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AR_INVOICE")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ar_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ar_counterparty: Type.Optional(Type.Union([ArInvoiceCounterpartyInputDto, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  document_memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  invoice_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  revenue_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  dimensions: Type.Optional(Type.Union([ArInvoiceDimensionsDto, Type.Null()])),
+  lines: Type.Array(ArInvoiceLineRequestDto),
+});
+export type ArInvoiceRequestDto = Type.Static<typeof ArInvoiceRequestDto>;

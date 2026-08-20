@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { TaxActivityReconciliationResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -81,4 +80,4 @@ async function getTaxActivityReconciliationUnchecked(
   };
 }
 
-export const getTaxActivityReconciliation = withResponseValidation(getTaxActivityReconciliationUnchecked, "getTaxActivityReconciliation");
+export const getTaxActivityReconciliation = getTaxActivityReconciliationUnchecked;

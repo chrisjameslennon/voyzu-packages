@@ -1,14 +1,17 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CountryCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface ArCounterpartyResponseDto {
-  id: number;
-  companyId: number;
-  code: string;
-  name: string;
-  status: "ACTIVE" | "INACTIVE";
-  countryCode: string | null;
-  countryName: string | null;
-  taxRegionOrProvince: string | null;
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const ArCounterpartyResponseDto = StrictObject({
+  id: PositiveId,
+  companyId: PositiveId,
+  code: BusinessCode,
+  name: NonBlankText,
+  status: Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]),
+  countryCode: Type.Union([CountryCode, Type.Null()]),
+  countryName: Type.Union([NonBlankText, Type.Null()]),
+  taxRegionOrProvince: Type.Union([Type.String(), Type.Null()]),
+  audit: AuditMetadataDto,
+});
+export type ArCounterpartyResponseDto = Type.Static<typeof ArCounterpartyResponseDto>;

@@ -1,22 +1,19 @@
 import { randomUUID } from "node:crypto";
 
+import { BusinessRuleError } from "@voyzu/capability/errors";
+import { ChangeCode } from "@voyzu/core/organization/domain/operation-policy";
 import type {
   OrganizationResponseDto,
   OrganizationUpdateRequestDto,
 } from "@voyzu/core/types/modules/organization";
-import { BusinessRuleError } from "@voyzu/capability/errors";
-import { ChangeCode } from "@voyzu/core/organization/domain/operation-policy";
-import { runtime } from "@voyzu/capability/runtime";
 
+import { getCurrentActorType, getCurrentUser, UserRepo } from "@voyzu/auth/users/server";
 import { getDb } from "@voyzu/capability/db";
-import { UserRepo } from "@voyzu/auth/users/server";
-import { getCurrentActorType, getCurrentUser } from "@voyzu/auth/users/server";
 
 import { OrganizationRepo } from "../db/organization.repo";
 import type { OrganizationRow } from "../db/organization.row.types";
 
 import { toDto, toUpdateRow } from "./organization.mapper";
-import { validateUpdate, validateResponse } from "./organization.validator";
 
 async function getAuditActor(
   repo: UserRepo,
@@ -28,10 +25,10 @@ async function getAuditActor(
   const row = await repo.getById(parsed);
   return row
     ? {
-        id: row.id,
-        code: row.code,
-        displayName: row.display_name,
-      }
+      id: row.id,
+      code: row.code,
+      displayName: row.display_name,
+    }
     : null;
 }
 
@@ -57,26 +54,13 @@ async function enrich(row: OrganizationRow): Promise<OrganizationResponseDto> {
   };
 }
 
-function checkedResponse(dto: OrganizationResponseDto): OrganizationResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid organization response: ${errors.join("; ")}`;
-    if (runtime.isDevLike) throw new Error(message);
-    console.error(message);
-  }
-  return dto;
-}
-
 export async function getOrganization(): Promise<OrganizationResponseDto | null> {
   const row = await new OrganizationRepo(getDb()).get();
   if (!row) return null;
-  return checkedResponse(await enrich(row));
+  return await enrich(row);
 }
 
 export async function updateOrganization(input: OrganizationUpdateRequestDto): Promise<OrganizationResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new Error(errors.join("; "));
-
   const repo = new OrganizationRepo(getDb());
   const existing = await repo.get();
   if (!existing) throw new Error("Organization not found");
@@ -93,5 +77,5 @@ export async function updateOrganization(input: OrganizationUpdateRequestDto): P
     updated_user_id: currentUser ? String(currentUser.id) : null,
     updated_mutation_id: mutationId,
   });
-  return checkedResponse(await enrich(row));
+  return await enrich(row);
 }

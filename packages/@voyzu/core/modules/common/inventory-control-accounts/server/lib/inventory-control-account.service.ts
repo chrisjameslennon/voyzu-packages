@@ -3,15 +3,12 @@ import type { InventoryControlAccountPatchRequestDto } from "@voyzu/core/types/m
 import type { InventoryControlAccountSettingResponseDto } from "@voyzu/core/types/modules/inventory-control-accounts";
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
-import { checkResponse } from "@voyzu/capability/validation";
 import { UpdateGLAccount } from "@voyzu/core/common/inventory-control-accounts/domain/operation-policy";
 import { createUpdateAuditStamp, withAuditActors } from "../../../server";
 
 import { InventoryControlAccountRepo } from "../db/inventory-control-account.repo";
 import type { InventoryControlAccountRow } from "../db/inventory-control-account.row.types";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
-import { validateResponse } from "./inventory-control-account.validator";
-
 const REQUIRED_ACCOUNT_TYPE: Record<string, AccountType | null> = {
   INVENTORY_CONTROL: "ASSET",
 };
@@ -43,7 +40,7 @@ function toDto(row: InventoryControlAccountRow): InventoryControlAccountSettingR
 
 async function enrichRow(row: InventoryControlAccountRow): Promise<InventoryControlAccountSettingResponseDto> {
   const dto = await withAuditActors(toDto(row), row);
-  return checkResponse(dto, validateResponse(dto), `inventory control account (${dto.code})`);
+  return dto;
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {

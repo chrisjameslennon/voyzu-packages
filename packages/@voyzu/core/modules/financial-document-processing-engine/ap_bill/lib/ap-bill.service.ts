@@ -1,6 +1,6 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { ApBillRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-bill.request.dto";
-import type { InventoryReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
 import type {
   ApBillApCounterpartyDetailsDto,
   ApBillApSubledgerDetailsDto,
@@ -12,12 +12,11 @@ import type {
   ApBillPostingResponseDto,
   ApBillTaxLedgerDetailDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-bill.response.dto";
-import { getDb, withTransaction } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
+import type { InventoryReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
 
+import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { processInventoryReceipt } from "../../inventory/lib/inventory-processing.service";
 import { ApBillPostingRepo } from "../db/ap-bill-posting.repo";
 import type {
@@ -39,7 +38,7 @@ import {
   type ApBillLineDimension,
   type ApBillPostingLine,
 } from "./ap-bill.types";
-import { type ApBillDataValidationContext, validateData, validateRequest } from "./ap-bill.validator";
+import { validateData, validateRequest, type ApBillDataValidationContext } from "./ap-bill.validator";
 
 export interface ProcessApBillOptions {
   preview?: boolean;
@@ -808,4 +807,4 @@ async function processApBillUnchecked(input: ApBillRequestDto, options: ProcessA
   });
 }
 
-export const processApBill = withResponseValidation(processApBillUnchecked, "processApBill");
+export const processApBill = processApBillUnchecked;

@@ -111,7 +111,7 @@ function mapLineRow(row: Record<string, unknown>): JournalLineRow {
 }
 
 export class JournalRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async reserveHeaderId(): Promise<number> {
     const { rows } = await this.db.query(

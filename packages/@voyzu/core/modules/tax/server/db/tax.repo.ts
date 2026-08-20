@@ -128,7 +128,7 @@ function mapTaxComponent(row: Record<string, unknown>): TaxComponentRow {
 }
 
 export class TaxRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insertAuthority(row: InsertTaxAuthorityRow): Promise<TaxAuthorityRow> {
     const built = buildInsert("tax_authority", row, AUTHORITY_COLUMNS);

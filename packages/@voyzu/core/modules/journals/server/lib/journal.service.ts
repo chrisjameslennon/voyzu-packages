@@ -1,11 +1,9 @@
 import { getDb } from "@voyzu/capability";
-import { checkResponse } from "@voyzu/capability/validation";
 import { withAuditActors } from "@voyzu/core/common/server";
 import type { JournalResponseDto } from "@voyzu/core/types/modules/journals";
 
 import { JournalRepo } from "../db/journal.repo";
 import { toDto } from "./journal.mapper";
-import { validateResponse } from "./journal.validator";
 
 async function enrichRow(
   row: Parameters<typeof toDto>[0],
@@ -13,7 +11,7 @@ async function enrichRow(
   dimensions?: Parameters<typeof toDto>[2],
 ): Promise<JournalResponseDto> {
   const dto = await withAuditActors(toDto(row, lines, dimensions), row);
-  return checkResponse(dto, validateResponse(dto), `journal (id=${dto.id})`);
+  return dto;
 }
 
 export async function listJournals(companyId: number): Promise<JournalResponseDto[]> {

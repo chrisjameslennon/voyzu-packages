@@ -1,4 +1,5 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { type DbExecutor, getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type { InventoryAdjustmentRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-adjustment.request.dto";
 import type { InventoryIssueRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
@@ -12,12 +13,10 @@ import type {
   InventoryProcessingPostingResponseDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-processing.response.dto";
 import type { InventoryReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
-import { getDb, type DbExecutor, withTransaction } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 
+import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import {
   INVENTORY_ADJUSTMENT_CONTROL_COMPONENT,
   INVENTORY_ADJUSTMENT_GAIN_COMPONENT,
@@ -552,50 +551,50 @@ async function persistInventoryDocument(context: ResolvedContext, db: DbExecutor
   }
 
   const journalHeaderId = journalHeader?.id ?? options.sourceJournalHeaderId!;
-    const ledgerHeader = await txRepo.insertInventoryLedgerHeader({
-      code: `${documentPrefix(context.request.document_type)}-${journalHeaderId}`,
-      company_id: context.data.company!.id,
-      journal_header_id: journalHeaderId,
-      source_document_type_code: ledgerSourceDocumentType(context.request),
-      document_id: context.detailedDocument.document_id,
-      description: context.detailedDocument.generated_description,
+  const ledgerHeader = await txRepo.insertInventoryLedgerHeader({
+    code: `${documentPrefix(context.request.document_type)}-${journalHeaderId}`,
+    company_id: context.data.company!.id,
+    journal_header_id: journalHeaderId,
+    source_document_type_code: ledgerSourceDocumentType(context.request),
+    document_id: context.detailedDocument.document_id,
+    description: context.detailedDocument.generated_description,
+    memo: context.detailedDocument.memo,
+    document_date: context.detailedDocument.document_date,
+    posting_date: context.detailedDocument.posting_date,
+    financial_year_id: context.data.fiscalPeriod!.financial_year_id,
+    financial_period_id: context.data.fiscalPeriod!.financial_period_id,
+    base_currency_code: context.data.company!.base_currency_code,
+  });
+  const ledgerLines: InventoryLedgerLineRow[] = [];
+  for (const [index, line] of context.detailedDocument.lines.entries()) {
+    const item = context.data.itemsByCode.get(line.inventory_item_code);
+    if (!item) throw new BusinessRuleError(`Inventory item ${line.inventory_item_code} was not resolved`);
+    ledgerLines.push(await txRepo.insertInventoryLedgerLine({
+      inventory_ledger_entry_header_id: ledgerHeader.id,
+      line_number: index + 1,
+      movement_type_code: line.movement,
+      item_id: item.id,
+      description: line.description,
+      inventory_control_account_code: inventoryControlCodeForDocument(context.request.document_type),
+      qty_delta: line.quantity_delta,
+      unit_value_supplied: line.unit_book_value_supplied,
+      book_value_delta: line.book_value_delta,
+      qty_balance: line.qty_balance,
+      avg_unit_value: line.avg_unit_value,
+      book_value_balance: line.book_value_balance,
       memo: context.detailedDocument.memo,
-      document_date: context.detailedDocument.document_date,
-      posting_date: context.detailedDocument.posting_date,
-      financial_year_id: context.data.fiscalPeriod!.financial_year_id,
-      financial_period_id: context.data.fiscalPeriod!.financial_period_id,
-      base_currency_code: context.data.company!.base_currency_code,
+    }));
+    await txRepo.updateItemDerivedBalance(item.id, {
+      qty_balance: line.qty_balance,
+      avg_unit_value: line.avg_unit_value,
+      book_value_balance: line.book_value_balance,
     });
-    const ledgerLines: InventoryLedgerLineRow[] = [];
-    for (const [index, line] of context.detailedDocument.lines.entries()) {
-      const item = context.data.itemsByCode.get(line.inventory_item_code);
-      if (!item) throw new BusinessRuleError(`Inventory item ${line.inventory_item_code} was not resolved`);
-      ledgerLines.push(await txRepo.insertInventoryLedgerLine({
-        inventory_ledger_entry_header_id: ledgerHeader.id,
-        line_number: index + 1,
-        movement_type_code: line.movement,
-        item_id: item.id,
-        description: line.description,
-        inventory_control_account_code: inventoryControlCodeForDocument(context.request.document_type),
-        qty_delta: line.quantity_delta,
-        unit_value_supplied: line.unit_book_value_supplied,
-        book_value_delta: line.book_value_delta,
-        qty_balance: line.qty_balance,
-        avg_unit_value: line.avg_unit_value,
-        book_value_balance: line.book_value_balance,
-        memo: context.detailedDocument.memo,
-      }));
-      await txRepo.updateItemDerivedBalance(item.id, {
-        qty_balance: line.qty_balance,
-        avg_unit_value: line.avg_unit_value,
-        book_value_balance: line.book_value_balance,
-      });
-    }
-    return {
-      detailed_document: context.detailedDocument,
-      inventory_ledger_details: inventoryLedgerDetails(context, journalHeaderId, ledgerHeader, ledgerLines),
-      posting_details: postingDetails(context, postedJournal, journalLines),
-    };
+  }
+  return {
+    detailed_document: context.detailedDocument,
+    inventory_ledger_details: inventoryLedgerDetails(context, journalHeaderId, ledgerHeader, ledgerLines),
+    posting_details: postingDetails(context, postedJournal, journalLines),
+  };
 }
 
 async function processInventoryDocument(input: InventoryProcessingRequestDto, documentType: InventoryDocumentType, options: ProcessInventoryOptions = {}): Promise<InventoryProcessingPostingResponseDto> {
@@ -638,6 +637,6 @@ async function processInventoryAdjustmentUnchecked(input: InventoryAdjustmentReq
   return processInventoryDocument(input, "INVENTORY_ADJUSTMENT", options);
 }
 
-export const processInventoryReceipt = withResponseValidation(processInventoryReceiptUnchecked, "processInventoryReceipt");
-export const processInventoryIssue = withResponseValidation(processInventoryIssueUnchecked, "processInventoryIssue");
-export const processInventoryAdjustment = withResponseValidation(processInventoryAdjustmentUnchecked, "processInventoryAdjustment");
+export const processInventoryReceipt = processInventoryReceiptUnchecked;
+export const processInventoryIssue = processInventoryIssueUnchecked;
+export const processInventoryAdjustment = processInventoryAdjustmentUnchecked;

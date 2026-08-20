@@ -1,21 +1,28 @@
-export interface ArWriteOffTargetInvoiceRequestDto {
-  document_id?: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, IsoDate } from "@voyzu/core/types/constraints";
 
-export interface ArWriteOffApplicationRequestDto {
-  target_invoice?: ArWriteOffTargetInvoiceRequestDto | null;
-  amount: number | string;
-}
+export const ArWriteOffTargetInvoiceRequestDto = StrictObject({
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+});
+export type ArWriteOffTargetInvoiceRequestDto = Type.Static<typeof ArWriteOffTargetInvoiceRequestDto>;
 
-export interface ArWriteOffRequestDto {
-  document_type?: "AR_WRITE_OFF";
-  company_code?: string | null;
-  ar_counterparty_code?: string | null;
-  document_id?: string | null;
-  memo?: string | null;
-  write_off_date: string;
-  posting_date?: string | null;
-  write_off_expense_posting_code?: string | null;
-  applications: ArWriteOffApplicationRequestDto[];
-  dimensions?: Record<string, string> | null;
-}
+export const ArWriteOffApplicationRequestDto = StrictObject({
+  target_invoice: Type.Optional(Type.Union([ArWriteOffTargetInvoiceRequestDto, Type.Null()])),
+  amount: Type.Union([Type.Number(), Type.String()]),
+});
+export type ArWriteOffApplicationRequestDto = Type.Static<typeof ArWriteOffApplicationRequestDto>;
+
+export const ArWriteOffRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AR_WRITE_OFF")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ar_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  write_off_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  write_off_expense_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  applications: Type.Array(ArWriteOffApplicationRequestDto),
+  dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),
+});
+export type ArWriteOffRequestDto = Type.Static<typeof ArWriteOffRequestDto>;

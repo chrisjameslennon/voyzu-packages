@@ -1,55 +1,67 @@
-import type { DrCr } from "@voyzu/core/types/modules/core";
-export interface FinancialDocumentTypePostingTemplateLinkDto {
-  label: string;
-  href: string;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { DrCr } from "@voyzu/core/types/modules/core";
+import { BusinessCode, NonBlankText } from "@voyzu/core/types/constraints";
 
-export interface FinancialDocumentTypePostingTemplateBadgeDto {
-  label: string;
-}
+export const FinancialDocumentTypePostingTemplateLinkDto = StrictObject({
+  label: Type.String(),
+  href: Type.String(),
+});
+export type FinancialDocumentTypePostingTemplateLinkDto = Type.Static<typeof FinancialDocumentTypePostingTemplateLinkDto>;
 
-export interface FinancialDocumentTypePostingTemplateGlAccountDto {
-  code: string;
-  name: string;
-}
+export const FinancialDocumentTypePostingTemplateBadgeDto = StrictObject({
+  label: Type.String(),
+});
+export type FinancialDocumentTypePostingTemplateBadgeDto = Type.Static<typeof FinancialDocumentTypePostingTemplateBadgeDto>;
 
-export type FinancialDocumentTypePostingTemplateSideDto = DrCr | "DR/CR";
+export const FinancialDocumentTypePostingTemplateGlAccountDto = StrictObject({
+  code: BusinessCode,
+  name: NonBlankText,
+});
+export type FinancialDocumentTypePostingTemplateGlAccountDto = Type.Static<typeof FinancialDocumentTypePostingTemplateGlAccountDto>;
 
-export interface FinancialDocumentTypePostingTemplateOutputLineDto {
-  side: FinancialDocumentTypePostingTemplateSideDto;
-  glAccount: FinancialDocumentTypePostingTemplateGlAccountDto | null;
-  fallbackLabel: string;
-  reversalOfDocument?: boolean;
-}
+export const FinancialDocumentTypePostingTemplateSideDto = Type.Union([DrCr, Type.Literal("DR/CR")]);
+export type FinancialDocumentTypePostingTemplateSideDto = Type.Static<typeof FinancialDocumentTypePostingTemplateSideDto>;
 
-export interface FinancialDocumentTypePostingTemplateCardDto {
-  key: string;
-  title: string;
-  side: FinancialDocumentTypePostingTemplateSideDto;
-  controlAccount?: FinancialDocumentTypePostingTemplateBadgeDto & {
-    name?: string;
-  };
-  documentDefault?: {
-    label: string;
-    glAccount: FinancialDocumentTypePostingTemplateGlAccountDto | null;
-  };
-  resolvesTo?: FinancialDocumentTypePostingTemplateGlAccountDto | null;
-  managedIn?: {
-    link: FinancialDocumentTypePostingTemplateLinkDto;
-    badge?: FinancialDocumentTypePostingTemplateBadgeDto;
-  };
-  overrideText?: string;
-  overrideCode?: string;
-}
+export const FinancialDocumentTypePostingTemplateOutputLineDto = StrictObject({
+  side: FinancialDocumentTypePostingTemplateSideDto,
+  glAccount: Type.Union([FinancialDocumentTypePostingTemplateGlAccountDto, Type.Null()]),
+  fallbackLabel: Type.String(),
+  reversalOfDocument: Type.Optional(Type.Boolean()),
+});
+export type FinancialDocumentTypePostingTemplateOutputLineDto = Type.Static<typeof FinancialDocumentTypePostingTemplateOutputLineDto>;
 
-export interface FinancialDocumentTypePostingTemplateDto {
-  title: string;
-  description: string;
-  formula: string;
-  isCancellation?: boolean;
-  cancellationMessage?: string;
-  outputTitle: string;
-  outputLines: FinancialDocumentTypePostingTemplateOutputLineDto[];
-  hideComponents?: boolean;
-  cards: FinancialDocumentTypePostingTemplateCardDto[];
-}
+export const FinancialDocumentTypePostingTemplateCardDto = StrictObject({
+  key: Type.String(),
+  title: Type.String(),
+  side: FinancialDocumentTypePostingTemplateSideDto,
+  controlAccount: Type.Optional(StrictObject({
+    ...FinancialDocumentTypePostingTemplateBadgeDto.properties,
+    name: Type.Optional(NonBlankText),
+  })),
+  documentDefault: Type.Optional(StrictObject({
+    label: Type.String(),
+    glAccount: Type.Union([FinancialDocumentTypePostingTemplateGlAccountDto, Type.Null()]),
+  })),
+  resolvesTo: Type.Optional(Type.Union([FinancialDocumentTypePostingTemplateGlAccountDto, Type.Null()])),
+  managedIn: Type.Optional(StrictObject({
+    link: FinancialDocumentTypePostingTemplateLinkDto,
+    badge: Type.Optional(FinancialDocumentTypePostingTemplateBadgeDto),
+  })),
+  overrideText: Type.Optional(Type.String()),
+  overrideCode: Type.Optional(BusinessCode),
+});
+export type FinancialDocumentTypePostingTemplateCardDto = Type.Static<typeof FinancialDocumentTypePostingTemplateCardDto>;
+
+export const FinancialDocumentTypePostingTemplateDto = StrictObject({
+  title: Type.String(),
+  description: Type.String(),
+  formula: Type.String(),
+  isCancellation: Type.Optional(Type.Boolean()),
+  cancellationMessage: Type.Optional(Type.String()),
+  outputTitle: Type.String(),
+  outputLines: Type.Array(FinancialDocumentTypePostingTemplateOutputLineDto),
+  hideComponents: Type.Optional(Type.Boolean()),
+  cards: Type.Array(FinancialDocumentTypePostingTemplateCardDto),
+});
+export type FinancialDocumentTypePostingTemplateDto = Type.Static<typeof FinancialDocumentTypePostingTemplateDto>;

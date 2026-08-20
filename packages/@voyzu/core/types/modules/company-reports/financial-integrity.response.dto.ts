@@ -1,193 +1,214 @@
-import type { AccountType } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AccountType } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface FinancialIntegrityDocumentTypeDto {
-  code: string;
-  name: string;
-}
+export const FinancialIntegrityDocumentTypeDto = StrictObject({
+  code: BusinessCode,
+  name: NonBlankText,
+});
+export type FinancialIntegrityDocumentTypeDto = Type.Static<typeof FinancialIntegrityDocumentTypeDto>;
 
-export interface FinancialIntegrityLedgerLineDto {
-  glAccountId: number;
-  glAccountCode: string;
-  glAccountName: string;
-  accountType: AccountType;
-  openingBalance: number;
-  periodDebits: number;
-  periodCredits: number;
-  netMovement: number;
-  closingBalance: number;
-}
+export const FinancialIntegrityLedgerLineDto = StrictObject({
+  glAccountId: PositiveId,
+  glAccountCode: BusinessCode,
+  glAccountName: NonBlankText,
+  accountType: AccountType,
+  openingBalance: Type.Number(),
+  periodDebits: Type.Number(),
+  periodCredits: Type.Number(),
+  netMovement: Type.Number(),
+  closingBalance: Type.Number(),
+});
+export type FinancialIntegrityLedgerLineDto = Type.Static<typeof FinancialIntegrityLedgerLineDto>;
 
-export interface FinancialIntegrityJournalLineDto {
-  id: number;
-  lineNumber: number;
-  glAccountId: number | null;
-  glAccountCode: string | null;
-  glAccountName: string | null;
-  debit: number;
-  credit: number;
-  amount: number;
-  dimensions: Record<string, string>;
-  taxCode: string | null;
-  taxAmount: number | null;
-  counterparty: string | null;
-  memo: string | null;
-  description: string | null;
-}
+export const FinancialIntegrityJournalLineDto = StrictObject({
+  id: PositiveId,
+  lineNumber: PositiveId,
+  glAccountId: Type.Union([PositiveId, Type.Null()]),
+  glAccountCode: Type.Union([BusinessCode, Type.Null()]),
+  glAccountName: Type.Union([NonBlankText, Type.Null()]),
+  debit: Type.Number(),
+  credit: Type.Number(),
+  amount: Type.Number(),
+  dimensions: Type.Record(Type.String(), Type.String()),
+  taxCode: Type.Union([BusinessCode, Type.Null()]),
+  taxAmount: Type.Union([Type.Number(), Type.Null()]),
+  counterparty: Type.Union([Type.String(), Type.Null()]),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  description: Type.Union([Type.String(), Type.Null()]),
+});
+export type FinancialIntegrityJournalLineDto = Type.Static<typeof FinancialIntegrityJournalLineDto>;
 
-export interface FinancialIntegrityJournalHeaderDto {
-  id: number;
-  code: string;
-  postingDate: string;
-  sourceDocumentTypeCode: string;
-  sourceDocumentId: string;
-  financialPeriodCode: string;
-  currencyCode: string;
-  status: string;
-  debitTotal: number;
-  creditTotal: number;
-  difference: number;
-  balancesToZero: boolean;
-  lines: FinancialIntegrityJournalLineDto[];
-}
+export const FinancialIntegrityJournalHeaderDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  postingDate: IsoDate,
+  sourceDocumentTypeCode: BusinessCode,
+  sourceDocumentId: Type.String(),
+  financialPeriodCode: BusinessCode,
+  currencyCode: CurrencyCode,
+  status: Type.String(),
+  debitTotal: Type.Number(),
+  creditTotal: Type.Number(),
+  difference: Type.Number(),
+  balancesToZero: Type.Boolean(),
+  lines: Type.Array(FinancialIntegrityJournalLineDto),
+});
+export type FinancialIntegrityJournalHeaderDto = Type.Static<typeof FinancialIntegrityJournalHeaderDto>;
 
-export interface FinancialIntegritySubledgerLineDto {
-  lineNumber: number;
-  fields: FinancialIntegritySourceFieldDto[];
-}
+export const FinancialIntegritySourceFieldDto = StrictObject({
+  label: Type.String(),
+  value: Type.String(),
+});
+export type FinancialIntegritySourceFieldDto = Type.Static<typeof FinancialIntegritySourceFieldDto>;
 
-export interface FinancialIntegritySubledgerEntryDto {
-  id: number;
-  code: string;
-  ledger: "AR" | "AP" | "TAX";
-  documentTypeCode: string;
-  documentId: string;
-  postingDate: string;
-  currencyCode: string;
-  memo: string | null;
-  description: string | null;
-  status: string;
-  lines: FinancialIntegritySubledgerLineDto[];
-}
+export const FinancialIntegritySourceLineDto = StrictObject({
+  lineNumber: PositiveId,
+  fields: Type.Array(FinancialIntegritySourceFieldDto),
+});
+export type FinancialIntegritySourceLineDto = Type.Static<typeof FinancialIntegritySourceLineDto>;
 
-export interface FinancialIntegrityInventoryLedgerLineDto {
-  lineNumber: number;
-  movement: string;
-  itemCode: string;
-  itemName: string;
-  qtyDelta: number;
-  unitValueSupplied: number | null;
-  bookValueDelta: number;
-  qtyBalance: number;
-  avgUnitValue: number;
-  bookValueBalance: number;
-}
+export const FinancialIntegritySubledgerLineDto = StrictObject({
+  lineNumber: PositiveId,
+  fields: Type.Array(FinancialIntegritySourceFieldDto),
+});
+export type FinancialIntegritySubledgerLineDto = Type.Static<typeof FinancialIntegritySubledgerLineDto>;
 
-export interface FinancialIntegrityLinkedInventoryDocumentDto {
-  id: number;
-  code: string;
-  documentTypeCode: string;
-  documentId: string;
-  postingDate: string;
-  sourceDocumentTypeCode: string;
-  sourceDocumentId: string | null;
-  currencyCode: string;
-  memo: string | null;
-  description: string | null;
-  status: string;
-  sourceTotals: FinancialIntegritySourceFieldDto[];
-  sourceLines: FinancialIntegritySourceLineDto[];
-  lines: FinancialIntegrityInventoryLedgerLineDto[];
-}
+export const FinancialIntegritySubledgerEntryDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  ledger: Type.Union([Type.Literal("AR"), Type.Literal("AP"), Type.Literal("TAX")]),
+  documentTypeCode: BusinessCode,
+  documentId: Type.String(),
+  postingDate: IsoDate,
+  currencyCode: CurrencyCode,
+  memo: Type.Union([Type.String(), Type.Null()]),
+  description: Type.Union([Type.String(), Type.Null()]),
+  status: Type.String(),
+  lines: Type.Array(FinancialIntegritySubledgerLineDto),
+});
+export type FinancialIntegritySubledgerEntryDto = Type.Static<typeof FinancialIntegritySubledgerEntryDto>;
 
-export interface FinancialIntegritySourceFieldDto {
-  label: string;
-  value: string;
-}
+export const FinancialIntegrityInventoryLedgerLineDto = StrictObject({
+  lineNumber: PositiveId,
+  movement: Type.String(),
+  itemCode: BusinessCode,
+  itemName: NonBlankText,
+  qtyDelta: Type.Number(),
+  unitValueSupplied: Type.Union([Type.Number(), Type.Null()]),
+  bookValueDelta: Type.Number(),
+  qtyBalance: Type.Number(),
+  avgUnitValue: Type.Number(),
+  bookValueBalance: Type.Number(),
+});
+export type FinancialIntegrityInventoryLedgerLineDto = Type.Static<typeof FinancialIntegrityInventoryLedgerLineDto>;
 
-export interface FinancialIntegritySourceLineDto {
-  lineNumber: number;
-  fields: FinancialIntegritySourceFieldDto[];
-}
+export const FinancialIntegrityLinkedInventoryDocumentDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  documentTypeCode: BusinessCode,
+  documentId: Type.String(),
+  postingDate: IsoDate,
+  sourceDocumentTypeCode: BusinessCode,
+  sourceDocumentId: Type.Union([Type.String(), Type.Null()]),
+  currencyCode: CurrencyCode,
+  memo: Type.Union([Type.String(), Type.Null()]),
+  description: Type.Union([Type.String(), Type.Null()]),
+  status: Type.String(),
+  sourceTotals: Type.Array(FinancialIntegritySourceFieldDto),
+  sourceLines: Type.Array(FinancialIntegritySourceLineDto),
+  lines: Type.Array(FinancialIntegrityInventoryLedgerLineDto),
+});
+export type FinancialIntegrityLinkedInventoryDocumentDto = Type.Static<typeof FinancialIntegrityLinkedInventoryDocumentDto>;
 
-export interface FinancialIntegrityDocumentDto {
-  key: string;
-  documentTypeCode: string;
-  documentTypeName: string;
-  accountingFormula: string | null;
-  documentId: string;
-  postingDate: string;
-  sourceDocumentTypeCode: string | null;
-  sourceDocumentId: string | null;
-  counterparty: string | null;
-  currencyCode: string | null;
-  memo: string | null;
-  description: string | null;
-  status: string | null;
-  sourceDocumentJson: Record<string, unknown>;
-  sourceTotals: FinancialIntegritySourceFieldDto[];
-  sourceLines: FinancialIntegritySourceLineDto[];
-  journalHeaders: FinancialIntegrityJournalHeaderDto[];
-  subledgerEntries: FinancialIntegritySubledgerEntryDto[];
-  linkedInventoryDocuments: FinancialIntegrityLinkedInventoryDocumentDto[];
-  downstreamDocuments: FinancialIntegrityDocumentDto[];
-}
+export const FinancialIntegrityDocumentDto = Type.Cyclic({
+  FinancialIntegrityDocument: StrictObject({
+  key: Type.String(),
+  documentTypeCode: BusinessCode,
+  documentTypeName: NonBlankText,
+  accountingFormula: Type.Union([Type.String(), Type.Null()]),
+  documentId: Type.String(),
+  postingDate: IsoDate,
+  sourceDocumentTypeCode: Type.Union([BusinessCode, Type.Null()]),
+  sourceDocumentId: Type.Union([Type.String(), Type.Null()]),
+  counterparty: Type.Union([Type.String(), Type.Null()]),
+  currencyCode: Type.Union([CurrencyCode, Type.Null()]),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  description: Type.Union([Type.String(), Type.Null()]),
+  status: Type.Union([Type.String(), Type.Null()]),
+  sourceDocumentJson: Type.Record(Type.String(), Type.Unknown()),
+  sourceTotals: Type.Array(FinancialIntegritySourceFieldDto),
+  sourceLines: Type.Array(FinancialIntegritySourceLineDto),
+  journalHeaders: Type.Array(FinancialIntegrityJournalHeaderDto),
+  subledgerEntries: Type.Array(FinancialIntegritySubledgerEntryDto),
+  linkedInventoryDocuments: Type.Array(FinancialIntegrityLinkedInventoryDocumentDto),
+    downstreamDocuments: Type.Array(Type.Ref("FinancialIntegrityDocument")),
+  }),
+}, "FinancialIntegrityDocument");
+export type FinancialIntegrityDocumentDto = Type.Static<typeof FinancialIntegrityDocumentDto>;
 
-export interface FinancialIntegrityIndicatorDto {
-  code: string;
-  label: string;
-  passed: boolean;
-  detail: string;
-}
+export const FinancialIntegrityIndicatorDto = StrictObject({
+  code: BusinessCode,
+  label: Type.String(),
+  passed: Type.Boolean(),
+  detail: Type.String(),
+});
+export type FinancialIntegrityIndicatorDto = Type.Static<typeof FinancialIntegrityIndicatorDto>;
 
-export interface FinancialIntegrityTotalsDto {
-  totalReportJournalDebits: number;
-  totalReportJournalCredits: number;
-  difference: number;
-}
+export const FinancialIntegrityTotalsDto = StrictObject({
+  totalReportJournalDebits: Type.Number(),
+  totalReportJournalCredits: Type.Number(),
+  difference: Type.Number(),
+});
+export type FinancialIntegrityTotalsDto = Type.Static<typeof FinancialIntegrityTotalsDto>;
 
-export interface FinancialIntegrityLedgerReconciliationDto {
-  ledgerSummaryPeriodDebits: number;
-  journalLinePeriodDebits: number;
-  debitDifference: number;
-  ledgerSummaryPeriodCredits: number;
-  journalLinePeriodCredits: number;
-  creditDifference: number;
-  ledgerSummaryNetMovement: number;
-  journalLineNetMovement: number;
-  netMovementDifference: number;
-  passed: boolean;
-}
+export const FinancialIntegrityLedgerReconciliationDto = StrictObject({
+  ledgerSummaryPeriodDebits: Type.Number(),
+  journalLinePeriodDebits: Type.Number(),
+  debitDifference: Type.Number(),
+  ledgerSummaryPeriodCredits: Type.Number(),
+  journalLinePeriodCredits: Type.Number(),
+  creditDifference: Type.Number(),
+  ledgerSummaryNetMovement: Type.Number(),
+  journalLineNetMovement: Type.Number(),
+  netMovementDifference: Type.Number(),
+  passed: Type.Boolean(),
+});
+export type FinancialIntegrityLedgerReconciliationDto = Type.Static<typeof FinancialIntegrityLedgerReconciliationDto>;
 
-export interface FinancialIntegrityTrialBalanceReconciliationDto {
-  trialBalancePeriodDebits: number;
-  ledgerSummaryPeriodDebits: number;
-  debitDifference: number;
-  trialBalancePeriodCredits: number;
-  ledgerSummaryPeriodCredits: number;
-  creditDifference: number;
-  trialBalanceNetMovement: number;
-  ledgerSummaryNetMovement: number;
-  netMovementDifference: number;
-  mismatchedAccountCount: number;
-  passed: boolean;
-}
+export const FinancialIntegrityTrialBalanceReconciliationDto = StrictObject({
+  trialBalancePeriodDebits: Type.Number(),
+  ledgerSummaryPeriodDebits: Type.Number(),
+  debitDifference: Type.Number(),
+  trialBalancePeriodCredits: Type.Number(),
+  ledgerSummaryPeriodCredits: Type.Number(),
+  creditDifference: Type.Number(),
+  trialBalanceNetMovement: Type.Number(),
+  ledgerSummaryNetMovement: Type.Number(),
+  netMovementDifference: Type.Number(),
+  mismatchedAccountCount: Type.Number(),
+  passed: Type.Boolean(),
+});
+export type FinancialIntegrityTrialBalanceReconciliationDto = Type.Static<typeof FinancialIntegrityTrialBalanceReconciliationDto>;
 
-export interface FinancialIntegrityResponseDto {
-  companyId: number;
-  companyName: string;
-  companyReportLine1: string | null;
-  companyReportLine2: string | null;
-  companyReportFooter: string | null;
-  baseCurrencyCode: string;
-  fromDate: string;
-  toDate: string;
-  documentTypeCode: string | null;
-  ledgerLines: FinancialIntegrityLedgerLineDto[];
-  documentTypes: FinancialIntegrityDocumentTypeDto[];
-  documents: FinancialIntegrityDocumentDto[];
-  totals: FinancialIntegrityTotalsDto;
-  trialBalanceLines: FinancialIntegrityLedgerLineDto[];
-  ledgerReconciliation: FinancialIntegrityLedgerReconciliationDto;
-  trialBalanceReconciliation: FinancialIntegrityTrialBalanceReconciliationDto;
-  indicators: FinancialIntegrityIndicatorDto[];
-}
+export const FinancialIntegrityResponseDto = StrictObject({
+  companyId: PositiveId,
+  companyName: NonBlankText,
+  companyReportLine1: Type.Union([Type.String(), Type.Null()]),
+  companyReportLine2: Type.Union([Type.String(), Type.Null()]),
+  companyReportFooter: Type.Union([Type.String(), Type.Null()]),
+  baseCurrencyCode: CurrencyCode,
+  fromDate: IsoDate,
+  toDate: IsoDate,
+  documentTypeCode: Type.Union([BusinessCode, Type.Null()]),
+  ledgerLines: Type.Array(FinancialIntegrityLedgerLineDto),
+  documentTypes: Type.Array(FinancialIntegrityDocumentTypeDto),
+  documents: Type.Array(FinancialIntegrityDocumentDto),
+  totals: FinancialIntegrityTotalsDto,
+  trialBalanceLines: Type.Array(FinancialIntegrityLedgerLineDto),
+  ledgerReconciliation: FinancialIntegrityLedgerReconciliationDto,
+  trialBalanceReconciliation: FinancialIntegrityTrialBalanceReconciliationDto,
+  indicators: Type.Array(FinancialIntegrityIndicatorDto),
+});
+export type FinancialIntegrityResponseDto = Type.Static<typeof FinancialIntegrityResponseDto>;

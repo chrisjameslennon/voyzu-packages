@@ -1,10 +1,8 @@
 import { getDb } from "@voyzu/capability/db";
-import { checkResponse } from "@voyzu/capability/validation";
 import { getAuditActors } from "@voyzu/core/common/server";
 import type { ArCounterpartyResponseDto } from "@voyzu/core/types/modules/ar-subledger";
 
 import { ArSubledgerCounterpartyRepo } from "../db/ar-subledger-counterparty.repo";
-import { validateResponse } from "./ar-subledger-counterparty.validator";
 
 function repo(): ArSubledgerCounterpartyRepo {
   return new ArSubledgerCounterpartyRepo(getDb());
@@ -38,7 +36,7 @@ async function toCounterpartyDto(row: Awaited<ReturnType<ArSubledgerCounterparty
       },
     },
   };
-  return checkResponse(dto, validateResponse(dto), `AR counterparty (id=${dto.id})`);
+  return dto;
 }
 
 export async function listArCounterparties(companyId: number): Promise<ArCounterpartyResponseDto[]> {

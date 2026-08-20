@@ -1,17 +1,15 @@
 import type { FinancialPeriodResponseDto } from "@voyzu/core/types/modules/financial-periods";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import { getDb } from "@voyzu/capability/db";
-import { checkResponse } from "@voyzu/capability/validation";
 import { createUpdateAuditStamp } from "../../../../common/server";
 
 import { FinancialYearRepo } from "../../db/financial-year.repo";
 import { FinancialPeriodRepo } from "../db/financial-period.repo";
 import { toDto } from "./financial-period.mapper";
-import { validateResponse } from "./financial-period.validator";
 
 function checkedDto(row: Parameters<typeof toDto>[0]): FinancialPeriodResponseDto {
   const dto = toDto(row);
-  return checkResponse(dto, validateResponse(dto), `financial period (id=${dto.id})`);
+  return dto;
 }
 
 // ── List ──────────────────────────────────────────────────────

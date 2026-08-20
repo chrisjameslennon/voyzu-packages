@@ -1,21 +1,14 @@
 import { getDb } from "@voyzu/capability/db";
 import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/errors";
-import { checkResponse } from "@voyzu/capability/validation";
 import { AssignGLAccount, ConfigurePostingAccounts, Deactivate, Delete } from "@voyzu/core/common/inventory-item-posting-profiles/domain/operation-policy";
+import type { ItemPostingProfileBatchPatchRequestDto, ItemPostingProfileBatchUpdateRequestDto, ItemPostingProfileCreateRequestDto, ItemPostingProfilePatchRequestDto, ItemPostingProfileResponseDto, ItemPostingProfileUpdateRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
-import type { Filter, ListOptions } from "@voyzu/types/params";
-import type { ItemPostingProfileBatchPatchRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
-import type { ItemPostingProfileBatchUpdateRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
-import type { ItemPostingProfileCreateRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
-import type { ItemPostingProfilePatchRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
-import type { ItemPostingProfileResponseDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
-import type { ItemPostingProfileUpdateRequestDto } from "@voyzu/core/types/modules/inventory-item-posting-profiles";
 
 import { ItemPostingProfileRepo } from "../db/item-posting-profile.repo";
 import type { ItemPostingProfileRow } from "../db/item-posting-profile.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./item-posting-profile.mapper";
-import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./item-posting-profile.validator";
 
 function repo() {
   return new ItemPostingProfileRepo(getDb());
@@ -23,7 +16,7 @@ function repo() {
 
 async function enrichRow(row: ItemPostingProfileRow): Promise<ItemPostingProfileResponseDto> {
   const dto = await withAuditActors(toDto(row), row);
-  return checkResponse(dto, validateResponse(dto), `item posting profile (id=${dto.id})`);
+  return dto;
 }
 
 function enrichRows(rows: ItemPostingProfileRow[]): Promise<ItemPostingProfileResponseDto[]> {
@@ -100,7 +93,6 @@ export async function getItemPostingProfile(code: string, companyId?: number): P
 }
 
 export async function createItemPostingProfile(input: ItemPostingProfileCreateRequestDto, companyId?: number): Promise<ItemPostingProfileResponseDto> {
-  validateCreate(input);
   assertValidConfiguration(input);
   await assertWritableScope(companyId);
   const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -110,7 +102,6 @@ export async function createItemPostingProfile(input: ItemPostingProfileCreateRe
 }
 
 export async function updateItemPostingProfile(code: string, input: ItemPostingProfileUpdateRequestDto, companyId?: number): Promise<ItemPostingProfileResponseDto> {
-  validateUpdate(input);
   try {
     await assertWritableScope(companyId);
     const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -127,7 +118,6 @@ export async function updateItemPostingProfile(code: string, input: ItemPostingP
 }
 
 export async function patchItemPostingProfile(code: string, input: ItemPostingProfilePatchRequestDto, companyId?: number): Promise<ItemPostingProfileResponseDto> {
-  validatePatch(input);
   try {
     await assertWritableScope(companyId);
     const resolvedCompanyId = await scopedCompanyId(companyId);

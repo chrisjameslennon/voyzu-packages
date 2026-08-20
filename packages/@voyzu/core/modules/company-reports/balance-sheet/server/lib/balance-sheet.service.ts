@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb, type DbExecutor } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { BalanceSheetLineDto, BalanceSheetResponseDto } from "@voyzu/core/types/modules/company-reports/balance-sheet";
@@ -156,5 +155,5 @@ async function getBalanceSheetUnchecked(
   };
 }
 
-export const listFinancialYearsWithPostings = withResponseValidation(listFinancialYearsWithPostingsUnchecked, "listFinancialYearsWithPostings");
-export const getBalanceSheet = withResponseValidation(getBalanceSheetUnchecked, "getBalanceSheet");
+export const listFinancialYearsWithPostings = listFinancialYearsWithPostingsUnchecked;
+export const getBalanceSheet = getBalanceSheetUnchecked;

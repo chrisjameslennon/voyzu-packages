@@ -1,3 +1,6 @@
-import type { ItemPostingProfileCreateRequestDto } from "./item-posting-profile.create.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { ItemPostingProfileCreateRequestDto } from "./item-posting-profile.create.request.dto";
 
-export type ItemPostingProfileUpdateRequestDto = ItemPostingProfileCreateRequestDto;
+export const ItemPostingProfileUpdateRequestDto = ItemPostingProfileCreateRequestDto;
+export type ItemPostingProfileUpdateRequestDto = Type.Static<typeof ItemPostingProfileUpdateRequestDto>;

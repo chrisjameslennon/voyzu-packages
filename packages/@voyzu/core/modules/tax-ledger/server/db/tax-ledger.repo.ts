@@ -5,7 +5,7 @@ import type { TaxSubledgerEntryRow } from "./tax-ledger.row.types";
 
 
 export class TaxLedgerRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
   async getEntry(companyId: number, code: string): Promise<TaxSubledgerEntryRow | null> {
     const settingsCompanyId = await resolveEffectiveSettingsCompanyId(companyId, this.db);
     const { rows } = await this.db.query(

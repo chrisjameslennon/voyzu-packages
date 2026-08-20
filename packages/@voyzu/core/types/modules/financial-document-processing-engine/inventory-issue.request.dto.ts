@@ -1,21 +1,26 @@
-import type { InventoryDocumentSourceDto } from "./inventory-receipt.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { InventoryDocumentSourceDto } from "./inventory-receipt.request.dto";
+import { BusinessCode, IsoDate, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface InventoryIssueLineRequestDto {
-  line_id?: number | null;
-  inventory_item_code: string;
-  description?: string | null;
-  quantity_delta: number | string;
-  issue_purpose: "SOLD" | "CONSUMED";
-  dimensions?: Record<string, string> | null;
-}
+export const InventoryIssueLineRequestDto = StrictObject({
+  line_id: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  inventory_item_code: BusinessCode,
+  description: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  quantity_delta: Type.Union([Type.Number(), Type.String()]),
+  issue_purpose: Type.Union([Type.Literal("SOLD"), Type.Literal("CONSUMED")]),
+  dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),
+});
+export type InventoryIssueLineRequestDto = Type.Static<typeof InventoryIssueLineRequestDto>;
 
-export interface InventoryIssueRequestDto {
-  document_type: "INVENTORY_ISSUE";
-  company_code: string;
-  document_id?: string | null;
-  memo?: string | null;
-  issue_date: string;
-  posting_date?: string | null;
-  source: InventoryDocumentSourceDto;
-  lines: InventoryIssueLineRequestDto[];
-}
+export const InventoryIssueRequestDto = StrictObject({
+  document_type: Type.Literal("INVENTORY_ISSUE"),
+  company_code: BusinessCode,
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  issue_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  source: InventoryDocumentSourceDto,
+  lines: Type.Array(InventoryIssueLineRequestDto),
+});
+export type InventoryIssueRequestDto = Type.Static<typeof InventoryIssueRequestDto>;

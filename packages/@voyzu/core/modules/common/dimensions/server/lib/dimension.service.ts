@@ -1,41 +1,19 @@
-import type { Filter } from "@voyzu/types/params";
-import type { ListOptions } from "@voyzu/types/params";
-import type { DimensionCreateRequestDto } from "@voyzu/core/types/modules/dimensions";
-import type { DimensionUpdateRequestDto } from "@voyzu/core/types/modules/dimensions";
-import type { DimensionPatchRequestDto } from "@voyzu/core/types/modules/dimensions";
-import type { DimensionBatchPatchRequestDto, DimensionBatchUpdateRequestDto } from "@voyzu/core/types/modules/dimensions";
-import type { DimensionResponseDto } from "@voyzu/core/types/modules/dimensions";
-import type { DimensionValueCreateRequestDto } from "@voyzu/core/types/modules/dimensions";
-import type { DimensionValuePatchRequestDto } from "@voyzu/core/types/modules/dimensions";
-import type { DimensionValueResponseDto } from "@voyzu/core/types/modules/dimensions";
-import { runtime } from "@voyzu/capability/runtime";
-import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError , DataError } from "@voyzu/capability/errors";
-import { ChangeCode, ChangeValueName, Deactivate, Delete, DeleteValue } from "@voyzu/core/common/dimensions/domain/operation-policy";
 import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
+import { ChangeCode, ChangeValueName, Deactivate, Delete, DeleteValue } from "@voyzu/core/common/dimensions/domain/operation-policy";
+import type { DimensionBatchPatchRequestDto, DimensionBatchUpdateRequestDto, DimensionCreateRequestDto, DimensionPatchRequestDto, DimensionResponseDto, DimensionUpdateRequestDto, DimensionValueCreateRequestDto, DimensionValuePatchRequestDto, DimensionValueResponseDto } from "@voyzu/core/types/modules/dimensions";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 
-import { DimensionRepo } from "../db/dimension.repo";
-import { DimensionValueRepo } from "../db/dimension-value.repo";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { DimensionValueRepo } from "../db/dimension-value.repo";
+import { DimensionRepo } from "../db/dimension.repo";
 
-import { toDto, toInsertRow, toUpdateRow, toPatchRow } from "./dimension.mapper";
-import { toValueDto, toInsertValueRow } from "./dimension-value.mapper";
-import { validateCreate, validateDimensionValueCreate, validateDimensionValuePatch, validateUpdate, validatePatch, validateResponse } from "./dimension.validator";
-
-function checkedResponse(dto: DimensionResponseDto): DimensionResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid dimension response (id=${dto.id}): ${errors.join("; ")}`;
-    if (runtime.isDevLike) {
-      throw new Error(message);
-    }
-    console.error(message);
-  }
-  return dto;
-}
+import { toInsertValueRow, toValueDto } from "./dimension-value.mapper";
+import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./dimension.mapper";
 
 async function enrichRow(row: Parameters<typeof toDto>[0], values?: DimensionValueResponseDto[]): Promise<DimensionResponseDto> {
-  return checkedResponse(await withAuditActors(toDto(row, values), row));
+  return await withAuditActors(toDto(row, values), row);
 }
 
 // Item operations.
@@ -59,8 +37,6 @@ function throwIfBlocked(blockers: ReturnType<typeof Delete>): void {
 }
 
 export async function createDimension(input: DimensionCreateRequestDto, companyId?: number): Promise<DimensionResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -86,8 +62,6 @@ export async function getDimension(code: string, companyId?: number): Promise<Di
 }
 
 export async function updateDimension(code: string, input: DimensionUpdateRequestDto, companyId?: number): Promise<DimensionResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -113,8 +87,6 @@ export async function patchDimension(code: string, input: DimensionPatchRequestD
   const normalizedInput = input.code === undefined
     ? input
     : { ...input, code: input.code.trim().toUpperCase() };
-  const errors = validatePatch(normalizedInput);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -188,10 +160,6 @@ export async function searchDimensions(
 // Batch operations.
 
 export async function batchCreateDimensions(inputs: DimensionCreateRequestDto[], companyId?: number): Promise<DimensionResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateCreate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   await assertWritableScope(companyId);
 
   const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -220,10 +188,6 @@ export async function batchGetDimensions(codes: string[], companyId?: number): P
 }
 
 export async function batchUpdateDimensions(inputs: DimensionBatchUpdateRequestDto[], companyId?: number): Promise<DimensionResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateUpdate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   await assertWritableScope(companyId);
 
   const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -252,10 +216,6 @@ export async function batchUpdateDimensions(inputs: DimensionBatchUpdateRequestD
 }
 
 export async function batchPatchDimensions(inputs: DimensionBatchPatchRequestDto[], companyId?: number): Promise<DimensionResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validatePatch(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   await assertWritableScope(companyId);
 
   const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -346,9 +306,6 @@ async function transitionDimensionStatus(
 export async function createDimensionValue(dimensionCode: string, input: DimensionValueCreateRequestDto, companyId?: number): Promise<DimensionValueResponseDto> {
   await assertWritableScope(companyId);
   const normalizedInput = { ...input, name: input.name?.trim() };
-  const errors = validateDimensionValueCreate(normalizedInput);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   const resolvedCompanyId = await scopedCompanyId(companyId);
   const dimension = await new DimensionRepo(getDb()).get(resolvedCompanyId, dimensionCode);
   if (!dimension) throw new NotFoundError(`Dimension ${dimensionCode} not found`);
@@ -383,8 +340,6 @@ export async function listDimensionValues(dimensionCode: string, companyId?: num
 export async function patchDimensionValue(id: number, input: DimensionValuePatchRequestDto, companyId?: number): Promise<DimensionValueResponseDto> {
   await assertWritableScope(companyId);
   input = input.name === undefined ? input : { ...input, name: input.name.trim() };
-  const errors = validateDimensionValuePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   const resolvedCompanyId = await scopedCompanyId(companyId);
   const repo = new DimensionValueRepo(getDb());
   const existing = await repo.getById(resolvedCompanyId, id);
@@ -417,4 +372,3 @@ export async function deleteDimensionValue(id: number, companyId?: number): Prom
   throwIfBlocked(DeleteValue({ name: existing.name, hasPostings: existing.has_postings }));
   await repo.deleteById(resolvedCompanyId, id);
 }
-

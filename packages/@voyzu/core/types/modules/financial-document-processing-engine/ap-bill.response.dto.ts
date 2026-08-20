@@ -1,164 +1,182 @@
-import type { DrCr } from "@voyzu/core/types/modules/core";
-export interface ApBillCompanySnapshotDto {
-  code: string;
-  base_currency_code: string;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { DrCr } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CountryCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface ApBillCounterpartySnapshotDto {
-  code: string;
-  name: string;
-  status: "ACTIVE" | "INACTIVE";
-  country_code: string;
-  tax_region_or_province: string | null;
-}
+export const ApBillCompanySnapshotDto = StrictObject({
+  code: BusinessCode,
+  base_currency_code: CurrencyCode,
+});
+export type ApBillCompanySnapshotDto = Type.Static<typeof ApBillCompanySnapshotDto>;
 
-export interface ApBillApCounterpartyDetailsDto extends ApBillCounterpartySnapshotDto {
-  id: number | null;
-  company_code: string;
-  was_created: boolean;
-}
+export const ApBillCounterpartySnapshotDto = StrictObject({
+  code: BusinessCode,
+  name: NonBlankText,
+  status: Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]),
+  country_code: CountryCode,
+  tax_region_or_province: Type.Union([Type.String(), Type.Null()]),
+});
+export type ApBillCounterpartySnapshotDto = Type.Static<typeof ApBillCounterpartySnapshotDto>;
 
-export interface ApBillDetailedTaxComponentDto {
-  tax_rule: string;
-  tax_rule_id?: number;
-  tax_component_id?: number | null;
-  tax_authority_id?: number;
-  tax_authority_code: string;
-  tax_authority_name?: string;
-  scheme_code?: string | null;
-  invoice_label?: string | null;
-  report_label?: string | null;
-  tax_rate: number;
-  taxable_amount: number;
-  raw_tax_amount: number;
-  tax_amount: number;
-  tax_recoverable: boolean;
-}
+export const ApBillApCounterpartyDetailsDto = StrictObject({
+  ...ApBillCounterpartySnapshotDto.properties,
+  id: Type.Union([PositiveId, Type.Null()]),
+  company_code: BusinessCode,
+  was_created: Type.Boolean(),
+});
+export type ApBillApCounterpartyDetailsDto = Type.Static<typeof ApBillApCounterpartyDetailsDto>;
 
-export interface ApBillDetailedLineDto {
-  line_id: number;
-  line_description: string;
-  quantity: number | null;
-  purchase_posting_code: string;
-  inventory_item_code: string | null;
-  net_amount: number;
-  tax_rule: string;
-  tax_amount: number;
-  gross_amount: number;
-  recoverable_tax_amount: number;
-  non_recoverable_tax_amount: number;
-  purchase_amount: number;
-  tax_components: ApBillDetailedTaxComponentDto[];
-  dimensions: Record<string, string>;
-}
+export const ApBillDetailedTaxComponentDto = StrictObject({
+  tax_rule: Type.String(),
+  tax_rule_id: Type.Optional(PositiveId),
+  tax_component_id: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  tax_authority_id: Type.Optional(PositiveId),
+  tax_authority_code: BusinessCode,
+  tax_authority_name: Type.Optional(NonBlankText),
+  scheme_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  invoice_label: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  report_label: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  tax_rate: Type.Number(),
+  taxable_amount: Type.Number(),
+  raw_tax_amount: Type.Number(),
+  tax_amount: Type.Number(),
+  tax_recoverable: Type.Boolean(),
+});
+export type ApBillDetailedTaxComponentDto = Type.Static<typeof ApBillDetailedTaxComponentDto>;
 
-export interface ApBillDetailedDocumentDto {
-  company: ApBillCompanySnapshotDto;
-  ap_counterparty: ApBillCounterpartySnapshotDto;
-  document_id: string;
-  supplier_invoice_number: string;
-  memo: string | null;
-  generated_description: string;
-  bill_date: string;
-  posting_date: string;
-  lines: ApBillDetailedLineDto[];
-  net_amount: number;
-  recoverable_tax_amount: number;
-  non_recoverable_tax_amount: number;
-  tax_amount: number;
-  gross_amount: number;
-}
+export const ApBillDetailedLineDto = StrictObject({
+  line_id: PositiveId,
+  line_description: Type.String(),
+  quantity: Type.Union([Type.Number(), Type.Null()]),
+  purchase_posting_code: BusinessCode,
+  inventory_item_code: Type.Union([BusinessCode, Type.Null()]),
+  net_amount: Type.Number(),
+  tax_rule: Type.String(),
+  tax_amount: Type.Number(),
+  gross_amount: Type.Number(),
+  recoverable_tax_amount: Type.Number(),
+  non_recoverable_tax_amount: Type.Number(),
+  purchase_amount: Type.Number(),
+  tax_components: Type.Array(ApBillDetailedTaxComponentDto),
+  dimensions: Type.Record(Type.String(), Type.String()),
+});
+export type ApBillDetailedLineDto = Type.Static<typeof ApBillDetailedLineDto>;
 
-export interface ApBillApSubledgerDetailsDto {
-  id: number | null;
-  code: string | null;
-  company_code: string;
-  journal_header_id: number | null;
-  ap_counterparty_code: string;
-  control_account_code: "AP_TRADE_PAYABLES";
-  posting_date: string;
-  financial_year_code: string;
-  financial_period_code: string;
-  base_currency_code: string;
-  entry_type: "CREDIT";
-  base_currency_amount: number;
-  open_amount: number;
-  memo: string | null;
-  status: "POSTED" | "EPHEMERAL";
-}
+export const ApBillDetailedDocumentDto = StrictObject({
+  company: ApBillCompanySnapshotDto,
+  ap_counterparty: ApBillCounterpartySnapshotDto,
+  document_id: Type.String(),
+  supplier_invoice_number: Type.String(),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  generated_description: Type.String(),
+  bill_date: IsoDate,
+  posting_date: IsoDate,
+  lines: Type.Array(ApBillDetailedLineDto),
+  net_amount: Type.Number(),
+  recoverable_tax_amount: Type.Number(),
+  non_recoverable_tax_amount: Type.Number(),
+  tax_amount: Type.Number(),
+  gross_amount: Type.Number(),
+});
+export type ApBillDetailedDocumentDto = Type.Static<typeof ApBillDetailedDocumentDto>;
 
-export interface ApBillTaxLedgerDetailDto {
-  id: number | null;
-  code: string | null;
-  tax_rule: string;
-  tax_component_id: number | null;
-  tax_authority_code: string;
-  tax_authority_name?: string;
-  tax_movement_type_code: "TAX_ON_PURCHASES";
-  description: string;
-  scheme_code?: string | null;
-  invoice_label?: string | null;
-  report_label?: string | null;
-  tax_rate: number;
-  taxable_amount: number;
-  posting_date: string;
-  financial_year_code: string;
-  financial_period_code: string;
-  base_currency_code: string;
-  entry_type: "DEBIT";
-  base_currency_amount: number;
-  status: "POSTED" | "EPHEMERAL";
-}
+export const ApBillApSubledgerDetailsDto = StrictObject({
+  id: Type.Union([PositiveId, Type.Null()]),
+  code: Type.Union([BusinessCode, Type.Null()]),
+  company_code: BusinessCode,
+  journal_header_id: Type.Union([PositiveId, Type.Null()]),
+  ap_counterparty_code: BusinessCode,
+  control_account_code: Type.Literal("AP_TRADE_PAYABLES"),
+  posting_date: IsoDate,
+  financial_year_code: BusinessCode,
+  financial_period_code: BusinessCode,
+  base_currency_code: CurrencyCode,
+  entry_type: Type.Literal("CREDIT"),
+  base_currency_amount: Type.Number(),
+  open_amount: Type.Number(),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  status: Type.Union([Type.Literal("POSTED"), Type.Literal("EPHEMERAL")]),
+});
+export type ApBillApSubledgerDetailsDto = Type.Static<typeof ApBillApSubledgerDetailsDto>;
 
-export interface ApBillJournalHeaderDto {
-  id: number | null;
-  code: string | null;
-  document_type_code: "AP_BILL";
-  document_id: string;
-  generated_description: string;
-  posting_engine_code: "AP_BILL";
-  company_code: string;
-  document_date: string;
-  posting_date: string;
-  financial_year_code: string;
-  financial_period_code: string;
-  base_currency_code: string;
-  total_debit_base_amount: number;
-  total_credit_base_amount: number;
-  memo: string | null;
-  status: "POSTED" | "EPHEMERAL";
-}
+export const ApBillTaxLedgerDetailDto = StrictObject({
+  id: Type.Union([PositiveId, Type.Null()]),
+  code: Type.Union([BusinessCode, Type.Null()]),
+  tax_rule: Type.String(),
+  tax_component_id: Type.Union([PositiveId, Type.Null()]),
+  tax_authority_code: BusinessCode,
+  tax_authority_name: Type.Optional(NonBlankText),
+  tax_movement_type_code: Type.Literal("TAX_ON_PURCHASES"),
+  description: Type.String(),
+  scheme_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  invoice_label: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  report_label: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  tax_rate: Type.Number(),
+  taxable_amount: Type.Number(),
+  posting_date: IsoDate,
+  financial_year_code: BusinessCode,
+  financial_period_code: BusinessCode,
+  base_currency_code: CurrencyCode,
+  entry_type: Type.Literal("DEBIT"),
+  base_currency_amount: Type.Number(),
+  status: Type.Union([Type.Literal("POSTED"), Type.Literal("EPHEMERAL")]),
+});
+export type ApBillTaxLedgerDetailDto = Type.Static<typeof ApBillTaxLedgerDetailDto>;
 
-export interface ApBillJournalLineDimensionDto {
-  dimension_code: string;
-  dimension_name: string;
-  dimension_value_name: string;
-}
+export const ApBillJournalHeaderDto = StrictObject({
+  id: Type.Union([PositiveId, Type.Null()]),
+  code: Type.Union([BusinessCode, Type.Null()]),
+  document_type_code: Type.Literal("AP_BILL"),
+  document_id: Type.String(),
+  generated_description: Type.String(),
+  posting_engine_code: Type.Literal("AP_BILL"),
+  company_code: BusinessCode,
+  document_date: IsoDate,
+  posting_date: IsoDate,
+  financial_year_code: BusinessCode,
+  financial_period_code: BusinessCode,
+  base_currency_code: CurrencyCode,
+  total_debit_base_amount: Type.Number(),
+  total_credit_base_amount: Type.Number(),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  status: Type.Union([Type.Literal("POSTED"), Type.Literal("EPHEMERAL")]),
+});
+export type ApBillJournalHeaderDto = Type.Static<typeof ApBillJournalHeaderDto>;
 
-export interface ApBillJournalLineDto {
-  id: number | null;
-  journal_header_id: number | null;
-  line_number: number;
-  gl_account_code: string;
-  gl_account_name: string;
-  source_ledger: string | null;
-  source_control_account: string | null;
-  dr_cr: DrCr;
-  base_currency_amount: number;
-  description: string;
-  memo: string | null;
-  dimensions?: ApBillJournalLineDimensionDto[];
-}
+export const ApBillJournalLineDimensionDto = StrictObject({
+  dimension_code: BusinessCode,
+  dimension_name: NonBlankText,
+  dimension_value_name: NonBlankText,
+});
+export type ApBillJournalLineDimensionDto = Type.Static<typeof ApBillJournalLineDimensionDto>;
 
-export interface ApBillPostingDetailsDto {
-  journal_header: ApBillJournalHeaderDto;
-  journal_lines: ApBillJournalLineDto[];
-}
+export const ApBillJournalLineDto = StrictObject({
+  id: Type.Union([PositiveId, Type.Null()]),
+  journal_header_id: Type.Union([PositiveId, Type.Null()]),
+  line_number: PositiveId,
+  gl_account_code: BusinessCode,
+  gl_account_name: NonBlankText,
+  source_ledger: Type.Union([Type.String(), Type.Null()]),
+  source_control_account: Type.Union([Type.String(), Type.Null()]),
+  dr_cr: DrCr,
+  base_currency_amount: Type.Number(),
+  description: Type.String(),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  dimensions: Type.Optional(Type.Array(ApBillJournalLineDimensionDto)),
+});
+export type ApBillJournalLineDto = Type.Static<typeof ApBillJournalLineDto>;
 
-export interface ApBillPostingResponseDto {
-  detailed_document: ApBillDetailedDocumentDto;
-  ap_subledger_details: ApBillApSubledgerDetailsDto;
-  ap_counterparty_details: ApBillApCounterpartyDetailsDto;
-  tax_ledger_details: ApBillTaxLedgerDetailDto[];
-  posting_details: ApBillPostingDetailsDto;
-}
+export const ApBillPostingDetailsDto = StrictObject({
+  journal_header: ApBillJournalHeaderDto,
+  journal_lines: Type.Array(ApBillJournalLineDto),
+});
+export type ApBillPostingDetailsDto = Type.Static<typeof ApBillPostingDetailsDto>;
+
+export const ApBillPostingResponseDto = StrictObject({
+  detailed_document: ApBillDetailedDocumentDto,
+  ap_subledger_details: ApBillApSubledgerDetailsDto,
+  ap_counterparty_details: ApBillApCounterpartyDetailsDto,
+  tax_ledger_details: Type.Array(ApBillTaxLedgerDetailDto),
+  posting_details: ApBillPostingDetailsDto,
+});
+export type ApBillPostingResponseDto = Type.Static<typeof ApBillPostingResponseDto>;

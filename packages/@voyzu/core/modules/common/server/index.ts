@@ -34,4 +34,3 @@ export {
   type DetailBackSource,
 } from "@voyzu/ui-surface/server";
 export { ledgerName } from "../ledger";
-export { validateSubledgerEntryResponse } from "./subledger-entry-response.validator";

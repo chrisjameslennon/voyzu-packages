@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ArRefundRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-refund.request.dto";
 import type { ArAdjustmentPostingResponseDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
 
@@ -11,4 +10,4 @@ async function processArRefundUnchecked(
   return processArAdjustment("AR_REFUND", input, options);
 }
 
-export const processArRefund = withResponseValidation(processArRefundUnchecked, "processArRefund");
+export const processArRefund = processArRefundUnchecked;

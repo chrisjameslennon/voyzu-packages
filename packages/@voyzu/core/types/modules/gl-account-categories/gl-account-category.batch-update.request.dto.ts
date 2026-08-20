@@ -1,6 +1,10 @@
-import type { GlAccountCategoryUpdateRequestDto } from "./gl-account-category.update.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { GlAccountCategoryUpdateRequestDto } from "./gl-account-category.update.request.dto";
+import { BusinessCode } from "@voyzu/core/types/constraints";
 
-export interface GlAccountCategoryBatchUpdateRequestDto extends GlAccountCategoryUpdateRequestDto {
-  /** GL account category business code identifying the category to update. */
-  code: string;
-}
+export const GlAccountCategoryBatchUpdateRequestDto = StrictObject({
+  ...GlAccountCategoryUpdateRequestDto.properties,
+  code: BusinessCode,
+});
+export type GlAccountCategoryBatchUpdateRequestDto = Type.Static<typeof GlAccountCategoryBatchUpdateRequestDto>;

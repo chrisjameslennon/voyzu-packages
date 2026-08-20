@@ -1,22 +1,15 @@
 import { getDb } from "@voyzu/capability/db";
 import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/errors";
-import { checkResponse } from "@voyzu/capability/validation";
 import { Deactivate, Delete } from "@voyzu/core/common/inventory-categories/domain/operation-policy";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 import { assertCompanySettingsWritable, resolveTemplateSettingsScope } from "../../../server/settings-scope";
 
+import type { InventoryCategoryBatchPatchRequestDto, InventoryCategoryBatchUpdateRequestDto, InventoryCategoryCreateRequestDto, InventoryCategoryPatchRequestDto, InventoryCategoryResponseDto, InventoryCategoryUpdateRequestDto } from "@voyzu/core/types/modules/inventory-categories";
 import type { Filter, ListOptions } from "@voyzu/types/params";
-import type { InventoryCategoryBatchPatchRequestDto } from "@voyzu/core/types/modules/inventory-categories";
-import type { InventoryCategoryBatchUpdateRequestDto } from "@voyzu/core/types/modules/inventory-categories";
-import type { InventoryCategoryCreateRequestDto } from "@voyzu/core/types/modules/inventory-categories";
-import type { InventoryCategoryPatchRequestDto } from "@voyzu/core/types/modules/inventory-categories";
-import type { InventoryCategoryResponseDto } from "@voyzu/core/types/modules/inventory-categories";
-import type { InventoryCategoryUpdateRequestDto } from "@voyzu/core/types/modules/inventory-categories";
 
 import { InventoryCategoryRepo } from "../db/inventory-category.repo";
 import type { InventoryCategoryRow } from "../db/inventory-category.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./inventory-category.mapper";
-import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./inventory-category.validator";
 
 function repo() {
   return new InventoryCategoryRepo(getDb());
@@ -24,7 +17,7 @@ function repo() {
 
 async function enrichRow(row: InventoryCategoryRow): Promise<InventoryCategoryResponseDto> {
   const dto = await withAuditActors(toDto(row), row);
-  return checkResponse(dto, validateResponse(dto), `inventory category (id=${dto.id})`);
+  return dto;
 }
 
 function enrichRows(rows: InventoryCategoryRow[]): Promise<InventoryCategoryResponseDto[]> {
@@ -70,14 +63,12 @@ export async function getInventoryCategory(code: string, companyId?: number): Pr
 }
 
 export async function createInventoryCategory(input: InventoryCategoryCreateRequestDto, companyId?: number): Promise<InventoryCategoryResponseDto> {
-  validateCreate(input);
   await assertWritableScope(companyId);
   const resolvedCompanyId = await scopedCompanyId(companyId);
   return enrichRow(await repo().insert(withCreationAudit(toInsertRow(input, resolvedCompanyId), await createCreationAuditStamp())));
 }
 
 export async function updateInventoryCategory(code: string, input: InventoryCategoryUpdateRequestDto, companyId?: number): Promise<InventoryCategoryResponseDto> {
-  validateUpdate(input);
   try {
     await assertWritableScope(companyId);
     const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -92,7 +83,6 @@ export async function updateInventoryCategory(code: string, input: InventoryCate
 }
 
 export async function patchInventoryCategory(code: string, input: InventoryCategoryPatchRequestDto, companyId?: number): Promise<InventoryCategoryResponseDto> {
-  validatePatch(input);
   try {
     await assertWritableScope(companyId);
     const resolvedCompanyId = await scopedCompanyId(companyId);

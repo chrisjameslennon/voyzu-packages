@@ -1,16 +1,20 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { BusinessCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export type FinancialYearStatus = "INACTIVE" | "PLANNED" | "OPEN" | "CLOSED";
+export const FinancialYearStatus = Type.Union([Type.Literal("INACTIVE"), Type.Literal("PLANNED"), Type.Literal("OPEN"), Type.Literal("CLOSED")]);
+export type FinancialYearStatus = Type.Static<typeof FinancialYearStatus>;
 
-export interface FinancialYearResponseDto {
-  id: number;
-  code: string;
-  name: string;
-  companyId: number;
-  startDate: string;
-  endDate: string;
-  status: FinancialYearStatus;
-  hasPostings: boolean;
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const FinancialYearResponseDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  name: NonBlankText,
+  companyId: PositiveId,
+  startDate: IsoDate,
+  endDate: IsoDate,
+  status: FinancialYearStatus,
+  hasPostings: Type.Boolean(),
+  audit: AuditMetadataDto,
+});
+export type FinancialYearResponseDto = Type.Static<typeof FinancialYearResponseDto>;

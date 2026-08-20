@@ -1,26 +1,18 @@
 import type { ActorType } from "@voyzu/core/types/modules/core";
 import { randomUUID } from "node:crypto";
 
-import type { Filter } from "@voyzu/types/params";
-import type { ListOptions } from "@voyzu/types/params";
-import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
-import type { CompanyCreateRequestDto } from "@voyzu/core/types/modules/companies";
-import type { CompanyUpdateRequestDto } from "@voyzu/core/types/modules/companies";
-import type { CompanyPatchRequestDto } from "@voyzu/core/types/modules/companies";
-import type { CompanyBatchUpdateRequestDto } from "@voyzu/core/types/modules/companies";
-import type { CompanyBatchPatchRequestDto } from "@voyzu/core/types/modules/companies";
-import { runtime } from "@voyzu/capability/runtime";
-import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError , DataError } from "@voyzu/capability/errors";
-import { ChangeCode } from "@voyzu/core/companies/domain/operation-policy";
-import { getDb, withTransaction } from "@voyzu/capability/db";
 import type { DbExecutor } from "@voyzu/capability/db";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
+import { ChangeCode } from "@voyzu/core/companies/domain/operation-policy";
+import type { CompanyBatchPatchRequestDto, CompanyBatchUpdateRequestDto, CompanyCreateRequestDto, CompanyPatchRequestDto, CompanyResponseDto, CompanyUpdateRequestDto } from "@voyzu/core/types/modules/companies";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 
+import { getCurrentActorType, getCurrentUser, UserRepo } from "@voyzu/auth/users/server";
 import { CompanyRepo } from "../db/company.repo";
 import type { CompanyRow } from "../db/company.row.types";
-import { getCurrentActorType, getCurrentUser, UserRepo } from "@voyzu/auth/users/server";
 
-import { toDto, toInsertRow, toUpdateRow, toPatchRow } from "./company.mapper";
-import { validateCreate, validateUpdate, validatePatch, validateResponse } from "./company.validator";
+import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./company.mapper";
 
 interface CompanyAuditStamp {
   actorType: ActorType;
@@ -124,7 +116,7 @@ interface CountryTaxProfileRow {
 }
 
 class OrganizationRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async get(): Promise<{ id: number } | null> {
     const { rows } = await this.db.query("SELECT id FROM organization LIMIT 1");
@@ -133,7 +125,7 @@ class OrganizationRepo {
 }
 
 class CountryRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async get(code: string): Promise<CountryTaxProfileRow | null> {
     const { rows } = await this.db.query(
@@ -152,7 +144,7 @@ class CountryRepo {
 }
 
 class FinancialYearRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insert(row: {
     company_id: number;
@@ -180,7 +172,7 @@ class FinancialYearRepo {
 }
 
 class FinancialPeriodRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async seedMonthlyPeriods(
     companyId: number,
@@ -313,8 +305,8 @@ async function copyCompanyDefaultsFromTemplate(
       [companyId, templateCompanyId, ...auditParams(audit)],
     );
 
-  await db.query(
-    `
+    await db.query(
+      `
     INSERT INTO gl_account (company_id, code, name, account_type, account_category_id, status, ${AUDIT_COLUMNS})
     SELECT $1, ga.code, ga.name, ga.account_type, target_category.id, ga.status, ${AUDIT_SELECT_VALUES}
     FROM gl_account ga
@@ -325,12 +317,12 @@ async function copyCompanyDefaultsFromTemplate(
     WHERE ga.company_id = $2 AND ga.status = 'ACTIVE'
     ON CONFLICT (company_id, code) DO NOTHING
     `,
-    [companyId, templateCompanyId, ...auditParams(audit)],
-  );
+      [companyId, templateCompanyId, ...auditParams(audit)],
+    );
 
-  for (const table of ["ar_control_account", "ap_control_account"]) {
-    await db.query(
-      `
+    for (const table of ["ar_control_account", "ap_control_account"]) {
+      await db.query(
+        `
       INSERT INTO ${table} (company_id, code, ledger, name, gl_account_id, status, ${AUDIT_COLUMNS})
       SELECT $1, source.code, source.ledger, source.name, target_gl.id, source.status, ${AUDIT_SELECT_VALUES}
       FROM ${table} source
@@ -339,12 +331,12 @@ async function copyCompanyDefaultsFromTemplate(
       WHERE source.company_id = $2 AND source.status = 'ACTIVE'
       ON CONFLICT (company_id, code) DO NOTHING
       `,
-      [companyId, templateCompanyId, ...auditParams(audit)],
-    );
-  }
+        [companyId, templateCompanyId, ...auditParams(audit)],
+      );
+    }
 
-  await db.query(
-    `
+    await db.query(
+      `
     INSERT INTO tax_control_account (company_id, code, ledger, name, description, tax_family_code, gl_account_id, status, ${AUDIT_COLUMNS})
     SELECT $1, source.code, source.ledger, source.name, source.description, source.tax_family_code, target_gl.id, source.status, ${AUDIT_SELECT_VALUES}
     FROM tax_control_account source
@@ -353,11 +345,11 @@ async function copyCompanyDefaultsFromTemplate(
     WHERE source.company_id = $2 AND source.status = 'ACTIVE'
     ON CONFLICT (company_id, code) DO NOTHING
     `,
-    [companyId, templateCompanyId, ...auditParams(audit)],
-  );
+      [companyId, templateCompanyId, ...auditParams(audit)],
+    );
 
-  await db.query(
-    `
+    await db.query(
+      `
     INSERT INTO inventory_control_account (company_id, code, ledger, name, description, gl_account_id, status, ${AUDIT_COLUMNS})
     SELECT $1, source.code, source.ledger, source.name, source.description, target_gl.id, source.status, ${AUDIT_SELECT_VALUES}
     FROM inventory_control_account source
@@ -366,11 +358,11 @@ async function copyCompanyDefaultsFromTemplate(
     WHERE source.company_id = $2 AND source.status = 'ACTIVE'
     ON CONFLICT (company_id, code) DO NOTHING
     `,
-    [companyId, templateCompanyId, ...auditParams(audit)],
-  );
+      [companyId, templateCompanyId, ...auditParams(audit)],
+    );
 
-  await db.query(
-    `
+    await db.query(
+      `
     INSERT INTO bank_cash_control_account (
       company_id, code, ledger, type, gl_account_id,
       bank_name, bank_branch_name, bank_account_identifier, cash_account_identifier, status, ${AUDIT_COLUMNS}
@@ -384,22 +376,22 @@ async function copyCompanyDefaultsFromTemplate(
     WHERE source.company_id = $2 AND source.status = 'ACTIVE'
     ON CONFLICT (company_id, code) DO NOTHING
     `,
-    [companyId, templateCompanyId, ...auditParams(audit)],
-  );
+      [companyId, templateCompanyId, ...auditParams(audit)],
+    );
 
-  await db.query(
-    `
+    await db.query(
+      `
     INSERT INTO dimension (company_id, code, name, status, ${AUDIT_COLUMNS})
     SELECT $1, code, name, status, ${AUDIT_SELECT_VALUES}
     FROM dimension
     WHERE company_id = $2 AND status = 'ACTIVE'
     ON CONFLICT (company_id, code) DO NOTHING
     `,
-    [companyId, templateCompanyId, ...auditParams(audit)],
-  );
+      [companyId, templateCompanyId, ...auditParams(audit)],
+    );
 
-  await db.query(
-    `
+    await db.query(
+      `
     INSERT INTO dimension_value (company_id, dimension_id, name, status, ${AUDIT_COLUMNS})
     SELECT $1, target_dimension.id, source_value.name, source_value.status, ${AUDIT_SELECT_VALUES}
     FROM dimension_value source_value
@@ -410,11 +402,11 @@ async function copyCompanyDefaultsFromTemplate(
     WHERE source_value.company_id = $2 AND source_value.status = 'ACTIVE'
     ON CONFLICT (company_id, dimension_id, lower(name)) DO NOTHING
     `,
-    [companyId, templateCompanyId, ...auditParams(audit)],
-  );
+      [companyId, templateCompanyId, ...auditParams(audit)],
+    );
 
-  await db.query(
-    `
+    await db.query(
+      `
     INSERT INTO financial_document_default (
       company_id, document_code, code, name, target_type, allowed_account_types,
       override_property_name, override_scope, gl_account_id, bank_cash_control_account_id, status, ${AUDIT_COLUMNS}
@@ -434,12 +426,12 @@ async function copyCompanyDefaultsFromTemplate(
     WHERE source.company_id = $2 AND source.status = 'ACTIVE'
     ON CONFLICT (company_id, document_code, code) DO NOTHING
     `,
-    [companyId, templateCompanyId, ...auditParams(audit)],
-  );
+      [companyId, templateCompanyId, ...auditParams(audit)],
+    );
   }
 
   await db.query(
-      `
+    `
       INSERT INTO item_posting_profile (
         company_id, code, name, description, is_sold, is_purchased, is_consumed,
         revenue_gl_account_id, cogs_gl_account_id, purchase_expense_gl_account_id,
@@ -558,18 +550,6 @@ async function applyOrganizationStandardSettingsTransition(
   await copyCompanyDefaultsFromTemplate(company.id, db, audit, { copyLinkedSettings: true });
 }
 
-function checkedResponse(dto: CompanyResponseDto): CompanyResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid company response (id=${dto.id}): ${errors.join("; ")}`;
-    if (runtime.isDevLike) {
-      throw new Error(message);
-    }
-    console.error(message);
-  }
-  return dto;
-}
-
 async function getAuditActor(
   repo: UserRepo,
   userId: string | null,
@@ -580,10 +560,10 @@ async function getAuditActor(
   const row = await repo.getById(parsed);
   return row
     ? {
-        id: row.id,
-        code: row.code,
-        displayName: row.display_name,
-      }
+      id: row.id,
+      code: row.code,
+      displayName: row.display_name,
+    }
     : null;
 }
 
@@ -594,7 +574,7 @@ async function enrichRow(row: CompanyRow): Promise<CompanyResponseDto> {
     getAuditActor(userRepo, row.updated_user_id),
   ]);
   const dto = toDto(row);
-  return checkedResponse({
+  return {
     ...dto,
     audit: {
       created: {
@@ -606,7 +586,7 @@ async function enrichRow(row: CompanyRow): Promise<CompanyResponseDto> {
         user: updatedUser,
       },
     },
-  });
+  };
 }
 
 function enrichRows(rows: CompanyRow[]): Promise<CompanyResponseDto[]> {
@@ -640,9 +620,6 @@ function normalizeCodes(codes: string[]): string[] {
 }
 
 export async function createCompany(input: CompanyCreateRequestDto, options: CompanyMutationOptions = {}): Promise<CompanyResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   const org = await new OrganizationRepo(getDb()).get();
   const audit = await createAuditStamp(options);
 
@@ -676,9 +653,6 @@ export async function getCompany(code: string): Promise<CompanyResponseDto | nul
 }
 
 export async function updateCompany(code: string, input: CompanyUpdateRequestDto): Promise<CompanyResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   try {
     const audit = await createAuditStamp();
     const row = await withTransaction(async (client) => {
@@ -713,9 +687,6 @@ export async function updateCompany(code: string, input: CompanyUpdateRequestDto
 }
 
 export async function patchCompany(code: string, input: CompanyPatchRequestDto): Promise<CompanyResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   try {
     const audit = await createAuditStamp();
     const row = await withTransaction(async (client) => {
@@ -776,11 +747,6 @@ export async function searchCompanies(
   return enrichRows(rows);
 }
 export async function batchCreateCompanies(inputs: CompanyCreateRequestDto[]): Promise<CompanyResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateCreate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   const org = await new OrganizationRepo(getDb()).get();
   const audit = await createAuditStamp();
 
@@ -814,11 +780,6 @@ export async function batchGetCompanies(codes: string[]): Promise<CompanyRespons
 }
 
 export async function batchUpdateCompanies(inputs: CompanyBatchUpdateRequestDto[]): Promise<CompanyResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateUpdate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   try {
     const audit = await createAuditStamp();
     return await withTransaction(async (client) => {
@@ -855,11 +816,6 @@ export async function batchUpdateCompanies(inputs: CompanyBatchUpdateRequestDto[
 }
 
 export async function batchPatchCompanies(inputs: CompanyBatchPatchRequestDto[]): Promise<CompanyResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validatePatch(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   try {
     const audit = await createAuditStamp();
     return await withTransaction(async (client) => {

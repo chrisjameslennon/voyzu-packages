@@ -41,11 +41,11 @@ function fieldsFromRow(row: Record<string, unknown>): ApSubledgerEntriesAuditFie
 }
 
 export class ApSubledgerEntriesAuditRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async getEntries(companyId: number, fromDate: string, toDate: string): Promise<ApSubledgerEntriesAuditEntryDto[]> {
     const { rows } = await this.db.query(
-       `SELECT
+      `SELECT
          l.id,
          e.code AS ap_subledger_entry_code,
          l.line_number,

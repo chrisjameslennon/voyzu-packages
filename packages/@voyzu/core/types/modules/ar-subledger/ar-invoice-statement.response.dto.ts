@@ -1,28 +1,33 @@
-import type { CompanyResponseDto } from "../companies/company.response.dto";
-import type { ArInvoiceDetailedInvoiceDto } from "../financial-document-types/ar-invoice.response.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CompanyResponseDto } from "../companies/company.response.dto";
+import { ArInvoiceDetailedInvoiceDto } from "../financial-document-types/ar-invoice.response.dto";
+import { BusinessCode, IsoDate, NonBlankText } from "@voyzu/core/types/constraints";
 
-export interface ArInvoiceStatementTransactionDto {
-  code: string;
-  journalCode: string;
-  postingDate: string;
-  documentDate: string;
-  documentTypeCode: string;
-  documentTypeLabel: string;
-  documentId: string;
-  documentRef: string;
-  memo: string | null;
-  amount: number;
-}
+export const ArInvoiceStatementTransactionDto = StrictObject({
+  code: BusinessCode,
+  journalCode: BusinessCode,
+  postingDate: IsoDate,
+  documentDate: IsoDate,
+  documentTypeCode: BusinessCode,
+  documentTypeLabel: Type.String(),
+  documentId: Type.String(),
+  documentRef: Type.String(),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  amount: Type.Number(),
+});
+export type ArInvoiceStatementTransactionDto = Type.Static<typeof ArInvoiceStatementTransactionDto>;
 
-export interface ArInvoiceStatementResponseDto {
-  company: CompanyResponseDto;
-  invoiceEntryCode: string;
-  invoice: ArInvoiceDetailedInvoiceDto;
-  counterpartyCode: string;
-  counterpartyName: string;
-  invoiceAmount: number;
-  appliedAmount: number;
-  openBalance: number;
-  transactions: ArInvoiceStatementTransactionDto[];
-}
+export const ArInvoiceStatementResponseDto = StrictObject({
+  company: CompanyResponseDto,
+  invoiceEntryCode: BusinessCode,
+  invoice: ArInvoiceDetailedInvoiceDto,
+  counterpartyCode: BusinessCode,
+  counterpartyName: NonBlankText,
+  invoiceAmount: Type.Number(),
+  appliedAmount: Type.Number(),
+  openBalance: Type.Number(),
+  transactions: Type.Array(ArInvoiceStatementTransactionDto),
+});
+export type ArInvoiceStatementResponseDto = Type.Static<typeof ArInvoiceStatementResponseDto>;
 

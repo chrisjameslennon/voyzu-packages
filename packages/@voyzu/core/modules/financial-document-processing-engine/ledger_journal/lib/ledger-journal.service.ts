@@ -1,26 +1,25 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type {
   BankCashJournalDetailsDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/bank-cash-details.dto";
+import type { LedgerJournalRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ledger-journal.request.dto";
 import type {
   LedgerJournalDetailedDocumentDto,
   LedgerJournalJournalLineDto,
   LedgerJournalPostingDetailsDto,
   LedgerJournalPostingResponseDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/ledger-journal.response.dto";
-import type { LedgerJournalRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ledger-journal.request.dto";
-import { getDb, withTransaction } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 
-import { JournalRepo } from "../../../journals/server/db/journal.repo";
-import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { resolveBankCashDetails, toJournalBankCashFields } from "../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
 import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
+import { JournalRepo } from "../../../journals/server/db/journal.repo";
+import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { LedgerJournalPostingRepo } from "../db/ledger-journal-posting.repo";
 import type { DimensionValueLookupRow, GlAccountPostingRow, ProtectedGlAccountLinkRow } from "../db/ledger-journal-posting.row.types";
-import { validateData, validateRequest, type LedgerJournalDataValidationContext } from "./ledger-journal.validator";
 import { LEDGER_JOURNAL_DOCUMENT_LABEL, LEDGER_JOURNAL_ENGINE_CODE, type LedgerJournalPostingLine } from "./ledger-journal.types";
+import { validateData, validateRequest, type LedgerJournalDataValidationContext } from "./ledger-journal.validator";
 
 export interface ProcessLedgerJournalOptions {
   preview?: boolean;
@@ -317,4 +316,4 @@ async function processLedgerJournalUnchecked(
   });
 }
 
-export const processLedgerJournal = withResponseValidation(processLedgerJournalUnchecked, "processLedgerJournal");
+export const processLedgerJournal = processLedgerJournalUnchecked;

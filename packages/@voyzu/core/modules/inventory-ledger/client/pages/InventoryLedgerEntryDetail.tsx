@@ -24,7 +24,7 @@ import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import localStyles from "./inventory-ledger-entry-detail.module.css";
 
 type InventoryLedgerLine = InventoryLedgerEntryDetailResponseDto["lines"][number] & { id: number };

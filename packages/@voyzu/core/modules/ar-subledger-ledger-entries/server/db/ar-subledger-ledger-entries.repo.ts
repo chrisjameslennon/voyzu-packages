@@ -141,8 +141,8 @@ const AR_ENTRY_COLUMNS = `
 
 
 export class ArSubledgerRepo {
-  constructor(private readonly db: DbExecutor) {}
-async listEntries(companyId: number): Promise<ArSubledgerEntryRow[]> {
+  constructor(private readonly db: DbExecutor) { }
+  async listEntries(companyId: number): Promise<ArSubledgerEntryRow[]> {
     const settingsCompanyId = await resolveEffectiveSettingsCompanyId(companyId, this.db);
     const { rows } = await this.db.query(
       `SELECT ${AR_ENTRY_COLUMNS}

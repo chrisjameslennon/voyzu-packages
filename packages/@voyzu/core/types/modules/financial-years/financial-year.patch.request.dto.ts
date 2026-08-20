@@ -1,10 +1,11 @@
-export interface FinancialYearPatchRequestDto {
-  /** Updated business code (up to 14 characters). Locked once the year has postings. */
-  code?: string;
-  /** Updated display name. */
-  name?: string;
-  /** Updated start date (ISO date string, YYYY-MM-DD). Locked once financial periods exist. */
-  startDate?: string;
-  /** Updated end date (ISO date string, YYYY-MM-DD). Locked once financial periods exist. */
-  endDate?: string;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode14, IsoDate, TrimmedText120 } from "@voyzu/core/types/constraints";
+
+export const FinancialYearPatchRequestDto = StrictObject({
+  code: Type.Optional(BusinessCode14),
+  name: Type.Optional(TrimmedText120),
+  startDate: Type.Optional(IsoDate),
+  endDate: Type.Optional(IsoDate),
+}, { minProperties: 1 });
+export type FinancialYearPatchRequestDto = Type.Static<typeof FinancialYearPatchRequestDto>;

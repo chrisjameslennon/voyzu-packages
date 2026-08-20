@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ApCreditNoteRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-adjustment.request.dto";
 import type { ApProcessingPostingResponseDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-processing.response.dto";
 
@@ -11,4 +10,4 @@ async function processApCreditNoteUnchecked(
   return processApDocument("AP_CREDIT_NOTE", input, options);
 }
 
-export const processApCreditNote = withResponseValidation(processApCreditNoteUnchecked, "processApCreditNote");
+export const processApCreditNote = processApCreditNoteUnchecked;

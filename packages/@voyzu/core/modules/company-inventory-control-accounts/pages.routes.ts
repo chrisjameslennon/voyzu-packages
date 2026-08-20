@@ -1,0 +1,31 @@
+import { handleListInventoryControlAccounts, handlePatchInventoryControlAccount } from "@voyzu/core/common/inventory-control-accounts/server";
+import { CompanyInventoryControlAccountsPage, CompanyInventoryControlAccountDetailPage } from "@voyzu/core/company-inventory-control-accounts/server";
+
+export const pageRoutes = {
+  list: {
+    id: "voyzu.company-inventory-control-accounts.page.list",
+    pageTitle: "Inventory Control Accounts",
+    helpPath: "modules-help/company-ledger/inventory-control-accounts",
+    path: "/finance/settings/control-accounts/inventory",
+    Page: CompanyInventoryControlAccountsPage,
+    breadcrumbBase: [
+      { label: "Finance" },
+      { label: "Settings" },
+      { label: "Control Accounts" },
+    ],
+    auth: { required: true, minRole: "COMPANY_USER" }
+  },
+  detail: {
+    id: "voyzu.company-inventory-control-accounts.page.detail",
+    pageTitle: "Inventory Control Accounts",
+    helpPath: "modules-help/company-ledger/inventory-control-accounts",
+    path: "/finance/settings/control-accounts/inventory/[code]",
+    Page: CompanyInventoryControlAccountDetailPage,
+    breadcrumbBase: [
+      { label: "Finance" },
+      { label: "Settings" },
+      { label: "Inventory Control Accounts", href: "/finance/settings/control-accounts/inventory" },
+    ],
+    auth: { required: true, minRole: "COMPANY_USER" }
+  }
+} as const;

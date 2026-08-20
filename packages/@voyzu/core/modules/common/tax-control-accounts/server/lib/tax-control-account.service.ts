@@ -3,15 +3,12 @@ import type { TaxControlAccountPatchRequestDto } from "@voyzu/core/types/modules
 import type { TaxControlAccountResponseDto } from "@voyzu/core/types/modules/tax-control-accounts";
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
-import { checkResponse } from "@voyzu/capability/validation";
 import { UpdateGLAccount } from "@voyzu/core/common/tax-control-accounts/domain/operation-policy";
 import { createUpdateAuditStamp, withAuditActors } from "../../../server";
 
 import { TaxControlAccountRepo } from "../db/tax-control-account.repo";
 import type { TaxControlAccountRow } from "../db/tax-control-account.row.types";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
-import { validateResponse } from "./tax-control-account.validator";
-
 const REQUIRED_ACCOUNT_TYPE: Record<string, AccountType | null> = {
   TAX_ON_SALES: "LIABILITY",
   TAX_ON_PURCHASES: "ASSET",
@@ -44,7 +41,7 @@ function toDto(row: TaxControlAccountRow): TaxControlAccountResponseDto {
 
 async function enrichRow(row: TaxControlAccountRow): Promise<TaxControlAccountResponseDto> {
   const dto = await withAuditActors(toDto(row), row);
-  return checkResponse(dto, validateResponse(dto), `tax control account (${dto.code})`);
+  return dto;
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {

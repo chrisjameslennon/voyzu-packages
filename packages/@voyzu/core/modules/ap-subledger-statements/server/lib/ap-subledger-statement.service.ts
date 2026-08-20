@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
 import type {
@@ -76,5 +75,5 @@ async function getApCounterpartyStatementUnchecked(
   };
 }
 
-export const listApCounterpartySummaries = withResponseValidation(listApCounterpartySummariesUnchecked, "listApCounterpartySummaries");
-export const getApCounterpartyStatement = withResponseValidation(getApCounterpartyStatementUnchecked, "getApCounterpartyStatement");
+export const listApCounterpartySummaries = listApCounterpartySummariesUnchecked;
+export const getApCounterpartyStatement = getApCounterpartyStatementUnchecked;

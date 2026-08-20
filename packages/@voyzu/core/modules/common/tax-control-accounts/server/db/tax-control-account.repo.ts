@@ -75,7 +75,7 @@ function mapRow(row: Record<string, unknown>): TaxControlAccountRow {
 }
 
 export class TaxControlAccountRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async list(companyId: number): Promise<TaxControlAccountRow[]> {
     const { rows } = await this.db.query(

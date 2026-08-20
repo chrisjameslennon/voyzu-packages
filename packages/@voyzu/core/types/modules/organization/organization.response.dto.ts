@@ -1,17 +1,15 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
-import type { Status } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { Status } from "@voyzu/core/types/modules/core";
+import { BusinessCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface OrganizationResponseDto {
-  /** Unique numeric identifier for the organization record. */
-  id: number;
-  /** Business code of the organization. */
-  code: string;
-  /** Display name of the organization. */
-  organizationName: string;
-  /** Current lifecycle status of the organization. Defaults to ACTIVE and cannot be changed through the API. */
-  status: Status;
-  /** True when one or more posted journal headers exist for any company in this organization. */
-  hasPostings: boolean;
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const OrganizationResponseDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  organizationName: NonBlankText,
+  status: Status,
+  hasPostings: Type.Boolean({ description: "True when one or more posted journal headers exist for any company in this organization." }),
+  audit: AuditMetadataDto,
+});
+export type OrganizationResponseDto = Type.Static<typeof OrganizationResponseDto>;

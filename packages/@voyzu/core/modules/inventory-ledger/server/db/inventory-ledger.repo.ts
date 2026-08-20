@@ -51,7 +51,7 @@ const INVENTORY_ENTRY_COLUMNS = `
 `;
 
 export class InventoryLedgerRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async listEntries(companyId: number): Promise<InventoryLedgerEntryRow[]> {
     const { rows } = await this.db.query(

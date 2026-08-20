@@ -178,7 +178,6 @@ export async function handleBatchGet(
 ): Promise<NextResponse<FinancialDocumentTypeResponseDto[] | InputValidationErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
     const { companyId } = await resolveApiSettingsScope(req);
     const out = await batchGetFinancialDocumentTypes(codes, companyId);
     return ok(out satisfies FinancialDocumentTypeResponseDto[]);
@@ -240,7 +239,6 @@ export async function handleBatchDelete(
 ): Promise<NextResponse<null | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
     const { companyId } = await resolveApiSettingsScope(req);
     await batchDeleteFinancialDocumentTypes(codes, companyId);
     return noContent();
@@ -286,7 +284,6 @@ export async function handleBatchActivate(
 ): Promise<NextResponse<FinancialDocumentTypeResponseDto[] | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
     const { companyId } = await resolveApiSettingsScope(req);
     return ok(await activateFinancialDocumentTypes(codes, companyId));
   } catch (err) {
@@ -302,7 +299,6 @@ export async function handleBatchDeactivate(
 ): Promise<NextResponse<FinancialDocumentTypeResponseDto[] | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
     const { companyId } = await resolveApiSettingsScope(req);
     return ok(await deactivateFinancialDocumentTypes(codes, companyId));
   } catch (err) {

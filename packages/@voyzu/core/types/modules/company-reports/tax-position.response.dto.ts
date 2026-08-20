@@ -1,25 +1,32 @@
-export interface TaxPositionAuthorityColumnDto {
-  taxAuthorityCode: string;
-  taxAuthorityName: string;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface TaxPositionLineDto {
-  key: "OUTPUT_TAX_PAYABLE" | "INPUT_TAX_RECEIVABLE";
-  label: string;
-  amountsByAuthority: Record<string, number>;
-  total: number;
-}
+export const TaxPositionAuthorityColumnDto = StrictObject({
+  taxAuthorityCode: BusinessCode,
+  taxAuthorityName: NonBlankText,
+});
+export type TaxPositionAuthorityColumnDto = Type.Static<typeof TaxPositionAuthorityColumnDto>;
 
-export interface TaxPositionResponseDto {
-  companyId: number;
-  companyName: string;
-  companyReportLine1: string | null;
-  companyReportLine2: string | null;
-  companyReportFooter: string | null;
-  baseCurrencyCode: string;
-  asAtDate: string;
-  authorityColumns: TaxPositionAuthorityColumnDto[];
-  lines: TaxPositionLineDto[];
-  netTaxPosition: number;
-  trialBalanceReconciled: boolean;
-}
+export const TaxPositionLineDto = StrictObject({
+  key: Type.Union([Type.Literal("OUTPUT_TAX_PAYABLE"), Type.Literal("INPUT_TAX_RECEIVABLE")]),
+  label: Type.String(),
+  amountsByAuthority: Type.Record(Type.String(), Type.Number()),
+  total: Type.Number(),
+});
+export type TaxPositionLineDto = Type.Static<typeof TaxPositionLineDto>;
+
+export const TaxPositionResponseDto = StrictObject({
+  companyId: PositiveId,
+  companyName: NonBlankText,
+  companyReportLine1: Type.Union([Type.String(), Type.Null()]),
+  companyReportLine2: Type.Union([Type.String(), Type.Null()]),
+  companyReportFooter: Type.Union([Type.String(), Type.Null()]),
+  baseCurrencyCode: CurrencyCode,
+  asAtDate: IsoDate,
+  authorityColumns: Type.Array(TaxPositionAuthorityColumnDto),
+  lines: Type.Array(TaxPositionLineDto),
+  netTaxPosition: Type.Number(),
+  trialBalanceReconciled: Type.Boolean(),
+});
+export type TaxPositionResponseDto = Type.Static<typeof TaxPositionResponseDto>;

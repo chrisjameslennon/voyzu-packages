@@ -1,22 +1,29 @@
-export interface JournalEntriesFieldDto {
-  label: string;
-  value: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface JournalEntriesLineDto {
-  id: string;
-  headerFields: JournalEntriesFieldDto[];
-  lineFields: JournalEntriesFieldDto[];
-}
+export const JournalEntriesFieldDto = StrictObject({
+  label: Type.String(),
+  value: Type.Union([Type.String(), Type.Null()]),
+});
+export type JournalEntriesFieldDto = Type.Static<typeof JournalEntriesFieldDto>;
 
-export interface JournalEntriesResponseDto {
-  companyId: number;
-  companyName: string;
-  companyReportLine1: string | null;
-  companyReportLine2: string | null;
-  companyReportFooter: string | null;
-  baseCurrencyCode: string;
-  fromDate: string;
-  toDate: string;
-  lines: JournalEntriesLineDto[];
-}
+export const JournalEntriesLineDto = StrictObject({
+  id: Type.String(),
+  headerFields: Type.Array(JournalEntriesFieldDto),
+  lineFields: Type.Array(JournalEntriesFieldDto),
+});
+export type JournalEntriesLineDto = Type.Static<typeof JournalEntriesLineDto>;
+
+export const JournalEntriesResponseDto = StrictObject({
+  companyId: PositiveId,
+  companyName: NonBlankText,
+  companyReportLine1: Type.Union([Type.String(), Type.Null()]),
+  companyReportLine2: Type.Union([Type.String(), Type.Null()]),
+  companyReportFooter: Type.Union([Type.String(), Type.Null()]),
+  baseCurrencyCode: CurrencyCode,
+  fromDate: IsoDate,
+  toDate: IsoDate,
+  lines: Type.Array(JournalEntriesLineDto),
+});
+export type JournalEntriesResponseDto = Type.Static<typeof JournalEntriesResponseDto>;

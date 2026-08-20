@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ArWriteOffRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-write-off.request.dto";
 import type { ArAdjustmentPostingResponseDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
 
@@ -11,4 +10,4 @@ async function processArWriteOffUnchecked(
   return processArAdjustment("AR_WRITE_OFF", input, options);
 }
 
-export const processArWriteOff = withResponseValidation(processArWriteOffUnchecked, "processArWriteOff");
+export const processArWriteOff = processArWriteOffUnchecked;

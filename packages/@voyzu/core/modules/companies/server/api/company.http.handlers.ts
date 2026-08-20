@@ -13,6 +13,7 @@ import type { CompanyCreateRequestDto } from "@voyzu/core/types/modules/companie
 import type { CompanyUpdateRequestDto } from "@voyzu/core/types/modules/companies";
 import type { CompanyPatchRequestDto } from "@voyzu/core/types/modules/companies";
 import type { CompanyBatchUpdateRequestDto } from "@voyzu/core/types/modules/companies";
+import type { CompanyBatchPatchRequestDto } from "@voyzu/core/types/modules/companies";
 
 import { businessRuleError, conflictError, notFoundError, serverError, inputValidationError } from "@voyzu/capability/http";
 import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
@@ -215,10 +216,6 @@ export async function handleBatchCreate(
 > {
   try {
     const body = await parseBody<CompanyCreateRequestDto[]>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
-
     const companies = await batchCreateCompanies(body);
     return created(companies satisfies CompanyResponseDto[]);
   } catch (err) {
@@ -237,10 +234,6 @@ export async function handleBatchGet(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const companies = await batchGetCompanies(codes);
     return ok(companies satisfies CompanyResponseDto[]);
   } catch (err) {
@@ -256,10 +249,6 @@ export async function handleBatchUpdate(
 > {
   try {
     const body = await parseBody<CompanyBatchUpdateRequestDto[]>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
-
     const companies = await batchUpdateCompanies(body);
     return ok(companies satisfies CompanyResponseDto[]);
   } catch (err) {
@@ -278,10 +267,7 @@ export async function handleBatchPatch(
   NextResponse<CompanyResponseDto[] | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | ConflictErrorResponseDto | InternalServerErrorResponseDto>
 > {
   try {
-    const body = await parseBody<Array<CompanyPatchRequestDto & { code: string }>>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
+    const body = await parseBody<CompanyBatchPatchRequestDto[]>(req);
     for (const item of body) {
       if (!item.code) {
         return inputValidationError("Each item must include a 'code' field");
@@ -307,10 +293,6 @@ export async function handleBatchDelete(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     await batchDeleteCompanies(codes);
     return noContent();
   } catch (err) {
@@ -326,10 +308,6 @@ export async function handleBatchActivate(
 ): Promise<NextResponse<CompanyResponseDto[] | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const companies = await activateCompanies(codes);
     return ok(companies satisfies CompanyResponseDto[]);
   } catch (err) {
@@ -344,10 +322,6 @@ export async function handleBatchDeactivate(
 ): Promise<NextResponse<CompanyResponseDto[] | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const companies = await deactivateCompanies(codes);
     return ok(companies satisfies CompanyResponseDto[]);
   } catch (err) {

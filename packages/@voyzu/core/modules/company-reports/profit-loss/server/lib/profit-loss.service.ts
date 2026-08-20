@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError, InputValidationError } from "@voyzu/capability/errors";
 import type { ProfitLossResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -247,5 +246,5 @@ function aggregateDimensionLines(
   return { lines, columns: visibleColumns };
 }
 
-export const getProfitLoss = withResponseValidation(getProfitLossUnchecked, "getProfitLoss");
-export const getProfitLossAnalysis = withResponseValidation(getProfitLossAnalysisUnchecked, "getProfitLossAnalysis");
+export const getProfitLoss = getProfitLossUnchecked;
+export const getProfitLossAnalysis = getProfitLossAnalysisUnchecked;

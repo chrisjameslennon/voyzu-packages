@@ -3,7 +3,7 @@ import type { DbExecutor } from "@voyzu/capability/db";
 import type { ApCounterpartyRow } from "./ap-subledger-counterparty.row.types";
 
 export class ApSubledgerCounterpartyRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async listCounterparties(companyId: number): Promise<ApCounterpartyRow[]> {
     const { rows } = await this.db.query(

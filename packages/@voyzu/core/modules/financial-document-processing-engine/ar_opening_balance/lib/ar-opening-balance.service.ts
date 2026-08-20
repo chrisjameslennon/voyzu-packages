@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ArOpeningBalanceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-opening-balance.request.dto";
 import type { ArAdjustmentPostingResponseDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
 
@@ -11,4 +10,4 @@ async function processArOpeningBalanceUnchecked(
   return processArAdjustment("AR_OPENING_BALANCE", input, options);
 }
 
-export const processArOpeningBalance = withResponseValidation(processArOpeningBalanceUnchecked, "processArOpeningBalance");
+export const processArOpeningBalance = processArOpeningBalanceUnchecked;

@@ -8,7 +8,6 @@ import { ok } from "@voyzu/capability/http";
 import { BusinessRuleError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
 
 import { processArInvoice } from "../lib/ar-invoice.service";
-import { validateRequest } from "../lib/ar-invoice.validator";
 
 
 export async function handleProcess(
@@ -16,7 +15,6 @@ export async function handleProcess(
 ): Promise<NextResponse> {
   try {
     const body = await parseBody<ArInvoiceRequestDto>(req);
-    validateRequest(body);
     const result: ArInvoicePostingResponseDto = await processArInvoice(body, { preview: req.nextUrl.searchParams.has("preview") });
     return ok(result);
   } catch (err) {
@@ -26,5 +24,4 @@ export async function handleProcess(
     return serverError(err);
   }
 }
-
 

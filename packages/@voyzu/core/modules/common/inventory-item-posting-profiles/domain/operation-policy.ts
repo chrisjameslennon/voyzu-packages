@@ -50,13 +50,13 @@ const POSTING_ACCOUNT_FIELDS: ReadonlyArray<{
   field: ItemPostingProfileAccountField;
   label: string;
 }> = [
-  { field: "revenue_code", label: "Revenue code" },
-  { field: "cogs_code", label: "COGS code" },
-  { field: "purchase_expense_code", label: "Purchase expense code" },
-  { field: "consumption_code", label: "Consumption code" },
-  { field: "adjustment_gain_code", label: "Adjustment gain code" },
-  { field: "adjustment_loss_code", label: "Adjustment loss code" },
-];
+    { field: "revenue_code", label: "Revenue code" },
+    { field: "cogs_code", label: "COGS code" },
+    { field: "purchase_expense_code", label: "Purchase expense code" },
+    { field: "consumption_code", label: "Consumption code" },
+    { field: "adjustment_gain_code", label: "Adjustment gain code" },
+    { field: "adjustment_loss_code", label: "Adjustment loss code" },
+  ];
 
 export function ConfigurePostingAccounts(
   permissions: ItemPostingProfilePermissions,

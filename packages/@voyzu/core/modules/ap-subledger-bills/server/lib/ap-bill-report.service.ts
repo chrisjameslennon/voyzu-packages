@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import type {
   ApLedgerEntryDocumentReportApplicationDto,
@@ -118,4 +117,4 @@ async function getApLedgerEntryDocumentReportUnchecked(
   };
 }
 
-export const getApLedgerEntryDocumentReport = withResponseValidation(getApLedgerEntryDocumentReportUnchecked, "getApLedgerEntryDocumentReport");
+export const getApLedgerEntryDocumentReport = getApLedgerEntryDocumentReportUnchecked;

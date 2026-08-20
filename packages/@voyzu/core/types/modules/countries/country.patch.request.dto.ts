@@ -1,10 +1,11 @@
-export interface CountryPatchRequestDto {
-  /** Country display name. */
-  name?: string;
-  /** Default currency code for the country. */
-  currencyCode?: string;
-  /** Optional tax filing anchor month. */
-  taxFilingAnchorMonth?: number;
-  /** Optional tax filing interval. */
-  taxFilingIntervalMonths?: 1 | 2 | 3 | 6 | 12;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CurrencyCode, NonBlankText, TaxFilingAnchorMonth } from "@voyzu/core/types/constraints";
+
+export const CountryPatchRequestDto = StrictObject({
+  name: Type.Optional(NonBlankText),
+  currencyCode: Type.Optional(CurrencyCode),
+  taxFilingAnchorMonth: Type.Optional(TaxFilingAnchorMonth),
+  taxFilingIntervalMonths: Type.Optional(Type.Union([Type.Literal(1), Type.Literal(2), Type.Literal(3), Type.Literal(6), Type.Literal(12)])),
+}, { minProperties: 1 });
+export type CountryPatchRequestDto = Type.Static<typeof CountryPatchRequestDto>;

@@ -125,7 +125,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class InventoryCategoryRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   private async resolvePostingProfileId(companyId: number, postingProfileCode: string): Promise<number> {
     const { rows } = await this.db.query(

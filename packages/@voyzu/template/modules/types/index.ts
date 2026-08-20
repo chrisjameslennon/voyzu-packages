@@ -1,50 +1,58 @@
-import type { AuditMetadataDto, Status } from "@voyzu/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto, Status } from "@voyzu/types/modules/core";
 
-export interface TemplateCreateRequestDto {
-  /** Stable, globally unique template business code. */
-  code: string;
-  /** Optional description of the template. */
-  description: string | null;
-}
+const TemplateCode = Type.String({
+  maxLength: 40,
+  pattern: "^[A-Z0-9][A-Z0-9_-]*$",
+  description: "An uppercase business code containing letters, numbers, underscores or hyphens.",
+});
+const TemplateDescription = Type.Union([
+  Type.String({ maxLength: 200 }),
+  Type.Null(),
+]);
+const PositiveId = Type.Integer({ minimum: 1 });
 
-export interface TemplatePatchRequestDto {
-  /** Optional replacement description; null clears the description. */
-  description?: string | null;
-}
+export const TemplateCreateRequestDto = StrictObject({
+  code: TemplateCode,
+  description: TemplateDescription,
+});
+export type TemplateCreateRequestDto = Type.Static<typeof TemplateCreateRequestDto>;
 
-export interface TemplateUpdateRequestDto {
-  /** Complete replacement description; null clears the description. */
-  description: string | null;
-}
+export const TemplateUpdateRequestDto = StrictObject({
+  description: TemplateDescription,
+});
+export type TemplateUpdateRequestDto = Type.Static<typeof TemplateUpdateRequestDto>;
 
-export interface TemplateBatchUpdateRequestDto extends TemplateUpdateRequestDto {
-  /** Template business code identifying the template to update. */
-  code: string;
-}
+export const TemplatePatchRequestDto = Type.Partial(TemplateUpdateRequestDto, {
+  additionalProperties: false,
+});
+export type TemplatePatchRequestDto = Type.Static<typeof TemplatePatchRequestDto>;
 
-export interface TemplateBatchPatchRequestDto extends TemplatePatchRequestDto {
-  /** Template business code identifying the template to patch. */
-  code: string;
-}
+export const TemplateBatchUpdateRequestDto = StrictObject({
+  ...TemplateUpdateRequestDto.properties,
+  code: TemplateCode,
+});
+export type TemplateBatchUpdateRequestDto = Type.Static<typeof TemplateBatchUpdateRequestDto>;
 
-export interface TemplateResponseDto {
-  /** Unique numeric identifier for the template. */
-  id: number;
-  /** Stable, globally unique template business code. */
-  code: string;
-  /** Optional description of the template. */
-  description: string | null;
-  /** Current lifecycle status of the template. */
-  status: Status;
-  /** Creation and most-recent-update audit metadata. */
-  audit: AuditMetadataDto;
-}
+export const TemplateBatchPatchRequestDto = StrictObject({
+  ...TemplatePatchRequestDto.properties,
+  code: TemplateCode,
+});
+export type TemplateBatchPatchRequestDto = Type.Static<typeof TemplateBatchPatchRequestDto>;
 
-export interface TemplateReportRowDto {
-  /** Stable, globally unique template business code. */
-  code: string;
-  /** Optional description of the template. */
-  description: string | null;
-  /** Current lifecycle status of the template. */
-  status: Status;
-}
+export const TemplateResponseDto = StrictObject({
+  id: PositiveId,
+  code: TemplateCode,
+  description: TemplateDescription,
+  status: Status,
+  audit: AuditMetadataDto,
+});
+export type TemplateResponseDto = Type.Static<typeof TemplateResponseDto>;
+
+export const TemplateReportRowDto = StrictObject({
+  code: TemplateCode,
+  description: TemplateDescription,
+  status: Status,
+});
+export type TemplateReportRowDto = Type.Static<typeof TemplateReportRowDto>;

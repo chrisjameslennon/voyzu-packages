@@ -1,78 +1,41 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface InventoryLedgerControlAccountBalanceDto {
-  controlAccountCode: string;
-  controlAccountName: string;
-  glAccountCode: string;
-  glAccountName: string;
-  balance: number;
-}
+export const InventoryLedgerControlAccountBalanceDto = StrictObject({
+  controlAccountCode: BusinessCode, controlAccountName: NonBlankText, glAccountCode: BusinessCode,
+  glAccountName: NonBlankText, balance: Type.Number(),
+});
+export type InventoryLedgerControlAccountBalanceDto = Type.Static<typeof InventoryLedgerControlAccountBalanceDto>;
 
-export interface InventoryLedgerEntryResponseDto {
-  id: number;
-  code: string;
-  journalHeaderId: number;
-  journalCode: string;
-  postingDate: string;
-  sourceDocument: string;
-  movement: string;
-  documentId: string;
-  itemCode: string;
-  itemName: string;
-  qtyDelta: number;
-  unitValueSupplied: number | null;
-  bookValueDelta: number;
-  qtyBalance: number;
-  avgUnitValue: number;
-  bookValueBalance: number;
-  baseCurrencyCode: string;
-  status: "POSTED";
-  controlAccountCode: string;
-  controlAccountName: string;
-  glAccountCode: string;
-  glAccountName: string;
-  controlAccountBalances: InventoryLedgerControlAccountBalanceDto[];
-  audit: AuditMetadataDto;
-}
+export const InventoryLedgerEntryResponseDto = StrictObject({
+  id: PositiveId, code: BusinessCode, journalHeaderId: PositiveId, journalCode: BusinessCode,
+  postingDate: IsoDate, sourceDocument: Type.String(), movement: Type.String(), documentId: Type.String(),
+  itemCode: BusinessCode, itemName: NonBlankText, qtyDelta: Type.Number(),
+  unitValueSupplied: Type.Union([Type.Number(), Type.Null()]), bookValueDelta: Type.Number(), qtyBalance: Type.Number(),
+  avgUnitValue: Type.Number(), bookValueBalance: Type.Number(), baseCurrencyCode: CurrencyCode, status: Type.Literal("POSTED"),
+  controlAccountCode: BusinessCode, controlAccountName: NonBlankText, glAccountCode: BusinessCode, glAccountName: NonBlankText,
+  controlAccountBalances: Type.Array(InventoryLedgerControlAccountBalanceDto), audit: AuditMetadataDto,
+});
+export type InventoryLedgerEntryResponseDto = Type.Static<typeof InventoryLedgerEntryResponseDto>;
 
-export interface InventoryLedgerEntryDetailLineDto {
-  id: number;
-  lineNumber: number;
-  movement: string;
-  itemCode: string;
-  itemName: string;
-  qtyDelta: number;
-  unitValueSupplied: number | null;
-  bookValueDelta: number;
-  qtyBalance: number;
-  avgUnitValue: number;
-  bookValueBalance: number;
-  description: string | null;
-  memo: string | null;
-}
+export const InventoryLedgerEntryDetailLineDto = StrictObject({
+  id: PositiveId, lineNumber: PositiveId, movement: Type.String(), itemCode: BusinessCode, itemName: NonBlankText,
+  qtyDelta: Type.Number(), unitValueSupplied: Type.Union([Type.Number(), Type.Null()]), bookValueDelta: Type.Number(),
+  qtyBalance: Type.Number(), avgUnitValue: Type.Number(), bookValueBalance: Type.Number(),
+  description: Type.Union([Type.String(), Type.Null()]), memo: Type.Union([Type.String(), Type.Null()]),
+});
+export type InventoryLedgerEntryDetailLineDto = Type.Static<typeof InventoryLedgerEntryDetailLineDto>;
 
-export interface InventoryLedgerEntryDetailResponseDto {
-  id: number;
-  code: string;
-  journalHeaderId: number;
-  journalCode: string;
-  postingDate: string;
-  documentDate: string;
-  sourceDocument: string;
-  documentId: string;
-  upstreamDocumentTypeCode: string | null;
-  upstreamDocumentId: string | null;
-  description: string | null;
-  memo: string | null;
-  baseCurrencyCode: string;
-  status: "POSTED";
-  controlAccountCode: string;
-  controlAccountName: string;
-  glAccountCode: string;
-  glAccountName: string;
-  controlAccountBalances: InventoryLedgerControlAccountBalanceDto[];
-  documentSnapshot: Record<string, unknown>;
-  detailedDocumentSnapshot: Record<string, unknown>;
-  audit: AuditMetadataDto;
-  lines: InventoryLedgerEntryDetailLineDto[];
-}
+export const InventoryLedgerEntryDetailResponseDto = StrictObject({
+  id: PositiveId, code: BusinessCode, journalHeaderId: PositiveId, journalCode: BusinessCode, postingDate: IsoDate,
+  documentDate: IsoDate, sourceDocument: Type.String(), documentId: Type.String(),
+  upstreamDocumentTypeCode: Type.Union([BusinessCode, Type.Null()]), upstreamDocumentId: Type.Union([Type.String(), Type.Null()]),
+  description: Type.Union([Type.String(), Type.Null()]), memo: Type.Union([Type.String(), Type.Null()]),
+  baseCurrencyCode: CurrencyCode, status: Type.Literal("POSTED"), controlAccountCode: BusinessCode, controlAccountName: NonBlankText,
+  glAccountCode: BusinessCode, glAccountName: NonBlankText, controlAccountBalances: Type.Array(InventoryLedgerControlAccountBalanceDto),
+  documentSnapshot: Type.Record(Type.String(), Type.Unknown()), detailedDocumentSnapshot: Type.Record(Type.String(), Type.Unknown()),
+  audit: AuditMetadataDto, lines: Type.Array(InventoryLedgerEntryDetailLineDto),
+});
+export type InventoryLedgerEntryDetailResponseDto = Type.Static<typeof InventoryLedgerEntryDetailResponseDto>;

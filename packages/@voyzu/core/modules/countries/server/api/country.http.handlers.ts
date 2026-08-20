@@ -171,8 +171,7 @@ export async function handleBatchGet(
 ): Promise<NextResponse<CountryResponseDto[] | InputValidationErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CountryCodesRequestDto>(request);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
-    return ok(await batchGetCountries(codes.map(String)));
+    return ok(await batchGetCountries(codes));
   } catch (error) {
     return serverError(error);
   }
@@ -207,8 +206,7 @@ export async function handleBatchDelete(
 ): Promise<NextResponse<null | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CountryCodesRequestDto>(request);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
-    await batchDeleteCountries(codes.map(String));
+    await batchDeleteCountries(codes);
     return noContent();
   } catch (error) {
     if (error instanceof InputValidationError) return inputValidationError(error.message);
@@ -251,8 +249,7 @@ export async function handleBatchActivate(
 ): Promise<NextResponse<CountryResponseDto[] | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CountryCodesRequestDto>(request);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
-    return ok(await activateCountries(codes.map(String)));
+    return ok(await activateCountries(codes));
   } catch (error) {
     if (error instanceof InputValidationError) return inputValidationError(error.message);
     if (error instanceof NotFoundError) return notFoundError(error.message);
@@ -265,8 +262,7 @@ export async function handleBatchDeactivate(
 ): Promise<NextResponse<CountryResponseDto[] | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CountryCodesRequestDto>(request);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
-    return ok(await deactivateCountries(codes.map(String)));
+    return ok(await deactivateCountries(codes));
   } catch (error) {
     if (error instanceof InputValidationError) return inputValidationError(error.message);
     if (error instanceof NotFoundError) return notFoundError(error.message);

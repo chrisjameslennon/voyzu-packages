@@ -1,6 +1,9 @@
-import type { CompanyResponseDto } from "./company.response.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CompanyResponseDto } from "./company.response.dto";
 
-export interface CompanyListResponseDto {
-  items: CompanyResponseDto[];
-  totalMatching: number;
-}
+export const CompanyListResponseDto = StrictObject({
+  items: Type.Array(CompanyResponseDto),
+  totalMatching: Type.Number(),
+});
+export type CompanyListResponseDto = Type.Static<typeof CompanyListResponseDto>;

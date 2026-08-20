@@ -1,10 +1,10 @@
-export interface FinancialYearsExportRequestDto {
-  /** Unique numeric identifier of the company to export financial years for. */
-  companyId: number;
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-  /** Unique numeric identifiers of financial years to include in the export. */
-  yearIds: number[];
-
-  /** Download filename without extension. */
-  filename: string;
-}
+export const FinancialYearsExportRequestDto = StrictObject({
+  companyId: PositiveId,
+  yearIds: Type.Array(Type.Number(), { description: "Unique numeric identifiers of financial years to include in the export." }),
+  filename: Type.Optional(NonBlankText),
+});
+export type FinancialYearsExportRequestDto = Type.Static<typeof FinancialYearsExportRequestDto>;

@@ -9,7 +9,7 @@ import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, with
 import type { FinancialPeriodResponseDto } from "@voyzu/core/types/modules/financial-periods";
 import { FinancialYearRepo } from "../db/financial-year.repo";
 import { toDto, toInsertRow } from "./financial-year.mapper";
-import { validateCreate, validatePatch, validateResponse } from "./financial-year.validator";
+import { validateFinancialYearDateRange } from "./financial-year.validator";
 import { seedPeriodsForYear } from "../periods/lib/financial-period.service";
 import { FinancialPeriodRepo } from "../periods/db/financial-period.repo";
 import { toDto as toPeriodDto } from "../periods/lib/financial-period.mapper";
@@ -23,20 +23,8 @@ import {
   type FinancialYearOperationState,
 } from "../../domain/operation-policy";
 
-function checkedResponse(dto: FinancialYearResponseDto): FinancialYearResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid financial year response (id=${dto.id}): ${errors.join("; ")}`;
-    if (runtime.isDevLike) {
-      throw new Error(message);
-    }
-    console.error(message);
-  }
-  return dto;
-}
-
 async function enrichRow(row: Parameters<typeof toDto>[0]): Promise<FinancialYearResponseDto> {
-  return checkedResponse(await withAuditActors(toDto(row), row));
+  return await withAuditActors(toDto(row), row);
 }
 
 function operationState(year: {
@@ -146,7 +134,7 @@ export async function createFinancialYear(
   companyId: number,
   input: FinancialYearCreateRequestDto,
 ): Promise<FinancialYearResponseDto> {
-  const errors = validateCreate(input);
+  const errors = validateFinancialYearDateRange(input.startDate, input.endDate);
   if (errors.length) throw new InputValidationError(errors.join("; "));
 
   const repo = new FinancialYearRepo(getDb());
@@ -181,14 +169,16 @@ export async function patchFinancialYear(
   code: string,
   input: FinancialYearPatchRequestDto,
 ): Promise<FinancialYearResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   const repo = new FinancialYearRepo(getDb());
 
   try {
     const existing = await repo.get(companyId, code);
     if (!existing) throw new NotFoundError(`Financial year ${code} not found`);
+    const errors = validateFinancialYearDateRange(
+      input.startDate ?? existing.start_date,
+      input.endDate ?? existing.end_date,
+    );
+    if (errors.length) throw new InputValidationError(errors.join("; "));
     if (input.code !== undefined) {
       const blockers = ChangeCode({ code: existing.code, hasPostings: existing.has_postings }, input.code);
       if (blockers.length) throw new BusinessRuleError(blockers.map((blocker) => blocker.message).join("; "));
@@ -270,4 +260,3 @@ export async function exportFinancialYearsWithPeriods(
   const periods = periodRows.map((r) => toPeriodDto(r));
   return { years, periods };
 }
-

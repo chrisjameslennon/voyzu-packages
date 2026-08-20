@@ -1,65 +1,74 @@
-import type { CompanyResponseDto } from "../companies/company.response.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CompanyResponseDto } from "../companies/company.response.dto";
+import { BusinessCode, IsoDate, NonBlankText } from "@voyzu/core/types/constraints";
 
-export interface ApLedgerEntryDocumentReportLineDto {
-  line: string;
-  description: string;
-  quantity: number | null;
-  unitAmount: number | null;
-  netAmount: number | null;
-  taxAmount: number | null;
-  grossAmount: number;
-}
+export const ApLedgerEntryDocumentReportLineDto = StrictObject({
+  line: Type.String(),
+  description: Type.String(),
+  quantity: Type.Union([Type.Number(), Type.Null()]),
+  unitAmount: Type.Union([Type.Number(), Type.Null()]),
+  netAmount: Type.Union([Type.Number(), Type.Null()]),
+  taxAmount: Type.Union([Type.Number(), Type.Null()]),
+  grossAmount: Type.Number(),
+});
+export type ApLedgerEntryDocumentReportLineDto = Type.Static<typeof ApLedgerEntryDocumentReportLineDto>;
 
-export interface ApLedgerEntryDocumentReportTaxSummaryDto {
-  taxAuthorityCode: string;
-  taxAuthorityName: string;
-  invoiceLabel: string | null;
-  taxRate: number;
-  taxableAmount: number;
-  taxAmount: number;
-}
+export const ApLedgerEntryDocumentReportTaxSummaryDto = StrictObject({
+  taxAuthorityCode: BusinessCode,
+  taxAuthorityName: NonBlankText,
+  invoiceLabel: Type.Union([Type.String(), Type.Null()]),
+  taxRate: Type.Number(),
+  taxableAmount: Type.Number(),
+  taxAmount: Type.Number(),
+});
+export type ApLedgerEntryDocumentReportTaxSummaryDto = Type.Static<typeof ApLedgerEntryDocumentReportTaxSummaryDto>;
 
-export interface ApLedgerEntryDocumentReportTransactionDto {
-  code: string;
-  postingDate: string;
-  documentDate: string;
-  documentTypeLabel: string;
-  documentId: string;
-  amount: number;
-}
+export const ApLedgerEntryDocumentReportTransactionDto = StrictObject({
+  code: BusinessCode,
+  postingDate: IsoDate,
+  documentDate: IsoDate,
+  documentTypeLabel: Type.String(),
+  documentId: Type.String(),
+  amount: Type.Number(),
+});
+export type ApLedgerEntryDocumentReportTransactionDto = Type.Static<typeof ApLedgerEntryDocumentReportTransactionDto>;
 
-export interface ApLedgerEntryDocumentReportApplicationDto {
-  sourceDocumentId: string | null;
-  targetDocumentId: string | null;
-  targetDocumentType: string | null;
-  amount: number;
-  sourceOpenAmountBefore?: number | null;
-  sourceOpenAmountAfter?: number | null;
-  targetOpenAmountBefore?: number | null;
-  targetOpenAmountAfter?: number | null;
-}
+export const ApLedgerEntryDocumentReportApplicationDto = StrictObject({
+  sourceDocumentId: Type.Union([Type.String(), Type.Null()]),
+  targetDocumentId: Type.Union([Type.String(), Type.Null()]),
+  targetDocumentType: Type.Union([Type.String(), Type.Null()]),
+  amount: Type.Number(),
+  sourceOpenAmountBefore: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+  sourceOpenAmountAfter: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+  targetOpenAmountBefore: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+  targetOpenAmountAfter: Type.Optional(Type.Union([Type.Number(), Type.Null()])),
+});
+export type ApLedgerEntryDocumentReportApplicationDto = Type.Static<typeof ApLedgerEntryDocumentReportApplicationDto>;
 
-export interface ApLedgerEntryDocumentReportTotalDto {
-  label: string;
-  amount: number;
-}
+export const ApLedgerEntryDocumentReportTotalDto = StrictObject({
+  label: Type.String(),
+  amount: Type.Number(),
+});
+export type ApLedgerEntryDocumentReportTotalDto = Type.Static<typeof ApLedgerEntryDocumentReportTotalDto>;
 
-export interface ApLedgerEntryDocumentReportResponseDto {
-  company: CompanyResponseDto;
-  documentTypeCode: string;
-  documentTypeLabel: string;
-  documentId: string;
-  documentDate: string | null;
-  postingDate: string | null;
-  memo: string | null;
-  description: string | null;
-  counterpartyCode: string | null;
-  counterpartyName: string | null;
-  counterpartyCountryCode: string | null;
-  lines: ApLedgerEntryDocumentReportLineDto[];
-  taxSummary: ApLedgerEntryDocumentReportTaxSummaryDto[];
-  totals: ApLedgerEntryDocumentReportTotalDto[];
-  appliedTransactions: ApLedgerEntryDocumentReportTransactionDto[];
-  applications: ApLedgerEntryDocumentReportApplicationDto[];
-}
+export const ApLedgerEntryDocumentReportResponseDto = StrictObject({
+  company: CompanyResponseDto,
+  documentTypeCode: BusinessCode,
+  documentTypeLabel: Type.String(),
+  documentId: Type.String(),
+  documentDate: Type.Union([IsoDate, Type.Null()]),
+  postingDate: Type.Union([IsoDate, Type.Null()]),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  description: Type.Union([Type.String(), Type.Null()]),
+  counterpartyCode: Type.Union([BusinessCode, Type.Null()]),
+  counterpartyName: Type.Union([NonBlankText, Type.Null()]),
+  counterpartyCountryCode: Type.Union([BusinessCode, Type.Null()]),
+  lines: Type.Array(ApLedgerEntryDocumentReportLineDto),
+  taxSummary: Type.Array(ApLedgerEntryDocumentReportTaxSummaryDto),
+  totals: Type.Array(ApLedgerEntryDocumentReportTotalDto),
+  appliedTransactions: Type.Array(ApLedgerEntryDocumentReportTransactionDto),
+  applications: Type.Array(ApLedgerEntryDocumentReportApplicationDto),
+});
+export type ApLedgerEntryDocumentReportResponseDto = Type.Static<typeof ApLedgerEntryDocumentReportResponseDto>;
 

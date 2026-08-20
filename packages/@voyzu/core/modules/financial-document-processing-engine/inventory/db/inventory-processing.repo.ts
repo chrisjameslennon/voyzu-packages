@@ -115,7 +115,7 @@ function dimensionValueRow(row: Record<string, unknown>): DimensionValueLookupRo
 }
 
 export class InventoryProcessingRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async reserveJournalHeaderId(): Promise<number> {
     const { rows } = await this.db.query(`SELECT nextval(pg_get_serial_sequence('journal_header', 'id')) AS id`);

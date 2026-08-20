@@ -1,10 +1,11 @@
-import type { AccountType } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AccountType } from "@voyzu/core/types/modules/core";
+import { NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface GlAccountCategoryPatchRequestDto {
-  /** GL account category display name. */
-  name?: string;
-  /** Account type grouped by this category. */
-  accountType?: AccountType;
-  /** Sort sequence for the category. */
-  sequence?: number;
-}
+export const GlAccountCategoryPatchRequestDto = StrictObject({
+  name: Type.Optional(NonBlankText),
+  accountType: Type.Optional(AccountType),
+  sequence: Type.Optional(PositiveId),
+}, { minProperties: 1 });
+export type GlAccountCategoryPatchRequestDto = Type.Static<typeof GlAccountCategoryPatchRequestDto>;

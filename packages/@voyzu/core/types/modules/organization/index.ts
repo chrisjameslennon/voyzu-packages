@@ -1,2 +1,2 @@
-export type { OrganizationResponseDto } from "./organization.response.dto";
-export type { OrganizationUpdateRequestDto } from "./organization.update.request.dto";
+export { OrganizationResponseDto } from "./organization.response.dto";
+export { OrganizationUpdateRequestDto } from "./organization.update.request.dto";

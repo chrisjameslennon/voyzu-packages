@@ -1,37 +1,17 @@
-import type { Filter } from "@voyzu/types/params";
-import type { ListOptions } from "@voyzu/types/params";
-import type { CurrencyCreateRequestDto } from "@voyzu/core/types/modules/currencies";
-import type { CurrencyUpdateRequestDto } from "@voyzu/core/types/modules/currencies";
-import type { CurrencyPatchRequestDto } from "@voyzu/core/types/modules/currencies";
-import type { CurrencyBatchUpdateRequestDto } from "@voyzu/core/types/modules/currencies";
-import type { CurrencyBatchPatchRequestDto } from "@voyzu/core/types/modules/currencies";
-import type { CurrencyResponseDto } from "@voyzu/core/types/modules/currencies";
-import { runtime } from "@voyzu/capability/runtime";
-import { BusinessRuleError, ConflictError, NotFoundError, DataError, InputValidationError } from "@voyzu/capability/errors";
 import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/core/common/server";
+import type { CurrencyBatchPatchRequestDto, CurrencyBatchUpdateRequestDto, CurrencyCreateRequestDto, CurrencyPatchRequestDto, CurrencyResponseDto, CurrencyUpdateRequestDto } from "@voyzu/core/types/modules/currencies";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 
-import { CurrencyRepo } from "../db/currency.repo";
 import { Deactivate, Delete } from "../../domain/operation-policy";
+import { CurrencyRepo } from "../db/currency.repo";
 import type { CurrencyRow } from "../db/currency.row.types";
 
-import { toDto, toInsertRow, toUpdateRow, toPatchRow } from "./currency.mapper";
-import { validateCreate, validateUpdate, validatePatch, validateResponse } from "./currency.validator";
-
-function checkedResponse(dto: CurrencyResponseDto): CurrencyResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid currency response (code=${dto.code}): ${errors.join("; ")}`;
-    if (runtime.isDevLike) {
-      throw new Error(message);
-    }
-    console.error(message);
-  }
-  return dto;
-}
+import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./currency.mapper";
 
 async function enrichRow(row: CurrencyRow): Promise<CurrencyResponseDto> {
-  return checkedResponse(await withAuditActors(toDto(row), row));
+  return await withAuditActors(toDto(row), row);
 }
 
 function enrichRows(rows: CurrencyRow[]): Promise<CurrencyResponseDto[]> {
@@ -70,9 +50,6 @@ export async function getCurrency(code: string): Promise<CurrencyResponseDto | n
 }
 
 export async function createCurrency(input: CurrencyCreateRequestDto): Promise<CurrencyResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   try {
     const row = await new CurrencyRepo(getDb()).insert(withCreationAudit(toInsertRow(input), await createCreationAuditStamp()));
     return enrichRow(row);
@@ -85,9 +62,6 @@ export async function createCurrency(input: CurrencyCreateRequestDto): Promise<C
 }
 
 export async function updateCurrency(code: string, input: CurrencyUpdateRequestDto): Promise<CurrencyResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   try {
     const row = await new CurrencyRepo(getDb()).update(code, withUpdateAudit(toUpdateRow(input), await createUpdateAuditStamp()));
     return enrichRow(row);
@@ -100,9 +74,6 @@ export async function updateCurrency(code: string, input: CurrencyUpdateRequestD
 }
 
 export async function patchCurrency(code: string, input: CurrencyPatchRequestDto): Promise<CurrencyResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   try {
     const row = await new CurrencyRepo(getDb()).patch(code, withUpdateAudit(toPatchRow(input), await createUpdateAuditStamp()));
     return enrichRow(row);
@@ -124,11 +95,6 @@ export async function deleteCurrency(code: string): Promise<void> {
 
 
 export async function batchCreateCurrencies(inputs: CurrencyCreateRequestDto[]): Promise<CurrencyResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateCreate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   try {
     return await withTransaction(async (client) => {
       const repo = new CurrencyRepo(client);
@@ -154,11 +120,6 @@ export async function batchGetCurrencies(codes: string[]): Promise<CurrencyRespo
 }
 
 export async function batchUpdateCurrencies(inputs: CurrencyBatchUpdateRequestDto[]): Promise<CurrencyResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateUpdate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   try {
     return await withTransaction(async (client) => {
       const repo = new CurrencyRepo(client);
@@ -179,11 +140,6 @@ export async function batchUpdateCurrencies(inputs: CurrencyBatchUpdateRequestDt
 }
 
 export async function batchPatchCurrencies(inputs: CurrencyBatchPatchRequestDto[]): Promise<CurrencyResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validatePatch(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   try {
     return await withTransaction(async (client) => {
       const repo = new CurrencyRepo(client);

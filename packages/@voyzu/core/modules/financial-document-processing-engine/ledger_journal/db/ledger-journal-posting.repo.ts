@@ -112,7 +112,7 @@ function sourceJournalHeaderRow(row: Record<string, unknown>): SourceJournalHead
 }
 
 export class LedgerJournalPostingRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async getCompanyByCode(code: string): Promise<CompanyPostingContextRow | null> {
     const { rows } = await this.db.query(

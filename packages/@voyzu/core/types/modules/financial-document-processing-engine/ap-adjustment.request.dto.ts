@@ -1,95 +1,102 @@
-import type { BankCashDetailsRequestDto } from "./bank-cash-details.dto";
-import type { ApBillCallerSuppliedTaxComponentDto, ApBillCounterpartyInputDto, ApBillDimensionsDto } from "./ap-bill.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BankCashDetailsRequestDto } from "./bank-cash-details.dto";
+import { ApBillCallerSuppliedTaxComponentDto, ApBillCounterpartyInputDto, ApBillDimensionsDto } from "./ap-bill.request.dto";
+import { BusinessCode, IsoDate, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface ApDocumentReferenceRequestDto {
-  document_id?: string | null;
-}
+export const ApDocumentReferenceRequestDto = StrictObject({
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+});
+export type ApDocumentReferenceRequestDto = Type.Static<typeof ApDocumentReferenceRequestDto>;
 
-export interface ApCreditNoteLineRequestDto {
-  line_id?: number | null;
-  description: string;
-  net_amount?: number | string | null;
-  gross_amount?: number | string | null;
-  tax_rule: string;
-  tax_components?: ApBillCallerSuppliedTaxComponentDto[] | null;
-  tax_recoverable?: boolean | null;
-  purchase_posting_code?: string | null;
-  dimensions?: ApBillDimensionsDto | null;
-}
+export const ApCreditNoteLineRequestDto = StrictObject({
+  line_id: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  description: Type.String(),
+  net_amount: Type.Optional(Type.Union([Type.Number(), Type.String(), Type.Null()])),
+  gross_amount: Type.Optional(Type.Union([Type.Number(), Type.String(), Type.Null()])),
+  tax_rule: Type.String(),
+  tax_components: Type.Optional(Type.Union([Type.Array(ApBillCallerSuppliedTaxComponentDto), Type.Null()])),
+  tax_recoverable: Type.Optional(Type.Union([Type.Boolean(), Type.Null()])),
+  purchase_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  dimensions: Type.Optional(Type.Union([ApBillDimensionsDto, Type.Null()])),
+});
+export type ApCreditNoteLineRequestDto = Type.Static<typeof ApCreditNoteLineRequestDto>;
 
-export interface ApCreditNoteAllocationRequestDto {
-  document_id: string;
-  amount: number | string;
-}
+export const ApCreditNoteAllocationRequestDto = StrictObject({
+  document_id: Type.String(),
+  amount: Type.Union([Type.Number(), Type.String()]),
+});
+export type ApCreditNoteAllocationRequestDto = Type.Static<typeof ApCreditNoteAllocationRequestDto>;
 
-export interface ApCreditNoteRequestDto {
-  document_type?: "AP_CREDIT_NOTE";
-  company_code?: string | null;
-  ap_counterparty_code?: string | null;
-  ap_counterparty?: ApBillCounterpartyInputDto | null;
-  document_id?: string | null;
-  supplier_credit_note_number: string;
-  memo?: string | null;
-  credit_note_date: string;
-  posting_date?: string | null;
-  tax_recoverable?: boolean | null;
-  purchase_posting_code?: string | null;
-  dimensions?: ApBillDimensionsDto | null;
-  lines: ApCreditNoteLineRequestDto[];
-  allocations?: ApCreditNoteAllocationRequestDto[] | null;
-}
+export const ApCreditNoteRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AP_CREDIT_NOTE")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty: Type.Optional(Type.Union([ApBillCounterpartyInputDto, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  supplier_credit_note_number: Type.String(),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  credit_note_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  tax_recoverable: Type.Optional(Type.Union([Type.Boolean(), Type.Null()])),
+  purchase_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  dimensions: Type.Optional(Type.Union([ApBillDimensionsDto, Type.Null()])),
+  lines: Type.Array(ApCreditNoteLineRequestDto),
+  allocations: Type.Optional(Type.Union([Type.Array(ApCreditNoteAllocationRequestDto), Type.Null()])),
+});
+export type ApCreditNoteRequestDto = Type.Static<typeof ApCreditNoteRequestDto>;
 
-export interface ApOpeningBalanceRequestDto {
-  document_type?: "AP_OPENING_BALANCE";
-  company_code?: string | null;
-  ap_counterparty_code?: string | null;
-  ap_counterparty?: ApBillCounterpartyInputDto | null;
-  document_id?: string | null;
-  memo?: string | null;
-  opening_balance_date: string;
-  posting_date?: string | null;
-  opening_balance_equity_posting_code?: string | null;
-  items: Array<{
-    line_id?: number | null;
-    external_reference?: string | null;
-    description: string;
-    gross_amount: number | string;
-  }>;
-  dimensions?: Record<string, string> | null;
-}
+export const ApOpeningBalanceRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AP_OPENING_BALANCE")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty: Type.Optional(Type.Union([ApBillCounterpartyInputDto, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  opening_balance_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  opening_balance_equity_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  items: Type.Array(StrictObject({
+    line_id: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+    external_reference: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+    description: Type.String(),
+    gross_amount: Type.Union([Type.Number(), Type.String()]),
+  })),
+  dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),
+});
+export type ApOpeningBalanceRequestDto = Type.Static<typeof ApOpeningBalanceRequestDto>;
 
-export interface ApRefundRequestDto {
-  document_type?: "AP_REFUND";
-  company_code?: string | null;
-  ap_counterparty_code?: string | null;
-  document_id?: string | null;
-  memo?: string | null;
-  refund_date: string;
-  posting_date?: string | null;
-  refund_amount: number | string;
-  bank_cash_account_code?: string | null;
-  bank_cash_details?: BankCashDetailsRequestDto | null;
-  dimensions?: Record<string, string> | null;
-}
+export const ApRefundRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AP_REFUND")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  refund_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  refund_amount: Type.Union([Type.Number(), Type.String()]),
+  bank_cash_account_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  bank_cash_details: Type.Optional(Type.Union([BankCashDetailsRequestDto, Type.Null()])),
+  dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),
+});
+export type ApRefundRequestDto = Type.Static<typeof ApRefundRequestDto>;
 
-export interface ApWriteOffRequestDto {
-  document_type?: "AP_WRITE_OFF";
-  company_code?: string | null;
-  ap_counterparty_code?: string | null;
-  document_id?: string | null;
-  memo?: string | null;
-  write_off_date: string;
-  posting_date?: string | null;
-  write_off_income_posting_code?: string | null;
-  applications: Array<{
-    target_bill?: ApDocumentReferenceRequestDto | null;
-    amount: number | string;
-  }>;
-  dimensions?: Record<string, string> | null;
-}
+export const ApWriteOffRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AP_WRITE_OFF")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  write_off_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  write_off_income_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  applications: Type.Array(StrictObject({
+    target_bill: Type.Optional(Type.Union([ApDocumentReferenceRequestDto, Type.Null()])),
+    amount: Type.Union([Type.Number(), Type.String()]),
+  })),
+  dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),
+});
+export type ApWriteOffRequestDto = Type.Static<typeof ApWriteOffRequestDto>;
 
-export type ApAdjustmentRequestDto =
-  | ApCreditNoteRequestDto
-  | ApOpeningBalanceRequestDto
-  | ApRefundRequestDto
-  | ApWriteOffRequestDto;
+export const ApAdjustmentRequestDto = Type.Union([ApCreditNoteRequestDto, ApOpeningBalanceRequestDto, ApRefundRequestDto, ApWriteOffRequestDto]);
+export type ApAdjustmentRequestDto = Type.Static<typeof ApAdjustmentRequestDto>;

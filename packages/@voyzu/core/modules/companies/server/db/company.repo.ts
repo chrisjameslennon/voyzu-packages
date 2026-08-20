@@ -127,7 +127,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class CompanyRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   // ── Item operations ──
 

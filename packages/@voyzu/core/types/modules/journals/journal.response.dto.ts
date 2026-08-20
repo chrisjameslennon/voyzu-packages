@@ -1,58 +1,62 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
-import type { JournalLineResponseDto } from "./journal-line.response.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { JournalLineResponseDto } from "./journal-line.response.dto";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export type JournalStatus = "DRAFT" | "POSTED";
+export const JournalStatus = Type.Union([Type.Literal("DRAFT"), Type.Literal("POSTED")]);
+export type JournalStatus = Type.Static<typeof JournalStatus>;
 
-export interface JournalResponseDto {
-  id: number;
-  code: string;
-  arSubledgerEntryCode: string | null;
-  apSubledgerEntryCode: string | null;
-  taxLedgerEntryCode: string | null;
-  companyId: number;
-  companyCode: string;
-  companyName: string;
-  documentTypeCode: string;
-  documentTypeLabel: string;
-  documentId: string;
-  description: string;
-  documentSnapshot: Record<string, unknown>;
-  detailedDocumentSnapshot: Record<string, unknown>;
-  postingEngineCode: string;
-  documentDate: string;
-  postingDate: string;
-  financialYearId: number;
-  financialYearCode: string;
-  financialPeriodId: number;
-  financialPeriodCode: string;
-  baseCurrencyCode: string;
-  numberLines: number;
-  totalDr: number;
-  totalCr: number;
-  memo?: string | null;
-  status: JournalStatus;
-  reversalOfJournalId?: number | null;
-  reversalOfJournalCode?: string | null;
-  reversedByJournalId?: number | null;
-  reversedByJournalCode?: string | null;
-  bankCashDetails?: {
-    id: number | null;
-    code: string | null;
-    type: string | null;
-    glAccountId: number | null;
-    glAccountCode: string | null;
-    glAccountName: string | null;
-    bankName: string | null;
-    bankBranchName: string | null;
-    bankAccountIdentifier: string | null;
-    cashAccountIdentifier: string | null;
-    txId: string | null;
-    txCode: string | null;
-    txRef: string | null;
-    txDetails: string | null;
-    paymentRef: string | null;
-  } | null;
-  lines?: JournalLineResponseDto[];
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const JournalResponseDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  arSubledgerEntryCode: Type.Union([BusinessCode, Type.Null()]),
+  apSubledgerEntryCode: Type.Union([BusinessCode, Type.Null()]),
+  taxLedgerEntryCode: Type.Union([BusinessCode, Type.Null()]),
+  companyId: PositiveId,
+  companyCode: BusinessCode,
+  companyName: NonBlankText,
+  documentTypeCode: BusinessCode,
+  documentTypeLabel: Type.String(),
+  documentId: Type.String(),
+  description: Type.String(),
+  documentSnapshot: Type.Record(Type.String(), Type.Unknown()),
+  detailedDocumentSnapshot: Type.Record(Type.String(), Type.Unknown()),
+  postingEngineCode: BusinessCode,
+  documentDate: IsoDate,
+  postingDate: IsoDate,
+  financialYearId: PositiveId,
+  financialYearCode: BusinessCode,
+  financialPeriodId: PositiveId,
+  financialPeriodCode: BusinessCode,
+  baseCurrencyCode: CurrencyCode,
+  numberLines: Type.Number(),
+  totalDr: Type.Number(),
+  totalCr: Type.Number(),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  status: JournalStatus,
+  reversalOfJournalId: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  reversalOfJournalCode: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  reversedByJournalId: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  reversedByJournalCode: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  bankCashDetails: Type.Optional(Type.Union([StrictObject({
+    id: Type.Union([PositiveId, Type.Null()]),
+    code: Type.Union([BusinessCode, Type.Null()]),
+    type: Type.Union([Type.String(), Type.Null()]),
+    glAccountId: Type.Union([PositiveId, Type.Null()]),
+    glAccountCode: Type.Union([BusinessCode, Type.Null()]),
+    glAccountName: Type.Union([NonBlankText, Type.Null()]),
+    bankName: Type.Union([NonBlankText, Type.Null()]),
+    bankBranchName: Type.Union([NonBlankText, Type.Null()]),
+    bankAccountIdentifier: Type.Union([Type.String(), Type.Null()]),
+    cashAccountIdentifier: Type.Union([Type.String(), Type.Null()]),
+    txId: Type.Union([Type.String(), Type.Null()]),
+    txCode: Type.Union([BusinessCode, Type.Null()]),
+    txRef: Type.Union([Type.String(), Type.Null()]),
+    txDetails: Type.Union([Type.String(), Type.Null()]),
+    paymentRef: Type.Union([Type.String(), Type.Null()]),
+  }), Type.Null()])),
+  lines: Type.Optional(Type.Array(JournalLineResponseDto)),
+  audit: AuditMetadataDto,
+});
+export type JournalResponseDto = Type.Static<typeof JournalResponseDto>;

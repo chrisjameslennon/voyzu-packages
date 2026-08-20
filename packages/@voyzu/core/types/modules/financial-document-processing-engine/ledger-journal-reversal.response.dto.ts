@@ -1,27 +1,32 @@
-import type { BankCashJournalDetailsDto } from "./bank-cash-details.dto";
-import type {
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BankCashJournalDetailsDto } from "./bank-cash-details.dto";
+import {
   LedgerJournalJournalLineDto,
   LedgerJournalPostingDetailsDto,
 } from "./ledger-journal.response.dto";
+import { BusinessCode, CurrencyCode, IsoDate } from "@voyzu/core/types/constraints";
 
-export interface LedgerJournalReversalDetailedDocumentDto {
-  company: {
-    code: string;
-    base_currency_code: string;
-  };
-  document_id: string;
-  document_memo: string | null;
-  bank_cash_details?: BankCashJournalDetailsDto | null;
-  generated_description: string;
-  source_journal_code: string;
-  source_document_id: string;
-  posting_date: string;
-  lines: LedgerJournalJournalLineDto[];
-  total_debit_base_amount: number;
-  total_credit_base_amount: number;
-}
+export const LedgerJournalReversalDetailedDocumentDto = StrictObject({
+  company: StrictObject({
+    code: BusinessCode,
+    base_currency_code: CurrencyCode,
+  }),
+  document_id: Type.String(),
+  document_memo: Type.Union([Type.String(), Type.Null()]),
+  bank_cash_details: Type.Optional(Type.Union([BankCashJournalDetailsDto, Type.Null()])),
+  generated_description: Type.String(),
+  source_journal_code: BusinessCode,
+  source_document_id: Type.String(),
+  posting_date: IsoDate,
+  lines: Type.Array(LedgerJournalJournalLineDto),
+  total_debit_base_amount: Type.Number(),
+  total_credit_base_amount: Type.Number(),
+});
+export type LedgerJournalReversalDetailedDocumentDto = Type.Static<typeof LedgerJournalReversalDetailedDocumentDto>;
 
-export interface LedgerJournalReversalPostingResponseDto {
-  detailed_document: LedgerJournalReversalDetailedDocumentDto;
-  posting_details: LedgerJournalPostingDetailsDto;
-}
+export const LedgerJournalReversalPostingResponseDto = StrictObject({
+  detailed_document: LedgerJournalReversalDetailedDocumentDto,
+  posting_details: LedgerJournalPostingDetailsDto,
+});
+export type LedgerJournalReversalPostingResponseDto = Type.Static<typeof LedgerJournalReversalPostingResponseDto>;

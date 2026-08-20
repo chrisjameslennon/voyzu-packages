@@ -47,11 +47,11 @@ function fieldsFromRow(row: Record<string, unknown>): InventoryLedgerEntriesAudi
 }
 
 export class InventoryLedgerEntriesAuditRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async getEntries(companyId: number, fromDate: string, toDate: string): Promise<InventoryLedgerEntriesAuditEntryDto[]> {
     const { rows } = await this.db.query(
-       `SELECT
+      `SELECT
          l.id,
          e.code AS inventory_ledger_entry_code,
          l.line_number,

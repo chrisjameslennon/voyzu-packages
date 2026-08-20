@@ -62,7 +62,7 @@ function mapSnapshotRow(row: SnapshotRow): TrialBalanceSnapshotLine {
 }
 
 export class TrialBalanceSnapshotRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   reportDate(asAtDate?: string | null): string {
     return normalizeDate(asAtDate);

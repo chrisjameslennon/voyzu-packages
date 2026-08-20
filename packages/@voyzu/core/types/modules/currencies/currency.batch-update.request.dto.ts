@@ -1,6 +1,10 @@
-import type { CurrencyUpdateRequestDto } from "./currency.update.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CurrencyUpdateRequestDto } from "./currency.update.request.dto";
+import { BusinessCode } from "@voyzu/core/types/constraints";
 
-export interface CurrencyBatchUpdateRequestDto extends CurrencyUpdateRequestDto {
-  /** Currency business code identifying the currency to update. */
-  code: string;
-}
+export const CurrencyBatchUpdateRequestDto = StrictObject({
+  ...CurrencyUpdateRequestDto.properties,
+  code: BusinessCode,
+});
+export type CurrencyBatchUpdateRequestDto = Type.Static<typeof CurrencyBatchUpdateRequestDto>;

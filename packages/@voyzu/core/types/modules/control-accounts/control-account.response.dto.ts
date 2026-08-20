@@ -1,32 +1,23 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
-import type { AccountType, GlAccountPointerReference, Status } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { AccountType, GlAccountPointerReference, Status } from "@voyzu/core/types/modules/core";
+import { BusinessCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface ControlAccountResponseDto {
-  /** Business code of the control account. */
-  code: string;
-  /** Ledger this control account belongs to. */
-  ledger: "ACCOUNTS_RECEIVABLE" | "ACCOUNTS_PAYABLE";
-  /** Display name of the control account. */
-  name: string;
-  /** Unique numeric identifier of the linked GL account. */
-  glAccountId: number;
-  /** The GL account linked to this control account. */
-  glAccount: {
-    /** GL account business code. */
-    code: string;
-    /** GL account display name. */
-    name: string;
-    /** The accounting type of the GL account. */
-    accountType: AccountType;
-  } | null;
-  /** Current lifecycle status of the control account. */
-  status: Status;
-  /** True when one or more posted journal headers include a line for this control account's linked GL account. */
-  hasPostings: boolean;
-  /** Company codes with posted journals for this setting. */
-  companiesWithPostings: string[];
-  /** GL account pointers that reference this control account. */
-  linkedBy: GlAccountPointerReference[];
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const ControlAccountResponseDto = StrictObject({
+  code: BusinessCode,
+  ledger: Type.Union([Type.Literal("ACCOUNTS_RECEIVABLE"), Type.Literal("ACCOUNTS_PAYABLE")]),
+  name: NonBlankText,
+  glAccountId: PositiveId,
+  glAccount: Type.Union([StrictObject({
+    code: BusinessCode,
+    name: NonBlankText,
+    accountType: AccountType,
+  }), Type.Null()]),
+  status: Status,
+  hasPostings: Type.Boolean({ description: "True when one or more posted journal headers include a line for this control account's linked GL account." }),
+  companiesWithPostings: Type.Array(Type.String()),
+  linkedBy: Type.Array(GlAccountPointerReference),
+  audit: AuditMetadataDto,
+});
+export type ControlAccountResponseDto = Type.Static<typeof ControlAccountResponseDto>;

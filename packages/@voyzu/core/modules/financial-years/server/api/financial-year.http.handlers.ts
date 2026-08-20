@@ -216,12 +216,9 @@ const PERIOD_EXPORT_COLUMNS = [
 
 export async function handleExportZip(req: NextRequest): Promise<NextResponse> {
   try {
-    const { companyId, yearIds, filename } = await req.json() as Partial<FinancialYearsExportRequestDto>;
-    if (typeof companyId !== "number") return inputValidationError("companyId must be a number");
-    if (!Array.isArray(yearIds)) return inputValidationError("yearIds must be an array");
-    const safeFilename = typeof filename === "string" && filename ? filename : "financial-years";
+    const { companyId, yearIds, filename = "financial-years" } = await parseBody<FinancialYearsExportRequestDto>(req);
 
-    const { years, periods } = await exportFinancialYearsWithPeriods(companyId, yearIds as number[]);
+    const { years, periods } = await exportFinancialYearsWithPeriods(companyId, yearIds);
 
     const [yearsCsv, periodsCsv] = await Promise.all([
       toCsv(YEAR_EXPORT_COLUMNS, years as unknown as Record<string, unknown>[]),
@@ -238,15 +235,15 @@ export async function handleExportZip(req: NextRequest): Promise<NextResponse> {
       archive.on("data", (chunk: Buffer) => chunks.push(chunk));
       archive.on("end", () => resolve(Buffer.concat(chunks)));
       archive.on("error", reject);
-      archive.append(Buffer.from(yearsCsv), { name: `${safeFilename}.csv` });
-      archive.append(Buffer.from(periodsCsv), { name: `${safeFilename}-periods.csv` });
+      archive.append(Buffer.from(yearsCsv), { name: `${filename}.csv` });
+      archive.append(Buffer.from(periodsCsv), { name: `${filename}-periods.csv` });
       void archive.finalize();
     });
 
     return new NextResponse(new Uint8Array(zipBuffer), {
       headers: {
         "Content-Type": "application/zip",
-        "Content-Disposition": `attachment; filename="${safeFilename}.zip"`,
+        "Content-Disposition": `attachment; filename="${filename}.zip"`,
       },
     });
   } catch (err) {

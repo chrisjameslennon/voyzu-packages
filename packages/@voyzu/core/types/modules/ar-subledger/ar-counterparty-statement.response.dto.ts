@@ -1,47 +1,50 @@
-import type { EntryType } from "@voyzu/core/types/modules/core";
-import type { CompanyResponseDto } from "../companies/company.response.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { EntryType } from "@voyzu/core/types/modules/core";
+import { CompanyResponseDto } from "../companies/company.response.dto";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText } from "@voyzu/core/types/constraints";
 
-export interface ArCounterpartyStatementApplicationDto {
-  code: string;
-  postingDate: string;
-  documentTypeCode: string;
-  documentTypeLabel: string;
-  documentId: string;
-  documentRef: string;
-  memo: string | null;
-  description: string;
-  entryType: EntryType;
-  debit: number;
-  credit: number;
-}
+export const ArCounterpartyStatementApplicationDto = StrictObject({
+  code: BusinessCode,
+  postingDate: IsoDate,
+  documentTypeCode: BusinessCode,
+  documentTypeLabel: Type.String(),
+  documentId: Type.String(),
+  documentRef: Type.String(),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  description: Type.String(),
+  entryType: EntryType,
+  debit: Type.Number(),
+  credit: Type.Number(),
+});
+export type ArCounterpartyStatementApplicationDto = Type.Static<typeof ArCounterpartyStatementApplicationDto>;
 
-export interface ArCounterpartyStatementGroupDto {
-  code: string;
-  postingDate: string;
-  documentTypeCode: string;
-  documentTypeLabel: string;
-  documentId: string;
-  documentRef: string;
-  memo: string | null;
-  description: string;
-  entryType: EntryType;
-  debit: number;
-  credit: number;
-  /** Net of the root document amount and all applications. Negative when overpaid. */
-  openBalance: number;
-  applications: ArCounterpartyStatementApplicationDto[];
-}
+export const ArCounterpartyStatementGroupDto = StrictObject({
+  code: BusinessCode,
+  postingDate: IsoDate,
+  documentTypeCode: BusinessCode,
+  documentTypeLabel: Type.String(),
+  documentId: Type.String(),
+  documentRef: Type.String(),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  description: Type.String(),
+  entryType: EntryType,
+  debit: Type.Number(),
+  credit: Type.Number(),
+  openBalance: Type.Number({ description: "Net of the root document amount and all applications. Negative when overpaid." }),
+  applications: Type.Array(ArCounterpartyStatementApplicationDto),
+});
+export type ArCounterpartyStatementGroupDto = Type.Static<typeof ArCounterpartyStatementGroupDto>;
 
-export interface ArCounterpartyStatementResponseDto {
-  company: CompanyResponseDto;
-  counterpartyCode: string;
-  counterpartyName: string;
-  baseCurrencyCode: string;
-  /** ISO date (YYYY-MM-DD) the statement was generated. */
-  asAtDate: string;
-  totalDebit: number;
-  totalCredit: number;
-  /** totalDebit − totalCredit (positive = owed by counterparty). */
-  totalOwing: number;
-  groups: ArCounterpartyStatementGroupDto[];
-}
+export const ArCounterpartyStatementResponseDto = StrictObject({
+  company: CompanyResponseDto,
+  counterpartyCode: BusinessCode,
+  counterpartyName: NonBlankText,
+  baseCurrencyCode: CurrencyCode,
+  asAtDate: IsoDate,
+  totalDebit: Type.Number(),
+  totalCredit: Type.Number(),
+  totalOwing: Type.Number({ description: "totalDebit − totalCredit (positive = owed by counterparty)." }),
+  groups: Type.Array(ArCounterpartyStatementGroupDto),
+});
+export type ArCounterpartyStatementResponseDto = Type.Static<typeof ArCounterpartyStatementResponseDto>;

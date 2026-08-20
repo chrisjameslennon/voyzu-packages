@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import type { ArInvoiceStatementResponseDto, ArSubledgerEntryResponseDto } from "@voyzu/core/types/modules/ar-subledger";
 import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
@@ -149,4 +148,4 @@ async function getArInvoiceStatementUnchecked(company: CompanyResponseDto, docum
   };
 }
 
-export const getArInvoiceStatement = withResponseValidation(getArInvoiceStatementUnchecked, "getArInvoiceStatement");
+export const getArInvoiceStatement = getArInvoiceStatementUnchecked;

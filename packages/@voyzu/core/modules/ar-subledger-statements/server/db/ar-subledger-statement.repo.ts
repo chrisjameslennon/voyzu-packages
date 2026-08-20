@@ -3,7 +3,7 @@ import type { DbExecutor } from "@voyzu/capability/db";
 import type { ArCounterpartyStatementRow, ArCounterpartySummaryRow } from "./ar-subledger-statement.row.types";
 
 export class ArSubledgerStatementRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async listCounterpartySummaries(companyId: number): Promise<ArCounterpartySummaryRow[]> {
     const { rows } = await this.db.query(

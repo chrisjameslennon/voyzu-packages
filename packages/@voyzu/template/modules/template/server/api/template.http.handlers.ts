@@ -46,44 +46,6 @@ import {
 
 type RouteContext = { params: Promise<{ code: string }> };
 
-function requestObject(value: unknown, allowedFields: readonly string[]): Record<string, unknown> {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    throw new InputValidationError("Request body must be a JSON object");
-  }
-  const body = value as Record<string, unknown>;
-  const unsupported = Object.keys(body).filter((field) => !allowedFields.includes(field));
-  if (unsupported.length) throw new InputValidationError(`Unsupported request field${unsupported.length === 1 ? "" : "s"}: ${unsupported.join(", ")}`);
-  return body;
-}
-
-async function parseCreateRequest(request: NextRequest): Promise<TemplateCreateRequestDto> {
-  const body = requestObject(await parseBody<unknown>(request), ["code", "description"]);
-  return {
-    code: body.code as string,
-    description: body.description as string | null,
-  };
-}
-
-async function parsePatchRequest(request: NextRequest): Promise<TemplatePatchRequestDto> {
-  const body = requestObject(await parseBody<unknown>(request), ["description"]);
-  return {
-    ...(Object.hasOwn(body, "description") && { description: body.description as string | null }),
-  };
-}
-
-async function parseUpdateRequest(request: NextRequest): Promise<TemplateUpdateRequestDto> {
-  const body = requestObject(await parseBody<unknown>(request), ["description"]);
-  return { description: body.description as string | null };
-}
-
-async function parseCodesRequest(request: NextRequest): Promise<string[]> {
-  const body = requestObject(await parseBody<unknown>(request), ["codes"]);
-  if (!Array.isArray(body.codes) || body.codes.some((code) => typeof code !== "string")) {
-    throw new InputValidationError("codes must be an array of template code strings");
-  }
-  return body.codes;
-}
-
 function errorResponse(error: unknown) {
   if (error instanceof InputValidationError) return inputValidationError(error.message);
   if (error instanceof BusinessRuleError) return businessRuleError(error.message);
@@ -117,21 +79,21 @@ export async function handleGet(_request: NextRequest, { params }: RouteContext)
 }
 
 export async function handleCreate(request: NextRequest) {
-  try { return created(await createTemplate(await parseCreateRequest(request))); }
+  try { return created(await createTemplate(await parseBody<TemplateCreateRequestDto>(request))); }
   catch (error) { return errorResponse(error); }
 }
 
 export async function handleUpdate(request: NextRequest, { params }: RouteContext) {
   try {
     const { code } = await params;
-    return ok(await updateTemplate(code, await parseUpdateRequest(request)));
+    return ok(await updateTemplate(code, await parseBody<TemplateUpdateRequestDto>(request)));
   } catch (error) { return errorResponse(error); }
 }
 
 export async function handlePatch(request: NextRequest, { params }: RouteContext) {
   try {
     const { code } = await params;
-    return ok(await patchTemplate(code, await parsePatchRequest(request)));
+    return ok(await patchTemplate(code, await parseBody<TemplatePatchRequestDto>(request)));
   } catch (error) { return errorResponse(error); }
 }
 
@@ -159,20 +121,15 @@ export async function handleDeactivate(_request: NextRequest, { params }: RouteC
 
 export async function handleBatchDelete(request: NextRequest) {
   try {
-    await batchDeleteTemplates(await parseCodesRequest(request));
+    const { codes } = await parseBody<CodesRequestDto>(request);
+    await batchDeleteTemplates(codes);
     return noContent();
   } catch (error) { return errorResponse(error); }
 }
 
 export async function handleBatchCreate(request: NextRequest) {
   try {
-    const values = await parseBody<unknown>(request);
-    if (!Array.isArray(values)) throw new InputValidationError("Request body must be an array of templates");
-    const inputs = values.map((value) => {
-      const body = requestObject(value, ["code", "description"]);
-      return { code: body.code as string, description: body.description as string | null };
-    });
-    return created(await batchCreateTemplates(inputs));
+    return created(await batchCreateTemplates(await parseBody<TemplateCreateRequestDto[]>(request)));
   } catch (error) { return errorResponse(error); }
 }
 
@@ -185,39 +142,26 @@ export async function handleBatchGet(request: NextRequest) {
 
 export async function handleBatchUpdate(request: NextRequest) {
   try {
-    const values = await parseBody<unknown>(request);
-    if (!Array.isArray(values)) throw new InputValidationError("Request body must be an array of templates");
-    const inputs: TemplateBatchUpdateRequestDto[] = values.map((value) => {
-      const body = requestObject(value, ["code", "description"]);
-      return { code: body.code as string, description: body.description as string | null };
-    });
-    return ok(await batchUpdateTemplates(inputs));
+    return ok(await batchUpdateTemplates(await parseBody<TemplateBatchUpdateRequestDto[]>(request)));
   } catch (error) { return errorResponse(error); }
 }
 
 export async function handleBatchPatch(request: NextRequest) {
   try {
-    const values = await parseBody<unknown>(request);
-    if (!Array.isArray(values)) throw new InputValidationError("Request body must be an array of templates");
-    const inputs: TemplateBatchPatchRequestDto[] = values.map((value) => {
-      const body = requestObject(value, ["code", "description"]);
-      return {
-        code: body.code as string,
-        ...(Object.hasOwn(body, "description") && { description: body.description as string | null }),
-      };
-    });
-    return ok(await batchPatchTemplates(inputs));
+    return ok(await batchPatchTemplates(await parseBody<TemplateBatchPatchRequestDto[]>(request)));
   } catch (error) { return errorResponse(error); }
 }
 
 export async function handleBatchActivate(request: NextRequest) {
   try {
-    return ok(await activateTemplates(await parseCodesRequest(request)));
+    const { codes } = await parseBody<CodesRequestDto>(request);
+    return ok(await activateTemplates(codes));
   } catch (error) { return errorResponse(error); }
 }
 
 export async function handleBatchDeactivate(request: NextRequest) {
   try {
-    return ok(await deactivateTemplates(await parseCodesRequest(request)));
+    const { codes } = await parseBody<CodesRequestDto>(request);
+    return ok(await deactivateTemplates(codes));
   } catch (error) { return errorResponse(error); }
 }

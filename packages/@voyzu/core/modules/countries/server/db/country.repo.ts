@@ -161,7 +161,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class CountryRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insert(row: InsertCountryRow): Promise<CountryRow> {
     const columns: string[] = [];

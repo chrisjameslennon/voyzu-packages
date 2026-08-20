@@ -1,24 +1,29 @@
-import type { AccountType } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AccountType } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface TrialBalanceLineDto {
-  glAccountId: number;
-  glAccountCode: string;
-  glAccountName: string;
-  accountType: AccountType;
-  debitTotal: number;
-  creditTotal: number;
-}
+export const TrialBalanceLineDto = StrictObject({
+  glAccountId: PositiveId,
+  glAccountCode: BusinessCode,
+  glAccountName: NonBlankText,
+  accountType: AccountType,
+  debitTotal: Type.Number(),
+  creditTotal: Type.Number(),
+});
+export type TrialBalanceLineDto = Type.Static<typeof TrialBalanceLineDto>;
 
-export interface TrialBalanceResponseDto {
-  companyId: number;
-  companyName: string;
-  companyReportLine1: string | null;
-  companyReportLine2: string | null;
-  companyReportFooter: string | null;
-  baseCurrencyCode: string;
-  asAtDate: string | null;
-  lines: TrialBalanceLineDto[];
-  totalDebit: number;
-  totalCredit: number;
-}
+export const TrialBalanceResponseDto = StrictObject({
+  companyId: PositiveId,
+  companyName: NonBlankText,
+  companyReportLine1: Type.Union([Type.String(), Type.Null()]),
+  companyReportLine2: Type.Union([Type.String(), Type.Null()]),
+  companyReportFooter: Type.Union([Type.String(), Type.Null()]),
+  baseCurrencyCode: CurrencyCode,
+  asAtDate: Type.Union([IsoDate, Type.Null()]),
+  lines: Type.Array(TrialBalanceLineDto),
+  totalDebit: Type.Number(),
+  totalCredit: Type.Number(),
+});
+export type TrialBalanceResponseDto = Type.Static<typeof TrialBalanceResponseDto>;
 

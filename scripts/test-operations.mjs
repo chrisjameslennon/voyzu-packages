@@ -1,15 +1,16 @@
 import { spawn } from "node:child_process";
+import { readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
 
 const root = process.cwd();
 const runtimeRoot = resolve(root, ".run");
-const testFiles = [
-  "packages/@voyzu/ice-creams/tests/operations/ice-creams/ice-creams.operations.test.ts",
-  "packages/@voyzu/ice-creams/tests/operations/reports/reports.operations.test.ts",
-  "packages/@voyzu/ugly-package/tests/operations/ugly/ugly.operations.test.ts",
-];
+const testFiles = readdirSync(resolve(root, "packages"), { recursive: true, withFileTypes: true })
+  .filter((entry) => entry.isFile()
+    && entry.name.endsWith(".test.ts")
+    && entry.parentPath.replaceAll("\\", "/").includes("/tests/operations/"))
+  .map((entry) => resolve(entry.parentPath, entry.name));
 
 const args = [
   "--env-file=.env.local",

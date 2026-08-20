@@ -7,11 +7,11 @@ import { createCompany } from "@voyzu/core/companies/server";
 import { ConflictError } from "@voyzu/capability/errors";
 
 const COMPANIES: Record<string, { name: string; suffix: string }> = {
-  NZ: { name: "Acme New Zealand",    suffix: "Ltd" },
-  AU: { name: "Acme Australia",      suffix: "Pty Ltd" },
-  US: { name: "Acme United States",  suffix: "Inc" },
+  NZ: { name: "Acme New Zealand", suffix: "Ltd" },
+  AU: { name: "Acme Australia", suffix: "Pty Ltd" },
+  US: { name: "Acme United States", suffix: "Inc" },
   GB: { name: "Acme United Kingdom", suffix: "Ltd" },
-  CA: { name: "Acme Canada",         suffix: "Inc" },
+  CA: { name: "Acme Canada", suffix: "Inc" },
 };
 
 async function main() {

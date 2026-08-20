@@ -1,27 +1,16 @@
-import type { Filter } from "@voyzu/types/params";
-import type { ListOptions } from "@voyzu/types/params";
-import type { GlAccountCreateRequestDto } from "@voyzu/core/types/modules/gl-accounts";
-import type { GlAccountUpdateRequestDto } from "@voyzu/core/types/modules/gl-accounts";
-import type { GlAccountPatchRequestDto } from "@voyzu/core/types/modules/gl-accounts";
-import type { GlAccountBatchPatchRequestDto, GlAccountBatchUpdateRequestDto } from "@voyzu/core/types/modules/gl-accounts";
-import type { GlAccountResponseDto } from "@voyzu/core/types/modules/gl-accounts";
-import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError , DataError } from "@voyzu/capability/errors";
-import { getDb, withTransaction } from "@voyzu/capability/db";
 import { UserRepo } from "@voyzu/auth/users/server";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
+import type { GlAccountBatchPatchRequestDto, GlAccountBatchUpdateRequestDto, GlAccountCreateRequestDto, GlAccountPatchRequestDto, GlAccountResponseDto, GlAccountUpdateRequestDto } from "@voyzu/core/types/modules/gl-accounts";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withCreationAudit, withUpdateAudit } from "../../../server";
 
-import { GlAccountRepo } from "../db/gl-account.repo";
-import type { GlAccountRow } from "../db/gl-account.row.types";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
 import { ChangeCode, Deactivate, Delete } from "../../domain/operation-policy";
+import { GlAccountRepo } from "../db/gl-account.repo";
+import type { GlAccountRow } from "../db/gl-account.row.types";
 
-import { toDto, toInsertRow, toUpdateRow, toPatchRow } from "./gl-account.mapper";
-import { validateCreate, validateUpdate, validatePatch, validateResponse } from "./gl-account.validator";
-import { checkResponse } from "@voyzu/capability/validation";
-
-function checkedResponse(dto: GlAccountResponseDto): GlAccountResponseDto {
-  return checkResponse(dto, validateResponse(dto), `GL account (id=${dto.id})`);
-}
+import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./gl-account.mapper";
 
 async function getAuditActor(
   repo: UserRepo,
@@ -33,10 +22,10 @@ async function getAuditActor(
   const row = await repo.getById(parsed);
   return row
     ? {
-        id: row.id,
-        code: row.code,
-        displayName: row.display_name,
-      }
+      id: row.id,
+      code: row.code,
+      displayName: row.display_name,
+    }
     : null;
 }
 
@@ -47,7 +36,7 @@ async function enrichRow(row: GlAccountRow): Promise<GlAccountResponseDto> {
     getAuditActor(userRepo, row.updated_user_id),
   ]);
   const dto = toDto(row);
-  return checkedResponse({
+  return {
     ...dto,
     audit: {
       created: {
@@ -59,7 +48,7 @@ async function enrichRow(row: GlAccountRow): Promise<GlAccountResponseDto> {
         user: updatedUser,
       },
     },
-  });
+  };
 }
 
 async function enrichRows(rows: GlAccountRow[]): Promise<GlAccountResponseDto[]> {
@@ -89,8 +78,6 @@ async function assertDeleteAllowed(repo: GlAccountRepo, companyId: number, code:
 
 
 export async function createGlAccount(input: GlAccountCreateRequestDto, companyId?: number): Promise<GlAccountResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -114,8 +101,6 @@ export async function getGlAccount(code: string, companyId?: number): Promise<Gl
 }
 
 export async function updateGlAccount(code: string, input: GlAccountUpdateRequestDto, companyId?: number): Promise<GlAccountResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -139,8 +124,6 @@ export async function updateGlAccount(code: string, input: GlAccountUpdateReques
 }
 
 export async function patchGlAccount(code: string, input: GlAccountPatchRequestDto, companyId?: number): Promise<GlAccountResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -191,10 +174,6 @@ export async function searchGlAccounts(
   return await enrichRows(rows);
 }
 export async function batchCreateGlAccounts(inputs: GlAccountCreateRequestDto[], companyId?: number): Promise<GlAccountResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateCreate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   await assertWritableScope(companyId);
 
   const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -223,10 +202,6 @@ export async function batchGetGlAccounts(codes: string[], companyId?: number): P
 }
 
 export async function batchUpdateGlAccounts(inputs: GlAccountBatchUpdateRequestDto[], companyId?: number): Promise<GlAccountResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateUpdate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   await assertWritableScope(companyId);
 
   const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -253,10 +228,6 @@ export async function batchUpdateGlAccounts(inputs: GlAccountBatchUpdateRequestD
 }
 
 export async function batchPatchGlAccounts(inputs: GlAccountBatchPatchRequestDto[], companyId?: number): Promise<GlAccountResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validatePatch(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   await assertWritableScope(companyId);
 
   const resolvedCompanyId = await scopedCompanyId(companyId);
@@ -346,5 +317,4 @@ async function transitionGlAccountStatus(
     return results;
   });
 }
-
 

@@ -58,7 +58,7 @@ function fieldsFromRow(row: Record<string, unknown>, fields: Array<{ key: string
 }
 
 export class JournalEntriesRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async getLines(companyId: number, fromDate: string, toDate: string): Promise<JournalEntriesLineDto[]> {
     const { rows } = await this.db.query(

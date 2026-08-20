@@ -1,20 +1,27 @@
-export interface BankCashDetailsRequestDto {
-  code: string;
-  tx_id?: string | null;
-  tx_code?: string | null;
-  tx_ref?: string | null;
-  tx_details?: string | null;
-  payment_ref?: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface BankCashJournalDetailsDto extends BankCashDetailsRequestDto {
-  id: number;
-  type: "BANK" | "CASH" | "OTHER";
-  gl_account_id: number;
-  gl_account_code: string;
-  gl_account_name: string;
-  bank_name?: string | null;
-  bank_branch_name?: string | null;
-  bank_account_identifier?: string | null;
-  cash_account_identifier?: string | null;
-}
+export const BankCashDetailsRequestDto = StrictObject({
+  code: BusinessCode,
+  tx_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  tx_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  tx_ref: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  tx_details: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  payment_ref: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+});
+export type BankCashDetailsRequestDto = Type.Static<typeof BankCashDetailsRequestDto>;
+
+export const BankCashJournalDetailsDto = StrictObject({
+  ...BankCashDetailsRequestDto.properties,
+  id: PositiveId,
+  type: Type.Union([Type.Literal("BANK"), Type.Literal("CASH"), Type.Literal("OTHER")]),
+  gl_account_id: PositiveId,
+  gl_account_code: BusinessCode,
+  gl_account_name: NonBlankText,
+  bank_name: Type.Optional(Type.Union([NonBlankText, Type.Null()])),
+  bank_branch_name: Type.Optional(Type.Union([NonBlankText, Type.Null()])),
+  bank_account_identifier: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  cash_account_identifier: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+});
+export type BankCashJournalDetailsDto = Type.Static<typeof BankCashJournalDetailsDto>;

@@ -1,17 +1,19 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
-import type { AccountType, OperationReference, Status } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { AccountType, OperationReference, Status } from "@voyzu/core/types/modules/core";
+import { BusinessCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface GlAccountCategoryResponseDto {
-  id: number;
-  code: string;
-  name: string;
-  accountType: AccountType;
-  sequence: number;
-  status: Status;
-  hasPostings: boolean;
-  companiesWithPostings: string[];
-  /** GL accounts that use this reporting category. */
-  linkedBy: OperationReference[];
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const GlAccountCategoryResponseDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  name: NonBlankText,
+  accountType: AccountType,
+  sequence: Type.Number(),
+  status: Status,
+  hasPostings: Type.Boolean(),
+  companiesWithPostings: Type.Array(Type.String()),
+  linkedBy: Type.Array(OperationReference),
+  audit: AuditMetadataDto,
+});
+export type GlAccountCategoryResponseDto = Type.Static<typeof GlAccountCategoryResponseDto>;

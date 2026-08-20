@@ -1,9 +1,6 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { DrCr, EntryType } from "@voyzu/core/types/modules/core";
-import type { ArCreditNoteRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
-import type { ArOpeningBalanceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-opening-balance.request.dto";
-import type { ArRefundRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-refund.request.dto";
-import type { ArWriteOffRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-write-off.request.dto";
 import type {
   ArAdjustmentArSubledgerDetailDto,
   ArAdjustmentDetailedDocumentDto,
@@ -13,15 +10,17 @@ import type {
   ArAdjustmentTaxLedgerDetailDto,
   ArCreditNoteDetailedLineDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
+import type { ArCreditNoteRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
 import type { ArInvoiceDetailedTaxComponentDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
+import type { ArOpeningBalanceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-opening-balance.request.dto";
+import type { ArRefundRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-refund.request.dto";
+import type { ArWriteOffRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-write-off.request.dto";
 import type { BankCashJournalDetailsDto } from "@voyzu/core/types/modules/financial-document-processing-engine/bank-cash-details.dto";
-import { getDb, withTransaction } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 
-import { JournalRepo } from "../../../../journals/server/db/journal.repo";
-import type { JournalHeaderRow, JournalLineRow } from "../../../../journals/server/db/journal.row.types";
 import { resolveBankCashDetails, toJournalBankCashFields } from "../../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
 import { resolveEffectiveSettingsCompanyId } from "../../../../common/server/settings-scope";
+import { JournalRepo } from "../../../../journals/server/db/journal.repo";
+import type { JournalHeaderRow, JournalLineRow } from "../../../../journals/server/db/journal.row.types";
 import { ArAdjustmentPostingRepo } from "../db/ar-adjustment-posting.repo";
 import type {
   AccountRow,
@@ -272,7 +271,7 @@ function taxComponentsForLine(
       tax_authority_id: component.tax_authority_id,
       tax_authority_code: component.tax_authority_code,
       tax_authority_name: component.tax_authority_name,
-        scheme_code: component.scheme_code ?? undefined,
+      scheme_code: component.scheme_code ?? undefined,
       invoice_label: component.invoice_label,
       report_label: component.report_label,
       tax_rate: component.rate,
@@ -1195,4 +1194,4 @@ async function processArAdjustmentUnchecked(
   });
 }
 
-export const processArAdjustment = withResponseValidation(processArAdjustmentUnchecked, "processArAdjustment");
+export const processArAdjustment = processArAdjustmentUnchecked;

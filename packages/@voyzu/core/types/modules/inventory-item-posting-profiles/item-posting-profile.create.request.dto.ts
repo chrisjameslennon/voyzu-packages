@@ -1,14 +1,21 @@
-export interface ItemPostingProfileCreateRequestDto {
-  profile_code: string;
-  profile_name: string;
-  description: string;
-  is_sold: boolean;
-  is_purchased: boolean;
-  is_consumed: boolean;
-  revenue_code: string | null;
-  cogs_code: string | null;
-  purchase_expense_code: string | null;
-  consumption_code: string | null;
-  adjustment_gain_code: string | null;
-  adjustment_loss_code: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { NonBlankText, NormalizableBusinessCode } from "@voyzu/core/types/constraints";
+
+const NullablePostingCode = Type.Union([NormalizableBusinessCode, Type.Literal(""), Type.Null()]);
+
+export const ItemPostingProfileCreateRequestDto = StrictObject({
+  profile_code: NormalizableBusinessCode,
+  profile_name: NonBlankText,
+  description: NonBlankText,
+  is_sold: Type.Boolean(),
+  is_purchased: Type.Boolean(),
+  is_consumed: Type.Boolean(),
+  revenue_code: NullablePostingCode,
+  cogs_code: NullablePostingCode,
+  purchase_expense_code: NullablePostingCode,
+  consumption_code: NullablePostingCode,
+  adjustment_gain_code: NullablePostingCode,
+  adjustment_loss_code: NullablePostingCode,
+});
+export type ItemPostingProfileCreateRequestDto = Type.Static<typeof ItemPostingProfileCreateRequestDto>;

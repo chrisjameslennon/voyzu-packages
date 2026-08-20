@@ -13,6 +13,7 @@ import type { FinancialDocumentDefaultResponseDto } from "@voyzu/core/types/modu
 import type { FinancialDocumentDefaultCreateRequestDto } from "@voyzu/core/types/modules/financial-document-defaults";
 import type { FinancialDocumentDefaultUpdateRequestDto } from "@voyzu/core/types/modules/financial-document-defaults";
 import type { FinancialDocumentDefaultPatchRequestDto } from "@voyzu/core/types/modules/financial-document-defaults";
+import type { FinancialDocumentDefaultBatchPatchRequestDto, FinancialDocumentDefaultBatchUpdateRequestDto } from "@voyzu/core/types/modules/financial-document-defaults";
 
 import { businessRuleError, conflictError, notFoundError, serverError, inputValidationError } from "@voyzu/capability/http";
 import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
@@ -202,7 +203,6 @@ export async function handleBatchCreate(
 ): Promise<NextResponse<FinancialDocumentDefaultResponseDto[] | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | ConflictErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const body = await parseBody<FinancialDocumentDefaultCreateRequestDto[]>(req);
-    if (!Array.isArray(body)) return inputValidationError("Request body must be an array");
     const out = await batchCreateFinancialDocumentDefaults(body);
     return created(out satisfies FinancialDocumentDefaultResponseDto[]);
   } catch (err) {
@@ -234,8 +234,7 @@ export async function handleBatchUpdate(
   req: NextRequest,
 ): Promise<NextResponse<FinancialDocumentDefaultResponseDto[] | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | ConflictErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
-    const body = await parseBody<Array<FinancialDocumentDefaultUpdateRequestDto & { documentCode: string; code: string }>>(req);
-    if (!Array.isArray(body)) return inputValidationError("Request body must be an array");
+    const body = await parseBody<FinancialDocumentDefaultBatchUpdateRequestDto[]>(req);
     const out = await batchUpdateFinancialDocumentDefaults(body);
     return ok(out satisfies FinancialDocumentDefaultResponseDto[]);
   } catch (err) {
@@ -252,11 +251,7 @@ export async function handleBatchPatch(
   req: NextRequest,
 ): Promise<NextResponse<FinancialDocumentDefaultResponseDto[] | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | ConflictErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
-    const body = await parseBody<Array<FinancialDocumentDefaultPatchRequestDto & { documentCode: string; code: string }>>(req);
-    if (!Array.isArray(body)) return inputValidationError("Request body must be an array");
-    for (const item of body) {
-      if (!item.documentCode || !item.code) return inputValidationError("Each item must include documentCode and code");
-    }
+    const body = await parseBody<FinancialDocumentDefaultBatchPatchRequestDto[]>(req);
     const out = await batchPatchFinancialDocumentDefaults(body);
     return ok(out satisfies FinancialDocumentDefaultResponseDto[]);
   } catch (err) {

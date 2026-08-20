@@ -122,7 +122,7 @@ const JOIN_SQL = `
   LEFT JOIN gl_account bank_ga ON bank_ga.company_id = p.company_id AND bank_ga.id = bca.gl_account_id`;
 
 export class FinancialDocumentDefaultRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insert(row: InsertFinancialDocumentDefaultRow): Promise<FinancialDocumentDefaultRow> {
     const cols: string[] = [];

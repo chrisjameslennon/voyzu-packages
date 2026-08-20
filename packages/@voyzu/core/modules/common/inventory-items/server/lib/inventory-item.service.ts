@@ -1,26 +1,18 @@
-import type { InventoryItemCreateRequestDto } from "@voyzu/core/types/modules/inventory-items";
-import type { InventoryItemBatchPatchRequestDto, InventoryItemBatchUpdateRequestDto } from "@voyzu/core/types/modules/inventory-items";
-import type { InventoryItemPatchRequestDto } from "@voyzu/core/types/modules/inventory-items";
-import type { InventoryItemResponseDto } from "@voyzu/core/types/modules/inventory-items";
-import type { InventoryItemUpdateRequestDto } from "@voyzu/core/types/modules/inventory-items";
-import { getDb } from "@voyzu/capability/db";
-import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/errors";
-import { checkResponse } from "@voyzu/capability/validation";
-import { ChangeCode, Deactivate, Delete } from "@voyzu/core/common/inventory-items/domain/operation-policy";
-import type { Filter, ListOptions } from "@voyzu/types/params";
-import { withAuditActors } from "@voyzu/audit/stamps";
 import {
   createCreationAuditStamp,
-  createUpdateAuditStamp,
-  withCreationAudit,
-  withUpdateAudit,
+  createUpdateAuditStamp, withAuditActors, withCreationAudit,
+  withUpdateAudit
 } from "@voyzu/audit/stamps";
+import { getDb } from "@voyzu/capability/db";
+import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/errors";
+import { ChangeCode, Deactivate, Delete } from "@voyzu/core/common/inventory-items/domain/operation-policy";
+import type { InventoryItemBatchPatchRequestDto, InventoryItemBatchUpdateRequestDto, InventoryItemCreateRequestDto, InventoryItemPatchRequestDto, InventoryItemResponseDto, InventoryItemUpdateRequestDto } from "@voyzu/core/types/modules/inventory-items";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 import { resolveTemplateSettingsScope } from "../../../server/settings-scope";
 
 import { InventoryItemRepo } from "../db/inventory-item.repo";
 import type { InventoryItemRow } from "../db/inventory-item.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./inventory-item.mapper";
-import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./inventory-item.validator";
 
 function repo() {
   return new InventoryItemRepo(getDb());
@@ -28,7 +20,7 @@ function repo() {
 
 async function enrichRow(row: InventoryItemRow): Promise<InventoryItemResponseDto> {
   const dto = await withAuditActors(toDto(row), row);
-  return checkResponse(dto, validateResponse(dto), `inventory item (id=${dto.id})`);
+  return dto;
 }
 
 function enrichRows(rows: InventoryItemRow[]): Promise<InventoryItemResponseDto[]> {
@@ -66,13 +58,11 @@ export async function getInventoryItem(code: string, companyId?: number): Promis
 }
 
 export async function createInventoryItem(input: InventoryItemCreateRequestDto, companyId?: number): Promise<InventoryItemResponseDto> {
-  validateCreate(input);
   const resolvedCompanyId = await scopedCompanyId(companyId);
   return enrichRow(await repo().insert(withCreationAudit(toInsertRow(input, resolvedCompanyId), await createCreationAuditStamp())));
 }
 
 export async function updateInventoryItem(code: string, input: InventoryItemUpdateRequestDto, companyId?: number): Promise<InventoryItemResponseDto> {
-  validateUpdate(input);
   try {
     return enrichRow(await repo().update(await scopedCompanyId(companyId), code, toUpdateRow(input), await createUpdateAuditStamp()));
   } catch (err) {
@@ -81,7 +71,6 @@ export async function updateInventoryItem(code: string, input: InventoryItemUpda
 }
 
 export async function patchInventoryItem(code: string, input: InventoryItemPatchRequestDto, companyId?: number): Promise<InventoryItemResponseDto> {
-  validatePatch(input);
   try {
     const resolvedCompanyId = await scopedCompanyId(companyId);
     const inventoryItemRepo = repo();

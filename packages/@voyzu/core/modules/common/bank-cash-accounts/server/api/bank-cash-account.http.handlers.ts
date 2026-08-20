@@ -154,8 +154,7 @@ export async function handleDeactivate(req: NextRequest, { params }: { params: P
 
 async function parseCodes(req: NextRequest): Promise<string[]> {
   const { codes } = await parseBody<CodesRequestDto>(req);
-  if (!Array.isArray(codes)) throw new InputValidationError("'codes' must be an array");
-  return codes.map(String);
+  return codes;
 }
 
 export async function handleBatchGet(req: NextRequest): Promise<NextResponse<BankCashAccountResponseDto[] | InputValidationErrorResponseDto | InternalServerErrorResponseDto>> {

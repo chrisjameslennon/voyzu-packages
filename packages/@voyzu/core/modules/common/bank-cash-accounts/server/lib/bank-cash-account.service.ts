@@ -1,16 +1,3 @@
-import type {
-  BankCashAccountCreateRequestDto,
-  BankCashAccountBatchPatchRequestDto,
-  BankCashAccountBatchUpdateRequestDto,
-  BankCashAccountPatchRequestDto,
-  BankCashAccountResponseDto,
-  BankCashAccountType,
-  BankCashAccountUpdateRequestDto,
-} from "@voyzu/core/types/modules/bank-cash-accounts";
-import type { Filter, ListOptions } from "@voyzu/types/params";
-import { BusinessRuleError, ConflictError, DataError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
-import { getDb, withTransaction } from "@voyzu/capability/db";
-import { checkResponse } from "@voyzu/capability/validation";
 import {
   createCreationAuditStamp,
   createUpdateAuditStamp,
@@ -18,15 +5,26 @@ import {
   withCreationAudit,
   withUpdateAudit,
 } from "@voyzu/audit/stamps";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
+import type {
+  BankCashAccountBatchPatchRequestDto,
+  BankCashAccountBatchUpdateRequestDto,
+  BankCashAccountCreateRequestDto,
+  BankCashAccountPatchRequestDto,
+  BankCashAccountResponseDto,
+  BankCashAccountType,
+  BankCashAccountUpdateRequestDto,
+} from "@voyzu/core/types/modules/bank-cash-accounts";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
-import { BankCashAccountRepo } from "../db/bank-cash-account.repo";
 import { AssignGLAccount, ChangeCode, ChangeType, Deactivate, Delete, UpdateGLAccount } from "../../domain/operation-policy";
+import { BankCashAccountRepo } from "../db/bank-cash-account.repo";
 import { toDto, toInsertRow, toPatchRow, updateToPatch } from "./bank-cash-account.mapper";
-import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./bank-cash-account.validator";
 
 async function enrichRow(row: Parameters<typeof toDto>[0]): Promise<BankCashAccountResponseDto> {
   const dto = await withAuditActors(toDto(row), row);
-  return checkResponse(dto, validateResponse(dto), `bank/cash account (id=${dto.id})`);
+  return dto;
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
@@ -74,8 +72,6 @@ export async function getBankCashAccount(code: string, companyId?: number): Prom
 }
 
 export async function createBankCashAccount(input: BankCashAccountCreateRequestDto, companyId?: number): Promise<BankCashAccountResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
   const resolvedCompanyId = await scopedCompanyId(companyId);
   try {
@@ -92,8 +88,6 @@ export async function createBankCashAccount(input: BankCashAccountCreateRequestD
 }
 
 export async function patchBankCashAccount(code: string, input: BankCashAccountPatchRequestDto, companyId?: number): Promise<BankCashAccountResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
   const resolvedCompanyId = await scopedCompanyId(companyId);
   try {
@@ -142,8 +136,6 @@ export async function patchBankCashAccount(code: string, input: BankCashAccountP
 }
 
 export async function updateBankCashAccount(code: string, input: BankCashAccountUpdateRequestDto, companyId?: number): Promise<BankCashAccountResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   return patchBankCashAccount(code, updateToPatch(input), companyId);
 }
 

@@ -198,7 +198,7 @@ function dimensionValueRow(row: Record<string, unknown>): DimensionValueLookupRo
 }
 
 export class ApBillPostingRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async reserveJournalHeaderId(): Promise<number> {
     const { rows } = await this.db.query(

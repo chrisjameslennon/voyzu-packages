@@ -124,7 +124,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class ControlAccountRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async get(companyId: number, code: string): Promise<ControlAccountRow | null> {
     const { rows } = await this.db.query(

@@ -152,8 +152,7 @@ export async function handleDeactivate(req: NextRequest, { params }: { params: P
 
 async function parseCodes(req: NextRequest): Promise<string[]> {
   const body = await parseBody<CodesRequestDto>(req);
-  if (!Array.isArray(body.codes)) throw new InputValidationError("codes must be an array");
-  return body.codes.map(String);
+  return body.codes;
 }
 
 export async function handleBatchGet(req: NextRequest): Promise<NextResponse<InventoryItemResponseDto[] | InputValidationErrorResponseDto | InternalServerErrorResponseDto>> {

@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { TaxPositionResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -45,4 +44,4 @@ async function getTaxPositionUnchecked(companyId: number, asAtDate: string): Pro
   };
 }
 
-export const getTaxPosition = withResponseValidation(getTaxPositionUnchecked, "getTaxPosition");
+export const getTaxPosition = getTaxPositionUnchecked;

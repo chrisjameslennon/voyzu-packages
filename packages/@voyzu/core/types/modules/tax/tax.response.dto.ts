@@ -1,60 +1,74 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
-import type { Status } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { Status } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CountryCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export type TaxFamilyCode = "INDIRECT_TAX";
-export type TaxRuleCalculationMethod = "NO_TAX" | "CONFIGURED_COMPONENTS";
-export type TaxComponentMode = "NONE" | "CONFIGURED";
-export type TaxBaseAmountType = "LINE_NET_AMOUNT";
+export const TaxFamilyCode = Type.Literal("INDIRECT_TAX");
+export type TaxFamilyCode = Type.Static<typeof TaxFamilyCode>;
+export const TaxRuleCalculationMethod = Type.Union([Type.Literal("NO_TAX"), Type.Literal("CONFIGURED_COMPONENTS")]);
+export type TaxRuleCalculationMethod = Type.Static<typeof TaxRuleCalculationMethod>;
+export const TaxComponentMode = Type.Union([Type.Literal("NONE"), Type.Literal("CONFIGURED")]);
+export type TaxComponentMode = Type.Static<typeof TaxComponentMode>;
+export const TaxBaseAmountType = Type.Literal("LINE_NET_AMOUNT");
+export type TaxBaseAmountType = Type.Static<typeof TaxBaseAmountType>;
 
-interface AuditDto {
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+const AuditDto = StrictObject({
+  audit: AuditMetadataDto,
+});
+type AuditDto = Type.Static<typeof AuditDto>;
 
-export interface TaxAuthorityResponseDto extends AuditDto {
-  id: number;
-  code: string;
-  name: string;
-  countryCode: string;
-  regionCode: string | null;
-  jurisdictionLevel: string;
-  taxFamilyCode: TaxFamilyCode;
-  description: string | null;
-  status: Status;
-}
+export const TaxAuthorityResponseDto = StrictObject({
+  ...AuditDto.properties,
+  id: PositiveId,
+  code: BusinessCode,
+  name: NonBlankText,
+  countryCode: CountryCode,
+  regionCode: Type.Union([BusinessCode, Type.Null()]),
+  jurisdictionLevel: Type.String(),
+  taxFamilyCode: TaxFamilyCode,
+  description: Type.Union([Type.String(), Type.Null()]),
+  status: Status,
+});
+export type TaxAuthorityResponseDto = Type.Static<typeof TaxAuthorityResponseDto>;
 
-export interface TaxRuleResponseDto extends AuditDto {
-  id: number;
-  code: string;
-  countryCode: string;
-  regionCode: string | null;
-  name: string;
-  invoiceLabel: string;
-  reportLabel: string;
-  calculationMethod: TaxRuleCalculationMethod;
-  componentMode: TaxComponentMode;
-  componentCount: number;
-  description: string | null;
-  status: Status;
-}
+export const TaxRuleResponseDto = StrictObject({
+  ...AuditDto.properties,
+  id: PositiveId,
+  code: BusinessCode,
+  countryCode: CountryCode,
+  regionCode: Type.Union([BusinessCode, Type.Null()]),
+  name: NonBlankText,
+  invoiceLabel: Type.String(),
+  reportLabel: Type.String(),
+  calculationMethod: TaxRuleCalculationMethod,
+  componentMode: TaxComponentMode,
+  componentCount: Type.Number(),
+  description: Type.Union([Type.String(), Type.Null()]),
+  status: Status,
+});
+export type TaxRuleResponseDto = Type.Static<typeof TaxRuleResponseDto>;
 
-export interface TaxComponentResponseDto extends AuditDto {
-  id: number;
-  code: string;
-  taxRuleCode: string;
-  taxAuthorityCode: string;
-  schemeCode: string;
-  invoiceLabel: string;
-  reportLabel: string;
-  rate: number;
-  baseAmountType: TaxBaseAmountType;
-  calculationOrder: number;
-  description: string | null;
-  status: Status;
-}
+export const TaxComponentResponseDto = StrictObject({
+  ...AuditDto.properties,
+  id: PositiveId,
+  code: BusinessCode,
+  taxRuleCode: BusinessCode,
+  taxAuthorityCode: BusinessCode,
+  schemeCode: BusinessCode,
+  invoiceLabel: Type.String(),
+  reportLabel: Type.String(),
+  rate: Type.Number(),
+  baseAmountType: TaxBaseAmountType,
+  calculationOrder: Type.Number(),
+  description: Type.Union([Type.String(), Type.Null()]),
+  status: Status,
+});
+export type TaxComponentResponseDto = Type.Static<typeof TaxComponentResponseDto>;
 
-export interface CountryTaxConfigurationResponseDto {
-  taxAuthorities: TaxAuthorityResponseDto[];
-  taxRules: TaxRuleResponseDto[];
-  taxComponents: TaxComponentResponseDto[];
-}
+export const CountryTaxConfigurationResponseDto = StrictObject({
+  taxAuthorities: Type.Array(TaxAuthorityResponseDto),
+  taxRules: Type.Array(TaxRuleResponseDto),
+  taxComponents: Type.Array(TaxComponentResponseDto),
+});
+export type CountryTaxConfigurationResponseDto = Type.Static<typeof CountryTaxConfigurationResponseDto>;

@@ -1,5 +1,10 @@
-import type { BankCashAccountPatchRequestDto } from "./bank-cash-account.patch.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BankCashAccountPatchRequestDto } from "./bank-cash-account.patch.request.dto";
+import { BusinessCode40, TrimmedText100, TrimmedText50 } from "@voyzu/core/types/constraints";
 
-export interface BankCashAccountBatchPatchRequestDto extends BankCashAccountPatchRequestDto {
-  code: string;
-}
+export const BankCashAccountBatchPatchRequestDto = StrictObject({
+  ...BankCashAccountPatchRequestDto.properties,
+  code: BusinessCode40,
+});
+export type BankCashAccountBatchPatchRequestDto = Type.Static<typeof BankCashAccountBatchPatchRequestDto>;

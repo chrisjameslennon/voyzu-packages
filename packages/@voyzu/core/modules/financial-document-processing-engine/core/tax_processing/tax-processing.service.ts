@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { DrCr, EntryType } from "@voyzu/core/types/modules/core";
 import type { BankCashJournalDetailsDto } from "@voyzu/core/types/modules/financial-document-processing-engine/bank-cash-details.dto";
 import type {
@@ -583,4 +582,4 @@ async function processTaxDocumentUnchecked(documentType: TaxProcessingDocumentTy
   return withTransaction(async (client) => persist(client, ctx));
 }
 
-export const processTaxDocument = withResponseValidation(processTaxDocumentUnchecked, "processTaxDocument");
+export const processTaxDocument = processTaxDocumentUnchecked;

@@ -129,7 +129,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class GlAccountRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   private async withLinkedBy(rows: GlAccountRow[]): Promise<GlAccountRow[]> {
     if (rows.length === 0) return rows;

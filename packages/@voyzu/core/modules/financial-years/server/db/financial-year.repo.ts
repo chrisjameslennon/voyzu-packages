@@ -37,7 +37,7 @@ function assertColumn(field: string): void {
 }
 
 export class FinancialYearRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insert(row: InsertFinancialYearRow): Promise<FinancialYearRow> {
     const { rows } = await this.db.query(

@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import type {
   ArCounterpartyStatementApplicationDto,
@@ -116,5 +115,5 @@ async function getArCounterpartyStatementUnchecked(
   };
 }
 
-export const listArCounterpartySummaries = withResponseValidation(listArCounterpartySummariesUnchecked, "listArCounterpartySummaries");
-export const getArCounterpartyStatement = withResponseValidation(getArCounterpartyStatementUnchecked, "getArCounterpartyStatement");
+export const listArCounterpartySummaries = listArCounterpartySummariesUnchecked;
+export const getArCounterpartyStatement = getArCounterpartyStatementUnchecked;

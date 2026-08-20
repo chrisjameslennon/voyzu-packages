@@ -1,10 +1,17 @@
-export interface ApBillCancellationRequestDto {
-  document_type?: "AP_BILL_CANCELLATION";
-  company_code?: string | null;
-  ap_counterparty_code?: string | null;
-  document_id?: string | null;
-  memo?: string | null;
-  source_bill?: { document_id?: string | null } | null;
-  cancellation_date: string;
-  posting_date?: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, IsoDate } from "@voyzu/core/types/constraints";
+
+export const ApBillCancellationRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AP_BILL_CANCELLATION")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  source_bill: Type.Optional(Type.Union([StrictObject({
+    document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  }), Type.Null()])),
+  cancellation_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+});
+export type ApBillCancellationRequestDto = Type.Static<typeof ApBillCancellationRequestDto>;

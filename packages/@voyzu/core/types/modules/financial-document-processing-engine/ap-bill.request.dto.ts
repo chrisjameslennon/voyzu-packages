@@ -1,46 +1,56 @@
-export interface ApBillCounterpartyInputDto {
-  code?: string | null;
-  name: string;
-  status: "ACTIVE" | "INACTIVE";
-  country_code: string;
-  state_or_province_code?: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, CountryCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export type ApBillDimensionsDto = Record<string, string>;
-export type ApBillAmountDto = number | string;
+export const ApBillCounterpartyInputDto = StrictObject({
+  code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  name: NonBlankText,
+  status: Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]),
+  country_code: CountryCode,
+  state_or_province_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+});
+export type ApBillCounterpartyInputDto = Type.Static<typeof ApBillCounterpartyInputDto>;
 
-export interface ApBillCallerSuppliedTaxComponentDto {
-  tax_authority_code: string;
-  tax_rate: number;
-  invoice_label?: string | null;
-}
+export const ApBillDimensionsDto = Type.Record(Type.String(), Type.String());
+export type ApBillDimensionsDto = Type.Static<typeof ApBillDimensionsDto>;
+export const ApBillAmountDto = Type.Union([Type.Number(), Type.String()]);
+export type ApBillAmountDto = Type.Static<typeof ApBillAmountDto>;
 
-export interface ApBillLineRequestDto {
-  line_id?: number | null;
-  description: string;
-  quantity?: ApBillAmountDto | null;
-  net_amount?: ApBillAmountDto | null;
-  gross_amount?: ApBillAmountDto | null;
-  tax_rule: string;
-  tax_components?: ApBillCallerSuppliedTaxComponentDto[] | null;
-  tax_recoverable?: boolean | null;
-  purchase_posting_code?: string | null;
-  inventory_item_code?: string | null;
-  dimensions?: ApBillDimensionsDto | null;
-}
+export const ApBillCallerSuppliedTaxComponentDto = StrictObject({
+  tax_authority_code: BusinessCode,
+  tax_rate: Type.Number(),
+  invoice_label: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+});
+export type ApBillCallerSuppliedTaxComponentDto = Type.Static<typeof ApBillCallerSuppliedTaxComponentDto>;
 
-export interface ApBillRequestDto {
-  document_type?: "AP_BILL";
-  company_code?: string | null;
-  ap_counterparty_code?: string | null;
-  ap_counterparty?: ApBillCounterpartyInputDto | null;
-  document_id?: string | null;
-  supplier_invoice_number: string;
-  memo?: string | null;
-  bill_date: string;
-  posting_date?: string | null;
-  tax_recoverable?: boolean | null;
-  purchase_posting_code?: string | null;
-  dimensions?: ApBillDimensionsDto | null;
-  lines: ApBillLineRequestDto[];
-}
+export const ApBillLineRequestDto = StrictObject({
+  line_id: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  description: Type.String(),
+  quantity: Type.Optional(Type.Union([ApBillAmountDto, Type.Null()])),
+  net_amount: Type.Optional(Type.Union([ApBillAmountDto, Type.Null()])),
+  gross_amount: Type.Optional(Type.Union([ApBillAmountDto, Type.Null()])),
+  tax_rule: Type.String(),
+  tax_components: Type.Optional(Type.Union([Type.Array(ApBillCallerSuppliedTaxComponentDto), Type.Null()])),
+  tax_recoverable: Type.Optional(Type.Union([Type.Boolean(), Type.Null()])),
+  purchase_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  inventory_item_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  dimensions: Type.Optional(Type.Union([ApBillDimensionsDto, Type.Null()])),
+});
+export type ApBillLineRequestDto = Type.Static<typeof ApBillLineRequestDto>;
+
+export const ApBillRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AP_BILL")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ap_counterparty: Type.Optional(Type.Union([ApBillCounterpartyInputDto, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  supplier_invoice_number: Type.String(),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  bill_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  tax_recoverable: Type.Optional(Type.Union([Type.Boolean(), Type.Null()])),
+  purchase_posting_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  dimensions: Type.Optional(Type.Union([ApBillDimensionsDto, Type.Null()])),
+  lines: Type.Array(ApBillLineRequestDto),
+});
+export type ApBillRequestDto = Type.Static<typeof ApBillRequestDto>;

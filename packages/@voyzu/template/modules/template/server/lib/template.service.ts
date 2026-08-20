@@ -6,7 +6,6 @@ import {
   InputValidationError,
   NotFoundError,
 } from "@voyzu/capability/errors";
-import { checkResponse } from "@voyzu/capability/validation";
 import {
   createCreationAuditStamp,
   createUpdateAuditStamp,
@@ -29,19 +28,11 @@ import { Activate, Deactivate, Delete } from "../../domain/operation-policy";
 import { TemplateRepo } from "../db/template.repo";
 import type { TemplateRow } from "../db/template.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./template.mapper";
-import { validateCreate, validatePatch, validateResponse, validateTemplateCode, validateUpdate } from "./template.validator";
 
 const normalizeCode = (value: string): string => value.trim().toUpperCase();
 
-function validatedCode(value: string): string {
-  const normalized = normalizeCode(value);
-  const error = validateTemplateCode(normalized);
-  if (error) throw new InputValidationError(error);
-  return normalized;
-}
-
 function validateCodes(values: string[]): string[] {
-  const codes = [...new Set(values.map(validatedCode))];
+  const codes = [...new Set(values.map(normalizeCode).filter(Boolean))];
   if (!codes.length) throw new InputValidationError("At least one template code is required");
   return codes;
 }
@@ -51,8 +42,7 @@ function throwIfBlocked(blockers: Array<{ message: string }>): void {
 }
 
 async function checkedDto(row: TemplateRow): Promise<TemplateResponseDto> {
-  const dto = await withAuditActors(toDto(row), row);
-  return checkResponse(dto, validateResponse(dto), `template (${row.code})`);
+  return withAuditActors(toDto(row), row);
 }
 
 const checkedDtos = (rows: TemplateRow[]): Promise<TemplateResponseDto[]> => Promise.all(rows.map(checkedDto));
@@ -68,8 +58,6 @@ function translateDuplicate(error: unknown): never {
 }
 
 export async function createTemplate(input: TemplateCreateRequestDto): Promise<TemplateResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   try {
     const row = await new TemplateRepo(getDb()).insert(withCreationAudit(
       toInsertRow(input),
@@ -83,10 +71,6 @@ export async function createTemplate(input: TemplateCreateRequestDto): Promise<T
 
 export async function batchCreateTemplates(inputs: TemplateCreateRequestDto[]): Promise<TemplateResponseDto[]> {
   if (!inputs.length) throw new InputValidationError("At least one template is required");
-  for (const input of inputs) {
-    const errors = validateCreate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   try {
     return await withTransaction(async (client) => {
       const repo = new TemplateRepo(client);
@@ -101,7 +85,7 @@ export async function batchCreateTemplates(inputs: TemplateCreateRequestDto[]): 
 }
 
 export async function getTemplate(code: string): Promise<TemplateResponseDto | null> {
-  const row = await new TemplateRepo(getDb()).get(validatedCode(code));
+  const row = await new TemplateRepo(getDb()).get(normalizeCode(code));
   return row ? checkedDto(row) : null;
 }
 
@@ -119,11 +103,9 @@ export async function searchTemplates(phrase: string, options?: ListOptions): Pr
 }
 
 export async function updateTemplate(code: string, input: TemplateUpdateRequestDto): Promise<TemplateResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   try {
     const row = await new TemplateRepo(getDb()).update(
-      validatedCode(code),
+      normalizeCode(code),
       withUpdateAudit(toUpdateRow(input), await createUpdateAuditStamp()),
     );
     return checkedDto(row);
@@ -134,11 +116,9 @@ export async function updateTemplate(code: string, input: TemplateUpdateRequestD
 }
 
 export async function patchTemplate(code: string, input: TemplatePatchRequestDto): Promise<TemplateResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   try {
     const row = await new TemplateRepo(getDb()).patch(
-      validatedCode(code),
+      normalizeCode(code),
       withUpdateAudit(toPatchRow(input), await createUpdateAuditStamp()),
     );
     return checkedDto(row);
@@ -154,17 +134,13 @@ export async function batchGetTemplates(codes: string[]): Promise<TemplateRespon
 
 export async function batchUpdateTemplates(inputs: TemplateBatchUpdateRequestDto[]): Promise<TemplateResponseDto[]> {
   if (!inputs.length) throw new InputValidationError("At least one template is required");
-  for (const input of inputs) {
-    const errors = validateUpdate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   return withTransaction(async (client) => {
     const repo = new TemplateRepo(client);
     const audit = await createUpdateAuditStamp();
     const rows: TemplateRow[] = [];
     for (const { code, ...update } of inputs) {
       try {
-        rows.push(await repo.update(validatedCode(code), withUpdateAudit(toUpdateRow(update), audit)));
+        rows.push(await repo.update(normalizeCode(code), withUpdateAudit(toUpdateRow(update), audit)));
       } catch (error) {
         if (error instanceof DataError) throw new NotFoundError(error.message);
         throw error;
@@ -176,17 +152,13 @@ export async function batchUpdateTemplates(inputs: TemplateBatchUpdateRequestDto
 
 export async function batchPatchTemplates(inputs: TemplateBatchPatchRequestDto[]): Promise<TemplateResponseDto[]> {
   if (!inputs.length) throw new InputValidationError("At least one template is required");
-  for (const input of inputs) {
-    const errors = validatePatch(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   return withTransaction(async (client) => {
     const repo = new TemplateRepo(client);
     const audit = await createUpdateAuditStamp();
     const rows: TemplateRow[] = [];
     for (const { code, ...patch } of inputs) {
       try {
-        rows.push(await repo.patch(validatedCode(code), withUpdateAudit(toPatchRow(patch), audit)));
+        rows.push(await repo.patch(normalizeCode(code), withUpdateAudit(toPatchRow(patch), audit)));
       } catch (error) {
         if (error instanceof DataError) throw new NotFoundError(error.message);
         throw error;

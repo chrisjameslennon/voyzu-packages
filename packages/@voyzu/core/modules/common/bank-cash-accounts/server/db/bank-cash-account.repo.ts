@@ -136,7 +136,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class BankCashAccountRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insert(row: InsertBankCashAccountRow): Promise<BankCashAccountRow> {
     const { rows } = await this.db.query(

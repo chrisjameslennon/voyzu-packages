@@ -1,4 +1,5 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type { BankCashJournalDetailsDto } from "@voyzu/core/types/modules/financial-document-processing-engine/bank-cash-details.dto";
 import type { LedgerJournalReversalRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ledger-journal-reversal.request.dto";
@@ -10,24 +11,22 @@ import type {
   LedgerJournalJournalLineDto,
   LedgerJournalPostingDetailsDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/ledger-journal.response.dto";
-import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 
+import { resolveBankCashDetails, toJournalBankCashFields } from "../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
-import { resolveBankCashDetails, toJournalBankCashFields } from "../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
 import { LedgerJournalPostingRepo } from "../db/ledger-journal-posting.repo";
 import type { SourceJournalHeaderRow } from "../db/ledger-journal-posting.row.types";
-import {
-  LEDGER_JOURNAL_REVERSAL_DOCUMENT_LABEL,
-  LEDGER_JOURNAL_REVERSAL_ENGINE_CODE,
-  type LedgerJournalPostingLine,
-} from "./ledger-journal.types";
 import {
   validateReversalData,
   validateReversalRequest,
   type LedgerJournalReversalDataValidationContext,
 } from "./ledger-journal-reversal.validator";
+import {
+  LEDGER_JOURNAL_REVERSAL_DOCUMENT_LABEL,
+  LEDGER_JOURNAL_REVERSAL_ENGINE_CODE,
+  type LedgerJournalPostingLine,
+} from "./ledger-journal.types";
 
 export interface ProcessLedgerJournalReversalOptions {
   preview?: boolean;
@@ -294,4 +293,4 @@ async function processLedgerJournalReversalUnchecked(
   });
 }
 
-export const processLedgerJournalReversal = withResponseValidation(processLedgerJournalReversalUnchecked, "processLedgerJournalReversal");
+export const processLedgerJournalReversal = processLedgerJournalReversalUnchecked;

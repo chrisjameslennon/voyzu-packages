@@ -8,14 +8,12 @@ import { ok } from "@voyzu/capability/http";
 import { BusinessRuleError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
 
 import { processInventoryIssue } from "../lib/inventory-processing.service";
-import { validateInventoryRequest } from "../lib/inventory-processing.validator";
 
 export async function handleProcess(
   req: NextRequest,
 ): Promise<NextResponse> {
   try {
     const body = await parseBody<InventoryIssueRequestDto>(req);
-    validateInventoryRequest(body, "INVENTORY_ISSUE");
     const result: InventoryProcessingPostingResponseDto = await processInventoryIssue(body, { preview: req.nextUrl.searchParams.has("preview") });
     return ok(result);
   } catch (err) {
@@ -25,5 +23,4 @@ export async function handleProcess(
     return serverError(err);
   }
 }
-
 

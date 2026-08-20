@@ -7,8 +7,6 @@ import type {
 } from "@voyzu/core/types/modules/ar-subledger";
 import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
 import { getDb } from "@voyzu/capability/db";
-import { checkResponse } from "@voyzu/capability/validation";
-import { validateSubledgerEntryResponse } from "@voyzu/core/common/server";
 import { getAuditActors } from "@voyzu/core/common/server";
 
 import { ArSubledgerRepo } from "../db/ar-subledger-ledger-entries.repo";
@@ -68,7 +66,7 @@ export async function getArSubledgerEntry(companyId: number, code: string): Prom
     documentSnapshot: row.document_snapshot_json,
     detailedDocumentSnapshot: row.detailed_document_snapshot_json,
   };
-  return checkResponse(dto, validateSubledgerEntryResponse(dto), `AR subledger entry (id=${dto.id})`);
+  return dto;
 }
 
 export async function listArSubledgerEntries(companyId: number): Promise<ArSubledgerEntryResponseDto[]> {
@@ -124,7 +122,7 @@ export async function listArSubledgerEntries(companyId: number): Promise<ArSuble
         },
       },
     };
-    return checkResponse(dto, validateSubledgerEntryResponse(dto), `AR subledger entry (id=${dto.id})`);
+    return dto;
   }));
 }
 

@@ -1,36 +1,29 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
-import type { AccountType, GlAccountPointerReference } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { AccountType, GlAccountPointerReference } from "@voyzu/core/types/modules/core";
+import { BusinessCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export type GlAccountStatus = "ACTIVE" | "INACTIVE";
+export const GlAccountStatus = Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]);
+export type GlAccountStatus = Type.Static<typeof GlAccountStatus>;
 
-export type GlAccountLinkedByDto = GlAccountPointerReference;
+export const GlAccountLinkedByDto = GlAccountPointerReference;
+export type GlAccountLinkedByDto = Type.Static<typeof GlAccountLinkedByDto>;
 
-export interface GlAccountResponseDto {
-  /** Unique numeric identifier of the GL account. */
-  id: number;
-  /** Business code of the GL account (up to 14 characters). */
-  code: string;
-  /** Display name of the GL account. */
-  name: string;
-  /** The accounting type of this GL account (e.g. ASSET, LIABILITY). */
-  accountType: AccountType;
-  /** ID of the GL account category this account belongs to. */
-  accountCategoryId?: number;
-  /** The category this account belongs to. */
-  category?: {
-    /** Category business code. */
-    code: string;
-    /** Category display name. */
-    name: string;
-  };
-  /** Current lifecycle status of the GL account. */
-  status: GlAccountStatus;
-  /** Control account records that currently link to this GL account. */
-  linkedBy: GlAccountLinkedByDto[];
-  /** True when one or more posted journal headers include a line for this GL account. */
-  hasPostings: boolean;
-  /** Company codes with posted journals for this setting. */
-  companiesWithPostings: string[];
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const GlAccountResponseDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  name: NonBlankText,
+  accountType: AccountType,
+  accountCategoryId: Type.Optional(PositiveId),
+  category: Type.Optional(StrictObject({
+    code: BusinessCode,
+    name: NonBlankText,
+  })),
+  status: GlAccountStatus,
+  linkedBy: Type.Array(GlAccountLinkedByDto),
+  hasPostings: Type.Boolean({ description: "True when one or more posted journal headers include a line for this GL account." }),
+  companiesWithPostings: Type.Array(Type.String()),
+  audit: AuditMetadataDto,
+});
+export type GlAccountResponseDto = Type.Static<typeof GlAccountResponseDto>;

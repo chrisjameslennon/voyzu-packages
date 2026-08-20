@@ -1,37 +1,18 @@
-import type { Filter } from "@voyzu/types/params";
-import type { ListOptions } from "@voyzu/types/params";
-import type { FinancialDocumentDefaultCreateRequestDto } from "@voyzu/core/types/modules/financial-document-defaults";
-import type { FinancialDocumentDefaultPatchRequestDto } from "@voyzu/core/types/modules/financial-document-defaults";
-import type { FinancialDocumentDefaultResponseDto } from "@voyzu/core/types/modules/financial-document-defaults";
-import type { FinancialDocumentDefaultUpdateRequestDto } from "@voyzu/core/types/modules/financial-document-defaults";
-import { runtime } from "@voyzu/capability/runtime";
-import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError, DataError } from "@voyzu/capability/errors";
-import { AssignTarget } from "@voyzu/core/common/financial-document-defaults/domain/operation-policy";
 import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
+import { AssignTarget } from "@voyzu/core/common/financial-document-defaults/domain/operation-policy";
+import type { FinancialDocumentDefaultCreateRequestDto, FinancialDocumentDefaultPatchRequestDto, FinancialDocumentDefaultResponseDto, FinancialDocumentDefaultUpdateRequestDto } from "@voyzu/core/types/modules/financial-document-defaults";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createUpdateAuditStamp, withAuditActors, withUpdateAudit } from "../../../server";
 
-import { FinancialDocumentDefaultRepo, type FinancialDocumentDefaultKey } from "../db/financial-document-default.repo";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { FinancialDocumentDefaultRepo, type FinancialDocumentDefaultKey } from "../db/financial-document-default.repo";
 
-import { toDto, toUpdateRow, toPatchRow } from "./financial-document-default.mapper";
-import { validateUpdate, validatePatch, validateResponse } from "./financial-document-default.validator";
-
+import { toDto, toPatchRow, toUpdateRow } from "./financial-document-default.mapper";
 export type FinancialDocumentDefaultRouteKey = FinancialDocumentDefaultKey;
 
-function checkedResponse(dto: FinancialDocumentDefaultResponseDto): FinancialDocumentDefaultResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid posting code response (${dto.documentCode}/${dto.code}): ${errors.join("; ")}`;
-    if (runtime.isDevLike) {
-      throw new Error(message);
-    }
-    console.error(message);
-  }
-  return dto;
-}
-
 async function enrichRow(row: Parameters<typeof toDto>[0]): Promise<FinancialDocumentDefaultResponseDto> {
-  return checkedResponse(await withAuditActors(toDto(row), row));
+  return await withAuditActors(toDto(row), row);
 }
 
 function enrichRows(rows: Array<Parameters<typeof toDto>[0]>): Promise<FinancialDocumentDefaultResponseDto[]> {
@@ -126,9 +107,6 @@ export async function getFinancialDocumentDefault(documentCode: string, code: st
 
 export async function updateFinancialDocumentDefault(documentCode: string, code: string, input: FinancialDocumentDefaultUpdateRequestDto, companyId?: number): Promise<FinancialDocumentDefaultResponseDto> {
   assertOnlyFinancialDocumentDefaultTargetUpdate(input);
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   await assertWritableScope(companyId);
   const resolvedCompanyId = await scopedCompanyId(companyId);
   try {
@@ -170,9 +148,6 @@ export async function updateFinancialDocumentDefault(documentCode: string, code:
 
 export async function patchFinancialDocumentDefault(documentCode: string, code: string, input: FinancialDocumentDefaultPatchRequestDto, companyId?: number): Promise<FinancialDocumentDefaultResponseDto> {
   assertOnlyFinancialDocumentDefaultTargetUpdate(input);
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   await assertWritableScope(companyId);
   const resolvedCompanyId = await scopedCompanyId(companyId);
   try {

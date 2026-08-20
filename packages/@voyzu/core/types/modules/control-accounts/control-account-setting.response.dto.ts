@@ -1,30 +1,23 @@
-import type { AccountType, GlAccountPointerReference, Status } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AccountType, GlAccountPointerReference, Status } from "@voyzu/core/types/modules/core";
+import { BusinessCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface ControlAccountSettingResponseDto {
-  /** Engine-facing control account code. */
-  code: string;
-  /** Ledger this control account belongs to. */
-  ledger: "ACCOUNTS_RECEIVABLE" | "ACCOUNTS_PAYABLE";
-  /** Display name for this fixed control account role. */
-  name: string;
-  /** Supporting ledger group shown in the configuration screen. */
-  supportingLedger: "Accounts Payable" | "Accounts Receivable" | "Tax Ledger";
-  /** Required GL account type for this control account. */
-  requiredAccountType: AccountType;
-  /** Linked GL account ID when configured. */
-  glAccountId: number | null;
-  /** Linked GL account when configured. */
-  glAccount: {
-    code: string;
-    name: string;
-    accountType: AccountType;
-  } | null;
-  /** Current lifecycle status when the row exists. */
-  status: Status | null;
-  /** True when the linked control account has associated posted journal lines. */
-  hasPostings: boolean;
-  /** Company codes with posted journals for this setting. */
-  companiesWithPostings: string[];
-  /** GL account pointers that reference this control account. */
-  linkedBy: GlAccountPointerReference[];
-}
+export const ControlAccountSettingResponseDto = StrictObject({
+  code: BusinessCode,
+  ledger: Type.Union([Type.Literal("ACCOUNTS_RECEIVABLE"), Type.Literal("ACCOUNTS_PAYABLE")]),
+  name: NonBlankText,
+  supportingLedger: Type.Union([Type.Literal("Accounts Payable"), Type.Literal("Accounts Receivable"), Type.Literal("Tax Ledger")]),
+  requiredAccountType: AccountType,
+  glAccountId: Type.Union([PositiveId, Type.Null()]),
+  glAccount: Type.Union([StrictObject({
+    code: BusinessCode,
+    name: NonBlankText,
+    accountType: AccountType,
+  }), Type.Null()]),
+  status: Type.Union([Status, Type.Null()]),
+  hasPostings: Type.Boolean({ description: "True when the linked control account has associated posted journal lines." }),
+  companiesWithPostings: Type.Array(Type.String()),
+  linkedBy: Type.Array(GlAccountPointerReference),
+});
+export type ControlAccountSettingResponseDto = Type.Static<typeof ControlAccountSettingResponseDto>;

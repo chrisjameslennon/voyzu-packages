@@ -1,4 +1,5 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type { ArInvoiceCancellationRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto";
 import type {
@@ -10,12 +11,10 @@ import type {
   ArInvoiceCancellationTaxLedgerDetailDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice-cancellation.response.dto";
 import type { ArInvoiceDetailedInvoiceDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
-import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 
+import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import arInvoiceCancellationPosting from "../journal-posting-components";
 import { validateRequest } from "./ar-invoice-cancellation.validator";
 
@@ -809,4 +808,4 @@ async function processArInvoiceCancellationUnchecked(input: ArInvoiceCancellatio
   });
 }
 
-export const processArInvoiceCancellation = withResponseValidation(processArInvoiceCancellationUnchecked, "processArInvoiceCancellation");
+export const processArInvoiceCancellation = processArInvoiceCancellationUnchecked;

@@ -14,31 +14,31 @@ import type { AccountType } from "@voyzu/core/types/modules/core";
 
 export const AR_INVOICE_JOURNAL_POSTING_COMPONENTS = {
 
-    description: 'Customer invoices debit the AR control account and credit revenue and tax output accounts.',
-    formula: 'Dr AR receivable = Cr Revenue + Cr Tax output',
-    components: {
-        dr_ar: {
-            title: 'Accounts receivable',
-            side: 'DR',
-            type: ComponentType.CONTROL_ACCOUNT,
-            ledger:"ACCOUNTS_RECEIVABLE" ,
-            code: 'AR_TRADE_RECEIVABLES'
-        },
-        cr_revenue: {
-            title: 'Revenue',
-            side: 'CR',
-            type: ComponentType.POSTING_CODE,
-            code: 'REVENUE_ACCOUNT',
-            allowedAccountTypes: ["REVENUE"] satisfies readonly AccountType[],
-        },
-        cr_tax_output: {
-            title: 'Tax output',
-            side: 'CR',
-            type: ComponentType.CONTROL_ACCOUNT,
-            ledger: "TAX",
-            code: 'TAX_ON_SALES'
-        }
+  description: 'Customer invoices debit the AR control account and credit revenue and tax output accounts.',
+  formula: 'Dr AR receivable = Cr Revenue + Cr Tax output',
+  components: {
+    dr_ar: {
+      title: 'Accounts receivable',
+      side: 'DR',
+      type: ComponentType.CONTROL_ACCOUNT,
+      ledger: "ACCOUNTS_RECEIVABLE",
+      code: 'AR_TRADE_RECEIVABLES'
+    },
+    cr_revenue: {
+      title: 'Revenue',
+      side: 'CR',
+      type: ComponentType.POSTING_CODE,
+      code: 'REVENUE_ACCOUNT',
+      allowedAccountTypes: ["REVENUE"] satisfies readonly AccountType[],
+    },
+    cr_tax_output: {
+      title: 'Tax output',
+      side: 'CR',
+      type: ComponentType.CONTROL_ACCOUNT,
+      ledger: "TAX",
+      code: 'TAX_ON_SALES'
     }
+  }
 } as const;
 
 export const AR_INVOICE_AR_RECEIVABLE_COMPONENT = AR_INVOICE_JOURNAL_POSTING_COMPONENTS.components.dr_ar;

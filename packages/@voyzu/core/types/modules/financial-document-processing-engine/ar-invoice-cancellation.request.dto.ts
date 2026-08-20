@@ -1,14 +1,20 @@
-export interface ArInvoiceCancellationSourceInvoiceRequestDto {
-  document_id?: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, IsoDate } from "@voyzu/core/types/constraints";
 
-export interface ArInvoiceCancellationRequestDto {
-  document_type?: "AR_INVOICE_CANCELLATION";
-  company_code?: string | null;
-  ar_counterparty_code?: string | null;
-  document_id?: string | null;
-  document_memo?: string | null;
-  source_invoice?: ArInvoiceCancellationSourceInvoiceRequestDto | null;
-  cancellation_date: string;
-  posting_date?: string | null;
-}
+export const ArInvoiceCancellationSourceInvoiceRequestDto = StrictObject({
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+});
+export type ArInvoiceCancellationSourceInvoiceRequestDto = Type.Static<typeof ArInvoiceCancellationSourceInvoiceRequestDto>;
+
+export const ArInvoiceCancellationRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("AR_INVOICE_CANCELLATION")),
+  company_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  ar_counterparty_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  document_memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  source_invoice: Type.Optional(Type.Union([ArInvoiceCancellationSourceInvoiceRequestDto, Type.Null()])),
+  cancellation_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+});
+export type ArInvoiceCancellationRequestDto = Type.Static<typeof ArInvoiceCancellationRequestDto>;

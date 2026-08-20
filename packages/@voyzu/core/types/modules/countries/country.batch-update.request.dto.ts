@@ -1,6 +1,10 @@
-import type { CountryUpdateRequestDto } from "./country.update.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CountryUpdateRequestDto } from "./country.update.request.dto";
+import { BusinessCode } from "@voyzu/core/types/constraints";
 
-export interface CountryBatchUpdateRequestDto extends CountryUpdateRequestDto {
-  /** Stable country code identifying the row to update. */
-  code: string;
-}
+export const CountryBatchUpdateRequestDto = StrictObject({
+  ...CountryUpdateRequestDto.properties,
+  code: BusinessCode,
+});
+export type CountryBatchUpdateRequestDto = Type.Static<typeof CountryBatchUpdateRequestDto>;

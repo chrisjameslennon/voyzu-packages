@@ -1,8 +1,11 @@
-import type { FinancialDocumentDefaultUpdateRequestDto } from "./financial-document-default.update.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { FinancialDocumentDefaultUpdateRequestDto } from "./financial-document-default.update.request.dto";
+import { BusinessCode } from "@voyzu/core/types/constraints";
 
-export interface FinancialDocumentDefaultBatchUpdateRequestDto extends FinancialDocumentDefaultUpdateRequestDto {
-  /** Financial document processor code this default belongs to. */
-  documentCode: string;
-  /** Financial document default slot code. */
-  code: string;
-}
+export const FinancialDocumentDefaultBatchUpdateRequestDto = StrictObject({
+  ...FinancialDocumentDefaultUpdateRequestDto.properties,
+  documentCode: BusinessCode,
+  code: BusinessCode,
+});
+export type FinancialDocumentDefaultBatchUpdateRequestDto = Type.Static<typeof FinancialDocumentDefaultBatchUpdateRequestDto>;

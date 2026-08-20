@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { BankCashMovementResponseDto } from "@voyzu/core/types/modules/company-reports";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
@@ -44,4 +43,4 @@ async function getBankCashMovementUnchecked(companyId: number, fromDate: string,
   };
 }
 
-export const getBankCashMovement = withResponseValidation(getBankCashMovementUnchecked, "getBankCashMovement");
+export const getBankCashMovement = getBankCashMovementUnchecked;

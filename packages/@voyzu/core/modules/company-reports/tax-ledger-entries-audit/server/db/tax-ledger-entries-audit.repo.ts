@@ -44,11 +44,11 @@ function fieldsFromRow(row: Record<string, unknown>): TaxLedgerEntriesAuditField
 }
 
 export class TaxLedgerEntriesAuditRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async getEntries(companyId: number, fromDate: string, toDate: string): Promise<TaxLedgerEntriesAuditEntryDto[]> {
     const { rows } = await this.db.query(
-       `SELECT
+      `SELECT
          l.id,
          e.code AS tax_ledger_entry_code,
          l.line_number,

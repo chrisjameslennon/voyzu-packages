@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { TrialBalanceResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -50,4 +49,4 @@ async function getTrialBalanceUnchecked(
   };
 }
 
-export const getTrialBalance = withResponseValidation(getTrialBalanceUnchecked, "getTrialBalance");
+export const getTrialBalance = getTrialBalanceUnchecked;

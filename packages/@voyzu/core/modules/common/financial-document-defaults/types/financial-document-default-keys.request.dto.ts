@@ -1,12 +1,14 @@
-export interface FinancialDocumentDefaultKeyDto {
-  /** Financial document processor code this default belongs to. */
-  documentCode: string;
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode } from "@voyzu/core/types/constraints";
 
-  /** Financial document default slot code. */
-  code: string;
-}
+export const FinancialDocumentDefaultKeyDto = StrictObject({
+  documentCode: BusinessCode,
+  code: BusinessCode,
+});
+export type FinancialDocumentDefaultKeyDto = Type.Static<typeof FinancialDocumentDefaultKeyDto>;
 
-export interface FinancialDocumentDefaultKeysRequestDto {
-  /** Composite financial document default keys identifying the records to act on. */
-  keys: FinancialDocumentDefaultKeyDto[];
-}
+export const FinancialDocumentDefaultKeysRequestDto = StrictObject({
+  keys: Type.Array(FinancialDocumentDefaultKeyDto, { minItems: 1, description: "Composite financial document default keys identifying the records to act on." }),
+});
+export type FinancialDocumentDefaultKeysRequestDto = Type.Static<typeof FinancialDocumentDefaultKeysRequestDto>;

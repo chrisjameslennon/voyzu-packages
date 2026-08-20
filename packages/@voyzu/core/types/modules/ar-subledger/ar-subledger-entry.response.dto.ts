@@ -1,54 +1,52 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
-import type { EntryType } from "@voyzu/core/types/modules/core";
-export interface ArSubledgerControlAccountBalanceDto {
-  controlAccountCode: string;
-  controlAccountName: string;
-  glAccountCode: string;
-  glAccountName: string;
-  balance: number;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { EntryType } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface ArSubledgerEntryResponseDto {
-  id: number;
-  code: string;
-  journalHeaderId: number;
-  journalCode: string;
-  hasBankCashDetails: boolean;
-  bankCashCode: string | null;
-  taxLedgerEntryCode: string | null;
-  postingDate: string;
-  documentDate: string;
-  baseCurrencyCode: string;
-  entryType: EntryType;
-  baseCurrencyAmount: number;
-  memo: string | null;
-  status: string;
-  documentTypeCode: string;
-  documentTypeLabel: string;
-  documentId: string;
-  description: string;
-  appliedToDocumentId: string | null;
-  counterpartyCode: string;
-  counterpartyName: string;
-  controlAccountCode: string;
-  controlAccountName: string;
-  glAccountCode: string;
-  glAccountName: string;
-  /** Derived per-invoice payment state. Only populated for AR invoice rows
-   * (document_type_code='AR_INVOICE', entry_type='DEBIT'); null otherwise. */
-  paymentStatus: "UNPAID" | "PART_PAID" | "SETTLED" | null;
-  /** Sum of CREDIT applications posted against this invoice. Populated for AR invoice rows; null otherwise. */
-  appliedAmount: number | null;
-  /** Sum of AR receipt/application amounts applied to this invoice. Populated for AR invoice rows; null otherwise. */
-  paymentAppliedAmount: number | null;
-  /** Sum of non-payment AR credits/write-offs/cancellations applied to this invoice. Populated for AR invoice rows; null otherwise. */
-  otherCreditAppliedAmount: number | null;
-  /** Remaining open invoice balance. Populated for AR invoice rows; null otherwise. */
-  openBalance: number | null;
-  /** Derived from AR subledger lines; not stored on the header. */
-  controlAccountBalances?: ArSubledgerControlAccountBalanceDto[];
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-  documentSnapshot?: Record<string, unknown>;
-  detailedDocumentSnapshot?: Record<string, unknown>;
-}
+export const ArSubledgerControlAccountBalanceDto = StrictObject({
+  controlAccountCode: BusinessCode,
+  controlAccountName: NonBlankText,
+  glAccountCode: BusinessCode,
+  glAccountName: NonBlankText,
+  balance: Type.Number(),
+});
+export type ArSubledgerControlAccountBalanceDto = Type.Static<typeof ArSubledgerControlAccountBalanceDto>;
+
+export const ArSubledgerEntryResponseDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  journalHeaderId: PositiveId,
+  journalCode: BusinessCode,
+  hasBankCashDetails: Type.Boolean(),
+  bankCashCode: Type.Union([BusinessCode, Type.Null()]),
+  taxLedgerEntryCode: Type.Union([BusinessCode, Type.Null()]),
+  postingDate: IsoDate,
+  documentDate: IsoDate,
+  baseCurrencyCode: CurrencyCode,
+  entryType: EntryType,
+  baseCurrencyAmount: Type.Number(),
+  memo: Type.Union([Type.String(), Type.Null()]),
+  status: Type.String(),
+  documentTypeCode: BusinessCode,
+  documentTypeLabel: Type.String(),
+  documentId: Type.String(),
+  description: Type.String(),
+  appliedToDocumentId: Type.Union([Type.String(), Type.Null()]),
+  counterpartyCode: BusinessCode,
+  counterpartyName: NonBlankText,
+  controlAccountCode: BusinessCode,
+  controlAccountName: NonBlankText,
+  glAccountCode: BusinessCode,
+  glAccountName: NonBlankText,
+  paymentStatus: Type.Union([Type.Literal("UNPAID"), Type.Literal("PART_PAID"), Type.Literal("SETTLED"), Type.Null()]),
+  appliedAmount: Type.Union([Type.Number(), Type.Null()]),
+  paymentAppliedAmount: Type.Union([Type.Number(), Type.Null()]),
+  otherCreditAppliedAmount: Type.Union([Type.Number(), Type.Null()]),
+  openBalance: Type.Union([Type.Number(), Type.Null()]),
+  controlAccountBalances: Type.Optional(Type.Array(ArSubledgerControlAccountBalanceDto)),
+  audit: AuditMetadataDto,
+  documentSnapshot: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
+  detailedDocumentSnapshot: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
+});
+export type ArSubledgerEntryResponseDto = Type.Static<typeof ArSubledgerEntryResponseDto>;

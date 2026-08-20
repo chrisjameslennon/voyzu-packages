@@ -1,4 +1,5 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { EntryType } from "@voyzu/core/types/modules/core";
 import type { ArReceiptApplicationRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt-application.request.dto";
 import type {
@@ -8,12 +9,10 @@ import type {
   ArReceiptApplicationPostingDetailsDto,
   ArReceiptApplicationPostingResponseDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt-application.response.dto";
-import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 
+import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import arReceiptApplicationPosting from "../journal-posting-components";
 import { validateRequest } from "./ar-receipt-application.validator";
 
@@ -479,4 +478,4 @@ async function processArReceiptApplicationUnchecked(input: ArReceiptApplicationR
   });
 }
 
-export const processArReceiptApplication = withResponseValidation(processArReceiptApplicationUnchecked, "processArReceiptApplication");
+export const processArReceiptApplication = processArReceiptApplicationUnchecked;

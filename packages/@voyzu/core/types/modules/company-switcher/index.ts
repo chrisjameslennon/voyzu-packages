@@ -1,2 +1,2 @@
-export type { CompanySelectionResponseDto } from "./company-selection.response.dto";
-export type { CompanySelectionUpdateResponseDto } from "./company-selection.update.response.dto";
+export { CompanySelectionResponseDto } from "./company-selection.response.dto";
+export { CompanySelectionUpdateResponseDto } from "./company-selection.update.response.dto";

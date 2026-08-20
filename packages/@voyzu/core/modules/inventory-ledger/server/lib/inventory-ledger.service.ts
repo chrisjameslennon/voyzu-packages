@@ -3,11 +3,8 @@ import type {
   InventoryLedgerEntryResponseDto,
 } from "@voyzu/core/types/modules/inventory-ledger";
 import { getDb } from "@voyzu/capability/db";
-import { checkResponse } from "@voyzu/capability/validation";
-
 import { InventoryLedgerRepo } from "../db/inventory-ledger.repo";
 import type { InventoryLedgerEntryRow } from "../db/inventory-ledger.row.types";
-import { validateDetailResponse, validateEntryResponse } from "./inventory-ledger.validator";
 
 function toDto(row: InventoryLedgerEntryRow): InventoryLedgerEntryResponseDto {
   const dto: InventoryLedgerEntryResponseDto = {
@@ -43,7 +40,7 @@ function toDto(row: InventoryLedgerEntryRow): InventoryLedgerEntryResponseDto {
       },
     },
   };
-  return checkResponse(dto, validateEntryResponse(dto), `inventory ledger entry (id=${dto.id})`);
+  return dto;
 }
 
 export async function listInventoryLedgerEntries(companyId: number): Promise<InventoryLedgerEntryResponseDto[]> {
@@ -99,7 +96,7 @@ function toDetailDto(rows: InventoryLedgerEntryRow[]): InventoryLedgerEntryDetai
       memo: row.line_memo,
     })),
   };
-  return checkResponse(dto, validateDetailResponse(dto), `inventory ledger entry detail (id=${dto.id})`);
+  return dto;
 }
 
 export async function getInventoryLedgerEntry(companyId: number, code: string): Promise<InventoryLedgerEntryDetailResponseDto | null> {

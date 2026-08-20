@@ -30,7 +30,7 @@ const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
 const SELECT_WITH_DERIVED = `SELECT dv.*, ${COMPANIES_WITH_POSTINGS_SQL} AS companies_with_postings FROM ${TABLE} dv`;
 
 export class DimensionValueRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insert(row: InsertDimensionValueRow): Promise<DimensionValueRow> {
     const cols: string[] = [];

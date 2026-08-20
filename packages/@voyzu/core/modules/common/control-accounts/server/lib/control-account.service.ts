@@ -1,23 +1,20 @@
-import type { Filter, ListOptions } from "@voyzu/types/params";
-import type { AccountType } from "@voyzu/core/types/modules/core";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/errors";
+import { UpdateGLAccount } from "@voyzu/core/common/control-accounts/domain/operation-policy";
 import type {
   ControlAccountPatchRequestDto,
   ControlAccountResponseDto,
   ControlAccountSettingResponseDto,
 } from "@voyzu/core/types/modules/control-accounts";
-import { getDb, withTransaction } from "@voyzu/capability/db";
-import { runtime } from "@voyzu/capability/runtime";
-import { BusinessRuleError, DataError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
-import { UpdateGLAccount } from "@voyzu/core/common/control-accounts/domain/operation-policy";
+import type { AccountType } from "@voyzu/core/types/modules/core";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createUpdateAuditStamp, withAuditActors } from "../../../server";
 
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
 import { ControlAccountRepo } from "../db/control-account.repo";
 import type { ControlAccountRow } from "../db/control-account.row.types";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
 
 import { toDto } from "./control-account.mapper";
-import { validatePatch, validateResponse } from "./control-account.validator";
-
 const FIXED_CONTROL_ACCOUNT_SETTINGS: Array<{
   code: string;
   ledger: ControlAccountSettingResponseDto["ledger"];
@@ -25,25 +22,13 @@ const FIXED_CONTROL_ACCOUNT_SETTINGS: Array<{
   supportingLedger: ControlAccountSettingResponseDto["supportingLedger"];
   requiredAccountType: AccountType;
 }> = [
-  { code: "AP_TRADE_PAYABLES", ledger: "ACCOUNTS_PAYABLE", name: "Trade Payables", supportingLedger: "Accounts Payable", requiredAccountType: "LIABILITY" },
-  { code: "AP_UNAPPLIED_PAYMENTS", ledger: "ACCOUNTS_PAYABLE", name: "Supplier Payments Awaiting Allocation", supportingLedger: "Accounts Payable", requiredAccountType: "LIABILITY" },
-  { code: "AR_TRADE_RECEIVABLES", ledger: "ACCOUNTS_RECEIVABLE", name: "Trade Receivables", supportingLedger: "Accounts Receivable", requiredAccountType: "ASSET" },
-  { code: "AR_UNAPPLIED_CASH", ledger: "ACCOUNTS_RECEIVABLE", name: "Customer Receipts Awaiting Allocation", supportingLedger: "Accounts Receivable", requiredAccountType: "ASSET" },
-];
+    { code: "AP_TRADE_PAYABLES", ledger: "ACCOUNTS_PAYABLE", name: "Trade Payables", supportingLedger: "Accounts Payable", requiredAccountType: "LIABILITY" },
+    { code: "AP_UNAPPLIED_PAYMENTS", ledger: "ACCOUNTS_PAYABLE", name: "Supplier Payments Awaiting Allocation", supportingLedger: "Accounts Payable", requiredAccountType: "LIABILITY" },
+    { code: "AR_TRADE_RECEIVABLES", ledger: "ACCOUNTS_RECEIVABLE", name: "Trade Receivables", supportingLedger: "Accounts Receivable", requiredAccountType: "ASSET" },
+    { code: "AR_UNAPPLIED_CASH", ledger: "ACCOUNTS_RECEIVABLE", name: "Customer Receipts Awaiting Allocation", supportingLedger: "Accounts Receivable", requiredAccountType: "ASSET" },
+  ];
 
 export type ControlAccountLedger = typeof FIXED_CONTROL_ACCOUNT_SETTINGS[number]["ledger"];
-
-function checkedResponse(dto: ControlAccountResponseDto): ControlAccountResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid control account response (code=${dto.code}): ${errors.join("; ")}`;
-    if (runtime.isDevLike) {
-      throw new Error(message);
-    }
-    console.error(message);
-  }
-  return dto;
-}
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
   return companyId === undefined
@@ -58,7 +43,7 @@ async function assertWritableScope(companyId?: number): Promise<void> {
 export async function getControlAccount(code: string, companyId?: number): Promise<ControlAccountResponseDto | null> {
   const row = await new ControlAccountRepo(getDb()).get(await scopedCompanyId(companyId), code);
   if (!row) return null;
-  return checkedResponse(await withAuditActors(toDto(row), row));
+  return await withAuditActors(toDto(row), row);
 }
 
 function toSettingDto(
@@ -109,7 +94,7 @@ export async function getControlAccountByLedger(
 
 export async function listControlAccounts(companyId?: number): Promise<ControlAccountResponseDto[]> {
   const rows = await new ControlAccountRepo(getDb()).listAll(await scopedCompanyId(companyId));
-  return Promise.all(rows.map(async (r) => checkedResponse(await withAuditActors(toDto(r), r))));
+  return Promise.all(rows.map(async (r) => await withAuditActors(toDto(r), r)));
 }
 
 export async function filterControlAccounts(
@@ -118,7 +103,7 @@ export async function filterControlAccounts(
   companyId?: number,
 ): Promise<ControlAccountResponseDto[]> {
   const rows = await new ControlAccountRepo(getDb()).filter(await scopedCompanyId(companyId), filters, options);
-  return Promise.all(rows.map(async (r) => checkedResponse(await withAuditActors(toDto(r), r))));
+  return Promise.all(rows.map(async (r) => await withAuditActors(toDto(r), r)));
 }
 
 export async function searchControlAccounts(
@@ -127,7 +112,7 @@ export async function searchControlAccounts(
   companyId?: number,
 ): Promise<ControlAccountResponseDto[]> {
   const rows = await new ControlAccountRepo(getDb()).search(await scopedCompanyId(companyId), phrase, options);
-  return Promise.all(rows.map(async (r) => checkedResponse(await withAuditActors(toDto(r), r))));
+  return Promise.all(rows.map(async (r) => await withAuditActors(toDto(r), r)));
 }
 
 export async function patchControlAccount(
@@ -135,9 +120,6 @@ export async function patchControlAccount(
   input: ControlAccountPatchRequestDto,
   companyId?: number,
 ): Promise<ControlAccountResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   const setting = FIXED_CONTROL_ACCOUNT_SETTINGS.find((item) => item.code === code);
   if (!setting) throw new NotFoundError(`Control account ${code} not found`);
   await assertWritableScope(companyId);
@@ -173,7 +155,7 @@ export async function patchControlAccount(
       return repo.patchGlAccount(resolvedCompanyId, code, input.glAccountId as number, await createUpdateAuditStamp());
     });
 
-    return checkedResponse(await withAuditActors(toDto(row), row));
+    return await withAuditActors(toDto(row), row);
   } catch (err) {
     if (err instanceof DataError) throw new NotFoundError(`Control account ${code} not found`);
     throw err;

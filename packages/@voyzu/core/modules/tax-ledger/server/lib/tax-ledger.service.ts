@@ -1,9 +1,6 @@
 import type { TaxSubledgerEntryResponseDto } from "@voyzu/core/types/modules/tax-ledger";
 import { getDb } from "@voyzu/capability/db";
-import { checkResponse } from "@voyzu/capability/validation";
-
 import { TaxLedgerRepo } from "../db/tax-ledger.repo";
-import { validateResponse } from "./tax-ledger.validator";
 
 function toEntryDto(row: Awaited<ReturnType<TaxLedgerRepo["listEntries"]>>[number]): TaxSubledgerEntryResponseDto {
   const dto: TaxSubledgerEntryResponseDto = {
@@ -43,7 +40,7 @@ function toEntryDto(row: Awaited<ReturnType<TaxLedgerRepo["listEntries"]>>[numbe
     documentSnapshot: row.document_snapshot_json,
     detailedDocumentSnapshot: row.detailed_document_snapshot_json,
   };
-  return checkResponse(dto, validateResponse(dto), `tax subledger entry (id=${dto.id})`);
+  return dto;
 }
 
 export async function getTaxSubledgerEntry(companyId: number, code: string): Promise<TaxSubledgerEntryResponseDto | null> {

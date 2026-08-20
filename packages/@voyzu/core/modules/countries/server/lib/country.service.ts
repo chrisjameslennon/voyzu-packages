@@ -1,33 +1,27 @@
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/core/common/server";
-import type { Filter, ListOptions } from "@voyzu/types/params";
 import type {
+  CountryBatchPatchRequestDto,
+  CountryBatchUpdateRequestDto,
   CountryCreateRequestDto,
+  CountryPatchRequestDto,
   CountryResponseDto,
   CountryTaxAuthorityResponseDto,
   CountryTaxComponentResponseDto,
   CountryTaxRuleResponseDto,
-  CountryPatchRequestDto,
-  CountryBatchPatchRequestDto,
-  CountryBatchUpdateRequestDto,
   CountryUpdateRequestDto,
 } from "@voyzu/core/types/modules/countries";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 
-import { CountryRepo } from "../db/country.repo";
 import { Deactivate, Delete } from "../../domain/operation-policy";
+import { CountryRepo } from "../db/country.repo";
 import type { CountryRow } from "../db/country.row.types";
 
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./country.mapper";
-import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./country.validator";
-import { checkResponse } from "@voyzu/capability/validation";
-
-function checkedResponse(dto: CountryResponseDto): CountryResponseDto {
-  return checkResponse(dto, validateResponse(dto), `country (code=${dto.code})`);
-}
 
 async function enrichRow(row: CountryRow): Promise<CountryResponseDto> {
-  return checkedResponse(await withAuditActors(toDto(row), row));
+  return withAuditActors(toDto(row), row);
 }
 
 function enrichRows(rows: CountryRow[]): Promise<CountryResponseDto[]> {
@@ -124,9 +118,6 @@ async function getCountryTaxConfiguration(countryCode: string): Promise<CountryT
 }
 
 export async function createCountry(input: CountryCreateRequestDto): Promise<CountryResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   try {
     const row = await new CountryRepo(getDb()).insert(withCreationAudit(toInsertRow(input), await createCreationAuditStamp()));
     return enrichRow(row);
@@ -148,9 +139,6 @@ export async function getCountry(code: string): Promise<CountryResponseDto | nul
 }
 
 export async function updateCountry(code: string, input: CountryUpdateRequestDto): Promise<CountryResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   try {
     const row = await new CountryRepo(getDb()).update(code, {
       ...withUpdateAudit(toUpdateRow(input), await createUpdateAuditStamp()),
@@ -163,9 +151,6 @@ export async function updateCountry(code: string, input: CountryUpdateRequestDto
 }
 
 export async function patchCountry(code: string, input: CountryPatchRequestDto): Promise<CountryResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
-
   try {
     const row = await new CountryRepo(getDb()).patch(code, {
       ...withUpdateAudit(toPatchRow(input), await createUpdateAuditStamp()),
@@ -209,11 +194,6 @@ export async function searchCountries(phrase: string, options?: ListOptions): Pr
   return enrichRows(rows);
 }
 export async function batchCreateCountries(inputs: CountryCreateRequestDto[]): Promise<CountryResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateCreate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   try {
     return await withTransaction(async (client) => {
       const repo = new CountryRepo(client);
@@ -238,11 +218,6 @@ export async function batchGetCountries(codes: string[]): Promise<CountryRespons
 }
 
 export async function batchUpdateCountries(inputs: CountryBatchUpdateRequestDto[]): Promise<CountryResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateUpdate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   try {
     return await withTransaction(async (client) => {
       const repo = new CountryRepo(client);
@@ -260,11 +235,6 @@ export async function batchUpdateCountries(inputs: CountryBatchUpdateRequestDto[
 }
 
 export async function batchPatchCountries(inputs: CountryBatchPatchRequestDto[]): Promise<CountryResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validatePatch(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
-
   try {
     return await withTransaction(async (client) => {
       const repo = new CountryRepo(client);
@@ -334,4 +304,3 @@ async function transitionCountryStatus(codes: string[], targetStatus: "ACTIVE" |
     return enrichRows(rows);
   });
 }
-

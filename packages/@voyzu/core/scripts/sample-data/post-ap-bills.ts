@@ -16,88 +16,88 @@ const BILLS: Array<{
   dimensions?: ApBillRequestDto["dimensions"];
   lines: ApBillRequestDto["lines"];
 }> = [
-  {
-    counterpartyCode: "SAMP-SUPP-001",
-    counterpartyName: "Acme Design Partners",
-    documentId: "SAMP-BILL-001",
-    billDate: "2026-04-15",
-    lines: [
-      { line_id: 1, description: "Website redesign", net_amount: 5000, tax_rule: "NZ_STANDARD", gross_amount: 5750 },
-      { line_id: 2, description: "SEO audit", net_amount: 1500, tax_rule: "NZ_STANDARD", gross_amount: 1725 },
-    ],
-  },
-  {
-    counterpartyCode: "SAMP-SUPP-002",
-    counterpartyName: "Global Trade NZ Ltd",
-    documentId: "SAMP-BILL-002",
-    billDate: "2026-04-22",
-    lines: [
-      { line_id: 1, description: "Export consulting", net_amount: 3500, tax_rule: "NZ_ZERO_RATED", gross_amount: 3500 },
-      { line_id: 2, description: "Market research report", net_amount: 1200, tax_rule: "NZ_STANDARD", gross_amount: 1380 },
-    ],
-  },
-  {
-    counterpartyCode: "SAMP-SUPP-003",
-    counterpartyName: "Kiwi Financial Services",
-    documentId: "SAMP-BILL-003",
-    billDate: "2026-05-01",
-    lines: [
-      { line_id: 1, description: "Accounting software licence", net_amount: 2400, tax_rule: "NZ_STANDARD", gross_amount: 2760 },
-      { line_id: 2, description: "Financial advisory (exempt)", net_amount: 800, tax_rule: "NZ_EXEMPT", gross_amount: 800 },
-    ],
-  },
-  {
-    counterpartyCode: "SAMP-SUPP-003",
-    counterpartyName: "Kiwi Financial Services",
-    documentId: "SAMP-BILL-004",
-    billDate: "2026-05-03",
-    lines: [
-      { line_id: 1, description: "Implementation support", net_amount: 1250, tax_rule: "NZ_STANDARD", gross_amount: 1437.5 },
-    ],
-  },
-  {
-    counterpartyCode: "SAMP-SUPP-004",
-    counterpartyName: "Harbour Retail Group",
-    documentId: "SAMP-BILL-005",
-    billDate: "2026-05-09",
-    lines: [
-      { line_id: 1, description: "Monthly platform subscription", net_amount: 900, tax_rule: "NZ_STANDARD", gross_amount: 1035 },
-      { line_id: 2, description: "Onboarding support", net_amount: 450, tax_rule: "NZ_STANDARD", gross_amount: 517.5 },
-    ],
-  },
-  {
-    counterpartyCode: "SAMP-SUPP-005",
-    counterpartyName: "North Shore Wholesale",
-    documentId: "SAMP-BILL-008",
-    billDate: "2026-05-12",
-    dimensions: null,
-    lines: [
-      { line_id: 1, description: "General setup", net_amount: 100, tax_rule: "NZ_STANDARD", gross_amount: 115 },
-      { line_id: 2, description: "Direct campaign", net_amount: 200, tax_rule: "NZ_STANDARD", gross_amount: 230, dimensions: { SALES_CHANNEL: "Direct" } },
-      { line_id: 3, description: "Online campaign", net_amount: 400, tax_rule: "NZ_STANDARD", gross_amount: 460, dimensions: { SALES_CHANNEL: "Online" } },
-      { line_id: 4, description: "Wholesale campaign", net_amount: 800, tax_rule: "NZ_STANDARD", gross_amount: 920, dimensions: { SALES_CHANNEL: "Wholesale" } },
-    ],
-  },
-  {
-    counterpartyCode: "SAMP-SUPP-002",
-    counterpartyName: "Global Trade NZ Ltd",
-    documentId: "SAMP-BILL-006",
-    billDate: "2026-05-14",
-    lines: [
-      { line_id: 1, description: "Credit note target services", net_amount: 600, tax_rule: "NZ_STANDARD", gross_amount: 690 },
-    ],
-  },
-  {
-    counterpartyCode: "SAMP-SUPP-005",
-    counterpartyName: "North Shore Wholesale",
-    documentId: "SAMP-BILL-007",
-    billDate: "2026-05-16",
-    dimensions: null,
-    lines: [
-      { line_id: 1, description: "Write-off target balance", net_amount: 300, tax_rule: "NZ_STANDARD", gross_amount: 345 },
-    ],
-  },
-];
+    {
+      counterpartyCode: "SAMP-SUPP-001",
+      counterpartyName: "Acme Design Partners",
+      documentId: "SAMP-BILL-001",
+      billDate: "2026-04-15",
+      lines: [
+        { line_id: 1, description: "Website redesign", net_amount: 5000, tax_rule: "NZ_STANDARD", gross_amount: 5750 },
+        { line_id: 2, description: "SEO audit", net_amount: 1500, tax_rule: "NZ_STANDARD", gross_amount: 1725 },
+      ],
+    },
+    {
+      counterpartyCode: "SAMP-SUPP-002",
+      counterpartyName: "Global Trade NZ Ltd",
+      documentId: "SAMP-BILL-002",
+      billDate: "2026-04-22",
+      lines: [
+        { line_id: 1, description: "Export consulting", net_amount: 3500, tax_rule: "NZ_ZERO_RATED", gross_amount: 3500 },
+        { line_id: 2, description: "Market research report", net_amount: 1200, tax_rule: "NZ_STANDARD", gross_amount: 1380 },
+      ],
+    },
+    {
+      counterpartyCode: "SAMP-SUPP-003",
+      counterpartyName: "Kiwi Financial Services",
+      documentId: "SAMP-BILL-003",
+      billDate: "2026-05-01",
+      lines: [
+        { line_id: 1, description: "Accounting software licence", net_amount: 2400, tax_rule: "NZ_STANDARD", gross_amount: 2760 },
+        { line_id: 2, description: "Financial advisory (exempt)", net_amount: 800, tax_rule: "NZ_EXEMPT", gross_amount: 800 },
+      ],
+    },
+    {
+      counterpartyCode: "SAMP-SUPP-003",
+      counterpartyName: "Kiwi Financial Services",
+      documentId: "SAMP-BILL-004",
+      billDate: "2026-05-03",
+      lines: [
+        { line_id: 1, description: "Implementation support", net_amount: 1250, tax_rule: "NZ_STANDARD", gross_amount: 1437.5 },
+      ],
+    },
+    {
+      counterpartyCode: "SAMP-SUPP-004",
+      counterpartyName: "Harbour Retail Group",
+      documentId: "SAMP-BILL-005",
+      billDate: "2026-05-09",
+      lines: [
+        { line_id: 1, description: "Monthly platform subscription", net_amount: 900, tax_rule: "NZ_STANDARD", gross_amount: 1035 },
+        { line_id: 2, description: "Onboarding support", net_amount: 450, tax_rule: "NZ_STANDARD", gross_amount: 517.5 },
+      ],
+    },
+    {
+      counterpartyCode: "SAMP-SUPP-005",
+      counterpartyName: "North Shore Wholesale",
+      documentId: "SAMP-BILL-008",
+      billDate: "2026-05-12",
+      dimensions: null,
+      lines: [
+        { line_id: 1, description: "General setup", net_amount: 100, tax_rule: "NZ_STANDARD", gross_amount: 115 },
+        { line_id: 2, description: "Direct campaign", net_amount: 200, tax_rule: "NZ_STANDARD", gross_amount: 230, dimensions: { SALES_CHANNEL: "Direct" } },
+        { line_id: 3, description: "Online campaign", net_amount: 400, tax_rule: "NZ_STANDARD", gross_amount: 460, dimensions: { SALES_CHANNEL: "Online" } },
+        { line_id: 4, description: "Wholesale campaign", net_amount: 800, tax_rule: "NZ_STANDARD", gross_amount: 920, dimensions: { SALES_CHANNEL: "Wholesale" } },
+      ],
+    },
+    {
+      counterpartyCode: "SAMP-SUPP-002",
+      counterpartyName: "Global Trade NZ Ltd",
+      documentId: "SAMP-BILL-006",
+      billDate: "2026-05-14",
+      lines: [
+        { line_id: 1, description: "Credit note target services", net_amount: 600, tax_rule: "NZ_STANDARD", gross_amount: 690 },
+      ],
+    },
+    {
+      counterpartyCode: "SAMP-SUPP-005",
+      counterpartyName: "North Shore Wholesale",
+      documentId: "SAMP-BILL-007",
+      billDate: "2026-05-16",
+      dimensions: null,
+      lines: [
+        { line_id: 1, description: "Write-off target balance", net_amount: 300, tax_rule: "NZ_STANDARD", gross_amount: 345 },
+      ],
+    },
+  ];
 
 async function postForCompany(config: SampleCompanyConfig) {
   const onlyIndex = process.argv.findIndex((arg) => arg === "--only");

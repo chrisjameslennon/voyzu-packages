@@ -144,7 +144,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class GlAccountCategoryRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async insert(row: InsertGlAccountCategoryRow): Promise<GlAccountCategoryRow> {
     const columns: string[] = [];

@@ -219,10 +219,7 @@ export async function handleBatchGet(
 ): Promise<NextResponse<CurrencyResponseDto[] | InputValidationErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-    return ok(await batchGetCurrencies(codes.map(String)));
+    return ok(await batchGetCurrencies(codes));
   } catch (err) {
     return serverError(err);
   }
@@ -259,10 +256,7 @@ export async function handleBatchDelete(
 ): Promise<NextResponse<null | BusinessRuleErrorResponseDto | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-    await batchDeleteCurrencies(codes.map(String));
+    await batchDeleteCurrencies(codes);
     return noContent();
   } catch (err) {
     if (err instanceof InputValidationError) return inputValidationError(err.message);
@@ -308,10 +302,6 @@ export async function handleBatchActivate(
 ): Promise<NextResponse<CurrencyResponseDto[] | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const currencies = await activateCurrencies(codes);
     return ok(currencies satisfies CurrencyResponseDto[]);
   } catch (err) {
@@ -326,10 +316,6 @@ export async function handleBatchDeactivate(
 ): Promise<NextResponse<CurrencyResponseDto[] | InputValidationErrorResponseDto | BusinessRuleErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const currencies = await deactivateCurrencies(codes);
     return ok(currencies satisfies CurrencyResponseDto[]);
   } catch (err) {

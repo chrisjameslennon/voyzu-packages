@@ -1,1 +1,1 @@
-export type { FinancialPeriodResponseDto, FinancialPeriodStatus } from "./financial-period.response.dto";
+export { FinancialPeriodResponseDto, FinancialPeriodStatus } from "./financial-period.response.dto";

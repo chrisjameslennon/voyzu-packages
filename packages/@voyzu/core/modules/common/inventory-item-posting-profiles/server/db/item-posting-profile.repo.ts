@@ -166,7 +166,7 @@ function buildOrderLimitOffset(params: unknown[], options?: ListOptions): string
 }
 
 export class ItemPostingProfileRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async getGlAccount(companyId: number, code: string): Promise<{ id: number; code: string; accountType: "ASSET" | "LIABILITY" | "EQUITY" | "REVENUE" | "EXPENSE"; status: "ACTIVE" | "INACTIVE" } | null> {
     const { rows } = await this.db.query(`SELECT id::int, code, account_type, status FROM gl_account WHERE company_id = $1 AND code = $2`, [companyId, code]);

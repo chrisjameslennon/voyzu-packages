@@ -1,21 +1,25 @@
-import type { AccountType, GlAccountPointerReference } from "@voyzu/core/types/modules/core";
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AccountType, GlAccountPointerReference } from "@voyzu/core/types/modules/core";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { BusinessCode, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface TaxControlAccountResponseDto {
-  code: string;
-  ledger: "TAX";
-  name: string;
-  description: string;
-  requiredAccountType: AccountType | null;
-  glAccountId: number;
-  glAccount: {
-    code: string;
-    name: string;
-    accountType: AccountType;
-  };
-  status: "ACTIVE" | "INACTIVE" | null;
-  hasPostings: boolean;
-  companiesWithPostings: string[];
-  linkedBy: GlAccountPointerReference[];
-  audit: AuditMetadataDto;
-}
+export const TaxControlAccountResponseDto = StrictObject({
+  code: BusinessCode,
+  ledger: Type.Literal("TAX"),
+  name: NonBlankText,
+  description: Type.String(),
+  requiredAccountType: Type.Union([AccountType, Type.Null()]),
+  glAccountId: PositiveId,
+  glAccount: StrictObject({
+    code: BusinessCode,
+    name: NonBlankText,
+    accountType: AccountType,
+  }),
+  status: Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE"), Type.Null()]),
+  hasPostings: Type.Boolean(),
+  companiesWithPostings: Type.Array(Type.String()),
+  linkedBy: Type.Array(GlAccountPointerReference),
+  audit: AuditMetadataDto,
+});
+export type TaxControlAccountResponseDto = Type.Static<typeof TaxControlAccountResponseDto>;

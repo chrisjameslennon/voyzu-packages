@@ -75,7 +75,7 @@ export interface FinancialIntegrityDbChecks {
 }
 
 export class FinancialIntegrityRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async getDocumentTypes(): Promise<FinancialIntegrityDocumentTypeDto[]> {
     const { rows } = await this.db.query(

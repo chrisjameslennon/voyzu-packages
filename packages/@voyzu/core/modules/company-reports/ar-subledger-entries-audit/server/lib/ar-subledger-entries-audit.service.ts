@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type { ArSubledgerEntriesAuditResponseDto } from "@voyzu/core/types/modules/company-reports";
@@ -53,4 +52,4 @@ async function getArSubledgerEntriesAuditUnchecked(
   };
 }
 
-export const getArSubledgerEntriesAudit = withResponseValidation(getArSubledgerEntriesAuditUnchecked, "getArSubledgerEntriesAudit");
+export const getArSubledgerEntriesAudit = getArSubledgerEntriesAuditUnchecked;

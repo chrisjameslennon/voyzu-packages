@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ApBillCancellationRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-bill-cancellation.request.dto";
 import type { ApProcessingPostingResponseDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-processing.response.dto";
 
@@ -11,4 +10,4 @@ async function processApBillCancellationUnchecked(
   return processApDocument("AP_BILL_CANCELLATION", input, options);
 }
 
-export const processApBillCancellation = withResponseValidation(processApBillCancellationUnchecked, "processApBillCancellation");
+export const processApBillCancellation = processApBillCancellationUnchecked;

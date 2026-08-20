@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ApWriteOffRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-adjustment.request.dto";
 import type { ApProcessingPostingResponseDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ap-processing.response.dto";
 
@@ -11,4 +10,4 @@ async function processApWriteOffUnchecked(
   return processApDocument("AP_WRITE_OFF", input, options);
 }
 
-export const processApWriteOff = withResponseValidation(processApWriteOffUnchecked, "processApWriteOff");
+export const processApWriteOff = processApWriteOffUnchecked;

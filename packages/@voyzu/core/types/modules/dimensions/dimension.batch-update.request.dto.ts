@@ -1,6 +1,10 @@
-import type { DimensionUpdateRequestDto } from "./dimension.update.request.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { DimensionUpdateRequestDto } from "./dimension.update.request.dto";
+import { BusinessCode14 } from "@voyzu/core/types/constraints";
 
-export interface DimensionBatchUpdateRequestDto extends DimensionUpdateRequestDto {
-  /** Dimension business code identifying the dimension to update. */
-  code: string;
-}
+export const DimensionBatchUpdateRequestDto = StrictObject({
+  ...DimensionUpdateRequestDto.properties,
+  code: BusinessCode14,
+});
+export type DimensionBatchUpdateRequestDto = Type.Static<typeof DimensionBatchUpdateRequestDto>;

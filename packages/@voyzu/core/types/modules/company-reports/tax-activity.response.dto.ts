@@ -1,29 +1,36 @@
-export interface TaxActivityAuthorityColumnDto {
-  taxAuthorityCode: string;
-  taxAuthorityName: string;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface TaxActivityLineDto {
-  key: "OUTPUT_TAX_PAYABLE" | "INPUT_TAX_RECEIVABLE" | "TAX_ADJUSTMENTS" | "TAX_PAYMENTS" | "TAX_REFUNDS";
-  label: string;
-  amountsByAuthority: Record<string, number>;
-  total: number;
-}
+export const TaxActivityAuthorityColumnDto = StrictObject({
+  taxAuthorityCode: BusinessCode,
+  taxAuthorityName: NonBlankText,
+});
+export type TaxActivityAuthorityColumnDto = Type.Static<typeof TaxActivityAuthorityColumnDto>;
 
-export interface TaxActivityResponseDto {
-  companyId: number;
-  companyName: string;
-  companyReportLine1: string | null;
-  companyReportLine2: string | null;
-  companyReportFooter: string | null;
-  baseCurrencyCode: string;
-  periodLabel: string;
-  periodStartDate: string;
-  periodEndDate: string;
-  authorityColumns: TaxActivityAuthorityColumnDto[];
-  returnLines: TaxActivityLineDto[];
-  settlementLines: TaxActivityLineDto[];
-  netTaxReturn: number;
-  closingTaxPositionImpact: number;
-  trialBalanceReconciled: boolean;
-}
+export const TaxActivityLineDto = StrictObject({
+  key: Type.Union([Type.Literal("OUTPUT_TAX_PAYABLE"), Type.Literal("INPUT_TAX_RECEIVABLE"), Type.Literal("TAX_ADJUSTMENTS"), Type.Literal("TAX_PAYMENTS"), Type.Literal("TAX_REFUNDS")]),
+  label: Type.String(),
+  amountsByAuthority: Type.Record(Type.String(), Type.Number()),
+  total: Type.Number(),
+});
+export type TaxActivityLineDto = Type.Static<typeof TaxActivityLineDto>;
+
+export const TaxActivityResponseDto = StrictObject({
+  companyId: PositiveId,
+  companyName: NonBlankText,
+  companyReportLine1: Type.Union([Type.String(), Type.Null()]),
+  companyReportLine2: Type.Union([Type.String(), Type.Null()]),
+  companyReportFooter: Type.Union([Type.String(), Type.Null()]),
+  baseCurrencyCode: CurrencyCode,
+  periodLabel: Type.String(),
+  periodStartDate: IsoDate,
+  periodEndDate: IsoDate,
+  authorityColumns: Type.Array(TaxActivityAuthorityColumnDto),
+  returnLines: Type.Array(TaxActivityLineDto),
+  settlementLines: Type.Array(TaxActivityLineDto),
+  netTaxReturn: Type.Number(),
+  closingTaxPositionImpact: Type.Number(),
+  trialBalanceReconciled: Type.Boolean(),
+});
+export type TaxActivityResponseDto = Type.Static<typeof TaxActivityResponseDto>;

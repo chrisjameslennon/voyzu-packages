@@ -36,7 +36,7 @@ export interface ApDocumentAppliedTransactionRow {
 }
 
 export class ApBillReportRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async listDocumentLines(entryId: number): Promise<ApDocumentLineRow[]> {
     const { rows } = await this.db.query(

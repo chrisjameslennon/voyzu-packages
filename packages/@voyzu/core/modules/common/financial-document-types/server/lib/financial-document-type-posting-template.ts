@@ -420,10 +420,10 @@ export async function buildFinancialDocumentTypePostingTemplate(
       resolved.config.side ?? "DR",
       resolved,
       resolved.config.title ??
-        resolved.config.code ??
-        resolved.config.posting_code ??
-        resolved.config.control_account ??
-        "Posting component",
+      resolved.config.code ??
+      resolved.config.posting_code ??
+      resolved.config.control_account ??
+      "Posting component",
     )),
     hideComponents: definition.hide_components,
     cards: definition.hide_components

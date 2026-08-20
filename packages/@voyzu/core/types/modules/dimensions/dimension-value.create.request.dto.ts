@@ -1,8 +1,10 @@
-import type { DimensionValueStatus } from "./dimension-value.response.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { DimensionValueStatus } from "./dimension-value.response.dto";
+import { DimensionValueName } from "@voyzu/core/types/constraints";
 
-export interface DimensionValueCreateRequestDto {
-  /** Display name, limited to 14 letters, numbers, spaces, dashes or underscores. */
-  name: string;
-  /** Initial lifecycle status of the dimension value. Defaults to ACTIVE if omitted. */
-  status?: DimensionValueStatus;
-}
+export const DimensionValueCreateRequestDto = StrictObject({
+  name: DimensionValueName,
+  status: Type.Optional(DimensionValueStatus),
+});
+export type DimensionValueCreateRequestDto = Type.Static<typeof DimensionValueCreateRequestDto>;

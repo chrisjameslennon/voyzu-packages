@@ -35,7 +35,7 @@ const SELECT_WITH_DERIVED = `
 `;
 
 export class OrganizationRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async get(): Promise<OrganizationRow | null> {
     const { rows } = await this.db.query(`${SELECT_WITH_DERIVED} LIMIT 1`);

@@ -1,7 +1,5 @@
 import type { ApSubledgerEntryResponseDto } from "@voyzu/core/types/modules/ap-subledger";
 import { getDb } from "@voyzu/capability/db";
-import { checkResponse } from "@voyzu/capability/validation";
-import { validateSubledgerEntryResponse } from "@voyzu/core/common/server";
 
 import { ApSubledgerRepo } from "../db/ap-subledger-ledger-entries.repo";
 
@@ -53,7 +51,7 @@ function toEntryDto(row: Awaited<ReturnType<ApSubledgerRepo["listEntries"]>>[num
     documentSnapshot: row.document_snapshot_json,
     detailedDocumentSnapshot: row.detailed_document_snapshot_json,
   };
-  return checkResponse(dto, validateSubledgerEntryResponse(dto), `AP subledger entry (id=${dto.id})`);
+  return dto;
 }
 
 export async function listApSubledgerEntries(companyId: number): Promise<ApSubledgerEntryResponseDto[]> {

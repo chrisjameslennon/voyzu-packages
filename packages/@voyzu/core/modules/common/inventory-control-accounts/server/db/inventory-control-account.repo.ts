@@ -73,7 +73,7 @@ function mapRow(row: Record<string, unknown>): InventoryControlAccountRow {
 }
 
 export class InventoryControlAccountRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async list(companyId: number): Promise<InventoryControlAccountRow[]> {
     const { rows } = await this.db.query(

@@ -230,10 +230,6 @@ export async function handleBatchCreate(
 > {
   try {
     const body = await parseBody<DimensionCreateRequestDto[]>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     const dimensions = await batchCreateDimensions(body, companyId);
     return created(dimensions satisfies DimensionResponseDto[]);
@@ -253,10 +249,6 @@ export async function handleBatchGet(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     const dimensions = await batchGetDimensions(codes, companyId);
     return ok(dimensions satisfies DimensionResponseDto[]);
@@ -273,10 +265,6 @@ export async function handleBatchUpdate(
 > {
   try {
     const body = await parseBody<DimensionBatchUpdateRequestDto[]>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     const results = await batchUpdateDimensions(body, companyId);
     return ok(results satisfies DimensionResponseDto[]);
@@ -297,9 +285,6 @@ export async function handleBatchPatch(
 > {
   try {
     const body = await parseBody<DimensionBatchPatchRequestDto[]>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
     for (const item of body) {
       if (!item.code) {
         return inputValidationError("Each item must include a 'code' field");
@@ -325,9 +310,8 @@ export async function handleBatchActivate(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
     const { companyId } = await resolveApiSettingsScope(req);
-    return ok(await activateDimensions(codes.map(String), companyId));
+    return ok(await activateDimensions(codes, companyId));
   } catch (err) {
     if (err instanceof InputValidationError) return inputValidationError(err.message);
     if (err instanceof NotFoundError) return notFoundError(err.message);
@@ -357,9 +341,8 @@ export async function handleBatchDeactivate(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) return inputValidationError("'codes' must be an array");
     const { companyId } = await resolveApiSettingsScope(req);
-    return ok(await deactivateDimensions(codes.map(String), companyId));
+    return ok(await deactivateDimensions(codes, companyId));
   } catch (err) {
     if (err instanceof InputValidationError) return inputValidationError(err.message);
     if (err instanceof BusinessRuleError) return businessRuleError(err.message);
@@ -391,10 +374,6 @@ export async function handleBatchDelete(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     await batchDeleteDimensions(codes, companyId);
     return noContent();

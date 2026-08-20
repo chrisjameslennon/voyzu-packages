@@ -219,10 +219,6 @@ export async function handleBatchCreate(
 > {
   try {
     const body = await parseBody<GlAccountCreateRequestDto[]>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     const accounts = await batchCreateGlAccounts(body, companyId);
     return created(accounts satisfies GlAccountResponseDto[]);
@@ -242,10 +238,6 @@ export async function handleBatchGet(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     const accounts = await batchGetGlAccounts(codes, companyId);
     return ok(accounts satisfies GlAccountResponseDto[]);
@@ -262,10 +254,6 @@ export async function handleBatchUpdate(
 > {
   try {
     const body = await parseBody<GlAccountBatchUpdateRequestDto[]>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     const results = await batchUpdateGlAccounts(body, companyId);
     return ok(results satisfies GlAccountResponseDto[]);
@@ -286,9 +274,6 @@ export async function handleBatchPatch(
 > {
   try {
     const body = await parseBody<GlAccountBatchPatchRequestDto[]>(req);
-    if (!Array.isArray(body)) {
-      return inputValidationError("Request body must be an array");
-    }
     for (const item of body) {
       if (!item.code) {
         return inputValidationError("Each item must include a 'code' field");
@@ -315,10 +300,6 @@ export async function handleBatchDelete(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     await batchDeleteGlAccounts(codes, companyId);
     return noContent();
@@ -333,10 +314,6 @@ export async function handleBatchActivate(
 ): Promise<NextResponse<GlAccountResponseDto[] | InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     const accounts = await activateGlAccounts(codes, companyId);
     return ok(accounts satisfies GlAccountResponseDto[]);
@@ -367,10 +344,6 @@ export async function handleBatchDeactivate(
 ): Promise<NextResponse<GlAccountResponseDto[] | InputValidationErrorResponseDto | BusinessRuleErrorResponseDto | EntityNotFoundErrorResponseDto | InternalServerErrorResponseDto>> {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
-    if (!Array.isArray(codes)) {
-      return inputValidationError("'codes' must be an array");
-    }
-
     const { companyId } = await resolveApiSettingsScope(req);
     const accounts = await deactivateGlAccounts(codes, companyId);
     return ok(accounts satisfies GlAccountResponseDto[]);

@@ -1,33 +1,16 @@
-import type { Filter } from "@voyzu/types/params";
-import type { ListOptions } from "@voyzu/types/params";
-import type { FinancialDocumentTypeCreateRequestDto } from "@voyzu/core/types/modules/financial-document-types";
-import type { FinancialDocumentTypePatchRequestDto } from "@voyzu/core/types/modules/financial-document-types";
-import type { FinancialDocumentTypeResponseDto } from "@voyzu/core/types/modules/financial-document-types";
-import type { FinancialDocumentTypeUpdateRequestDto } from "@voyzu/core/types/modules/financial-document-types";
-import { runtime } from "@voyzu/capability/runtime";
-import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError, DataError } from "@voyzu/capability/errors";
 import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, ConflictError, DataError, NotFoundError } from "@voyzu/capability/errors";
+import type { FinancialDocumentTypeCreateRequestDto, FinancialDocumentTypePatchRequestDto, FinancialDocumentTypeResponseDto, FinancialDocumentTypeUpdateRequestDto } from "@voyzu/core/types/modules/financial-document-types";
+import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, withAuditActors, withCreationAudit } from "../../../server";
 
 import { FinancialDocumentTypeRepo } from "../db/financial-document-type.repo";
 
-import { toDto, toInsertRow, toUpdateRow, toPatchRow } from "./financial-document-type.mapper";
-import { validateCreate, validateUpdate, validatePatch, validateResponse } from "./financial-document-type.validator";
-
+import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./financial-document-type.mapper";
 const SYSTEM_LOCKED_MSG = "Financial document types are system-defined and cannot be modified or deleted";
 
-function checkedResponse(dto: FinancialDocumentTypeResponseDto): FinancialDocumentTypeResponseDto {
-  const errors = validateResponse(dto);
-  if (errors.length) {
-    const message = `Invalid financial document type response (code=${dto.code}): ${errors.join("; ")}`;
-    if (runtime.isDevLike) throw new Error(message);
-    console.error(message);
-  }
-  return dto;
-}
-
 async function enrichRow(row: Parameters<typeof toDto>[0]): Promise<FinancialDocumentTypeResponseDto> {
-  return checkedResponse(await withAuditActors(toDto(row), row));
+  return await withAuditActors(toDto(row), row);
 }
 
 function enrichRows(rows: Array<Parameters<typeof toDto>[0]>): Promise<FinancialDocumentTypeResponseDto[]> {
@@ -47,8 +30,6 @@ async function assertNoneAreSystem(repo: FinancialDocumentTypeRepo, codes: strin
 }
 
 export async function createFinancialDocumentType(input: FinancialDocumentTypeCreateRequestDto, _companyId?: number): Promise<FinancialDocumentTypeResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   try {
     const row = await withTransaction(async (client) => {
       return new FinancialDocumentTypeRepo(client).insert(withCreationAudit(toInsertRow(input), await createCreationAuditStamp()));
@@ -69,8 +50,6 @@ export async function getFinancialDocumentType(code: string, _companyId?: number
 }
 
 export async function updateFinancialDocumentType(code: string, input: FinancialDocumentTypeUpdateRequestDto, _companyId?: number): Promise<FinancialDocumentTypeResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   try {
     return await withTransaction(async (client) => {
       const repo = new FinancialDocumentTypeRepo(client);
@@ -90,8 +69,6 @@ export async function updateFinancialDocumentType(code: string, input: Financial
 }
 
 export async function patchFinancialDocumentType(code: string, input: FinancialDocumentTypePatchRequestDto, _companyId?: number): Promise<FinancialDocumentTypeResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   try {
     return await withTransaction(async (client) => {
       const repo = new FinancialDocumentTypeRepo(client);

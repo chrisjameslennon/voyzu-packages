@@ -1,6 +1,9 @@
-export interface FinancialDocumentDefaultPatchRequestDto {
-  /** Unique numeric identifier of the GL account to link to this posting code. */
-  glAccountId?: number;
-  /** Unique numeric identifier of the Bank / Cash control account to link to this posting code. */
-  bankCashControlAccountId?: number;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { PositiveId } from "@voyzu/core/types/constraints";
+
+export const FinancialDocumentDefaultPatchRequestDto = StrictObject({
+  glAccountId: Type.Optional(PositiveId),
+  bankCashControlAccountId: Type.Optional(PositiveId),
+}, { minProperties: 1 });
+export type FinancialDocumentDefaultPatchRequestDto = Type.Static<typeof FinancialDocumentDefaultPatchRequestDto>;

@@ -32,7 +32,7 @@ function lastDayOfMonth(year: number, monthIndex: number): string {
 }
 
 export class FinancialPeriodRepo {
-  constructor(private readonly db: DbExecutor) {}
+  constructor(private readonly db: DbExecutor) { }
 
   async listByYear(fiscalYearId: number): Promise<FinancialPeriodRow[]> {
     const { rows } = await this.db.query(

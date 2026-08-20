@@ -136,7 +136,7 @@ function openItemRow(row: Record<string, unknown>): OpenItemRow {
 }
 
 export class ArAdjustmentPostingRepo {
-  constructor(private readonly db: ArAdjustmentDb) {}
+  constructor(private readonly db: ArAdjustmentDb) { }
 
   async getCompany(code: string): Promise<CompanyRow | null> {
     const { rows } = await this.db.query(`SELECT id, code, name, country_code, base_currency_code, status FROM company WHERE code = $1`, [code]);

@@ -1,6 +1,9 @@
-export interface DimensionCreateRequestDto {
-  /** Business code for the new dimension (up to 14 characters, uppercase letters, numbers, dash, underscore). */
-  code: string;
-  /** Display name of the dimension. */
-  name: string;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode14, NonBlankText } from "@voyzu/core/types/constraints";
+
+export const DimensionCreateRequestDto = StrictObject({
+  code: BusinessCode14,
+  name: NonBlankText,
+});
+export type DimensionCreateRequestDto = Type.Static<typeof DimensionCreateRequestDto>;

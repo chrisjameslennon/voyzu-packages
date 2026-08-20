@@ -1,4 +1,5 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { DrCr } from "@voyzu/core/types/modules/core";
 import type { ArReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
 import type {
@@ -8,14 +9,12 @@ import type {
   ArReceiptPostingDetailsDto,
   ArReceiptPostingResponseDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt.response.dto";
-import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 
-import { JournalRepo } from "../../../journals/server/db/journal.repo";
-import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { resolveBankCashDetails, toJournalBankCashFields } from "../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
 import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { validateRequest } from "./ar-receipt.validator";
+import { JournalRepo } from "../../../journals/server/db/journal.repo";
+import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import {
   AR_RECEIPT_DOCUMENT_LABEL,
   AR_RECEIPT_ENGINE_CODE,
@@ -703,4 +702,4 @@ async function processArReceiptUnchecked(input: ArReceiptRequestDto, options: Pr
   });
 }
 
-export const processArReceipt = withResponseValidation(processArReceiptUnchecked, "processArReceipt");
+export const processArReceipt = processArReceiptUnchecked;

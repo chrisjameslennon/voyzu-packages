@@ -1,21 +1,28 @@
-export interface ArSubledgerEntriesAuditFieldDto {
-  label: string;
-  value: string | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CurrencyCode, IsoDate, NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface ArSubledgerEntriesAuditEntryDto {
-  id: string;
-  fields: ArSubledgerEntriesAuditFieldDto[];
-}
+export const ArSubledgerEntriesAuditFieldDto = StrictObject({
+  label: Type.String(),
+  value: Type.Union([Type.String(), Type.Null()]),
+});
+export type ArSubledgerEntriesAuditFieldDto = Type.Static<typeof ArSubledgerEntriesAuditFieldDto>;
 
-export interface ArSubledgerEntriesAuditResponseDto {
-  companyId: number;
-  companyName: string;
-  companyReportLine1: string | null;
-  companyReportLine2: string | null;
-  companyReportFooter: string | null;
-  baseCurrencyCode: string;
-  fromDate: string;
-  toDate: string;
-  entries: ArSubledgerEntriesAuditEntryDto[];
-}
+export const ArSubledgerEntriesAuditEntryDto = StrictObject({
+  id: Type.String(),
+  fields: Type.Array(ArSubledgerEntriesAuditFieldDto),
+});
+export type ArSubledgerEntriesAuditEntryDto = Type.Static<typeof ArSubledgerEntriesAuditEntryDto>;
+
+export const ArSubledgerEntriesAuditResponseDto = StrictObject({
+  companyId: PositiveId,
+  companyName: NonBlankText,
+  companyReportLine1: Type.Union([Type.String(), Type.Null()]),
+  companyReportLine2: Type.Union([Type.String(), Type.Null()]),
+  companyReportFooter: Type.Union([Type.String(), Type.Null()]),
+  baseCurrencyCode: CurrencyCode,
+  fromDate: IsoDate,
+  toDate: IsoDate,
+  entries: Type.Array(ArSubledgerEntriesAuditEntryDto),
+});
+export type ArSubledgerEntriesAuditResponseDto = Type.Static<typeof ArSubledgerEntriesAuditResponseDto>;

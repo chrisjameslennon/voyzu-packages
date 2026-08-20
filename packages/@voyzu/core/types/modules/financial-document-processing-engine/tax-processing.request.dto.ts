@@ -1,52 +1,58 @@
-import type { BankCashDetailsRequestDto } from "./bank-cash-details.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BankCashDetailsRequestDto } from "./bank-cash-details.dto";
+import { BusinessCode, IsoDate } from "@voyzu/core/types/constraints";
 
-export type TaxProcessingDocumentType = "TAX_PAYMENT" | "TAX_REFUND" | "TAX_ADJUSTMENT";
-export type TaxMovementCode = "TAX_ON_SALES" | "TAX_ON_PURCHASES";
-export type TaxAdjustmentEffect =
-  | "INCREASES_TAX_PAYABLE"
-  | "REDUCES_TAX_PAYABLE"
-  | "INCREASES_TAX_RECOVERABLE"
-  | "REDUCES_TAX_RECOVERABLE";
+export const TaxProcessingDocumentType = Type.Union([Type.Literal("TAX_PAYMENT"), Type.Literal("TAX_REFUND"), Type.Literal("TAX_ADJUSTMENT")]);
+export type TaxProcessingDocumentType = Type.Static<typeof TaxProcessingDocumentType>;
+export const TaxMovementCode = Type.Union([Type.Literal("TAX_ON_SALES"), Type.Literal("TAX_ON_PURCHASES")]);
+export type TaxMovementCode = Type.Static<typeof TaxMovementCode>;
+export const TaxAdjustmentEffect = Type.Union([Type.Literal("INCREASES_TAX_PAYABLE"), Type.Literal("REDUCES_TAX_PAYABLE"), Type.Literal("INCREASES_TAX_RECOVERABLE"), Type.Literal("REDUCES_TAX_RECOVERABLE")]);
+export type TaxAdjustmentEffect = Type.Static<typeof TaxAdjustmentEffect>;
 
-export interface TaxPaymentRequestDto {
-  document_type?: "TAX_PAYMENT";
-  company_code: string;
-  tax_authority_code: string;
-  document_id?: string;
-  memo?: string | null;
-  payment_date: string;
-  posting_date?: string | null;
-  payment_amount: number;
-  bank_cash_account_code?: string | null;
-  bank_cash_details?: BankCashDetailsRequestDto | null;
-}
+export const TaxPaymentRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("TAX_PAYMENT")),
+  company_code: BusinessCode,
+  tax_authority_code: BusinessCode,
+  document_id: Type.Optional(Type.String()),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  payment_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  payment_amount: Type.Number(),
+  bank_cash_account_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  bank_cash_details: Type.Optional(Type.Union([BankCashDetailsRequestDto, Type.Null()])),
+});
+export type TaxPaymentRequestDto = Type.Static<typeof TaxPaymentRequestDto>;
 
-export interface TaxRefundRequestDto {
-  document_type?: "TAX_REFUND";
-  company_code: string;
-  tax_authority_code: string;
-  document_id?: string;
-  memo?: string | null;
-  refund_date: string;
-  posting_date?: string | null;
-  refund_amount: number;
-  bank_cash_account_code?: string | null;
-  bank_cash_details?: BankCashDetailsRequestDto | null;
-}
+export const TaxRefundRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("TAX_REFUND")),
+  company_code: BusinessCode,
+  tax_authority_code: BusinessCode,
+  document_id: Type.Optional(Type.String()),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  refund_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  refund_amount: Type.Number(),
+  bank_cash_account_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  bank_cash_details: Type.Optional(Type.Union([BankCashDetailsRequestDto, Type.Null()])),
+});
+export type TaxRefundRequestDto = Type.Static<typeof TaxRefundRequestDto>;
 
-export interface TaxAdjustmentRequestDto {
-  document_type?: "TAX_ADJUSTMENT";
-  company_code: string;
-  tax_authority_code: string;
-  document_id?: string;
-  memo?: string | null;
-  adjustment_date: string;
-  posting_date?: string | null;
-  tax_movement_code: TaxMovementCode;
-  adjustment_effect: TaxAdjustmentEffect;
-  adjustment_amount: number;
-  adjustment_gl_account_code?: string | null;
-  bank_cash_details?: BankCashDetailsRequestDto | null;
-}
+export const TaxAdjustmentRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("TAX_ADJUSTMENT")),
+  company_code: BusinessCode,
+  tax_authority_code: BusinessCode,
+  document_id: Type.Optional(Type.String()),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  adjustment_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  tax_movement_code: TaxMovementCode,
+  adjustment_effect: TaxAdjustmentEffect,
+  adjustment_amount: Type.Number(),
+  adjustment_gl_account_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  bank_cash_details: Type.Optional(Type.Union([BankCashDetailsRequestDto, Type.Null()])),
+});
+export type TaxAdjustmentRequestDto = Type.Static<typeof TaxAdjustmentRequestDto>;
 
-export type TaxProcessingRequestDto = TaxPaymentRequestDto | TaxRefundRequestDto | TaxAdjustmentRequestDto;
+export const TaxProcessingRequestDto = Type.Union([TaxPaymentRequestDto, TaxRefundRequestDto, TaxAdjustmentRequestDto]);
+export type TaxProcessingRequestDto = Type.Static<typeof TaxProcessingRequestDto>;

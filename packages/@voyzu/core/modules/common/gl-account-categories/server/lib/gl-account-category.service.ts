@@ -1,31 +1,25 @@
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
-import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 import type {
-  GlAccountCategoryCreateRequestDto,
   GlAccountCategoryBatchPatchRequestDto,
   GlAccountCategoryBatchUpdateRequestDto,
+  GlAccountCategoryCreateRequestDto,
   GlAccountCategoryPatchRequestDto,
   GlAccountCategoryResponseDto,
   GlAccountCategoryUpdateRequestDto,
 } from "@voyzu/core/types/modules/gl-account-categories";
 import type { Filter, ListOptions } from "@voyzu/types/params";
+import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
-import { GlAccountCategoryRepo } from "../db/gl-account-category.repo";
 import { Deactivate, Delete } from "../../domain/operation-policy";
+import { GlAccountCategoryRepo } from "../db/gl-account-category.repo";
 import type { GlAccountCategoryRow } from "../db/gl-account-category.row.types";
 
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./gl-account-category.mapper";
-import { validateCreate, validatePatch, validateResponse, validateUpdate } from "./gl-account-category.validator";
-import { checkResponse } from "@voyzu/capability/validation";
-
-function checkedResponse(dto: GlAccountCategoryResponseDto): GlAccountCategoryResponseDto {
-  return checkResponse(dto, validateResponse(dto), `GL account category (id=${dto.id})`);
-}
 
 async function enrichRow(row: GlAccountCategoryRow): Promise<GlAccountCategoryResponseDto> {
-  return checkedResponse(await withAuditActors(toDto(row), row));
+  return withAuditActors(toDto(row), row);
 }
 
 function enrichRows(rows: GlAccountCategoryRow[]): Promise<GlAccountCategoryResponseDto[]> {
@@ -51,8 +45,6 @@ function throwIfBlocked(blockers: ReturnType<typeof Delete>): void {
 }
 
 export async function createGlAccountCategory(input: GlAccountCategoryCreateRequestDto, companyId?: number): Promise<GlAccountCategoryResponseDto> {
-  const errors = validateCreate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -75,8 +67,6 @@ export async function getGlAccountCategory(code: string, companyId?: number): Pr
 }
 
 export async function updateGlAccountCategory(code: string, input: GlAccountCategoryUpdateRequestDto, companyId?: number): Promise<GlAccountCategoryResponseDto> {
-  const errors = validateUpdate(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -97,8 +87,6 @@ export async function updateGlAccountCategory(code: string, input: GlAccountCate
 }
 
 export async function patchGlAccountCategory(code: string, input: GlAccountCategoryPatchRequestDto, companyId?: number): Promise<GlAccountCategoryResponseDto> {
-  const errors = validatePatch(input);
-  if (errors.length) throw new InputValidationError(errors.join("; "));
   await assertWritableScope(companyId);
 
   try {
@@ -142,10 +130,6 @@ export async function searchGlAccountCategories(phrase: string, options?: ListOp
   return enrichRows(await new GlAccountCategoryRepo(getDb()).search(await scopedCompanyId(companyId), phrase, options));
 }
 export async function batchCreateGlAccountCategories(inputs: GlAccountCategoryCreateRequestDto[], companyId?: number): Promise<GlAccountCategoryResponseDto[]> {
-  for (const input of inputs) {
-    const errors = validateCreate(input);
-    if (errors.length) throw new InputValidationError(errors.join("; "));
-  }
   await assertWritableScope(companyId);
 
   const resolvedCompanyId = await scopedCompanyId(companyId);

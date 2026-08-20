@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import { getDb } from "@voyzu/capability/db";
 import { NotFoundError } from "@voyzu/capability/errors";
 import type {
@@ -745,4 +744,4 @@ async function getFinancialIntegrityUnchecked(
   };
 }
 
-export const getFinancialIntegrity = withResponseValidation(getFinancialIntegrityUnchecked, "getFinancialIntegrity");
+export const getFinancialIntegrity = getFinancialIntegrityUnchecked;

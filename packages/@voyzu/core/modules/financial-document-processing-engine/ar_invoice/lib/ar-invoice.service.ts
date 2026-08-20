@@ -1,6 +1,6 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import type { ArInvoiceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
-import type { InventoryIssueRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
 import type {
   ArInvoiceArCounterpartyDetailsDto,
   ArInvoiceArSubledgerDetailsDto,
@@ -12,12 +12,11 @@ import type {
   ArInvoicePostingResponseDto,
   ArInvoiceTaxLedgerDetailDto,
 } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
-import { getDb, withTransaction } from "@voyzu/capability/db";
-import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
+import type { InventoryIssueRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
 
+import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { processInventoryIssue } from "../../inventory/lib/inventory-processing.service";
 import { ArInvoicePostingRepo } from "../db/ar-invoice-posting.repo";
 import type {
@@ -39,7 +38,7 @@ import {
   type ArInvoiceLineDimension,
   type ArInvoicePostingLine,
 } from "./ar-invoice.types";
-import { type ArInvoiceDataValidationContext, validateData, validateRequest } from "./ar-invoice.validator";
+import { validateData, validateRequest, type ArInvoiceDataValidationContext } from "./ar-invoice.validator";
 
 export interface ProcessArInvoiceOptions {
   preview?: boolean;
@@ -782,4 +781,4 @@ async function processArInvoiceUnchecked(
   });
 }
 
-export const processArInvoice = withResponseValidation(processArInvoiceUnchecked, "processArInvoice");
+export const processArInvoice = processArInvoiceUnchecked;

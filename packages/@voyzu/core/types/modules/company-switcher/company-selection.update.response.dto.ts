@@ -1,4 +1,8 @@
-export interface CompanySelectionUpdateResponseDto {
-  /** Unique numeric identifier of the selected company. */
-  selectedCompanyId: number;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { PositiveId } from "@voyzu/core/types/constraints";
+
+export const CompanySelectionUpdateResponseDto = StrictObject({
+  selectedCompanyId: PositiveId,
+});
+export type CompanySelectionUpdateResponseDto = Type.Static<typeof CompanySelectionUpdateResponseDto>;

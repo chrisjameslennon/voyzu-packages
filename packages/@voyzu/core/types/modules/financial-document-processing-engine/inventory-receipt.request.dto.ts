@@ -1,27 +1,34 @@
-export interface InventoryDocumentSourceDto {
-  source_document: string;
-  source_document_id?: string | null;
-  source_type?: string | null;
-  source_line_id?: number | null;
-}
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BusinessCode, IsoDate, PositiveId } from "@voyzu/core/types/constraints";
 
-export interface InventoryReceiptLineRequestDto {
-  line_id?: number | null;
-  inventory_item_code: string;
-  description?: string | null;
-  quantity_delta: number | string;
-  valuation_method: "SUPPLIED_UNIT_BOOK_VALUE" | "CURRENT_AVERAGE_BOOK_VALUE" | "SOURCE_LINE_UNIT_VALUE";
-  unit_book_value?: number | string | null;
-  dimensions?: Record<string, string> | null;
-}
+export const InventoryDocumentSourceDto = StrictObject({
+  source_document: Type.String(),
+  source_document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  source_type: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  source_line_id: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+});
+export type InventoryDocumentSourceDto = Type.Static<typeof InventoryDocumentSourceDto>;
 
-export interface InventoryReceiptRequestDto {
-  document_type: "INVENTORY_RECEIPT";
-  company_code: string;
-  document_id?: string | null;
-  memo?: string | null;
-  receipt_date: string;
-  posting_date?: string | null;
-  source: InventoryDocumentSourceDto;
-  lines: InventoryReceiptLineRequestDto[];
-}
+export const InventoryReceiptLineRequestDto = StrictObject({
+  line_id: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  inventory_item_code: BusinessCode,
+  description: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  quantity_delta: Type.Union([Type.Number(), Type.String()]),
+  valuation_method: Type.Union([Type.Literal("SUPPLIED_UNIT_BOOK_VALUE"), Type.Literal("CURRENT_AVERAGE_BOOK_VALUE"), Type.Literal("SOURCE_LINE_UNIT_VALUE")]),
+  unit_book_value: Type.Optional(Type.Union([Type.Number(), Type.String(), Type.Null()])),
+  dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),
+});
+export type InventoryReceiptLineRequestDto = Type.Static<typeof InventoryReceiptLineRequestDto>;
+
+export const InventoryReceiptRequestDto = StrictObject({
+  document_type: Type.Literal("INVENTORY_RECEIPT"),
+  company_code: BusinessCode,
+  document_id: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  receipt_date: IsoDate,
+  posting_date: Type.Optional(Type.Union([IsoDate, Type.Null()])),
+  source: InventoryDocumentSourceDto,
+  lines: Type.Array(InventoryReceiptLineRequestDto),
+});
+export type InventoryReceiptRequestDto = Type.Static<typeof InventoryReceiptRequestDto>;

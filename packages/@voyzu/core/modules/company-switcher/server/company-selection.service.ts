@@ -2,7 +2,6 @@ import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
 import type { UserResponseDto } from "@voyzu/auth/types";
 import { listCompanies } from "@voyzu/core/companies/server";
 import { getCurrentUser } from "@voyzu/auth/users/server";
-import { withResponseValidation } from "@voyzu/capability/validation";
 
 function hasUiAccess(user: UserResponseDto | null): user is UserResponseDto {
   return user?.status === "ACTIVE" && (user.accessMode === "UI" || user.accessMode === "UI_AND_API");
@@ -57,15 +56,6 @@ async function resolveCompanySelectionForCurrentUserUnchecked(requestedCompanyId
   return resolveCompanySelection(companies, user, requestedCompanyId);
 }
 
-export const listSelectableCompaniesForCurrentUser = withResponseValidation(
-  listSelectableCompaniesForCurrentUserUnchecked,
-  "selectable company list",
-);
-export const listAccessibleCompaniesForCurrentUser = withResponseValidation(
-  listAccessibleCompaniesForCurrentUserUnchecked,
-  "accessible company list",
-);
-export const resolveCompanySelectionForCurrentUser = withResponseValidation(
-  resolveCompanySelectionForCurrentUserUnchecked,
-  "company selection",
-);
+export const listSelectableCompaniesForCurrentUser = listSelectableCompaniesForCurrentUserUnchecked;
+export const listAccessibleCompaniesForCurrentUser = listAccessibleCompaniesForCurrentUserUnchecked;
+export const resolveCompanySelectionForCurrentUser = resolveCompanySelectionForCurrentUserUnchecked;

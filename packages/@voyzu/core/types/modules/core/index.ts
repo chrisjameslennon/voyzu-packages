@@ -1,41 +1,44 @@
-export type AccountType = "ASSET" | "LIABILITY" | "EQUITY" | "REVENUE" | "EXPENSE";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
 
-export type DrCr = "DR" | "CR";
+export const AccountType = Type.Union([
+  Type.Literal("ASSET"), Type.Literal("LIABILITY"), Type.Literal("EQUITY"),
+  Type.Literal("REVENUE"), Type.Literal("EXPENSE"),
+]);
+export type AccountType = Type.Static<typeof AccountType>;
 
-export type EntryType = "DEBIT" | "CREDIT";
+export const DrCr = Type.Union([Type.Literal("DR"), Type.Literal("CR")]);
+export type DrCr = Type.Static<typeof DrCr>;
 
-export type Ledger =
-  | "ACCOUNTS_PAYABLE"
-  | "ACCOUNTS_RECEIVABLE"
-  | "GENERAL"
-  | "TAX"
-  | "INVENTORY"
-  | "BANK_CASH";
+export const EntryType = Type.Union([Type.Literal("DEBIT"), Type.Literal("CREDIT")]);
+export type EntryType = Type.Static<typeof EntryType>;
 
-export type GlAccountPointerName =
-  | "Accounts Payable Control Accounts"
-  | "Accounts Receivable Control Accounts"
-  | "Bank / Cash Accounts"
-  | "Tax Control Accounts"
-  | "Inventory Control Accounts"
-  | "Financial Document Defaults"
-  | "Item Posting Profiles";
+export const Ledger = Type.Union([
+  Type.Literal("ACCOUNTS_PAYABLE"), Type.Literal("ACCOUNTS_RECEIVABLE"),
+  Type.Literal("GENERAL"), Type.Literal("TAX"), Type.Literal("INVENTORY"),
+  Type.Literal("BANK_CASH"),
+]);
+export type Ledger = Type.Static<typeof Ledger>;
 
-export interface OperationReference {
-  type: string;
-  code: string;
-}
+export const GlAccountPointerName = Type.Union([
+  Type.Literal("Accounts Payable Control Accounts"),
+  Type.Literal("Accounts Receivable Control Accounts"),
+  Type.Literal("Bank / Cash Accounts"), Type.Literal("Tax Control Accounts"),
+  Type.Literal("Inventory Control Accounts"),
+  Type.Literal("Financial Document Defaults"), Type.Literal("Item Posting Profiles"),
+]);
+export type GlAccountPointerName = Type.Static<typeof GlAccountPointerName>;
 
-export interface GlAccountPointerReference extends OperationReference {
-  type: GlAccountPointerName;
-  code: string;
-}
+export const OperationReference = StrictObject({ type: Type.String(), code: Type.String() });
+export type OperationReference = Type.Static<typeof OperationReference>;
 
-export type {
-  ActorType,
-  AuditMetadataDto,
-  AuditStampDto,
-  AuditUserDto,
-  OperationBlocker,
-  Status,
+export const GlAccountPointerReference = StrictObject({
+  ...OperationReference.properties,
+  type: GlAccountPointerName,
+});
+export type GlAccountPointerReference = Type.Static<typeof GlAccountPointerReference>;
+
+export {
+  ActorType, AuditMetadataDto, AuditStampDto, AuditUserDto, Status,
 } from "@voyzu/types/modules/core";
+export type { OperationBlocker } from "@voyzu/types/modules/core";

@@ -1,10 +1,11 @@
-import type { CompanyResponseDto } from "../companies";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { CompanyResponseDto } from "../companies";
+import { PositiveId } from "@voyzu/core/types/constraints";
 
-export interface CompanySelectionResponseDto {
-  /** Companies the current user can select in the application. */
-  companies: CompanyResponseDto[];
-  /** The current company context, including an explicitly selected archived company. */
-  selectedCompany: CompanyResponseDto | null;
-  /** Unique numeric identifier of the selected company, or null when no company is selected. */
-  selectedCompanyId: number | null;
-}
+export const CompanySelectionResponseDto = StrictObject({
+  companies: Type.Array(CompanyResponseDto),
+  selectedCompany: Type.Union([CompanyResponseDto, Type.Null()]),
+  selectedCompanyId: Type.Union([PositiveId, Type.Null()]),
+});
+export type CompanySelectionResponseDto = Type.Static<typeof CompanySelectionResponseDto>;

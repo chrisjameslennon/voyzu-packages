@@ -1,11 +1,15 @@
-import type { BankCashDetailsRequestDto } from "./bank-cash-details.dto";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { BankCashDetailsRequestDto } from "./bank-cash-details.dto";
+import { BusinessCode, IsoDate } from "@voyzu/core/types/constraints";
 
-export interface LedgerJournalReversalRequestDto {
-  document_type?: "LEDGER_JOURNAL_REVERSAL";
-  company_code: string;
-  document_id?: string;
-  document_memo?: string | null;
-  bank_cash_details?: BankCashDetailsRequestDto | null;
-  source_journal_code: string;
-  posting_date?: string;
-}
+export const LedgerJournalReversalRequestDto = StrictObject({
+  document_type: Type.Optional(Type.Literal("LEDGER_JOURNAL_REVERSAL")),
+  company_code: BusinessCode,
+  document_id: Type.Optional(Type.String()),
+  document_memo: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  bank_cash_details: Type.Optional(Type.Union([BankCashDetailsRequestDto, Type.Null()])),
+  source_journal_code: BusinessCode,
+  posting_date: Type.Optional(IsoDate),
+});
+export type LedgerJournalReversalRequestDto = Type.Static<typeof LedgerJournalReversalRequestDto>;

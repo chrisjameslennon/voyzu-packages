@@ -1,93 +1,61 @@
-import type { AuditMetadataDto, OperationReference } from "@voyzu/core/types/modules/core";
-import type { Status } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto, OperationReference } from "@voyzu/core/types/modules/core";
+import { Status } from "@voyzu/core/types/modules/core";
+import { BusinessCode, CurrencyCode, NonBlankText } from "@voyzu/core/types/constraints";
 
-export interface CountryTaxAuthorityResponseDto {
-  /** Internal identifier for the tax authority. */
-  id: string;
-  /** Tax authority business code. */
-  code: string;
-  /** Tax authority display name. */
-  name: string;
-  /** Optional country region code for the authority. */
-  regionCode?: string | null;
-  /** Jurisdiction level handled by the authority. */
-  jurisdictionLevel: string;
-  /** Current lifecycle status of the tax authority. */
-  status: Status;
-}
+export const CountryTaxAuthorityResponseDto = StrictObject({
+  id: Type.String({ description: "Internal identifier for the tax authority." }),
+  code: BusinessCode,
+  name: NonBlankText,
+  regionCode: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  jurisdictionLevel: Type.String({ description: "Jurisdiction level handled by the authority." }),
+  status: Status,
+});
+export type CountryTaxAuthorityResponseDto = Type.Static<typeof CountryTaxAuthorityResponseDto>;
 
-export interface CountryTaxRuleResponseDto {
-  /** Internal identifier for the tax rule. */
-  id: string;
-  /** Tax rule business code. */
-  code: string;
-  /** Tax rule display name. */
-  name: string;
-  /** Optional country region code for the rule. */
-  regionCode?: string | null;
-  /** Invoice label used for this tax rule. */
-  invoiceLabel: string;
-  /** Calculation method used by this tax rule. */
-  calculationMethod: string;
-  /** Number of tax components in this tax rule. */
-  componentCount: number;
-  /** Current lifecycle status of the tax rule. */
-  status: Status;
-}
+export const CountryTaxRuleResponseDto = StrictObject({
+  id: Type.String({ description: "Internal identifier for the tax rule." }),
+  code: BusinessCode,
+  name: NonBlankText,
+  regionCode: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  invoiceLabel: Type.String({ description: "Invoice label used for this tax rule." }),
+  calculationMethod: Type.String({ description: "Calculation method used by this tax rule." }),
+  componentCount: Type.Number({ description: "Number of tax components in this tax rule." }),
+  status: Status,
+});
+export type CountryTaxRuleResponseDto = Type.Static<typeof CountryTaxRuleResponseDto>;
 
-export interface CountryTaxComponentResponseDto {
-  /** Internal identifier for the tax component. */
-  id: string;
-  /** Tax component business code. */
-  code: string;
-  /** Parent tax rule code. */
-  taxRuleCode: string;
-  /** Tax authority code receiving this component. */
-  taxAuthorityCode: string;
-  /** Tax scheme code for this component. */
-  schemeCode: string;
-  /** Invoice label used for this tax component. */
-  invoiceLabel: string;
-  /** Tax rate for this component. */
-  rate: number;
-  /** Current lifecycle status of the tax component. */
-  status: Status;
-}
+export const CountryTaxComponentResponseDto = StrictObject({
+  id: Type.String({ description: "Internal identifier for the tax component." }),
+  code: BusinessCode,
+  taxRuleCode: BusinessCode,
+  taxAuthorityCode: BusinessCode,
+  schemeCode: BusinessCode,
+  invoiceLabel: Type.String({ description: "Invoice label used for this tax component." }),
+  rate: Type.Number({ description: "Tax rate for this component." }),
+  status: Status,
+});
+export type CountryTaxComponentResponseDto = Type.Static<typeof CountryTaxComponentResponseDto>;
 
-export interface CountryResponseDto {
-  /** Stable country identifier. */
-  id: string;
-  /** Stable country business code. */
-  code: string;
-  /** Country display name. */
-  name: string;
-  /** Default currency code for the country. */
-  currencyCode: string;
-  /** First month of the country's financial period cycle, when configured. */
-  financialPeriodStartMonth: string | null;
-  /** Anchor month used for tax filing cycles. */
-  taxFilingAnchorMonth: number;
-  /** Filing interval, in months, used for tax filing cycles. */
-  taxFilingIntervalMonths: 1 | 2 | 3 | 6 | 12;
-  /** Tax authorities configured for this country. */
-  taxAuthorities?: CountryTaxAuthorityResponseDto[];
-  /** Tax rules configured for this country. */
-  taxRules?: CountryTaxRuleResponseDto[];
-  /** Tax components configured for this country. */
-  taxComponents?: CountryTaxComponentResponseDto[];
-  /** Default currency summary. */
-  currency: {
-    /** Default currency code. */
-    code: string;
-    /** Default currency display name. */
-    name: string;
-  };
-  /** Current lifecycle status of the country. */
-  status: Status;
-  /** True when at least one company in this country has posted journal headers. */
-  hasPostings: boolean;
-  /** Records that directly reference this country. */
-  linkedBy: OperationReference[];
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const CountryResponseDto = StrictObject({
+  id: Type.String({ description: "Stable country identifier." }),
+  code: BusinessCode,
+  name: NonBlankText,
+  currencyCode: CurrencyCode,
+  financialPeriodStartMonth: Type.Union([Type.String(), Type.Null()]),
+  taxFilingAnchorMonth: Type.Number({ description: "Anchor month used for tax filing cycles." }),
+  taxFilingIntervalMonths: Type.Union([Type.Literal(1), Type.Literal(2), Type.Literal(3), Type.Literal(6), Type.Literal(12)]),
+  taxAuthorities: Type.Optional(Type.Array(CountryTaxAuthorityResponseDto)),
+  taxRules: Type.Optional(Type.Array(CountryTaxRuleResponseDto)),
+  taxComponents: Type.Optional(Type.Array(CountryTaxComponentResponseDto)),
+  currency: StrictObject({
+    code: BusinessCode,
+    name: NonBlankText,
+  }),
+  status: Status,
+  hasPostings: Type.Boolean({ description: "True when at least one company in this country has posted journal headers." }),
+  linkedBy: Type.Array(OperationReference),
+  audit: AuditMetadataDto,
+});
+export type CountryResponseDto = Type.Static<typeof CountryResponseDto>;

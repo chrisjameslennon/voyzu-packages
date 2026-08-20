@@ -1,20 +1,18 @@
-import type { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto } from "@voyzu/core/types/modules/core";
+import { NonBlankText, PositiveId } from "@voyzu/core/types/constraints";
 
-export type DimensionValueStatus = "ACTIVE" | "INACTIVE";
+export const DimensionValueStatus = Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]);
+export type DimensionValueStatus = Type.Static<typeof DimensionValueStatus>;
 
-export interface DimensionValueResponseDto {
-  /** Unique numeric identifier of the dimension value. */
-  id: number;
-  /** Unique numeric identifier of the parent dimension. */
-  dimensionId: number;
-  /** Display name of the dimension value. */
-  name: string;
-  /** Current lifecycle status of the dimension value. */
-  status: DimensionValueStatus;
-  /** True when one or more posted journal headers include this dimension value. */
-  hasPostings: boolean;
-  /** Company codes with posted journals that use this value. */
-  companiesWithPostings: string[];
-  /** Audit metadata for creation and latest update. */
-  audit: AuditMetadataDto;
-}
+export const DimensionValueResponseDto = StrictObject({
+  id: PositiveId,
+  dimensionId: PositiveId,
+  name: NonBlankText,
+  status: DimensionValueStatus,
+  hasPostings: Type.Boolean({ description: "True when one or more posted journal headers include this dimension value." }),
+  companiesWithPostings: Type.Array(Type.String()),
+  audit: AuditMetadataDto,
+});
+export type DimensionValueResponseDto = Type.Static<typeof DimensionValueResponseDto>;

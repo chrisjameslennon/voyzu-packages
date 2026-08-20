@@ -1,4 +1,3 @@
-import { withResponseValidation } from "@voyzu/capability/validation";
 import type { ArCreditNoteRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
 import type { ArAdjustmentPostingResponseDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
 
@@ -11,4 +10,4 @@ async function processArCreditNoteUnchecked(
   return processArAdjustment("AR_CREDIT_NOTE", input, options);
 }
 
-export const processArCreditNote = withResponseValidation(processArCreditNoteUnchecked, "processArCreditNote");
+export const processArCreditNote = processArCreditNoteUnchecked;
