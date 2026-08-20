@@ -1,76 +1,11 @@
-import {
-  ForbiddenErrorResponseDto,
-  InternalServerErrorResponseDto,
-  UnauthorizedErrorResponseDto,
-} from "@voyzu/types";
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 
-import { RawRequestResponseDto } from "../types";
-import { DeveloperFreedomPage } from "./pages/DeveloperFreedomPage";
-import { ByoDependenciesPage } from "./pages/ByoDependenciesPage";
-import { RawRequestResponsePage } from "./pages/RawRequestResponsePage";
-import { UglyHomePage } from "./pages/UglyHomePage";
-import { handleRawRequestResponse } from "./server/api/raw-request-response.http.handlers";
+import { apiDefinitions } from "./api.routes";
+import { pageRoutes } from "./pages.routes";
 
 export const uglyPackageModule = {
-  pageRoutes: {
-    home: {
-      id: "voyzu.ugly-package.page.home",
-      path: "/ugly-package",
-      Page: UglyHomePage,
-      pageTitle: "Ugly Package",
-      auth: { required: true, minRole: "COMPANY_USER" },
-    },
-    developerFreedom: {
-      id: "voyzu.ugly-package.page.developer-freedom",
-      path: "/ugly-package/developer-freedom",
-      Page: DeveloperFreedomPage,
-      pageTitle: "the bare minimum",
-      auth: { required: true, minRole: "COMPANY_USER" },
-    },
-    byoDependencies: {
-      id: "voyzu.ugly-package.page.byo-dependencies",
-      path: "/ugly-package/byo-dependencies",
-      Page: ByoDependenciesPage,
-      pageTitle: "BYO Dependencies",
-      auth: { required: true, minRole: "COMPANY_USER" },
-    },
-    rawRequestResponse: {
-      id: "voyzu.ugly-package.page.raw-request-response",
-      path: "/ugly-package/raw-request-response",
-      Page: RawRequestResponsePage,
-      pageTitle: "Raw request / response",
-      auth: { required: true, minRole: "COMPANY_USER" },
-    },
-  },
-  apiDefinitions: {
-    rawRequestResponse: {
-      method: "GET",
-      path: "/ugly-package/raw-request-response",
-      handler: handleRawRequestResponse,
-      summary: "Raw Request / Response",
-      description: "Returns a demonstration snapshot of the raw Next.js request and response.",
-      tags: ["Ugly Package"],
-      responses: {
-        "200": {
-          description: "The request and response demonstration snapshot.",
-          body: RawRequestResponseDto,
-        },
-        "401": {
-          description: "Authentication failed.",
-          body: UnauthorizedErrorResponseDto,
-        },
-        "403": {
-          description: "Access is forbidden.",
-          body: ForbiddenErrorResponseDto,
-        },
-        "500": {
-          description: "An unexpected server error occurred.",
-          body: InternalServerErrorResponseDto,
-        },
-      },
-    },
-  },
+  pageRoutes,
+  apiDefinitions,
 } as const satisfies VoyzuPackageModuleDefinition;
 
 export default uglyPackageModule;

@@ -32,9 +32,17 @@
       "types": "./modules/ice-creams/module.ts",
       "import": "./modules/ice-creams/module.ts"
     },
+    "./modules/ice-creams/operations": {
+      "types": "./modules/ice-creams/operations.ts",
+      "import": "./modules/ice-creams/operations.ts"
+    },
     "./modules/reports": {
       "types": "./modules/reports/module.ts",
       "import": "./modules/reports/module.ts"
+    },
+    "./modules/reports/operations": {
+      "types": "./modules/reports/operations.ts",
+      "import": "./modules/reports/operations.ts"
     },
     "./modules/audit": {
       "types": "./modules/audit/module.ts",
