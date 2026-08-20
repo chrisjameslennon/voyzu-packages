@@ -2,6 +2,8 @@
   "name": "voyzu-packages",
   "description": "Voyzu package development",
   "scripts": {
+    "test": "node scripts/test-operations.mjs",
+    "test:operations": "node scripts/test-operations.mjs",
     "voyzu:add-repo": "node .run/voyzu/lib/runtime-tools/run-npm.mjs --prefix .run run voyzu:add-repo --",
     "voyzu:install": "node .run/voyzu/lib/runtime-tools/run-npm.mjs --prefix .run run voyzu:install --",
     "voyzu:update": "node .run/voyzu/lib/runtime-tools/run-npm.mjs --prefix .run run voyzu:update",

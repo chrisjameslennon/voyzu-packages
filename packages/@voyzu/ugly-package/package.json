@@ -27,6 +27,10 @@
     "./types": {
       "types": "./modules/types/index.ts",
       "import": "./modules/types/index.ts"
+    },
+    "./modules/ugly/operations": {
+      "types": "./modules/ugly/operations.ts",
+      "import": "./modules/ugly/operations.ts"
     }
   },
   "dependencies": {
