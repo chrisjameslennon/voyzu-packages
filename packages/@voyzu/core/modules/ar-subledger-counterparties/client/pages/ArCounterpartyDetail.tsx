@@ -2,10 +2,10 @@
 
 import { useMemo } from "react";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/core/common/client";
 import type { ArCounterpartyResponseDto } from "@voyzu/core/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { Badge, Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
@@ -105,7 +105,7 @@ export function ArCounterpartyDetail({
       </header>
       <aside className={layout.statusSection}>
         <div className={detailStyles.card}><div className={detailStyles.fieldGroup}><label className={typography.fieldLabel}>Status</label><Badge variant="soft" size="x-large" color={getStatusSemanticColor(counterparty.status)}>{counterparty.status}</Badge></div></div>
-        <AuditPanel id={counterparty.id} creationDate={counterparty.audit.created.date} updatedDate={counterparty.audit.updated.date} creationActorType={counterparty.audit.created.actorType} creationUser={counterparty.audit.created.user} updatedActorType={counterparty.audit.updated.actorType} updatedUser={counterparty.audit.updated.user} auditHref={`/finance/audit?entityType=ar_counterparty&entityId=${counterparty.id}`} mutationId={counterparty.audit.updated.mutationId ?? counterparty.audit.created.mutationId} />
+        <AuditPanel id={counterparty.id} creationDate={counterparty.audit.created.date} updatedDate={counterparty.audit.updated.date} creationActorType={counterparty.audit.created.actorType} creationUser={counterparty.audit.created.user} updatedActorType={counterparty.audit.updated.actorType} updatedUser={counterparty.audit.updated.user} auditHref={`/settings/audit?entityType=ar_counterparty&entityId=${counterparty.id}`} mutationId={counterparty.audit.updated.mutationId ?? counterparty.audit.created.mutationId} />
       </aside>
       <main className={layout.mainSection}><TabGroup tabs={tabs} defaultKey="document" /></main>
     </div>

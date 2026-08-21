@@ -16,8 +16,8 @@ export async function OrganizationInventoryCategoriesListPage() {
     <OrganizationInventoryCategoriesListContent
       categories={categories}
       postingProfiles={postingProfiles}
-      basePath="/organization/inventory/categories"
-      apiPath="/api/organization/inventory/categories"
+      basePath="/finance/inventory/categories"
+      apiPath="/api/finance/inventory/categories"
     />
   );
 }

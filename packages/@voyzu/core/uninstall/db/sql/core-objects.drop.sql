@@ -1,8 +1,3 @@
--- The audit rows remain platform-owned. Core removes only the referential
--- constraint that would otherwise prevent the company table from being dropped.
-ALTER TABLE IF EXISTS audit_event
-  DROP CONSTRAINT IF EXISTS audit_event_company_fk;
-
 -- Tables are removed in the reverse of Core's installation dependency order.
 DROP TABLE IF EXISTS trial_balance_snapshot;
 DROP TABLE IF EXISTS financial_document_default;
@@ -38,11 +33,6 @@ DROP TABLE IF EXISTS bank_cash_control_account;
 DROP TABLE IF EXISTS gl_account;
 DROP TABLE IF EXISTS gl_account_category;
 DROP TABLE IF EXISTS financial_document_type;
-DROP TABLE IF EXISTS app_user_assignment;
-DROP TABLE IF EXISTS company;
-DROP TABLE IF EXISTS country;
-DROP TABLE IF EXISTS currency;
-DROP TABLE IF EXISTS organization;
 
 DROP FUNCTION IF EXISTS journal_line_validate_fn();
 DROP FUNCTION IF EXISTS journal_validate_fn();
@@ -52,12 +42,3 @@ DROP FUNCTION IF EXISTS bank_cash_control_account_validate_fn();
 DROP FUNCTION IF EXISTS gl_account_type_match_fn();
 DROP FUNCTION IF EXISTS trg_ar_counterparty_validate_region();
 DROP FUNCTION IF EXISTS trg_ap_counterparty_validate_region();
-
-DROP DOMAIN IF EXISTS percentage_decimal;
-DROP DOMAIN IF EXISTS tax_family_code;
-DROP DOMAIN IF EXISTS money_2dp_pos;
-DROP DOMAIN IF EXISTS bank_cash_account_type;
-DROP DOMAIN IF EXISTS dr_cr;
-DROP DOMAIN IF EXISTS account_type;
-DROP DOMAIN IF EXISTS iso_currency_code;
-DROP DOMAIN IF EXISTS iso_country_code;

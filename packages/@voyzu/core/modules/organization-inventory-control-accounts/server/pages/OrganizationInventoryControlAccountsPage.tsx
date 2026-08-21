@@ -21,7 +21,7 @@ export async function OrganizationInventoryControlAccountsPage() {
           <div className={layoutStyles.slotTitleByline}><p className={typography.headingByline}>Inventory control accounts define the template general ledger accounts used by inventory workflows.</p></div>
         </div>
       </header>
-      <div className={layoutStyles.slotBody}><OrganizationInventoryControlAccountsContent controlAccounts={controlAccounts} basePath="/organization/control-accounts/inventory" /></div>
+      <div className={layoutStyles.slotBody}><OrganizationInventoryControlAccountsContent controlAccounts={controlAccounts} basePath="/finance/control-accounts/inventory" /></div>
     </div>
   );
 }

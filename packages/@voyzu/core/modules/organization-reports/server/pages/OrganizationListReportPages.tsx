@@ -2,11 +2,11 @@ import "server-only";
 import type { ReactNode } from "react";
 
 import { listBankCashAccounts } from "@voyzu/core/common/bank-cash-accounts/server";
-import { listCompanies } from "@voyzu/core/companies/server";
+import { listCompanies } from "@voyzu/organization/companies/server";
 import { getOrganizationName } from "@voyzu/core/company-reports/balance-sheet/server";
 import { listControlAccounts } from "@voyzu/core/common/control-accounts/server";
-import { listCountries, listCountriesWithTaxConfiguration } from "@voyzu/core/countries/server";
-import { listCurrencies } from "@voyzu/core/currencies/server";
+import { listCountries, listCountriesWithTaxConfiguration } from "@voyzu/organization/countries/server";
+import { listCurrencies } from "@voyzu/organization/currencies/server";
 import { listDimensions } from "@voyzu/core/common/dimensions/server";
 import { listFinancialDocumentTypes } from "@voyzu/core/common/financial-document-types/server";
 import { listGlAccountCategories } from "@voyzu/core/common/gl-account-categories/server";
@@ -137,7 +137,7 @@ async function report<T extends AnyRecord>(
 
 export async function CompaniesReportPage(props?: ReportPageProps) {
   const rows = await listCompanies();
-  return report("Companies", "/organization/reports/lists/companies/printable", rowsOf(rows), [
+  return report("Companies", "/finance/reports/lists/companies/printable", rowsOf(rows), [
     widthColumn("code", "Code", "14%"),
     nowrapWidthColumn("name", "Name", "36%"),
     nowrapWidthColumn("country.name", "Country", "22%"),
@@ -153,7 +153,7 @@ export async function CompaniesReportPage(props?: ReportPageProps) {
 
 export async function CountriesReportPage(props?: ReportPageProps) {
   const rows = await listCountries();
-  return report("Countries", "/organization/reports/lists/countries/printable", rowsOf(rows), [
+  return report("Countries", "/finance/reports/lists/countries/printable", rowsOf(rows), [
     column("code", "Code"),
     column("name", "Name"),
     column("currencyCode", "Currency"),
@@ -261,7 +261,7 @@ export async function CountryTaxSettingsReportPage(props?: ReportPageProps) {
   return (
     <OrganizationListReportShell
       title="Country Tax Settings"
-      printablePath="/organization/reports/lists/country-tax-settings/printable"
+      printablePath="/finance/reports/lists/country-tax-settings/printable"
       initialShowOrganization={initialShowOrganization}
       orientation="landscape"
       inactiveRowsOption={{
@@ -277,7 +277,7 @@ export async function CountryTaxSettingsReportPage(props?: ReportPageProps) {
 
 export async function CurrenciesReportPage(props?: ReportPageProps) {
   const rows = await listCurrencies();
-  return report("Currencies", "/organization/reports/lists/currencies/printable", rowsOf(rows), [
+  return report("Currencies", "/finance/reports/lists/currencies/printable", rowsOf(rows), [
     column("code", "Code"),
     column("name", "Name"),
     column("symbol", "Symbol"),
@@ -291,7 +291,7 @@ export async function DimensionsReportPage(props?: ReportPageProps) {
     ...row,
     valuesText: row.values?.map((value) => value.name).join(", ") ?? "",
   }));
-  return report("Dimensions", "/organization/reports/lists/dimensions/printable", rowsOf(reportRows), [
+  return report("Dimensions", "/finance/reports/lists/dimensions/printable", rowsOf(reportRows), [
     column("code", "Code"),
     column("name", "Name"),
     column("status", "Status"),
@@ -307,7 +307,7 @@ export async function DimensionsReportPage(props?: ReportPageProps) {
 
 export async function FinancialDocumentTypesReportPage(props?: ReportPageProps) {
   const rows = await listFinancialDocumentTypes();
-  return report("Financial Document Types", "/organization/reports/lists/financial-document-types/printable", rowsOf(rows), [
+  return report("Financial Document Types", "/finance/reports/lists/financial-document-types/printable", rowsOf(rows), [
     column("code", "Code"),
     {
       key: "primarySupportingLedger",
@@ -320,7 +320,7 @@ export async function FinancialDocumentTypesReportPage(props?: ReportPageProps) 
 
 export async function GlAccountsReportPage(props?: ReportPageProps) {
   const rows = await listGlAccounts();
-  return report("General Ledger Accounts", "/organization/reports/lists/general-ledger-accounts/printable", rowsOf(rows), [
+  return report("General Ledger Accounts", "/finance/reports/lists/general-ledger-accounts/printable", rowsOf(rows), [
     widthColumn("code", "Code", "10%"),
     nowrapWidthColumn("name", "Name", "30%"),
     widthColumn("accountType", "Type", "10%"),
@@ -342,7 +342,7 @@ export async function InventoryCategoriesReportPage(props?: ReportPageProps) {
     ...category,
     postingProfileName: postingProfileNames.get(category.posting_profile_code) ?? "",
   }));
-  return report("Inventory Categories", "/organization/reports/lists/inventory-categories/printable", rowsOf(rows), [
+  return report("Inventory Categories", "/finance/reports/lists/inventory-categories/printable", rowsOf(rows), [
     column("code", "Code"),
     column("name", "Name"),
     column("description", "Description"),
@@ -363,7 +363,7 @@ export async function InventoryItemsReportPage(props?: ReportPageProps) {
     categoryName: categoryNames.get(item.category_code) ?? "",
   }));
 
-  return report("Inventory Items", "/organization/reports/lists/inventory-items/printable", rowsOf(rows), [
+  return report("Inventory Items", "/finance/reports/lists/inventory-items/printable", rowsOf(rows), [
     nowrapWidthColumn("item_code", "Item Code", "18%"),
     nowrapWidthColumn("item_name", "Item Name", "32%"),
     widthColumn("item_type", "Item Type", "15%"),
@@ -393,7 +393,7 @@ export async function FinancialDocumentDefaultsReportPage(props?: ReportPageProp
     order: `${row.documentCode}:${row.code}`,
   })).sort((a, b) => a.order.localeCompare(b.order));
 
-  return report("Financial Document Defaults", "/organization/reports/lists/financial-document-defaults/printable", reportRows as AnyRecord[], [
+  return report("Financial Document Defaults", "/finance/reports/lists/financial-document-defaults/printable", reportRows as AnyRecord[], [
     widthColumn("documentCode", "Document", "15%"),
     widthColumn("code", "Code", "20%"),
     nowrapWidthColumn("name", "Name", "28%"),
@@ -405,7 +405,7 @@ export async function FinancialDocumentDefaultsReportPage(props?: ReportPageProp
 
 export async function ReportingCategoriesReportPage(props?: ReportPageProps) {
   const rows = await listGlAccountCategories();
-  return report("General Ledger Reporting Categories", "/organization/reports/lists/general-ledger-reporting-categories/printable", rowsOf(rows), [
+  return report("General Ledger Reporting Categories", "/finance/reports/lists/general-ledger-reporting-categories/printable", rowsOf(rows), [
     column("code", "Code"),
     column("name", "Name"),
     column("accountType", "Account Type"),
@@ -495,7 +495,7 @@ export async function LedgerBackedAccountCodesReportPage(props?: ReportPageProps
     })),
   ].sort((a, b) => a.order.localeCompare(b.order));
 
-  return report("Ledger Backed Account Codes", "/organization/reports/lists/ledger-backed-account-codes/printable", rows as AnyRecord[], [
+  return report("Ledger Backed Account Codes", "/finance/reports/lists/ledger-backed-account-codes/printable", rows as AnyRecord[], [
     widthColumn("code", "Code", "12%"),
     nowrapWidthColumn("name", "Name", "22%"),
     nowrapWidthColumn("supportingLedger", "Supporting Ledger", "18%"),
@@ -517,7 +517,7 @@ export async function InventoryItemPostingCodesReportPage(props?: ReportPageProp
     }))
     .sort((a, b) => a.order.localeCompare(b.order));
 
-  return report("Inventory Item Posting Codes", "/organization/reports/lists/inventory-item-posting-codes/printable", rows as AnyRecord[], [
+  return report("Inventory Item Posting Codes", "/finance/reports/lists/inventory-item-posting-codes/printable", rows as AnyRecord[], [
     widthColumn("code", "Code", "15%"),
     nowrapWidthColumn("name", "Name", "25%"),
     widthColumn("description", "Description", "60%"),

@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
@@ -38,7 +38,7 @@ interface CompanyDimensionDetailProps {
 export function CompanyDimensionDetail({
   dimension,
   listPath = "/organization/dimensions",
-  auditPath = "/organization/audit",
+  auditPath = "/settings/audit",
   apiPath = "/api/organization/dimensions",
   showOrganizationBaseSettings = false,
   showArchived = false,

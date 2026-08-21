@@ -24,9 +24,9 @@ export async function OrganizationBankCashAccountDetailPage({ code }: Organizati
     <OrganizationBankCashAccountDetail
       account={account}
       glAccounts={glAccounts}
-      listPath="/organization/bank-cash-accounts"
-      auditPath="/organization/audit"
-      apiPath="/api/organization/bank-cash-accounts"
+      listPath="/finance/bank-cash-accounts"
+      auditPath="/settings/audit"
+      apiPath="/api/finance/bank-cash-accounts"
     />
   );
 }

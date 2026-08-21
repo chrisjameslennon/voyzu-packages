@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-financial-document-types.page.list",
     pageTitle: "Financial Document Types",
     helpPath: "modules-help/organization-financial-settings/financial-document-types",
-    path: "/organization/financial-document-types",
+    path: "/finance/financial-document-types",
     Page: OrganizationFinancialDocumentTypesListPage,
     breadcrumbBase: [
       {
@@ -26,7 +26,7 @@ export const pageRoutes = {
     pageTitle: "Financial Document Type",
     helpPathResolver: ({ params }: { params: Readonly<Record<string, string>> }) =>
       `help-core/financial-documents/${params.code.toLowerCase()}`,
-    path: "/organization/financial-document-types/[code]",
+    path: "/finance/financial-document-types/[code]",
     Page: OrganizationFinancialDocumentTypeDetailPage,
     breadcrumbBase: [
       {
@@ -40,7 +40,7 @@ export const pageRoutes = {
       },
       {
         label: "Financial Document Types",
-        href: "/organization/financial-document-types",
+        href: "/finance/financial-document-types",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

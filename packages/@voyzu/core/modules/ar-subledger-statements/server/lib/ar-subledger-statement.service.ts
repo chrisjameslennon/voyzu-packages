@@ -5,7 +5,7 @@ import type {
   ArCounterpartyStatementResponseDto,
   ArCounterpartySummaryResponseDto,
 } from "@voyzu/core/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
 
 import { ArSubledgerStatementRepo } from "../db/ar-subledger-statement.repo";
 

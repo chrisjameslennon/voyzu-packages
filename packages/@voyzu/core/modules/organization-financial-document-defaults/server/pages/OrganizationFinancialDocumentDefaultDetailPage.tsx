@@ -26,7 +26,7 @@ export async function OrganizationFinancialDocumentDefaultDetailPage({ code, sur
       financialDocumentDefault={financialDocumentDefault}
       glAccounts={glAccounts}
       bankCashAccounts={bankCashAccounts}
-      apiPath="/api/organization/financial-document-defaults"
+      apiPath="/api/finance/financial-document-defaults"
       from={normalizeDetailBackSource(searchParams.from)}
       fromCode={searchParams.fromCode}
       routePrefix="/organization"

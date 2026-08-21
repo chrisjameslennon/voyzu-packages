@@ -1,5 +1,5 @@
 import { getDb } from "@voyzu/capability/db";
-import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
 import type {
   ApCounterpartyStatementApplicationDto,
   ApCounterpartyStatementGroupDto,

@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/organization-audit/client";
+import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
@@ -34,9 +34,9 @@ interface OrganizationDimensionDetailProps {
 
 export function OrganizationDimensionDetail({
   dimension,
-  listPath = "/organization/dimensions",
-  auditPath = "/organization/audit",
-  apiPath = "/api/organization/dimensions",
+  listPath = "/finance/dimensions",
+  auditPath = "/settings/audit",
+  apiPath = "/api/finance/dimensions",
 }: OrganizationDimensionDetailProps) {
   const router = useRouter();
   const [code, setCode] = useState(dimension.code);

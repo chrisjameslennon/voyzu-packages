@@ -14,7 +14,7 @@ import { InventoryItemBatchUpdateRequestDto } from "../../types/modules/inventor
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/inventory/items",
+    path: "/finance/inventory/items",
     handler: (request: any) => handleInventoryItemsList(request),
     summary: "List",
     description: "List Organization Inventory Items.",
@@ -28,7 +28,7 @@ export const apiDefinitions = {
     }
   },
   filter: {
-    method: "POST", path: "/organization/inventory/items/filter", handler: (request: any) => handleInventoryItemsFilter(request),
+    method: "POST", path: "/finance/inventory/items/filter", handler: (request: any) => handleInventoryItemsFilter(request),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Organization Inventory Items.",
@@ -36,7 +36,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(InventoryItemResponseDto) } }
   },
   search: {
-    method: "GET", path: "/organization/inventory/items/search", handler: (request: any) => handleInventoryItemsSearch(request),
+    method: "GET", path: "/finance/inventory/items/search", handler: (request: any) => handleInventoryItemsSearch(request),
     request: { query: { parameters: { q: { description: "Search text used to match inventory item records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Organization Inventory Items.",
@@ -44,7 +44,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(InventoryItemResponseDto) } }
   },
   batchGet: {
-    method: "POST", path: "/organization/inventory/items/batch/get", handler: (request: any) => handleInventoryItemsBatchGet(request),
+    method: "POST", path: "/finance/inventory/items/batch/get", handler: (request: any) => handleInventoryItemsBatchGet(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Batch Get Organization Inventory Items.",
@@ -52,7 +52,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(InventoryItemResponseDto) } }
   },
   batchCreate: {
-    method: "POST", path: "/organization/inventory/items/batch/create", handler: (request: any) => handleInventoryItemsBatchCreate(request),
+    method: "POST", path: "/finance/inventory/items/batch/create", handler: (request: any) => handleInventoryItemsBatchCreate(request),
     request: { contentType: "application/json", body: Type.Array(InventoryItemCreateRequestDto) },
     summary: "Batch Create",
     description: "Batch Create Organization Inventory Items.",
@@ -60,7 +60,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(InventoryItemResponseDto) } }
   },
   batchUpdate: {
-    method: "PUT", path: "/organization/inventory/items/batch", handler: (request: any) => handleInventoryItemsBatchUpdate(request),
+    method: "PUT", path: "/finance/inventory/items/batch", handler: (request: any) => handleInventoryItemsBatchUpdate(request),
     request: { contentType: "application/json", body: Type.Array(InventoryItemBatchUpdateRequestDto) },
     summary: "Batch Update",
     description: "Batch Update Organization Inventory Items.",
@@ -68,7 +68,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(InventoryItemResponseDto) } }
   },
   batchPatch: {
-    method: "PATCH", path: "/organization/inventory/items/batch", handler: (request: any) => handleInventoryItemsBatchPatch(request),
+    method: "PATCH", path: "/finance/inventory/items/batch", handler: (request: any) => handleInventoryItemsBatchPatch(request),
     request: { contentType: "application/json", body: Type.Array(InventoryItemBatchPatchRequestDto) },
     summary: "Batch Patch",
     description: "Batch Patch Organization Inventory Items.",
@@ -76,7 +76,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(InventoryItemResponseDto) } }
   },
   batchDelete: {
-    method: "DELETE", path: "/organization/inventory/items/batch", handler: (request: any) => handleInventoryItemsBatchDelete(request),
+    method: "DELETE", path: "/finance/inventory/items/batch", handler: (request: any) => handleInventoryItemsBatchDelete(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
     description: "Batch Delete Organization Inventory Items.",
@@ -85,7 +85,7 @@ export const apiDefinitions = {
   },
   create: {
     method: "POST",
-    path: "/organization/inventory/items",
+    path: "/finance/inventory/items",
     handler: (request: any) => handleInventoryItemsCreate(request),
     request: { contentType: "application/json", body: InventoryItemCreateRequestDto },
     summary: "Create",
@@ -102,7 +102,7 @@ export const apiDefinitions = {
     }
   },
   get: {
-    method: "GET", path: "/organization/inventory/items/[code]", handler: (request: any, context: any) => handleInventoryItemsGet(request, context),
+    method: "GET", path: "/finance/inventory/items/[code]", handler: (request: any, context: any) => handleInventoryItemsGet(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Organization Inventory Items.",
@@ -111,7 +111,7 @@ export const apiDefinitions = {
   },
   update: {
     method: "PUT",
-    path: "/organization/inventory/items/[code]",
+    path: "/finance/inventory/items/[code]",
     handler: (request: any, context: any) => handleInventoryItemsUpdate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryItemUpdateRequestDto },
     summary: "Update",
@@ -130,7 +130,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/organization/inventory/items/[code]",
+    path: "/finance/inventory/items/[code]",
     handler: (request: any, context: any) => handleInventoryItemsPatch(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryItemPatchRequestDto },
     summary: "Patch",
@@ -149,7 +149,7 @@ export const apiDefinitions = {
   },
   delete: {
     method: "DELETE",
-    path: "/organization/inventory/items/[code]",
+    path: "/finance/inventory/items/[code]",
     handler: (request: any, context: any) => handleInventoryItemsDelete(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
@@ -162,7 +162,7 @@ export const apiDefinitions = {
     }
   },
   activate: {
-    method: "POST", path: "/organization/inventory/items/[code]/activate", handler: (request: any, context: any) => handleInventoryItemsActivate(request, context),
+    method: "POST", path: "/finance/inventory/items/[code]/activate", handler: (request: any, context: any) => handleInventoryItemsActivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
     description: "Activate Organization Inventory Items.",
@@ -170,7 +170,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: InventoryItemResponseDto } }
   },
   deactivate: {
-    method: "POST", path: "/organization/inventory/items/[code]/deactivate", handler: (request: any, context: any) => handleInventoryItemsDeactivate(request, context),
+    method: "POST", path: "/finance/inventory/items/[code]/deactivate", handler: (request: any, context: any) => handleInventoryItemsDeactivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
     description: "Deactivate Organization Inventory Items.",
@@ -178,7 +178,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: InventoryItemResponseDto } }
   },
   batchActivate: {
-    method: "POST", path: "/organization/inventory/items/batch-activate", handler: (request: any) => handleInventoryItemsBatchActivate(request),
+    method: "POST", path: "/finance/inventory/items/batch-activate", handler: (request: any) => handleInventoryItemsBatchActivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
     description: "Batch Activate Organization Inventory Items.",
@@ -186,7 +186,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(InventoryItemResponseDto) } }
   },
   batchDeactivate: {
-    method: "POST", path: "/organization/inventory/items/batch-deactivate", handler: (request: any) => handleInventoryItemsBatchDeactivate(request),
+    method: "POST", path: "/finance/inventory/items/batch-deactivate", handler: (request: any) => handleInventoryItemsBatchDeactivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
     description: "Batch Deactivate Organization Inventory Items.",

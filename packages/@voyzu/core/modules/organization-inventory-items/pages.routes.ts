@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-inventory-items.page.list",
     pageTitle: "Inventory Items",
     helpPath: "modules-help/organization-financial-settings/inventory-items",
-    path: "/organization/inventory/items",
+    path: "/finance/inventory/items",
     Page: OrganizationInventoryItemsListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-inventory-items.page.detail",
     pageTitle: "Inventory Item",
     helpPath: "modules-help/organization-financial-settings/inventory-items",
-    path: "/organization/inventory/items/[code]",
+    path: "/finance/inventory/items/[code]",
     Page: OrganizationInventoryItemDetailPage,
     breadcrumbBase: [
       {

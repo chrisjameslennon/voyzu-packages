@@ -102,10 +102,10 @@ describe("detail back navigation", () => {
     assert.equal(
       detailBackHrefFromSearchParams({
         searchParams: new URLSearchParams("action=UPDATE&from=unknown&fromCode=X"),
-        fallbackHref: "/finance/audit",
+        fallbackHref: "/settings/audit",
         preserveSearchParams: true,
       }),
-      "/finance/audit?action=UPDATE",
+      "/settings/audit?action=UPDATE",
     );
   });
 });

@@ -26,3 +26,4 @@ export {
 export { ledgerName } from "../ledger";
 export { financeApiUrl } from "./finance-api";
 export { ScopedAuditPanel, type ScopedAuditPanelProps } from "./ScopedAuditPanel";
+export { CompanyAuditPanel, OrganizationAuditPanel } from "./AuditPanels";

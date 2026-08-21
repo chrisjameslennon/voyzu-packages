@@ -185,7 +185,7 @@ export function OrganizationGlAccountsListContent({
     if (refreshing) return;
     setRefreshing(true);
     try {
-      const response = await fetch("/api/organization/gl-accounts", { cache: "no-store" });
+      const response = await fetch("/api/finance/gl-accounts", { cache: "no-store" });
       if (response.ok) {
         setData(await response.json() as GlAccountResponseDto[]);
         setSelectedIds(new Set());
@@ -243,7 +243,7 @@ export function OrganizationGlAccountsListContent({
   };
 
   const createAccount = async (value: GlAccountCreateRequestDto): Promise<string | undefined> => {
-    const response = await fetch("/api/organization/gl-accounts", {
+    const response = await fetch("/api/finance/gl-accounts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),
@@ -299,7 +299,7 @@ export function OrganizationGlAccountsListContent({
   const transitionSelected = async (action: "activate" | "deactivate") => {
     setListError("");
     const codes = selectedAccounts.map((account) => account.code);
-    const response = await fetch(`/api/organization/gl-accounts/batch-${action}`, {
+    const response = await fetch(`/api/finance/gl-accounts/batch-${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes }),
@@ -321,7 +321,7 @@ export function OrganizationGlAccountsListContent({
     setIsDeleteOpen(false);
     setListError("");
     const codes = selectedAccounts.map((account) => account.code);
-    const response = await fetch("/api/organization/gl-accounts/batch/delete", {
+    const response = await fetch("/api/finance/gl-accounts/batch/delete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes }),
@@ -497,7 +497,7 @@ export function OrganizationGlAccountsListContent({
             isSomeSelected={isSomeSelected}
             onSelectAll={handleSelectAll}
             onSelectOne={handleSelectOne}
-            onRowClick={(account) => router.push(`/organization/general-ledger-accounts/${encodeURIComponent(account.code)}`)}
+            onRowClick={(account) => router.push(`/finance/general-ledger-accounts/${encodeURIComponent(account.code)}`)}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}

@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-gl-account-categories.page.list",
     pageTitle: "Reporting Categories",
     helpPath: "modules-help/organization-financial-settings/reporting-categories",
-    path: "/organization/chart-of-accounts/reporting-categories",
+    path: "/finance/chart-of-accounts/reporting-categories",
     Page: OrganizationGlAccountCategoriesListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-gl-account-categories.page.detail",
     pageTitle: "Reporting Category",
     helpPath: "modules-help/organization-financial-settings/reporting-categories",
-    path: "/organization/chart-of-accounts/reporting-categories/[code]",
+    path: "/finance/chart-of-accounts/reporting-categories/[code]",
     Page: OrganizationGlAccountCategoryDetailPage,
     breadcrumbBase: [
       {
@@ -39,7 +39,7 @@ export const pageRoutes = {
       },
       {
         label: "Reporting Categories",
-        href: "/organization/chart-of-accounts/reporting-categories",
+        href: "/finance/chart-of-accounts/reporting-categories",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

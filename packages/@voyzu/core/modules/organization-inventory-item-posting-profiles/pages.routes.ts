@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-inventory-item-posting-profiles.page.list",
     pageTitle: "Item Posting Profiles",
     helpPath: "modules-help/organization-financial-settings/item-posting-profiles",
-    path: "/organization/inventory/item-posting-profiles",
+    path: "/finance/inventory/item-posting-profiles",
     Page: OrganizationInventoryItemPostingProfilesListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-inventory-item-posting-profiles.page.detail",
     pageTitle: "Item Posting Profile",
     helpPath: "modules-help/organization-financial-settings/item-posting-profiles",
-    path: "/organization/inventory/item-posting-profiles/[code]",
+    path: "/finance/inventory/item-posting-profiles/[code]",
     Page: OrganizationInventoryItemPostingProfileDetailPage,
     breadcrumbBase: [
       {
@@ -39,7 +39,7 @@ export const pageRoutes = {
       },
       {
         label: "Item Posting Profiles",
-        href: "/organization/inventory/item-posting-profiles",
+        href: "/finance/inventory/item-posting-profiles",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

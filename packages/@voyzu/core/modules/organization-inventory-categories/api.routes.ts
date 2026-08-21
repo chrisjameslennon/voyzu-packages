@@ -14,7 +14,7 @@ import { InventoryCategoryBatchUpdateRequestDto } from "../../types/modules/inve
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/inventory/categories",
+    path: "/finance/inventory/categories",
     handler: (request: any) => handleInventoryCategoriesList(request),
     summary: "List",
     description: "List Organization Inventory Categories.",
@@ -29,7 +29,7 @@ export const apiDefinitions = {
   },
   filter: {
     method: "POST",
-    path: "/organization/inventory/categories/filter",
+    path: "/finance/inventory/categories/filter",
     handler: (request: any) => handleInventoryCategoriesFilter(request),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
@@ -39,7 +39,7 @@ export const apiDefinitions = {
   },
   search: {
     method: "GET",
-    path: "/organization/inventory/categories/search",
+    path: "/finance/inventory/categories/search",
     handler: (request: any) => handleInventoryCategoriesSearch(request),
     request: { query: { parameters: { q: { description: "Search text used to match organization inventory category records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
@@ -49,7 +49,7 @@ export const apiDefinitions = {
   },
   batchGet: {
     method: "POST",
-    path: "/organization/inventory/categories/batch/get",
+    path: "/finance/inventory/categories/batch/get",
     handler: (request: any) => handleInventoryCategoriesBatchGet(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
@@ -59,7 +59,7 @@ export const apiDefinitions = {
   },
   batchCreate: {
     method: "POST",
-    path: "/organization/inventory/categories/batch/create",
+    path: "/finance/inventory/categories/batch/create",
     handler: (request: any) => handleInventoryCategoriesBatchCreate(request),
     request: { contentType: "application/json", body: Type.Array(InventoryCategoryCreateRequestDto) },
     summary: "Batch Create",
@@ -69,7 +69,7 @@ export const apiDefinitions = {
   },
   batchUpdate: {
     method: "PUT",
-    path: "/organization/inventory/categories/batch",
+    path: "/finance/inventory/categories/batch",
     handler: (request: any) => handleInventoryCategoriesBatchUpdate(request),
     request: { contentType: "application/json", body: Type.Array(InventoryCategoryBatchUpdateRequestDto) },
     summary: "Batch Update",
@@ -79,7 +79,7 @@ export const apiDefinitions = {
   },
   batchPatch: {
     method: "PATCH",
-    path: "/organization/inventory/categories/batch",
+    path: "/finance/inventory/categories/batch",
     handler: (request: any) => handleInventoryCategoriesBatchPatch(request),
     request: { contentType: "application/json", body: Type.Array(InventoryCategoryBatchPatchRequestDto) },
     summary: "Batch Patch",
@@ -89,7 +89,7 @@ export const apiDefinitions = {
   },
   batchDelete: {
     method: "DELETE",
-    path: "/organization/inventory/categories/batch",
+    path: "/finance/inventory/categories/batch",
     handler: (request: any) => handleInventoryCategoriesBatchDelete(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
@@ -99,7 +99,7 @@ export const apiDefinitions = {
   },
   create: {
     method: "POST",
-    path: "/organization/inventory/categories",
+    path: "/finance/inventory/categories",
     handler: (request: any) => handleInventoryCategoriesCreate(request),
     request: { contentType: "application/json", body: InventoryCategoryCreateRequestDto },
     summary: "Create",
@@ -117,7 +117,7 @@ export const apiDefinitions = {
   },
   get: {
     method: "GET",
-    path: "/organization/inventory/categories/[code]",
+    path: "/finance/inventory/categories/[code]",
     handler: (request: any, context: any) => handleInventoryCategoriesGet(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
@@ -127,7 +127,7 @@ export const apiDefinitions = {
   },
   update: {
     method: "PUT",
-    path: "/organization/inventory/categories/[code]",
+    path: "/finance/inventory/categories/[code]",
     handler: (request: any, context: any) => handleInventoryCategoriesUpdate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryCategoryUpdateRequestDto },
     summary: "Update",
@@ -146,7 +146,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/organization/inventory/categories/[code]",
+    path: "/finance/inventory/categories/[code]",
     handler: (request: any, context: any) => handleInventoryCategoriesPatch(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryCategoryPatchRequestDto },
     summary: "Patch",
@@ -165,7 +165,7 @@ export const apiDefinitions = {
   },
   delete: {
     method: "DELETE",
-    path: "/organization/inventory/categories/[code]",
+    path: "/finance/inventory/categories/[code]",
     handler: (request: any, context: any) => handleInventoryCategoriesDelete(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
@@ -180,7 +180,7 @@ export const apiDefinitions = {
   },
   activate: {
     method: "POST",
-    path: "/organization/inventory/categories/[code]/activate",
+    path: "/finance/inventory/categories/[code]/activate",
     handler: (request: any, context: any) => handleInventoryCategoriesActivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
@@ -190,7 +190,7 @@ export const apiDefinitions = {
   },
   deactivate: {
     method: "POST",
-    path: "/organization/inventory/categories/[code]/deactivate",
+    path: "/finance/inventory/categories/[code]/deactivate",
     handler: (request: any, context: any) => handleInventoryCategoriesDeactivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
@@ -200,7 +200,7 @@ export const apiDefinitions = {
   },
   batchActivate: {
     method: "POST",
-    path: "/organization/inventory/categories/batch-activate",
+    path: "/finance/inventory/categories/batch-activate",
     handler: (request: any) => handleInventoryCategoriesBatchActivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
@@ -219,7 +219,7 @@ export const apiDefinitions = {
   },
   batchDeactivate: {
     method: "POST",
-    path: "/organization/inventory/categories/batch-deactivate",
+    path: "/finance/inventory/categories/batch-deactivate",
     handler: (request: any) => handleInventoryCategoriesBatchDeactivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",

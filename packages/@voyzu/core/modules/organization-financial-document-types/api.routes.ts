@@ -9,7 +9,7 @@ import { FinancialDocumentTypeResponseDto } from "../../types/modules/financial-
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/financial-document-types",
+    path: "/finance/financial-document-types",
     handler: (request: any) => handleFinancialDocumentTypeList(request),
     summary: "List",
     description: "List Organization Financial Document Types.",
@@ -21,7 +21,7 @@ export const apiDefinitions = {
   },
   filter: {
     method: "POST",
-    path: "/organization/financial-document-types/filter",
+    path: "/finance/financial-document-types/filter",
     handler: (request: any) => handleFinancialDocumentTypeFilter(request),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
@@ -34,7 +34,7 @@ export const apiDefinitions = {
   },
   search: {
     method: "GET",
-    path: "/organization/financial-document-types/search",
+    path: "/finance/financial-document-types/search",
     handler: (request: any) => handleFinancialDocumentTypeSearch(request),
     request: { query: { parameters: { q: { description: "Search text used to match organization financial document type records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
@@ -48,7 +48,7 @@ export const apiDefinitions = {
   },
   batchGet: {
     method: "POST",
-    path: "/organization/financial-document-types/batch/get",
+    path: "/finance/financial-document-types/batch/get",
     handler: (request: any) => handleFinancialDocumentTypeBatchGet(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
@@ -62,7 +62,7 @@ export const apiDefinitions = {
   },
   get: {
     method: "GET",
-    path: "/organization/financial-document-types/[code]",
+    path: "/finance/financial-document-types/[code]",
     handler: (request: any, context: any) => handleFinancialDocumentTypeGet(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",

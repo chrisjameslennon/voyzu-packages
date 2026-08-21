@@ -17,7 +17,7 @@ import { DimensionCreateRequestDto } from "../../types/modules/dimensions/dimens
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/dimensions",
+    path: "/finance/dimensions",
     handler: (request: any) => handleDimensionsList(request),
     summary: "List",
     description: "List Organization Dimensions.",
@@ -26,7 +26,7 @@ export const apiDefinitions = {
   },
   create: {
     method: "POST",
-    path: "/organization/dimensions",
+    path: "/finance/dimensions",
     handler: (request: any) => handleDimensionsCreate(request),
     request: { contentType: "application/json", body: DimensionCreateRequestDto },
     summary: "Create",
@@ -45,7 +45,7 @@ export const apiDefinitions = {
   },
   filter: {
     method: "POST",
-    path: "/organization/dimensions/filter",
+    path: "/finance/dimensions/filter",
     handler: (request: any) => handleDimensionsFilter(request),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
@@ -61,7 +61,7 @@ export const apiDefinitions = {
   },
   search: {
     method: "GET",
-    path: "/organization/dimensions/search",
+    path: "/finance/dimensions/search",
     handler: (request: any) => handleDimensionsSearch(request),
     request: { query: { parameters: { q: { description: "Search text used to match organization dimension records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
@@ -78,7 +78,7 @@ export const apiDefinitions = {
   },
   batchCreate: {
     method: "POST",
-    path: "/organization/dimensions/batch/create",
+    path: "/finance/dimensions/batch/create",
     handler: (request: any) => handleDimensionsBatchCreate(request),
     request: { contentType: "application/json", body: Type.Array(DimensionCreateRequestDto) },
     summary: "Batch Create",
@@ -97,7 +97,7 @@ export const apiDefinitions = {
   },
   batchGet: {
     method: "POST",
-    path: "/organization/dimensions/batch/get",
+    path: "/finance/dimensions/batch/get",
     handler: (request: any) => handleDimensionsBatchGet(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
@@ -114,7 +114,7 @@ export const apiDefinitions = {
   },
   batchUpdate: {
     method: "PUT",
-    path: "/organization/dimensions/batch/update",
+    path: "/finance/dimensions/batch/update",
     handler: (request: any) => handleDimensionsBatchUpdate(request),
     request: { contentType: "application/json", body: Type.Array(DimensionBatchUpdateRequestDto) },
     summary: "Batch Update",
@@ -134,7 +134,7 @@ export const apiDefinitions = {
   },
   batchPatch: {
     method: "PATCH",
-    path: "/organization/dimensions/batch/patch",
+    path: "/finance/dimensions/batch/patch",
     handler: (request: any) => handleDimensionsBatchPatch(request),
     request: { contentType: "application/json", body: Type.Array(DimensionBatchPatchRequestDto) },
     summary: "Batch Patch",
@@ -154,7 +154,7 @@ export const apiDefinitions = {
   },
   batchDelete: {
     method: "POST",
-    path: "/organization/dimensions/batch/delete",
+    path: "/finance/dimensions/batch/delete",
     handler: (request: any) => handleDimensionsBatchDelete(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
@@ -168,7 +168,7 @@ export const apiDefinitions = {
   },
   batchActivate: {
     method: "POST",
-    path: "/organization/dimensions/batch-activate",
+    path: "/finance/dimensions/batch-activate",
     handler: (request: any) => handleDimensionsBatchActivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
@@ -186,7 +186,7 @@ export const apiDefinitions = {
   },
   batchDeactivate: {
     method: "POST",
-    path: "/organization/dimensions/batch-deactivate",
+    path: "/finance/dimensions/batch-deactivate",
     handler: (request: any) => handleDimensionsBatchDeactivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
@@ -205,7 +205,7 @@ export const apiDefinitions = {
   },
   activate: {
     method: "POST",
-    path: "/organization/dimensions/[code]/activate",
+    path: "/finance/dimensions/[code]/activate",
     handler: (request: any, context: any) => handleDimensionsActivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
@@ -220,7 +220,7 @@ export const apiDefinitions = {
   },
   deactivate: {
     method: "POST",
-    path: "/organization/dimensions/[code]/deactivate",
+    path: "/finance/dimensions/[code]/deactivate",
     handler: (request: any, context: any) => handleDimensionsDeactivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
@@ -235,7 +235,7 @@ export const apiDefinitions = {
   },
   listValues: {
     method: "GET",
-    path: "/organization/dimensions/[code]/values",
+    path: "/finance/dimensions/[code]/values",
     handler: (request: any, context: any) => handleDimensionsListValues(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "List Values",
@@ -245,7 +245,7 @@ export const apiDefinitions = {
   },
   createValue: {
     method: "POST",
-    path: "/organization/dimensions/[code]/values",
+    path: "/finance/dimensions/[code]/values",
     handler: (request: any, context: any) => handleDimensionsCreateValue(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionValueCreateRequestDto },
     summary: "Create Value",
@@ -265,7 +265,7 @@ export const apiDefinitions = {
   },
   patchValue: {
     method: "PATCH",
-    path: "/organization/dimensions/values/[id]",
+    path: "/finance/dimensions/values/[id]",
     handler: (request: any, context: any) => handleDimensionsPatchValue(request, context as { params: Promise<{ id: string }> }),
     request: { path: { id: { description: "Unique identifier of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionValuePatchRequestDto },
     summary: "Patch Value",
@@ -283,7 +283,7 @@ export const apiDefinitions = {
   },
   deleteValue: {
     method: "DELETE",
-    path: "/organization/dimensions/values/[id]",
+    path: "/finance/dimensions/values/[id]",
     handler: (request: any, context: any) => handleDimensionsDeleteValue(request, context as { params: Promise<{ id: string }> }),
     request: { path: { id: { description: "Unique identifier of the requested record.", schema: { type: "string" } } } },
     summary: "Delete Value",
@@ -293,7 +293,7 @@ export const apiDefinitions = {
   },
   get: {
     method: "GET",
-    path: "/organization/dimensions/[code]",
+    path: "/finance/dimensions/[code]",
     handler: (request: any, context: any) => handleDimensionsGet(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
@@ -303,7 +303,7 @@ export const apiDefinitions = {
   },
   update: {
     method: "PUT",
-    path: "/organization/dimensions/[code]",
+    path: "/finance/dimensions/[code]",
     handler: (request: any, context: any) => handleDimensionsUpdate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionUpdateRequestDto },
     summary: "Update",
@@ -323,7 +323,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/organization/dimensions/[code]",
+    path: "/finance/dimensions/[code]",
     handler: (request: any, context: any) => handleDimensionsPatch(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionPatchRequestDto },
     summary: "Patch",
@@ -343,7 +343,7 @@ export const apiDefinitions = {
   },
   delete: {
     method: "DELETE",
-    path: "/organization/dimensions/[code]",
+    path: "/finance/dimensions/[code]",
     handler: (request: any, context: any) => handleDimensionsDelete(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",

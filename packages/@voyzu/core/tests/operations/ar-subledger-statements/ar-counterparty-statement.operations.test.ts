@@ -4,7 +4,7 @@ import { after, describe, it } from "node:test";
 import type { ArInvoiceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
 import type { ArReceiptApplicationRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt-application.request.dto";
 import type { ArReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
-import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies/company.response.dto";
+import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies/company.response.dto";
 import { getPool } from "@voyzu/capability/db";
 import { getArCounterpartyStatement } from "../../../modules/ar-subledger-statements/operations";
 import { processArInvoice, processArReceipt, processArReceiptApplication } from "../../../modules/financial-document-processing-engine/operations";

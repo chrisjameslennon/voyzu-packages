@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
@@ -90,7 +90,7 @@ export function CompanyFinancialDocumentTypeDetail({
           creationUser={processor.audit.created.user}
           updatedActorType={processor.audit.updated.actorType}
           updatedUser={processor.audit.updated.user}
-          auditHref={`/organization/audit?entityType=financial_document_type&entityCode=${encodeURIComponent(processor.code)}`}
+          auditHref={`/settings/audit?entityType=financial_document_type&entityCode=${encodeURIComponent(processor.code)}`}
           mutationId={processor.audit.updated.mutationId ?? processor.audit.created.mutationId}
         />
       </aside>

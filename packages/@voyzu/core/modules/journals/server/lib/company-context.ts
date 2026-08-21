@@ -3,7 +3,7 @@ import {
   SELECTED_COMPANY_COOKIE,
   parseSelectedCompanyId,
   resolveCompanySelectionForCurrentUser,
-} from "@voyzu/core/company-switcher/server";
+} from "@voyzu/organization/company-switcher/server";
 
 export async function getSelectedCompany() {
   const cookieStore = await cookies();

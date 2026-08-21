@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import type { DrCr } from "@voyzu/core/types/modules/core";
@@ -259,7 +259,7 @@ export function JournalDetail({ code, company, journal, from = "journals", fromC
           creationUser={journal.audit.created.user}
           updatedActorType={journal.audit.updated.actorType}
           updatedUser={journal.audit.updated.user}
-          auditHref={`/finance/audit?entityType=journal_header&entityId=${journal.id}`}
+          auditHref={`/settings/audit?entityType=journal_header&entityId=${journal.id}`}
           mutationId={journal.audit.updated.mutationId ?? journal.audit.created.mutationId}
         />
       </aside>

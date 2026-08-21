@@ -8,7 +8,7 @@ import { TaxAuthorityResponseDto } from "../../types/modules/tax/tax.response.dt
 export const apiDefinitions = {
   authoritiesList: {
     method: "GET",
-    path: "/organization/tax/authorities",
+    path: "/finance/tax/authorities",
     handler: (request: any) => handleListTaxAuthorities(request),
     summary: "Authorities List",
     description: "Authorities List Tax.",
@@ -24,7 +24,7 @@ export const apiDefinitions = {
   },
   authoritiesGet: {
     method: "GET",
-    path: "/organization/tax/authorities/[code]",
+    path: "/finance/tax/authorities/[code]",
     handler: (request: any, context: any) => handleGetTaxAuthority(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Authorities Get",

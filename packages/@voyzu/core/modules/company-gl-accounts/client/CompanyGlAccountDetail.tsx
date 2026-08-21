@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { CompanySettingsTitleBadges, financeApiUrl } from "@voyzu/core/common/client";
@@ -194,7 +194,7 @@ export function CompanyGlAccountDetail({ account, categories, readOnly = false, 
           creationUser={currentAccount.audit.created.user}
           updatedActorType={currentAccount.audit.updated.actorType}
           updatedUser={currentAccount.audit.updated.user}
-          auditHref={readOnly ? undefined : `/finance/audit?entityType=gl_account&entityCode=${encodeURIComponent(currentAccount.code)}`}
+          auditHref={readOnly ? undefined : `/settings/audit?entityType=gl_account&entityCode=${encodeURIComponent(currentAccount.code)}`}
           mutationId={currentAccount.audit.updated.mutationId ?? currentAccount.audit.created.mutationId}
         />
       </aside>

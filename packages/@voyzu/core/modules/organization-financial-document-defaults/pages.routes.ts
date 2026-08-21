@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-financial-document-defaults.page.list",
     pageTitle: "Financial Document Defaults",
     helpPath: "modules-help/organization-financial-settings/financial-document-defaults",
-    path: "/organization/financial-document-defaults",
+    path: "/finance/financial-document-defaults",
     Page: OrganizationFinancialDocumentDefaultsListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-financial-document-defaults.page.detail",
     pageTitle: "Financial Document Default",
     helpPath: "modules-help/organization-financial-settings/financial-document-defaults",
-    path: "/organization/financial-document-defaults/[code]",
+    path: "/finance/financial-document-defaults/[code]",
     Page: OrganizationFinancialDocumentDefaultDetailPage,
     breadcrumbBase: [
       {
@@ -39,7 +39,7 @@ export const pageRoutes = {
       },
       {
         label: "Financial Document Defaults",
-        href: "/organization/financial-document-defaults",
+        href: "/finance/financial-document-defaults",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

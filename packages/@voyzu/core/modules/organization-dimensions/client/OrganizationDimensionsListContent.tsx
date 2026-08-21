@@ -70,8 +70,8 @@ const columns: DataTableColumn<DimensionResponseDto>[] = [
 
 export function OrganizationDimensionsListContent({
   dimensions,
-  basePath = "/organization/dimensions",
-  apiPath = "/api/organization/dimensions",
+  basePath = "/finance/dimensions",
+  apiPath = "/api/finance/dimensions",
 }: OrganizationDimensionsListContentProps) {
   const router = useRouter();
   const [data, setData] = useState(dimensions);

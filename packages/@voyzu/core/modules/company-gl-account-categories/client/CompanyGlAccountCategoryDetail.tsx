@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
@@ -29,7 +29,7 @@ interface CompanyGlAccountCategoryDetailProps {
 export function CompanyGlAccountCategoryDetail({
   category,
   listPath = "/organization/chart-of-accounts/reporting-categories",
-  auditPath = "/organization/audit",
+  auditPath = "/settings/audit",
   apiPath = "/api/organization/gl-account-categories",
   showOrganizationBaseSettings = false,
   showArchived = false,

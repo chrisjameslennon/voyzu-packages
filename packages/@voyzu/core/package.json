@@ -8,15 +8,14 @@
   "voyzu": {
     "voyzu-package": true,
     "allowInstall": true,
-    "dependencies": [],
+    "dependencies": [
+      "@voyzu/organization"
+    ],
     "pageRootPaths": [
-      "/organization",
       "/finance"
     ],
     "apiRootPaths": [
-      "/organization",
-      "/finance",
-      "/company-selection"
+      "/finance"
     ],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
@@ -244,30 +243,6 @@
       "types": "./modules/common/tax-control-accounts/server/index.ts",
       "import": "./modules/common/tax-control-accounts/server/index.ts"
     },
-    "./companies": {
-      "types": "./modules/companies/module.ts",
-      "import": "./modules/companies/module.ts"
-    },
-    "./companies/domain/operation-policy": {
-      "types": "./modules/companies/domain/operation-policy.ts",
-      "import": "./modules/companies/domain/operation-policy.ts"
-    },
-    "./countries/domain/operation-policy": {
-      "types": "./modules/countries/domain/operation-policy.ts",
-      "import": "./modules/countries/domain/operation-policy.ts"
-    },
-    "./currencies/domain/operation-policy": {
-      "types": "./modules/currencies/domain/operation-policy.ts",
-      "import": "./modules/currencies/domain/operation-policy.ts"
-    },
-    "./companies/client": {
-      "types": "./modules/companies/client/index.ts",
-      "import": "./modules/companies/client/index.ts"
-    },
-    "./companies/server": {
-      "types": "./modules/companies/server/index.ts",
-      "import": "./modules/companies/server/index.ts"
-    },
     "./company-ap-control-accounts": {
       "types": "./modules/company-ap-control-accounts/module.ts",
       "import": "./modules/company-ap-control-accounts/module.ts"
@@ -291,18 +266,6 @@
     "./company-ar-control-accounts/server": {
       "types": "./modules/company-ar-control-accounts/server/index.ts",
       "import": "./modules/company-ar-control-accounts/server/index.ts"
-    },
-    "./company-audit": {
-      "types": "./modules/company-audit/module.ts",
-      "import": "./modules/company-audit/module.ts"
-    },
-    "./company-audit/client": {
-      "types": "./modules/company-audit/client/index.ts",
-      "import": "./modules/company-audit/client/index.ts"
-    },
-    "./company-audit/server": {
-      "types": "./modules/company-audit/server/index.ts",
-      "import": "./modules/company-audit/server/index.ts"
     },
     "./company-bank-cash-accounts": {
       "types": "./modules/company-bank-cash-accounts/module.ts",
@@ -428,22 +391,6 @@
     "./company-reports/tax-ledger-entries-audit/server": "./modules/company-reports/tax-ledger-entries-audit/server/index.ts",
     "./company-reports/tax-position/server": "./modules/company-reports/tax-position/server/index.ts",
     "./company-reports/trial-balance/server": "./modules/company-reports/trial-balance/server/index.ts",
-    "./company-switcher": {
-      "types": "./modules/company-switcher/module.ts",
-      "import": "./modules/company-switcher/module.ts"
-    },
-    "./company-switcher/client": {
-      "types": "./modules/company-switcher/client/index.ts",
-      "import": "./modules/company-switcher/client/index.ts"
-    },
-    "./company-switcher/server": {
-      "types": "./modules/company-switcher/server/index.ts",
-      "import": "./modules/company-switcher/server/index.ts"
-    },
-    "./company-switcher/types": {
-      "types": "./modules/company-switcher/types/index.ts",
-      "import": "./modules/company-switcher/types/index.ts"
-    },
     "./company-tax-control-accounts": {
       "types": "./modules/company-tax-control-accounts/module.ts",
       "import": "./modules/company-tax-control-accounts/module.ts"
@@ -455,30 +402,6 @@
     "./company-tax-control-accounts/server": {
       "types": "./modules/company-tax-control-accounts/server/index.ts",
       "import": "./modules/company-tax-control-accounts/server/index.ts"
-    },
-    "./countries": {
-      "types": "./modules/countries/module.ts",
-      "import": "./modules/countries/module.ts"
-    },
-    "./countries/client": {
-      "types": "./modules/countries/client/index.ts",
-      "import": "./modules/countries/client/index.ts"
-    },
-    "./countries/server": {
-      "types": "./modules/countries/server/index.ts",
-      "import": "./modules/countries/server/index.ts"
-    },
-    "./currencies": {
-      "types": "./modules/currencies/module.ts",
-      "import": "./modules/currencies/module.ts"
-    },
-    "./currencies/client": {
-      "types": "./modules/currencies/client/index.ts",
-      "import": "./modules/currencies/client/index.ts"
-    },
-    "./currencies/server": {
-      "types": "./modules/currencies/server/index.ts",
-      "import": "./modules/currencies/server/index.ts"
     },
     "./financial-document-processing-engine": {
       "types": "./modules/financial-document-processing-engine/module.ts",
@@ -525,26 +448,6 @@
     "./journals/server": {
       "types": "./modules/journals/server/index.ts",
       "import": "./modules/journals/server/index.ts"
-    },
-    "./organization": {
-      "types": "./modules/organization/module.ts",
-      "import": "./modules/organization/module.ts"
-    },
-    "./organization-audit": {
-      "types": "./modules/organization-audit/module.ts",
-      "import": "./modules/organization-audit/module.ts"
-    },
-    "./organization-audit/client": {
-      "types": "./modules/organization-audit/client/index.ts",
-      "import": "./modules/organization-audit/client/index.ts"
-    },
-    "./organization-audit/server": {
-      "types": "./modules/organization-audit/server/index.ts",
-      "import": "./modules/organization-audit/server/index.ts"
-    },
-    "./organization/domain/operation-policy": {
-      "types": "./modules/organization/domain/operation-policy.ts",
-      "import": "./modules/organization/domain/operation-policy.ts"
     },
     "./financial-years/domain/operation-policy": {
       "types": "./modules/financial-years/domain/operation-policy.ts",
@@ -683,14 +586,6 @@
     "./organization-tax-control-accounts/server": {
       "types": "./modules/organization-tax-control-accounts/server/index.ts",
       "import": "./modules/organization-tax-control-accounts/server/index.ts"
-    },
-    "./organization/client": {
-      "types": "./modules/organization/client/index.ts",
-      "import": "./modules/organization/client/index.ts"
-    },
-    "./organization/server": {
-      "types": "./modules/organization/server/index.ts",
-      "import": "./modules/organization/server/index.ts"
     },
     "./tax": {
       "types": "./modules/tax/module.ts",
@@ -842,25 +737,9 @@
       "types": "./modules/ar-subledger-statements/operations.ts",
       "import": "./modules/ar-subledger-statements/operations.ts"
     },
-    "./companies/operations": {
-      "types": "./modules/companies/operations.ts",
-      "import": "./modules/companies/operations.ts"
-    },
     "./company-reports/operations": {
       "types": "./modules/company-reports/operations.ts",
       "import": "./modules/company-reports/operations.ts"
-    },
-    "./company-switcher/operations": {
-      "types": "./modules/company-switcher/operations.ts",
-      "import": "./modules/company-switcher/operations.ts"
-    },
-    "./countries/operations": {
-      "types": "./modules/countries/operations.ts",
-      "import": "./modules/countries/operations.ts"
-    },
-    "./currencies/operations": {
-      "types": "./modules/currencies/operations.ts",
-      "import": "./modules/currencies/operations.ts"
     },
     "./financial-document-processing-engine/operations": {
       "types": "./modules/financial-document-processing-engine/operations.ts",
@@ -877,10 +756,6 @@
     "./journals/operations": {
       "types": "./modules/journals/operations.ts",
       "import": "./modules/journals/operations.ts"
-    },
-    "./organization/operations": {
-      "types": "./modules/organization/operations.ts",
-      "import": "./modules/organization/operations.ts"
     },
     "./tax/operations": {
       "types": "./modules/tax/operations.ts",
@@ -908,7 +783,8 @@
     "next": "^16",
     "react": "^19",
     "server-only": "^0.0.1",
-    "typebox": "^1.3.7"
+    "typebox": "^1.3.7",
+    "@voyzu/organization": "^0.1.0"
   },
   "devDependencies": {
     "@types/archiver": "^8.0.0",

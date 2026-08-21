@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/organization-audit/client";
+import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ import {
     type GlAccountFormAccountType,
 } from "../../common/gl-accounts/client";
 
-const LIST_PATH = "/organization/general-ledger-accounts";
+const LIST_PATH = "/finance/general-ledger-accounts";
 const TOAST_KEY = "voyzu:organization-gl-accounts:toast";
 
 interface OrganizationGlAccountDetailProps {
@@ -73,7 +73,7 @@ export function OrganizationGlAccountDetail({ account, categories }: Organizatio
         accountType: accountType as GlAccountUpdateRequestDto["accountType"],
         ...(accountCategoryId ? { accountCategoryId: Number(accountCategoryId) } : {}),
       };
-      const response = await fetch(`/api/organization/gl-accounts/${encodeURIComponent(currentAccount.code)}`, {
+      const response = await fetch(`/api/finance/gl-accounts/${encodeURIComponent(currentAccount.code)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -95,7 +95,7 @@ export function OrganizationGlAccountDetail({ account, categories }: Organizatio
 
   const transitionStatus = async (action: "activate" | "deactivate") => {
     setServerError("");
-    const response = await fetch(`/api/organization/gl-accounts/batch-${action}`, {
+    const response = await fetch(`/api/finance/gl-accounts/batch-${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: [currentAccount.code] }),
@@ -112,7 +112,7 @@ export function OrganizationGlAccountDetail({ account, categories }: Organizatio
   const deleteAccount = async () => {
     setIsDeleteOpen(false);
     setServerError("");
-    const response = await fetch(`/api/organization/gl-accounts/${encodeURIComponent(currentAccount.code)}`, { method: "DELETE" });
+    const response = await fetch(`/api/finance/gl-accounts/${encodeURIComponent(currentAccount.code)}`, { method: "DELETE" });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string; error?: string } | null;
       setServerError(body?.message ?? "An unexpected error occurred");
@@ -189,7 +189,7 @@ export function OrganizationGlAccountDetail({ account, categories }: Organizatio
           creationUser={currentAccount.audit.created.user}
           updatedActorType={currentAccount.audit.updated.actorType}
           updatedUser={currentAccount.audit.updated.user}
-          auditHref={`/organization/audit?entityType=gl_account&entityCode=${encodeURIComponent(currentAccount.code)}`}
+          auditHref={`/settings/audit?entityType=gl_account&entityCode=${encodeURIComponent(currentAccount.code)}`}
           mutationId={currentAccount.audit.updated.mutationId ?? currentAccount.audit.created.mutationId}
         />
       </aside>

@@ -1,7 +1,4 @@
 import type { VoyzuPackageNavigationGroup } from "@voyzu/types/framework";
-import { companiesModule } from "@voyzu/core/companies";
-import { countriesModule } from "@voyzu/core/countries";
-import { currenciesModule } from "@voyzu/core/currencies";
 import { organizationGlAccountsModule } from "@voyzu/core/organization-gl-accounts";
 import { organizationGlAccountCategoriesModule } from "@voyzu/core/organization-gl-account-categories";
 import { organizationApControlAccountsModule } from "@voyzu/core/organization-ap-control-accounts";
@@ -15,36 +12,11 @@ import { organizationInventoryItemPostingProfilesModule } from "@voyzu/core/orga
 import { organizationDimensionsModule } from "@voyzu/core/organization-dimensions";
 import { organizationInventoryCategoriesModule } from "@voyzu/core/organization-inventory-categories";
 import { organizationInventoryItemsModule } from "@voyzu/core/organization-inventory-items";
-import { organizationAuditModule } from "@voyzu/core/organization-audit";
 import { organizationReportsModule } from "@voyzu/core/organization-reports";
 
-export const organizationLeftNav = [
+export const financeTemplateLeftNav = [
   {
-    items: [
-      {
-        label: "Organization",
-        icon: "hub",
-        path: "/organization",
-        exactMatch: true,
-      },
-      {
-        label: "Companies",
-        icon: "domain",
-        routeId: companiesModule.pageRoutes.list.id,
-      },
-      {
-        label: "Localization",
-        icon: "globe",
-        path: "#localization",
-        children: [
-          { label: "Countries", routeId: countriesModule.pageRoutes.list.id },
-          { label: "Currencies", routeId: currenciesModule.pageRoutes.list.id },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Organization Standard Settings",
+    label: "Finance Template",
     items: [
       {
         label: "General Ledger",
@@ -95,12 +67,6 @@ export const organizationLeftNav = [
     ],
   },
   {
-    label: "Audit",
-    items: [
-      { label: "Audit Log", icon: "history", routeId: organizationAuditModule.pageRoutes.list.id },
-    ],
-  },
-  {
     label: "Reports",
     items: [
       {
@@ -108,10 +74,6 @@ export const organizationLeftNav = [
         icon: "format_list_bulleted",
         path: "#lists",
         children: [
-          { label: "Companies", routeId: organizationReportsModule.pageRoutes.companies.id },
-          { label: "Countries", routeId: organizationReportsModule.pageRoutes.countries.id },
-          { label: "Country Tax Settings", routeId: organizationReportsModule.pageRoutes.countryTaxSettings.id },
-          { label: "Currencies", routeId: organizationReportsModule.pageRoutes.currencies.id },
           { label: "Dimensions", routeId: organizationReportsModule.pageRoutes.dimensions.id },
           { label: "Financial Document Defaults", routeId: organizationReportsModule.pageRoutes.financialDocumentDefaults.id },
           { label: "Financial Document Types", routeId: organizationReportsModule.pageRoutes.financialDocumentTypes.id },
@@ -127,4 +89,4 @@ export const organizationLeftNav = [
   },
 ] as const satisfies readonly VoyzuPackageNavigationGroup[];
 
-export default organizationLeftNav;
+export default financeTemplateLeftNav;

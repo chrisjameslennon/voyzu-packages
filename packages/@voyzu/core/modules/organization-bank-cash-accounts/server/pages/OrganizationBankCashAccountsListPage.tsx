@@ -35,8 +35,8 @@ export async function OrganizationBankCashAccountsListPage() {
       <OrganizationBankCashAccountsListContent
         accounts={accounts}
         glAccounts={glAccounts}
-        basePath="/organization/bank-cash-accounts"
-        apiPath="/api/organization/bank-cash-accounts"
+        basePath="/finance/bank-cash-accounts"
+        apiPath="/api/finance/bank-cash-accounts"
       />
     </div>
   );

@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-dimensions.page.list",
     pageTitle: "Dimensions",
     helpPath: "modules-help/organization-financial-settings/dimensions",
-    path: "/organization/dimensions",
+    path: "/finance/dimensions",
     Page: OrganizationDimensionsListPage,
     breadcrumbBase: [
       {
@@ -22,7 +22,7 @@ export const pageRoutes = {
     id: "voyzu.organization-dimensions.page.detail",
     pageTitle: "Dimension",
     helpPath: "modules-help/organization-financial-settings/dimensions",
-    path: "/organization/dimensions/[code]",
+    path: "/finance/dimensions/[code]",
     Page: OrganizationDimensionDetailPage,
     breadcrumbBase: [
       {
@@ -33,7 +33,7 @@ export const pageRoutes = {
       },
       {
         label: "Dimensions",
-        href: "/organization/dimensions",
+        href: "/finance/dimensions",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

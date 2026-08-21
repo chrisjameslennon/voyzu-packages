@@ -4,11 +4,11 @@ import { cookies } from "next/headers";
 
 import type { ProfitLossBreakdownDto, ProfitLossDimensionSelectionDto } from "@voyzu/core/types/modules/company-reports";
 
-import { listCompanies } from "@voyzu/core/companies/server";
+import { listCompanies } from "@voyzu/organization/companies/server";
 import {
   SELECTED_COMPANY_COOKIE,
   parseSelectedCompanyId,
-} from "@voyzu/core/company-switcher/server";
+} from "@voyzu/organization/company-switcher/server";
 import { listDimensions } from "@voyzu/core/common/dimensions/server";
 import { listFinancialYears } from "@voyzu/core/financial-years/server";
 import { listPeriods } from "@voyzu/core/financial-years/server";

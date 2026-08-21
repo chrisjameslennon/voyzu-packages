@@ -5,10 +5,10 @@ import type {
 
 import {
   coreFinanceModules,
-  coreOrganizationModules,
+  coreFinanceTemplateModules,
 } from "../voyzu.package";
 import { financeLeftNav } from "./finance.left-nav";
-import { organizationLeftNav } from "./organization.left-nav";
+import { financeTemplateLeftNav } from "./organization.left-nav";
 
 function routeIds(modules: readonly VoyzuPackageModuleDefinition[]) {
   return modules.flatMap((moduleDefinition) =>
@@ -16,18 +16,17 @@ function routeIds(modules: readonly VoyzuPackageModuleDefinition[]) {
   );
 }
 
-const organizationRouteIds = [
-  ...routeIds(coreOrganizationModules),
-];
+const financeTemplateRouteIds = routeIds(coreFinanceTemplateModules);
 
 const financeRouteIds = routeIds(coreFinanceModules);
 
 const domains = [
   {
-    label: "Organization",
-    routeId: coreOrganizationModules[0].pageRoutes.detail.id,
-    routeIds: organizationRouteIds,
-    leftNav: organizationLeftNav,
+    label: "Finance Template",
+    routeId: coreFinanceTemplateModules[0].pageRoutes.landing.id,
+    routeIds: financeTemplateRouteIds,
+    leftNav: financeTemplateLeftNav,
+    topNavigationVisible: false,
   },
   {
     label: "Finance",

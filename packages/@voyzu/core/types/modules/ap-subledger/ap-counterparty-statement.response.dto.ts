@@ -1,7 +1,7 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
 import { EntryType } from "@voyzu/core/types/modules/core";
-import { CompanyResponseDto } from "../companies/company.response.dto";
+import { CompanyResponseDto } from "@voyzu/organization/types/modules/companies/company.response.dto";
 import { BusinessCode, CurrencyCode, IsoDate, NonBlankText } from "@voyzu/core/types/constraints";
 
 export const ApCounterpartyStatementApplicationDto = StrictObject({
@@ -50,4 +50,3 @@ export const ApCounterpartyStatementResponseDto = StrictObject({
   groups: Type.Array(ApCounterpartyStatementGroupDto),
 });
 export type ApCounterpartyStatementResponseDto = Type.Static<typeof ApCounterpartyStatementResponseDto>;
-

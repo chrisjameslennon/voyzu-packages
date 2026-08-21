@@ -27,7 +27,6 @@ import { companyFinancialDocumentTypesModule } from "@voyzu/core/company-financi
 import { companyFinancialDocumentDefaultsModule } from "@voyzu/core/company-financial-document-defaults";
 import { companyInventoryItemPostingProfilesModule } from "@voyzu/core/company-inventory-item-posting-profiles";
 import { companyDimensionsModule } from "@voyzu/core/company-dimensions";
-import { companyAuditModule } from "@voyzu/core/company-audit";
 
 export const financeLeftNav = [
   {
@@ -139,11 +138,6 @@ export const financeLeftNav = [
           },
           { label: "Dimensions", routeId: companyDimensionsModule.pageRoutes.list.id },
         ],
-      },
-      {
-        label: "Audit Log",
-        icon: "history",
-        routeId: companyAuditModule.pageRoutes.list.id,
       },
     ],
   },

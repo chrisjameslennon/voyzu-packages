@@ -5,7 +5,7 @@ import type {
   ArLedgerEntryDocumentReportResponseDto,
   ArLedgerEntryDocumentReportTotalDto,
 } from "@voyzu/core/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
 import { getDb } from "@voyzu/capability/db";
 import { getAuditActors } from "@voyzu/core/common/server";
 

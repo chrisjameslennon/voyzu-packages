@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-tax-control-accounts.page.list",
     pageTitle: "Tax Control Accounts",
     helpPath: "modules-help/organization-financial-settings/tax-accounts",
-    path: "/organization/control-accounts/tax",
+    path: "/finance/control-accounts/tax",
     Page: OrganizationTaxControlAccountsPage,
     breadcrumbBase: [
       { label: "Organization" },
@@ -19,13 +19,13 @@ export const pageRoutes = {
     id: "voyzu.organization-tax-control-accounts.page.detail",
     pageTitle: "Tax Control Accounts",
     helpPath: "modules-help/organization-financial-settings/tax-accounts",
-    path: "/organization/control-accounts/tax/[code]",
+    path: "/finance/control-accounts/tax/[code]",
     Page: OrganizationTaxControlAccountDetailPage,
     breadcrumbBase: [
       { label: "Organization" },
       { label: "Standard Settings" },
       { label: "Control Accounts" },
-      { label: "Tax Control Accounts", href: "/organization/control-accounts/tax" },
+      { label: "Tax Control Accounts", href: "/finance/control-accounts/tax" },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   }

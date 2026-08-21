@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/organization-audit/client";
+import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
@@ -30,9 +30,9 @@ interface OrganizationBankCashAccountDetailProps {
 export function OrganizationBankCashAccountDetail({
   account,
   glAccounts,
-  listPath = "/organization/bank-cash-accounts",
-  auditPath = "/organization/audit",
-  apiPath = "/api/organization/bank-cash-accounts",
+  listPath = "/finance/bank-cash-accounts",
+  auditPath = "/settings/audit",
+  apiPath = "/api/finance/bank-cash-accounts",
 }: OrganizationBankCashAccountDetailProps) {
   const router = useRouter();
   const [code, setCode] = useState(account.code);

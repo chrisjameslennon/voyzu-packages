@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/organization-audit/client";
+import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useState } from "react";
@@ -16,7 +16,7 @@ import { OrganizationArControlAccountDetailsForm } from "./OrganizationArControl
 
 interface Props { account: ControlAccountResponseDto; glAccounts: GlAccountResponseDto[]; apiPath: string; listPath?: string; auditPath?: string; }
 
-export function OrganizationArControlAccountDetail({ account, glAccounts, apiPath, listPath = "/organization/control-accounts/ar", auditPath = "/organization/audit" }: Props) {
+export function OrganizationArControlAccountDetail({ account, glAccounts, apiPath, listPath = "/finance/control-accounts/ar", auditPath = "/settings/audit" }: Props) {
   const [currentAccount, setCurrentAccount] = useState(account);
   const [glAccountId, setGlAccountId] = useState(String(account.glAccountId));
   const [saving, setSaving] = useState(false);

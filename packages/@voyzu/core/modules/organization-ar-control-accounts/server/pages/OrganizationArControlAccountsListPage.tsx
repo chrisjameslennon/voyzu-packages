@@ -32,7 +32,7 @@ export async function OrganizationArControlAccountsListPage() {
         </div>
       </header>
       <div className={layoutStyles.slotBody}>
-        <OrganizationArControlAccountSummaryPanels accounts={accounts} basePath="/organization/control-accounts/ar" />
+        <OrganizationArControlAccountSummaryPanels accounts={accounts} basePath="/finance/control-accounts/ar" />
       </div>
     </div>
   );

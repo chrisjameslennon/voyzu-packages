@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-inventory-control-accounts.page.list",
     pageTitle: "Inventory Control Accounts",
     helpPath: "modules-help/organization-financial-settings/inventory-control-accounts",
-    path: "/organization/control-accounts/inventory",
+    path: "/finance/control-accounts/inventory",
     Page: OrganizationInventoryControlAccountsPage,
     breadcrumbBase: [
       { label: "Organization" },
@@ -19,13 +19,13 @@ export const pageRoutes = {
     id: "voyzu.organization-inventory-control-accounts.page.detail",
     pageTitle: "Inventory Control Accounts",
     helpPath: "modules-help/organization-financial-settings/inventory-control-accounts",
-    path: "/organization/control-accounts/inventory/[code]",
+    path: "/finance/control-accounts/inventory/[code]",
     Page: OrganizationInventoryControlAccountDetailPage,
     breadcrumbBase: [
       { label: "Organization" },
       { label: "Standard Settings" },
       { label: "Control Accounts" },
-      { label: "Inventory Control Accounts", href: "/organization/control-accounts/inventory" },
+      { label: "Inventory Control Accounts", href: "/finance/control-accounts/inventory" },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   }

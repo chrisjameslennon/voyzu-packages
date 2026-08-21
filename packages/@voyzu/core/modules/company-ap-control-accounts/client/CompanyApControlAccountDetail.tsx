@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
@@ -31,7 +31,7 @@ export function CompanyApControlAccountDetail({
   glAccounts,
   apiPath,
   listPath = "/finance/settings/control-accounts/ap",
-  auditPath = "/finance/audit",
+  auditPath = "/settings/audit",
   readOnly = false,
   usesOrganizationStandardSettings = false,
   isArchived = false,

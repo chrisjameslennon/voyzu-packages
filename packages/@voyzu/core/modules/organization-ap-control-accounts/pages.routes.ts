@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-ap-control-accounts.page.list",
     pageTitle: "Accounts Payable Control Accounts",
     helpPath: "modules-help/organization-financial-settings/ap-control-accounts",
-    path: "/organization/control-accounts/ap",
+    path: "/finance/control-accounts/ap",
     Page: OrganizationApControlAccountsListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-ap-control-accounts.page.detail",
     pageTitle: "Accounts Payable Control Accounts",
     helpPath: "modules-help/organization-financial-settings/ap-control-accounts",
-    path: "/organization/control-accounts/ap/[code]",
+    path: "/finance/control-accounts/ap/[code]",
     Page: OrganizationApControlAccountDetailPage,
     breadcrumbBase: [
       {
@@ -39,7 +39,7 @@ export const pageRoutes = {
       },
       {
         label: "Accounts Payable Control Accounts",
-        href: "/organization/control-accounts/ap",
+        href: "/finance/control-accounts/ap",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

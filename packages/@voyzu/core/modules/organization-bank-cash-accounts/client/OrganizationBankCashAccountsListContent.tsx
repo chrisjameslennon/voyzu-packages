@@ -83,8 +83,8 @@ const columns: DataTableColumn<BankCashAccountResponseDto>[] = [
 export function OrganizationBankCashAccountsListContent({
   accounts,
   glAccounts,
-  basePath = "/organization/bank-cash-accounts",
-  apiPath = "/api/organization/bank-cash-accounts",
+  basePath = "/finance/bank-cash-accounts",
+  apiPath = "/api/finance/bank-cash-accounts",
 }: OrganizationBankCashAccountsListContentProps) {
   const router = useRouter();
   const [data, setData] = useState(accounts);

@@ -14,7 +14,7 @@ import { GlAccountCreateRequestDto } from "../../types/modules/gl-accounts/gl-ac
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/gl-accounts",
+    path: "/finance/gl-accounts",
     handler: (request: any) => handleGlAccountsList(request),
     summary: "List",
     description: "List Organization GL Accounts.",
@@ -23,7 +23,7 @@ export const apiDefinitions = {
   },
   create: {
     method: "POST",
-    path: "/organization/gl-accounts",
+    path: "/finance/gl-accounts",
     handler: (request: any) => handleGlAccountsCreate(request),
     request: { contentType: "application/json", body: GlAccountCreateRequestDto },
     summary: "Create",
@@ -42,7 +42,7 @@ export const apiDefinitions = {
   },
   filter: {
     method: "POST",
-    path: "/organization/gl-accounts/filter",
+    path: "/finance/gl-accounts/filter",
     handler: (request: any) => handleGlAccountsFilter(request),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
@@ -58,7 +58,7 @@ export const apiDefinitions = {
   },
   search: {
     method: "GET",
-    path: "/organization/gl-accounts/search",
+    path: "/finance/gl-accounts/search",
     handler: (request: any) => handleGlAccountsSearch(request),
     request: { query: { parameters: { q: { description: "Search text used to match organization GL account records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
@@ -75,7 +75,7 @@ export const apiDefinitions = {
   },
   batchCreate: {
     method: "POST",
-    path: "/organization/gl-accounts/batch/create",
+    path: "/finance/gl-accounts/batch/create",
     handler: (request: any) => handleGlAccountsBatchCreate(request),
     request: { contentType: "application/json", body: Type.Array(GlAccountCreateRequestDto) },
     summary: "Batch Create",
@@ -94,7 +94,7 @@ export const apiDefinitions = {
   },
   batchGet: {
     method: "POST",
-    path: "/organization/gl-accounts/batch/get",
+    path: "/finance/gl-accounts/batch/get",
     handler: (request: any) => handleGlAccountsBatchGet(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
@@ -111,7 +111,7 @@ export const apiDefinitions = {
   },
   batchUpdate: {
     method: "PUT",
-    path: "/organization/gl-accounts/batch/update",
+    path: "/finance/gl-accounts/batch/update",
     handler: (request: any) => handleGlAccountsBatchUpdate(request),
     request: { contentType: "application/json", body: Type.Array(GlAccountBatchUpdateRequestDto) },
     summary: "Batch Update",
@@ -131,7 +131,7 @@ export const apiDefinitions = {
   },
   batchPatch: {
     method: "PATCH",
-    path: "/organization/gl-accounts/batch/patch",
+    path: "/finance/gl-accounts/batch/patch",
     handler: (request: any) => handleGlAccountsBatchPatch(request),
     request: { contentType: "application/json", body: Type.Array(GlAccountBatchPatchRequestDto) },
     summary: "Batch Patch",
@@ -151,7 +151,7 @@ export const apiDefinitions = {
   },
   batchDelete: {
     method: "POST",
-    path: "/organization/gl-accounts/batch/delete",
+    path: "/finance/gl-accounts/batch/delete",
     handler: (request: any) => handleGlAccountsBatchDelete(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
@@ -165,7 +165,7 @@ export const apiDefinitions = {
   },
   batchActivate: {
     method: "POST",
-    path: "/organization/gl-accounts/batch-activate",
+    path: "/finance/gl-accounts/batch-activate",
     handler: (request: any) => handleGlAccountsBatchActivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
@@ -183,7 +183,7 @@ export const apiDefinitions = {
   },
   batchDeactivate: {
     method: "POST",
-    path: "/organization/gl-accounts/batch-deactivate",
+    path: "/finance/gl-accounts/batch-deactivate",
     handler: (request: any) => handleGlAccountsBatchDeactivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
@@ -202,7 +202,7 @@ export const apiDefinitions = {
   },
   activate: {
     method: "POST",
-    path: "/organization/gl-accounts/[code]/activate",
+    path: "/finance/gl-accounts/[code]/activate",
     handler: (request: any, context: any) => handleGlAccountsActivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
@@ -217,7 +217,7 @@ export const apiDefinitions = {
   },
   deactivate: {
     method: "POST",
-    path: "/organization/gl-accounts/[code]/deactivate",
+    path: "/finance/gl-accounts/[code]/deactivate",
     handler: (request: any, context: any) => handleGlAccountsDeactivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
@@ -233,7 +233,7 @@ export const apiDefinitions = {
   },
   get: {
     method: "GET",
-    path: "/organization/gl-accounts/[code]",
+    path: "/finance/gl-accounts/[code]",
     handler: (request: any, context: any) => handleGlAccountsGet(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
@@ -243,7 +243,7 @@ export const apiDefinitions = {
   },
   update: {
     method: "PUT",
-    path: "/organization/gl-accounts/[code]",
+    path: "/finance/gl-accounts/[code]",
     handler: (request: any, context: any) => handleGlAccountsUpdate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: GlAccountUpdateRequestDto },
     summary: "Update",
@@ -263,7 +263,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/organization/gl-accounts/[code]",
+    path: "/finance/gl-accounts/[code]",
     handler: (request: any, context: any) => handleGlAccountsPatch(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: GlAccountPatchRequestDto },
     summary: "Patch",
@@ -283,7 +283,7 @@ export const apiDefinitions = {
   },
   delete: {
     method: "DELETE",
-    path: "/organization/gl-accounts/[code]",
+    path: "/finance/gl-accounts/[code]",
     handler: (request: any, context: any) => handleGlAccountsDelete(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",

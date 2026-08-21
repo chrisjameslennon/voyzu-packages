@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-gl-accounts.page.list",
     pageTitle: "General Ledger Accounts",
     helpPath: "modules-help/organization-financial-settings/general-ledger-accounts",
-    path: "/organization/general-ledger-accounts",
+    path: "/finance/general-ledger-accounts",
     Page: OrganizationGlAccountsListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-gl-accounts.page.detail",
     pageTitle: "General Ledger Account",
     helpPath: "modules-help/organization-financial-settings/general-ledger-accounts",
-    path: "/organization/general-ledger-accounts/[code]",
+    path: "/finance/general-ledger-accounts/[code]",
     Page: OrganizationGlAccountDetailPage,
     breadcrumbBase: [
       {
@@ -39,7 +39,7 @@ export const pageRoutes = {
       },
       {
         label: "General Ledger Accounts",
-        href: "/organization/general-ledger-accounts",
+        href: "/finance/general-ledger-accounts",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

@@ -1,11 +1,5 @@
 export const coreInstall = {
   sql: [
-    "./install/db/objects/accounting-domains.sql",
-    "./install/db/objects/table.organization.create.sql",
-    "./install/db/objects/table.currency.create.sql",
-    "./install/db/objects/table.country.create.sql",
-    "./install/db/objects/table.company.create.sql",
-    "./install/db/objects/table.app-user-assignment.create.sql",
     "./install/db/objects/table.financial_document_type.create.sql",
     "./install/db/objects/table.gl_account_category.create.sql",
     "./install/db/objects/table.gl_account.create.sql",
@@ -47,17 +41,12 @@ export const coreInstall = {
     "./install/db/objects/trigger.journal_validate.create.sql",
     "./install/db/objects/trigger.journal_line_validate.create.sql",
     "./install/db/objects/triggers.business.attach.sql",
-    "./install/db/objects/audit-company-reference.attach.sql",
     "./install/db/objects/audit-triggers.attach.sql",
   ],
   seedSql: [
-    "./install/db/seed/organization.seed.sql",
-    "./install/db/seed/currency.seed.sql",
-    "./install/db/seed/country.seed.sql",
     "./install/db/seed/tax-authority.seed.sql",
     "./install/db/seed/tax-rule.seed.sql",
     "./install/db/seed/tax-component.seed.sql",
-    "./install/db/seed/company.seed.sql",
     "./install/db/seed/financial-document-type.seed.sql",
     "./install/db/seed/gl-account-category.seed.sql",
     "./install/db/seed/gl-account.seed.sql",
@@ -74,6 +63,5 @@ export const coreInstall = {
     "./install/db/seed/financial-document-default.seed.sql",
     "./install/db/seed/fiscal-year.seed.sql",
     "./install/db/seed/fiscal-period.seed.sql",
-    "./install/db/seed/home-page.seed.sql",
   ],
 } as const;

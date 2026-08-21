@@ -2,11 +2,11 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-import { listCompanies } from "@voyzu/core/companies/server";
+import { listCompanies } from "@voyzu/organization/companies/server";
 import {
   SELECTED_COMPANY_COOKIE,
   parseSelectedCompanyId,
-} from "@voyzu/core/company-switcher/server";
+} from "@voyzu/organization/company-switcher/server";
 
 import { BankCashMovementReport } from "../../client";
 import { BankCashMovementReportTemplate } from "../../templates/BankCashMovementReportTemplate";

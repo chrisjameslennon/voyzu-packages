@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-ar-control-accounts.page.list",
     pageTitle: "Accounts Receivable Control Accounts",
     helpPath: "modules-help/organization-financial-settings/ar-control-accounts",
-    path: "/organization/control-accounts/ar",
+    path: "/finance/control-accounts/ar",
     Page: OrganizationArControlAccountsListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-ar-control-accounts.page.detail",
     pageTitle: "Accounts Receivable Control Accounts",
     helpPath: "modules-help/organization-financial-settings/ar-control-accounts",
-    path: "/organization/control-accounts/ar/[code]",
+    path: "/finance/control-accounts/ar/[code]",
     Page: OrganizationArControlAccountDetailPage,
     breadcrumbBase: [
       {
@@ -39,7 +39,7 @@ export const pageRoutes = {
       },
       {
         label: "Accounts Receivable Control Accounts",
-        href: "/organization/control-accounts/ar",
+        href: "/finance/control-accounts/ar",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

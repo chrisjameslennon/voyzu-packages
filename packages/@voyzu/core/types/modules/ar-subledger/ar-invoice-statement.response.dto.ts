@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
-import { CompanyResponseDto } from "../companies/company.response.dto";
+import { CompanyResponseDto } from "@voyzu/organization/types/modules/companies/company.response.dto";
 import { ArInvoiceDetailedInvoiceDto } from "../financial-document-types/ar-invoice.response.dto";
 import { BusinessCode, IsoDate, NonBlankText } from "@voyzu/core/types/constraints";
 
@@ -30,4 +30,3 @@ export const ArInvoiceStatementResponseDto = StrictObject({
   transactions: Type.Array(ArInvoiceStatementTransactionDto),
 });
 export type ArInvoiceStatementResponseDto = Type.Static<typeof ArInvoiceStatementResponseDto>;
-

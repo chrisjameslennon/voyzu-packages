@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/organization-audit/client";
+import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
@@ -25,9 +25,9 @@ interface OrganizationGlAccountCategoryDetailProps {
 
 export function OrganizationGlAccountCategoryDetail({
   category,
-  listPath = "/organization/chart-of-accounts/reporting-categories",
-  auditPath = "/organization/audit",
-  apiPath = "/api/organization/gl-account-categories",
+  listPath = "/finance/chart-of-accounts/reporting-categories",
+  auditPath = "/settings/audit",
+  apiPath = "/api/finance/gl-account-categories",
 }: OrganizationGlAccountCategoryDetailProps) {
   const router = useRouter();
   const [name, setName] = useState(category.name);

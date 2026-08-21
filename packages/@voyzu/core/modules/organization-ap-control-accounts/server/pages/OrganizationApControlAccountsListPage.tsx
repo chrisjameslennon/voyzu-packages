@@ -32,7 +32,7 @@ export async function OrganizationApControlAccountsListPage() {
         </div>
       </header>
       <div className={layoutStyles.slotBody}>
-        <OrganizationApControlAccountSummaryPanels accounts={accounts} basePath="/organization/control-accounts/ap" />
+        <OrganizationApControlAccountSummaryPanels accounts={accounts} basePath="/finance/control-accounts/ap" />
       </div>
     </div>
   );

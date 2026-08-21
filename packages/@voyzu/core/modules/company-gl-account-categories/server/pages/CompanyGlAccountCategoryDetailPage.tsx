@@ -25,7 +25,7 @@ export async function CompanyGlAccountCategoryDetailPage({ code }: CompanyGlAcco
     <CompanyGlAccountCategoryDetail
       category={category}
       listPath="/finance/settings/reporting-categories"
-      auditPath="/finance/audit"
+      auditPath="/settings/audit"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/gl-account-categories`}
       readOnly={settingsUiState.readOnly}
       showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}

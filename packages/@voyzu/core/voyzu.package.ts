@@ -15,10 +15,8 @@ import { arSubledgerInvoicesModule } from "./modules/ar-subledger-invoices/modul
 import { arSubledgerLedgerEntriesModule } from "./modules/ar-subledger-ledger-entries/module";
 import { arSubledgerLedgerEntryEnquiryModule } from "./modules/ar-subledger-ledger-entry-enquiry/module";
 import { arSubledgerStatementsModule } from "./modules/ar-subledger-statements/module";
-import { companiesModule } from "./modules/companies/module";
 import { companyApControlAccountsModule } from "./modules/company-ap-control-accounts/module";
 import { companyArControlAccountsModule } from "./modules/company-ar-control-accounts/module";
-import { companyAuditModule } from "./modules/company-audit/module";
 import { companyBankCashAccountsModule } from "./modules/company-bank-cash-accounts/module";
 import { companyDimensionsModule } from "./modules/company-dimensions/module";
 import { companyFinancialDocumentDefaultsModule } from "./modules/company-financial-document-defaults/module";
@@ -30,16 +28,12 @@ import { companyInventoryControlAccountsModule } from "./modules/company-invento
 import { companyInventoryItemPostingProfilesModule } from "./modules/company-inventory-item-posting-profiles/module";
 import { companyInventoryItemsModule } from "./modules/company-inventory-items/module";
 import { companyReportsModule } from "./modules/company-reports/module";
-import { companySwitcherModule } from "./modules/company-switcher/module";
 import { companyTaxControlAccountsModule } from "./modules/company-tax-control-accounts/module";
-import { countriesModule } from "./modules/countries/module";
-import { currenciesModule } from "./modules/currencies/module";
 import { financialDocumentProcessingEngineModule } from "./modules/financial-document-processing-engine/module";
 import { financialYearsModule } from "./modules/financial-years/module";
+import { financeTemplateModule } from "./modules/finance-template/module";
 import { inventoryLedgerModule } from "./modules/inventory-ledger/module";
 import { journalsModule } from "./modules/journals/module";
-import { organizationModule } from "./modules/organization/module";
-import { organizationAuditModule } from "./modules/organization-audit/module";
 import { organizationApControlAccountsModule } from "./modules/organization-ap-control-accounts/module";
 import { organizationArControlAccountsModule } from "./modules/organization-ar-control-accounts/module";
 import { organizationBankCashAccountsModule } from "./modules/organization-bank-cash-accounts/module";
@@ -57,10 +51,8 @@ import { organizationTaxControlAccountsModule } from "./modules/organization-tax
 import { taxModule } from "./modules/tax/module";
 import { taxLedgerModule } from "./modules/tax-ledger/module";
 
-export const coreOrganizationModules = [
-  organizationModule,
-  organizationAuditModule,
-  companiesModule,
+export const coreFinanceTemplateModules = [
+  financeTemplateModule,
   organizationBankCashAccountsModule,
   organizationApControlAccountsModule,
   organizationArControlAccountsModule,
@@ -69,8 +61,6 @@ export const coreOrganizationModules = [
   organizationFinancialDocumentTypesModule,
   organizationFinancialDocumentDefaultsModule,
   organizationDimensionsModule,
-  countriesModule,
-  currenciesModule,
   organizationTaxControlAccountsModule,
   organizationInventoryControlAccountsModule,
   organizationInventoryCategoriesModule,
@@ -108,68 +98,18 @@ export const coreFinanceModules = [
   companyFinancialDocumentTypesModule,
   companyTaxControlAccountsModule,
   financialYearsModule,
-  companyAuditModule,
 ] as const;
 
 export const coreServiceModules = [
-  companySwitcherModule,
   financialDocumentProcessingEngineModule,
   taxModule,
 ] as const;
 
 export const corePackage = {
   modules: [
-    organizationModule,
-    organizationAuditModule,
-    companiesModule,
-    organizationBankCashAccountsModule,
-    organizationApControlAccountsModule,
-    organizationArControlAccountsModule,
-    organizationGlAccountsModule,
-    organizationGlAccountCategoriesModule,
-    organizationFinancialDocumentTypesModule,
-    organizationFinancialDocumentDefaultsModule,
-    organizationDimensionsModule,
-    countriesModule,
-    currenciesModule,
-    organizationTaxControlAccountsModule,
-    organizationInventoryControlAccountsModule,
-    organizationInventoryCategoriesModule,
-    organizationInventoryItemsModule,
-    organizationInventoryItemPostingProfilesModule,
-    organizationReportsModule,
-    journalsModule,
-    companyReportsModule,
-    companyInventoryItemsModule,
-    companyInventoryCategoriesModule,
-    companyInventoryItemPostingProfilesModule,
-    inventoryLedgerModule,
-    taxLedgerModule,
-    apSubledgerLedgerEntriesModule,
-    apSubledgerLedgerEntryEnquiryModule,
-    apSubledgerCounterpartiesModule,
-    apSubledgerStatementsModule,
-    apSubledgerBillsModule,
-    arSubledgerLedgerEntriesModule,
-    arSubledgerLedgerEntryEnquiryModule,
-    arSubledgerCounterpartiesModule,
-    arSubledgerStatementsModule,
-    arSubledgerInvoicesModule,
-    companyInventoryControlAccountsModule,
-    companyGlAccountsModule,
-    companyGlAccountCategoriesModule,
-    companyApControlAccountsModule,
-    companyArControlAccountsModule,
-    companyBankCashAccountsModule,
-    companyDimensionsModule,
-    companyFinancialDocumentDefaultsModule,
-    companyFinancialDocumentTypesModule,
-    companyTaxControlAccountsModule,
-    financialYearsModule,
-    companyAuditModule,
-    companySwitcherModule,
-    financialDocumentProcessingEngineModule,
-    taxModule,
+    ...coreFinanceTemplateModules,
+    ...coreFinanceModules,
+    ...coreServiceModules,
   ],
   install: coreInstall,
   uninstall: coreUninstall,

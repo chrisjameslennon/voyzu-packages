@@ -24,9 +24,9 @@ export async function OrganizationApControlAccountDetailPage({ code }: Organizat
     <OrganizationApControlAccountDetail
       account={account}
       glAccounts={allGlAccounts}
-      apiPath="/api/organization/ap-control-accounts"
-      listPath="/organization/control-accounts/ap"
-      auditPath="/organization/audit"
+      apiPath="/api/finance/ap-control-accounts"
+      listPath="/finance/control-accounts/ap"
+      auditPath="/settings/audit"
     />
   );
 }

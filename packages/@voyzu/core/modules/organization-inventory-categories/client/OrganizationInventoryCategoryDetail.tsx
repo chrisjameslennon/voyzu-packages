@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/organization-audit/client";
+import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { getStatusSemanticColor } from "@voyzu/core/common/client";
@@ -153,7 +153,7 @@ export function OrganizationInventoryCategoryDetail({
           creationUser={currentCategory.audit.created.user}
           updatedActorType={currentCategory.audit.updated.actorType}
           updatedUser={currentCategory.audit.updated.user}
-          auditHref={`/organization/audit?entityType=inventory_category&entityCode=${encodeURIComponent(currentCategory.code)}`}
+          auditHref={`/settings/audit?entityType=inventory_category&entityCode=${encodeURIComponent(currentCategory.code)}`}
           mutationId={currentCategory.audit.updated.mutationId ?? currentCategory.audit.created.mutationId}
         />
       </aside>

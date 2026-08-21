@@ -26,8 +26,8 @@ import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 
 const ITEMS_PER_PAGE = 100;
 const TOAST_KEY = "voyzu:organization-gl-account-categories:toast";
-const API_PATH = "/api/organization/gl-account-categories";
-const BASE_PATH = "/organization/chart-of-accounts/reporting-categories";
+const API_PATH = "/api/finance/gl-account-categories";
+const BASE_PATH = "/finance/chart-of-accounts/reporting-categories";
 
 interface OrganizationGlAccountCategoriesListContentProps {
   categories: GlAccountCategoryResponseDto[];

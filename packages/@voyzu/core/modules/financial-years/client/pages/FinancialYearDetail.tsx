@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 import { Close, Delete, Open, Reopen, type FinancialYearOperationState } from "../../domain/operation-policy";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
@@ -249,7 +249,7 @@ export function FinancialYearDetail({
           creationUser={currentYear.audit.created.user}
           updatedActorType={currentYear.audit.updated.actorType}
           updatedUser={currentYear.audit.updated.user}
-          auditHref={`/organization/audit?entityType=fiscal_year&entityId=${currentYear.id}`}
+          auditHref={`/settings/audit?entityType=fiscal_year&entityId=${currentYear.id}`}
           mutationId={currentYear.audit.updated.mutationId ?? currentYear.audit.created.mutationId}
         />
       </aside>

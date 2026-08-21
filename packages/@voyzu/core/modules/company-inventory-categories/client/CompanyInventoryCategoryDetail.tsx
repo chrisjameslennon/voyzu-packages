@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/core/common/client";
@@ -154,7 +154,7 @@ export function CompanyInventoryCategoryDetail({
           creationUser={currentCategory.audit.created.user}
           updatedActorType={currentCategory.audit.updated.actorType}
           updatedUser={currentCategory.audit.updated.user}
-          auditHref={`/finance/audit?entityType=inventory_category&entityCode=${encodeURIComponent(currentCategory.code)}`}
+          auditHref={`/settings/audit?entityType=inventory_category&entityCode=${encodeURIComponent(currentCategory.code)}`}
           mutationId={currentCategory.audit.updated.mutationId ?? currentCategory.audit.created.mutationId}
         />
       </aside>

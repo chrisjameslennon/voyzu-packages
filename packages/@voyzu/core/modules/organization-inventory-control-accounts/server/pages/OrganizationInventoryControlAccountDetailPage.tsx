@@ -12,5 +12,5 @@ export async function OrganizationInventoryControlAccountDetailPage({ code }: { 
   const [account, allGlAccounts] = await Promise.all([getInventoryControlAccountSetting(decodeURIComponent(code), scope.companyId), listGlAccounts(scope.companyId)]);
   if (!account) notFound();
   const glAccounts = allGlAccounts.filter((item) => item.accountType === "ASSET" && (item.status === "ACTIVE" || item.id === account.glAccountId));
-  return <OrganizationInventoryControlAccountDetail account={account} glAccounts={glAccounts} apiPath="/api/organization/inventory-control-accounts" listPath="/organization/control-accounts/inventory" auditPath="/organization/audit" />;
+  return <OrganizationInventoryControlAccountDetail account={account} glAccounts={glAccounts} apiPath="/api/finance/inventory-control-accounts" listPath="/finance/control-accounts/inventory" auditPath="/settings/audit" />;
 }

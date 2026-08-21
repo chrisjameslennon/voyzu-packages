@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-bank-cash-accounts.page.list",
     pageTitle: "Bank / Cash Accounts",
     helpPath: "modules-help/organization-financial-settings/bank-cash-accounts",
-    path: "/organization/bank-cash-accounts",
+    path: "/finance/bank-cash-accounts",
     Page: OrganizationBankCashAccountsListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-bank-cash-accounts.page.detail",
     pageTitle: "Bank / Cash Account",
     helpPath: "modules-help/organization-financial-settings/bank-cash-accounts",
-    path: "/organization/bank-cash-accounts/[code]",
+    path: "/finance/bank-cash-accounts/[code]",
     Page: OrganizationBankCashAccountDetailPage,
     breadcrumbBase: [
       {
@@ -39,7 +39,7 @@ export const pageRoutes = {
       },
       {
         label: "Bank / Cash Accounts",
-        href: "/organization/bank-cash-accounts",
+        href: "/finance/bank-cash-accounts",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

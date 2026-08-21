@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import {
   CompanyPageTitleBadges,
@@ -172,7 +172,7 @@ export function InventoryLedgerEntryDetail({
             creationUser={entry.audit.created.user}
             updatedActorType={entry.audit.updated.actorType}
             updatedUser={entry.audit.updated.user}
-            auditHref={`/finance/audit?entityType=inventory_ledger_entry&entityId=${entry.id}`}
+            auditHref={`/settings/audit?entityType=inventory_ledger_entry&entityId=${entry.id}`}
             mutationId={entry.audit.updated.mutationId ?? entry.audit.created.mutationId}
           />
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/company-audit/client";
+import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { CompanySettingsTitleBadges, getStatusSemanticColor } from "@voyzu/core/common/client";
@@ -204,7 +204,7 @@ export function CompanyInventoryItemPostingProfileDetail({
           creationUser={profile.audit.created.user}
           updatedActorType={profile.audit.updated.actorType}
           updatedUser={profile.audit.updated.user}
-          auditHref={`/finance/audit?entityType=item_posting_profile&entityCode=${encodeURIComponent(profile.profile_code)}`}
+          auditHref={`/settings/audit?entityType=item_posting_profile&entityCode=${encodeURIComponent(profile.profile_code)}`}
           mutationId={profile.audit.updated.mutationId ?? profile.audit.created.mutationId}
         />
       </aside>

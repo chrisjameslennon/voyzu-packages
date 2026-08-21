@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it, before, after } from "node:test";
 
 import { getPool } from "@voyzu/capability/db";
-import { listCompanies } from "../../../modules/companies/operations";
+import { listCompanies } from "@voyzu/organization/companies/operations";
 import { getFinancialYear } from "../../../modules/financial-years/operations";
 import {
   listPeriods,

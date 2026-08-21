@@ -10,7 +10,7 @@ import { InventoryControlAccountPatchRequestDto } from "../../types/modules/inve
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/inventory-control-accounts",
+    path: "/finance/inventory-control-accounts",
     handler: (request: any) => handleListInventoryControlAccounts(request),
     summary: "List",
     description: "List Organization Inventory Control Accounts.",
@@ -25,7 +25,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/organization/inventory-control-accounts/[code]",
+    path: "/finance/inventory-control-accounts/[code]",
     handler: (request: any, context: any) => handlePatchInventoryControlAccount(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryControlAccountPatchRequestDto },
     summary: "Patch",

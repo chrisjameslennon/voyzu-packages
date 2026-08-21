@@ -29,7 +29,7 @@ export async function CompanyApControlAccountDetailPage({ code }: CompanyApContr
       glAccounts={allGlAccounts}
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/ap-control-accounts`}
       listPath="/finance/settings/control-accounts/ap"
-      auditPath="/finance/audit"
+      auditPath="/settings/audit"
       readOnly={settingsState.readOnly}
       usesOrganizationStandardSettings={settingsState.usesOrganizationStandardSettings}
       isArchived={settingsState.isArchived}

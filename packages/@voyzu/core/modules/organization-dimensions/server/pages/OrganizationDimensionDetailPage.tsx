@@ -19,9 +19,9 @@ export async function OrganizationDimensionDetailPage({ code }: OrganizationDime
   return (
     <OrganizationDimensionDetail
       dimension={dimension}
-      listPath="/organization/dimensions"
-      auditPath="/organization/audit"
-      apiPath="/api/organization/dimensions"
+      listPath="/finance/dimensions"
+      auditPath="/settings/audit"
+      apiPath="/api/finance/dimensions"
     />
   );
 }

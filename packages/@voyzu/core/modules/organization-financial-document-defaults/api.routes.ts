@@ -15,7 +15,7 @@ import { FinancialDocumentDefaultCreateRequestDto } from "../../types/modules/fi
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/financial-document-defaults",
+    path: "/finance/financial-document-defaults",
     handler: (request: any) => handleFinancialDocumentDefaultsList(request),
     summary: "List",
     description: "List Organization Financial Document Defaults.",
@@ -24,7 +24,7 @@ export const apiDefinitions = {
   },
   create: {
     method: "POST",
-    path: "/organization/financial-document-defaults",
+    path: "/finance/financial-document-defaults",
     handler: (request: any) => handleFinancialDocumentDefaultsCreate(request),
     request: { contentType: "application/json", body: FinancialDocumentDefaultCreateRequestDto },
     summary: "Create",
@@ -43,7 +43,7 @@ export const apiDefinitions = {
   },
   filter: {
     method: "POST",
-    path: "/organization/financial-document-defaults/filter",
+    path: "/finance/financial-document-defaults/filter",
     handler: (request: any) => handleFinancialDocumentDefaultsFilter(request),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
@@ -59,7 +59,7 @@ export const apiDefinitions = {
   },
   search: {
     method: "GET",
-    path: "/organization/financial-document-defaults/search",
+    path: "/finance/financial-document-defaults/search",
     handler: (request: any) => handleFinancialDocumentDefaultsSearch(request),
     request: { query: { parameters: { q: { description: "Search text used to match organization financial document default records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
@@ -76,7 +76,7 @@ export const apiDefinitions = {
   },
   batchCreate: {
     method: "POST",
-    path: "/organization/financial-document-defaults/batch/create",
+    path: "/finance/financial-document-defaults/batch/create",
     handler: (request: any) => handleFinancialDocumentDefaultsBatchCreate(request),
     request: { contentType: "application/json", body: Type.Array(FinancialDocumentDefaultCreateRequestDto) },
     summary: "Batch Create",
@@ -95,7 +95,7 @@ export const apiDefinitions = {
   },
   batchGet: {
     method: "POST",
-    path: "/organization/financial-document-defaults/batch/get",
+    path: "/finance/financial-document-defaults/batch/get",
     handler: (request: any) => handleFinancialDocumentDefaultsBatchGet(request),
     request: { contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Get",
@@ -112,7 +112,7 @@ export const apiDefinitions = {
   },
   batchUpdate: {
     method: "PUT",
-    path: "/organization/financial-document-defaults/batch/update",
+    path: "/finance/financial-document-defaults/batch/update",
     handler: (request: any) => handleFinancialDocumentDefaultsBatchUpdate(request),
     request: { contentType: "application/json", body: Type.Array(FinancialDocumentDefaultBatchUpdateRequestDto) },
     summary: "Batch Update",
@@ -132,7 +132,7 @@ export const apiDefinitions = {
   },
   batchPatch: {
     method: "PATCH",
-    path: "/organization/financial-document-defaults/batch/patch",
+    path: "/finance/financial-document-defaults/batch/patch",
     handler: (request: any) => handleFinancialDocumentDefaultsBatchPatch(request),
     request: { contentType: "application/json", body: Type.Array(FinancialDocumentDefaultBatchPatchRequestDto) },
     summary: "Batch Patch",
@@ -152,7 +152,7 @@ export const apiDefinitions = {
   },
   batchDelete: {
     method: "POST",
-    path: "/organization/financial-document-defaults/batch/delete",
+    path: "/finance/financial-document-defaults/batch/delete",
     handler: (request: any) => handleFinancialDocumentDefaultsBatchDelete(request),
     request: { contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Delete",
@@ -167,7 +167,7 @@ export const apiDefinitions = {
   },
   batchActivate: {
     method: "POST",
-    path: "/organization/financial-document-defaults/batch/activate",
+    path: "/finance/financial-document-defaults/batch/activate",
     handler: (request: any) => handleFinancialDocumentDefaultsBatchActivate(request),
     request: { contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Activate",
@@ -182,7 +182,7 @@ export const apiDefinitions = {
   },
   batchDeactivate: {
     method: "POST",
-    path: "/organization/financial-document-defaults/batch/deactivate",
+    path: "/finance/financial-document-defaults/batch/deactivate",
     handler: (request: any) => handleFinancialDocumentDefaultsBatchDeactivate(request),
     request: { contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Deactivate",
@@ -197,7 +197,7 @@ export const apiDefinitions = {
   },
   get: {
     method: "GET",
-    path: "/organization/financial-document-defaults/[code]",
+    path: "/finance/financial-document-defaults/[code]",
     handler: (request: any, context: any) => handleFinancialDocumentDefaultsGet(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
@@ -207,7 +207,7 @@ export const apiDefinitions = {
   },
   update: {
     method: "PUT",
-    path: "/organization/financial-document-defaults/[code]",
+    path: "/finance/financial-document-defaults/[code]",
     handler: (request: any, context: any) => handleFinancialDocumentDefaultsUpdate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultUpdateRequestDto },
     summary: "Update",
@@ -227,7 +227,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/organization/financial-document-defaults/[code]",
+    path: "/finance/financial-document-defaults/[code]",
     handler: (request: any, context: any) => handleFinancialDocumentDefaultsPatch(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultPatchRequestDto },
     summary: "Patch",
@@ -247,7 +247,7 @@ export const apiDefinitions = {
   },
   delete: {
     method: "DELETE",
-    path: "/organization/financial-document-defaults/[code]",
+    path: "/finance/financial-document-defaults/[code]",
     handler: (request: any, context: any) => handleFinancialDocumentDefaultsDelete(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
@@ -257,7 +257,7 @@ export const apiDefinitions = {
   },
   activate: {
     method: "POST",
-    path: "/organization/financial-document-defaults/[code]/activate",
+    path: "/finance/financial-document-defaults/[code]/activate",
     handler: (request: any, context: any) => handleFinancialDocumentDefaultsActivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
@@ -272,7 +272,7 @@ export const apiDefinitions = {
   },
   deactivate: {
     method: "POST",
-    path: "/organization/financial-document-defaults/[code]/deactivate",
+    path: "/finance/financial-document-defaults/[code]/deactivate",
     handler: (request: any, context: any) => handleFinancialDocumentDefaultsDeactivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",

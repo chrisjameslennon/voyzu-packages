@@ -10,7 +10,7 @@ import { TaxControlAccountPatchRequestDto } from "../../types/modules/tax-contro
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/tax-control-accounts",
+    path: "/finance/tax-control-accounts",
     handler: (request: any) => handleListTaxControlAccounts(request),
     summary: "List",
     description: "List Organization Tax Control Accounts.",
@@ -25,7 +25,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/organization/tax-control-accounts/[code]",
+    path: "/finance/tax-control-accounts/[code]",
     handler: (request: any, context: any) => handlePatchTaxControlAccount(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: TaxControlAccountPatchRequestDto },
     summary: "Patch",

@@ -19,9 +19,9 @@ export async function OrganizationGlAccountCategoryDetailPage({ code }: Organiza
   return (
     <OrganizationGlAccountCategoryDetail
       category={category}
-      listPath="/organization/chart-of-accounts/reporting-categories"
-      auditPath="/organization/audit"
-      apiPath="/api/organization/gl-account-categories"
+      listPath="/finance/chart-of-accounts/reporting-categories"
+      auditPath="/settings/audit"
+      apiPath="/api/finance/gl-account-categories"
     />
   );
 }

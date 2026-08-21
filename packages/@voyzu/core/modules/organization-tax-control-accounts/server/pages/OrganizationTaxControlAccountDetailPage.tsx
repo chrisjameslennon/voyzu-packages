@@ -12,5 +12,5 @@ export async function OrganizationTaxControlAccountDetailPage({ code }: { code?:
   const [account, allGlAccounts] = await Promise.all([getTaxControlAccount(decodeURIComponent(code), scope.companyId), listGlAccounts(scope.companyId)]);
   if (!account || !account.requiredAccountType) notFound();
   const glAccounts = allGlAccounts.filter((item) => item.accountType === account.requiredAccountType && (item.status === "ACTIVE" || item.id === account.glAccountId));
-  return <OrganizationTaxControlAccountDetail account={account} glAccounts={glAccounts} apiPath="/api/organization/tax-control-accounts" listPath="/organization/control-accounts/tax" auditPath="/organization/audit" />;
+  return <OrganizationTaxControlAccountDetail account={account} glAccounts={glAccounts} apiPath="/api/finance/tax-control-accounts" listPath="/finance/control-accounts/tax" auditPath="/settings/audit" />;
 }

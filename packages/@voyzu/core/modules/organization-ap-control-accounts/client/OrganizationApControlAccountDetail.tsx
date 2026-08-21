@@ -1,6 +1,6 @@
 "use client";
 
-import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/organization-audit/client";
+import { OrganizationAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
@@ -27,8 +27,8 @@ export function OrganizationApControlAccountDetail({
   account,
   glAccounts,
   apiPath,
-  listPath = "/organization/control-accounts/ap",
-  auditPath = "/organization/audit",
+  listPath = "/finance/control-accounts/ap",
+  auditPath = "/settings/audit",
 }: OrganizationApControlAccountDetailProps) {
   const [currentAccount, setCurrentAccount] = useState(account);
   const [glAccountId, setGlAccountId] = useState(String(account.glAccountId));

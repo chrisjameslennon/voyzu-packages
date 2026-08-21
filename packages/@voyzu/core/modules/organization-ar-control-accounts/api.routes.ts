@@ -11,7 +11,7 @@ import { ControlAccountSettingResponseDto } from "../../types/modules/control-ac
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/organization/ar-control-accounts",
+    path: "/finance/ar-control-accounts",
     handler: (request: any) => handleArControlAccountsList(request),
     summary: "List",
     description: "List Organization AR Control Accounts.",
@@ -26,7 +26,7 @@ export const apiDefinitions = {
   },
   get: {
     method: "GET",
-    path: "/organization/ar-control-accounts/[code]",
+    path: "/finance/ar-control-accounts/[code]",
     handler: (request: any, context: any) => handleControlAccountsGet(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
@@ -43,7 +43,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/organization/ar-control-accounts/[code]",
+    path: "/finance/ar-control-accounts/[code]",
     handler: (request: any, context: any) => handleControlAccountsPatch(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: ControlAccountPatchRequestDto },
     summary: "Patch",

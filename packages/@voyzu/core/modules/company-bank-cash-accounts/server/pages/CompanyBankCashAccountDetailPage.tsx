@@ -31,7 +31,7 @@ export async function CompanyBankCashAccountDetailPage({ code, surface }: Compan
       account={account}
       glAccounts={glAccounts}
       listPath="/finance/settings/bank-cash-accounts"
-      auditPath="/finance/audit"
+      auditPath="/settings/audit"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/bank-cash-accounts`}
       readOnly={settingsState.readOnly}
       usesOrganizationStandardSettings={settingsState.usesOrganizationStandardSettings}

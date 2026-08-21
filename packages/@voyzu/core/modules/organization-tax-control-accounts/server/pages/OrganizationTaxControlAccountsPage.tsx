@@ -21,7 +21,7 @@ export async function OrganizationTaxControlAccountsPage() {
           <div className={layoutStyles.slotTitleByline}><p className={typography.headingByline}>Tax control accounts define the template general ledger accounts used by tax workflows.</p></div>
         </div>
       </header>
-      <div className={layoutStyles.slotBody}><OrganizationTaxControlAccountsContent controlAccounts={controlAccounts} basePath="/organization/control-accounts/tax" /></div>
+      <div className={layoutStyles.slotBody}><OrganizationTaxControlAccountsContent controlAccounts={controlAccounts} basePath="/finance/control-accounts/tax" /></div>
     </div>
   );
 }

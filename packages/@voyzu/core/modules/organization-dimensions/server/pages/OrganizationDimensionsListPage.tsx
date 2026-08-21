@@ -33,8 +33,8 @@ export async function OrganizationDimensionsListPage() {
       </header>
       <OrganizationDimensionsListContent
         dimensions={dimensions}
-        basePath="/organization/dimensions"
-        apiPath="/api/organization/dimensions"
+        basePath="/finance/dimensions"
+        apiPath="/api/finance/dimensions"
       />
     </div>
   );

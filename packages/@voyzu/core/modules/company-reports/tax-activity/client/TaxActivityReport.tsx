@@ -3,7 +3,7 @@
 import { financeApiUrl } from "@voyzu/core/common/client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { CompanyResponseDto } from "@voyzu/core/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
 import type { FinancialYearResponseDto } from "@voyzu/core/types/modules/financial-years";
 import type { TaxActivityResponseDto } from "@voyzu/core/types/modules/company-reports";
 import { Breadcrumbs } from "@voyzu/ui-components";
