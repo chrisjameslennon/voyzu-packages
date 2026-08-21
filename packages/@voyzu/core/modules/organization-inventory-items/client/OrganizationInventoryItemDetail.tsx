@@ -25,7 +25,7 @@ const ITEM_TYPE_OPTIONS = [
   { value: "SERVICE", label: "SERVICE" },
 ];
 
-export function OrganizationInventoryItemDetail({ item, categories, listPath = "/finance/inventory/items" }: { item: InventoryItemResponseDto; categories: InventoryCategoryResponseDto[]; listPath?: string }) {
+export function OrganizationInventoryItemDetail({ item, categories, listPath = "/finance/template/inventory/items" }: { item: InventoryItemResponseDto; categories: InventoryCategoryResponseDto[]; listPath?: string }) {
   const router = useRouter();
   const [currentItem, setCurrentItem] = useState(item);
   const [itemCode, setItemCode] = useState(item.item_code);
@@ -58,7 +58,7 @@ export function OrganizationInventoryItemDetail({ item, categories, listPath = "
         item_code: itemCode.trim(), item_name: itemName.trim(), description: description.trim(), item_type: itemType,
         category_code: categoryCode, unit_code: unitCode.trim(),
       };
-      const response = await fetch(`/api/finance/inventory/items/${encodeURIComponent(currentItem.item_code)}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const response = await fetch(`/api/finance/template/inventory/items/${encodeURIComponent(currentItem.item_code)}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!response.ok) {
         const body = await response.json().catch(() => null) as { message?: string } | null;
         setServerError(body?.message ?? "An unexpected error occurred");
@@ -83,7 +83,7 @@ export function OrganizationInventoryItemDetail({ item, categories, listPath = "
 
   const transitionStatus = async (action: "activate" | "deactivate") => {
     setServerError("");
-    const response = await fetch(`/api/finance/inventory/items/${encodeURIComponent(currentItem.item_code)}/${action}`, { method: "POST" });
+    const response = await fetch(`/api/finance/template/inventory/items/${encodeURIComponent(currentItem.item_code)}/${action}`, { method: "POST" });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string } | null;
       setServerError(body?.message ?? "An unexpected error occurred");
@@ -94,7 +94,7 @@ export function OrganizationInventoryItemDetail({ item, categories, listPath = "
 
   const deleteItem = async () => {
     setServerError("");
-    const response = await fetch(`/api/finance/inventory/items/${encodeURIComponent(currentItem.item_code)}`, { method: "DELETE" });
+    const response = await fetch(`/api/finance/template/inventory/items/${encodeURIComponent(currentItem.item_code)}`, { method: "DELETE" });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string } | null;
       setServerError(body?.message ?? "An unexpected error occurred");

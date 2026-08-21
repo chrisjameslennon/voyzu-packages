@@ -24,8 +24,8 @@ export async function OrganizationInventoryItemPostingProfileDetailPage({ code }
     <OrganizationInventoryItemPostingProfileDetail
       profile={profile}
       glAccounts={glAccounts}
-      listPath="/finance/inventory/item-posting-profiles"
-      apiPath="/api/finance/inventory/item-posting-profiles"
+      listPath="/finance/template/inventory/item-posting-profiles"
+      apiPath="/api/finance/template/inventory/item-posting-profiles"
     />
   );
 }

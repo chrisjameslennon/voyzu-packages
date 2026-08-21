@@ -21,7 +21,7 @@ const TOAST_KEY = "voyzu.inventory-categories.toast";
 export function OrganizationInventoryCategoryDetail({
   category,
   postingProfiles,
-  listPath = "/finance/inventory/categories",
+  listPath = "/finance/template/inventory/categories",
   apiPath = "/api/inventory/categories",
 }: {
   category: InventoryCategoryResponseDto;

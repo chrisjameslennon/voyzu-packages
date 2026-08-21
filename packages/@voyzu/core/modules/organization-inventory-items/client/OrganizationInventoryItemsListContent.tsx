@@ -112,7 +112,7 @@ export function OrganizationInventoryItemsListContent({
   const canDeactivateSelection = selectedRows.some((row) => row.status === "ACTIVE") && selectedRows.every((row) => Deactivate(row).length === 0);
 
   const transitionStatus = async (action: "activate" | "deactivate") => {
-    const response = await fetch(`/api/finance/inventory/items/batch-${action}`, {
+    const response = await fetch(`/api/finance/template/inventory/items/batch-${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: selectedRows.map((row) => row.item_code) }),
@@ -125,7 +125,7 @@ export function OrganizationInventoryItemsListContent({
   };
 
   const deleteSelected = async () => {
-    const response = await fetch("/api/finance/inventory/items/batch", {
+    const response = await fetch("/api/finance/template/inventory/items/batch", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: selectedRows.map((row) => row.item_code) }),
@@ -192,7 +192,7 @@ export function OrganizationInventoryItemsListContent({
   const hasSearch = search.trim().length > 0;
 
   const createItem = async (value: InventoryItemCreateRequestDto): Promise<string | undefined> => {
-    const response = await fetch("/api/finance/inventory/items", {
+    const response = await fetch("/api/finance/template/inventory/items", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),
@@ -289,7 +289,7 @@ export function OrganizationInventoryItemsListContent({
             isSomeSelected={isSomeSelected}
             onSelectAll={() => setSelectedIds((current) => isAllSelected ? new Set([...current].filter((id) => !paginated.some((row) => row.id === id))) : new Set([...current, ...paginated.map((row) => row.id)]))}
             onSelectOne={(id) => setSelectedIds((current) => { const next = new Set(current); if (next.has(id)) next.delete(id); else next.add(id); return next; })}
-            onRowClick={(row) => router.push(`/finance/inventory/items/${encodeURIComponent(row.item_code)}`)}
+            onRowClick={(row) => router.push(`/finance/template/inventory/items/${encodeURIComponent(row.item_code)}`)}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}

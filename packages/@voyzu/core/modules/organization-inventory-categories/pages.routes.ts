@@ -6,7 +6,7 @@ export const pageRoutes = {
     id: "voyzu.organization-inventory-categories.page.list",
     pageTitle: "Inventory Categories",
     helpPath: "modules-help/organization-financial-settings/inventory-categories",
-    path: "/finance/inventory/categories",
+    path: "/finance/template/inventory/categories",
     Page: OrganizationInventoryCategoriesListPage,
     breadcrumbBase: [
       {
@@ -25,7 +25,7 @@ export const pageRoutes = {
     id: "voyzu.organization-inventory-categories.page.detail",
     pageTitle: "Inventory Category",
     helpPath: "modules-help/organization-financial-settings/inventory-categories",
-    path: "/finance/inventory/categories/[code]",
+    path: "/finance/template/inventory/categories/[code]",
     Page: OrganizationInventoryCategoryDetailPage,
     breadcrumbBase: [
       {
@@ -39,7 +39,7 @@ export const pageRoutes = {
       },
       {
         label: "Categories",
-        href: "/finance/inventory/categories",
+        href: "/finance/template/inventory/categories",
       },
     ],
     auth: { required: true, minRole: "ORGANIZATION_USER" }

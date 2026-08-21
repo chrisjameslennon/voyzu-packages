@@ -59,7 +59,7 @@ function accountText(account: ItemPostingProfileGlRefDto | null) {
 export function OrganizationInventoryItemPostingProfilesListContent({
   profiles,
   glAccounts,
-  basePath = "/finance/inventory/item-posting-profiles",
+  basePath = "/finance/template/inventory/item-posting-profiles",
   apiPath = "/api/inventory/item-posting-profiles",
 }: {
   profiles: ItemPostingProfileResponseDto[];

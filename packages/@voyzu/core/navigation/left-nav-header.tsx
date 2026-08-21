@@ -5,6 +5,17 @@ import { CompanySwitcher } from "@voyzu/organization/company-switcher/client";
 
 export const leftNavHeaderRootPaths = ["/finance"] as const;
 
-export default function CoreLeftNavHeader({ isCollapsed }: VoyzuSurfaceLeftNavHeaderProps) {
-  return <CompanySwitcher isCollapsed={isCollapsed} />;
+const financeTemplateDomainId = "voyzu.financeTemplate.page.landing";
+const financeTemplatePath = "/finance";
+const companyFinancePath = "/finance/journals";
+
+export default function CoreLeftNavHeader({ domainId, isCollapsed }: VoyzuSurfaceLeftNavHeaderProps) {
+  return (
+    <CompanySwitcher
+      companyPath={companyFinancePath}
+      isCollapsed={isCollapsed}
+      isTemplateMode={domainId === financeTemplateDomainId}
+      templatePath={financeTemplatePath}
+    />
+  );
 }

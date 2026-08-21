@@ -37,7 +37,7 @@ const columns: DataTableColumn<InventoryCategoryRow>[] = [
 export function OrganizationInventoryCategoriesListContent({
   categories,
   postingProfiles,
-  basePath = "/finance/inventory/categories",
+  basePath = "/finance/template/inventory/categories",
   apiPath = "/api/inventory/categories",
 }: {
   categories: InventoryCategoryResponseDto[];

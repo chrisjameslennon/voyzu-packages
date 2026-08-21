@@ -25,8 +25,8 @@ export async function OrganizationInventoryCategoryDetailPage({ code }: Organiza
     <OrganizationInventoryCategoryDetail
       category={category}
       postingProfiles={postingProfiles}
-      listPath="/finance/inventory/categories"
-      apiPath="/api/finance/inventory/categories"
+      listPath="/finance/template/inventory/categories"
+      apiPath="/api/finance/template/inventory/categories"
     />
   );
 }

@@ -14,7 +14,7 @@ import { ItemPostingProfileBatchUpdateRequestDto } from "../../types/modules/inv
 export const apiDefinitions = {
   list: {
     method: "GET",
-    path: "/finance/inventory/item-posting-profiles",
+    path: "/finance/template/inventory/item-posting-profiles",
     handler: (request: any) => handleItemPostingProfilesList(request),
     summary: "List",
     description: "List Organization Inventory Item Posting Profiles.",
@@ -29,7 +29,7 @@ export const apiDefinitions = {
   },
   filter: {
     method: "POST",
-    path: "/finance/inventory/item-posting-profiles/filter",
+    path: "/finance/template/inventory/item-posting-profiles/filter",
     handler: (request: any) => handleItemPostingProfilesFilter(request),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
@@ -39,7 +39,7 @@ export const apiDefinitions = {
   },
   search: {
     method: "GET",
-    path: "/finance/inventory/item-posting-profiles/search",
+    path: "/finance/template/inventory/item-posting-profiles/search",
     handler: (request: any) => handleItemPostingProfilesSearch(request),
     request: { query: { parameters: { q: { description: "Search text used to match item posting profile records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
@@ -49,7 +49,7 @@ export const apiDefinitions = {
   },
   batchGet: {
     method: "POST",
-    path: "/finance/inventory/item-posting-profiles/batch/get",
+    path: "/finance/template/inventory/item-posting-profiles/batch/get",
     handler: (request: any) => handleItemPostingProfilesBatchGet(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
@@ -59,7 +59,7 @@ export const apiDefinitions = {
   },
   batchCreate: {
     method: "POST",
-    path: "/finance/inventory/item-posting-profiles/batch/create",
+    path: "/finance/template/inventory/item-posting-profiles/batch/create",
     handler: (request: any) => handleItemPostingProfilesBatchCreate(request),
     request: { contentType: "application/json", body: Type.Array(ItemPostingProfileCreateRequestDto) },
     summary: "Batch Create",
@@ -69,7 +69,7 @@ export const apiDefinitions = {
   },
   batchUpdate: {
     method: "PUT",
-    path: "/finance/inventory/item-posting-profiles/batch",
+    path: "/finance/template/inventory/item-posting-profiles/batch",
     handler: (request: any) => handleItemPostingProfilesBatchUpdate(request),
     request: { contentType: "application/json", body: Type.Array(ItemPostingProfileBatchUpdateRequestDto) },
     summary: "Batch Update",
@@ -79,7 +79,7 @@ export const apiDefinitions = {
   },
   batchPatch: {
     method: "PATCH",
-    path: "/finance/inventory/item-posting-profiles/batch",
+    path: "/finance/template/inventory/item-posting-profiles/batch",
     handler: (request: any) => handleItemPostingProfilesBatchPatch(request),
     request: { contentType: "application/json", body: Type.Array(ItemPostingProfileBatchPatchRequestDto) },
     summary: "Batch Patch",
@@ -89,7 +89,7 @@ export const apiDefinitions = {
   },
   batchDelete: {
     method: "DELETE",
-    path: "/finance/inventory/item-posting-profiles/batch",
+    path: "/finance/template/inventory/item-posting-profiles/batch",
     handler: (request: any) => handleItemPostingProfilesBatchDelete(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
@@ -99,7 +99,7 @@ export const apiDefinitions = {
   },
   create: {
     method: "POST",
-    path: "/finance/inventory/item-posting-profiles",
+    path: "/finance/template/inventory/item-posting-profiles",
     handler: (request: any) => handleItemPostingProfilesCreate(request),
     request: { contentType: "application/json", body: ItemPostingProfileCreateRequestDto },
     summary: "Create",
@@ -117,7 +117,7 @@ export const apiDefinitions = {
   },
   get: {
     method: "GET",
-    path: "/finance/inventory/item-posting-profiles/[code]",
+    path: "/finance/template/inventory/item-posting-profiles/[code]",
     handler: (request: any, context: any) => handleItemPostingProfilesGet(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
@@ -127,7 +127,7 @@ export const apiDefinitions = {
   },
   update: {
     method: "PUT",
-    path: "/finance/inventory/item-posting-profiles/[code]",
+    path: "/finance/template/inventory/item-posting-profiles/[code]",
     handler: (request: any, context: any) => handleItemPostingProfilesUpdate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: ItemPostingProfileUpdateRequestDto },
     summary: "Update",
@@ -146,7 +146,7 @@ export const apiDefinitions = {
   },
   patch: {
     method: "PATCH",
-    path: "/finance/inventory/item-posting-profiles/[code]",
+    path: "/finance/template/inventory/item-posting-profiles/[code]",
     handler: (request: any, context: any) => handleItemPostingProfilesPatch(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: ItemPostingProfilePatchRequestDto },
     summary: "Patch",
@@ -165,7 +165,7 @@ export const apiDefinitions = {
   },
   delete: {
     method: "DELETE",
-    path: "/finance/inventory/item-posting-profiles/[code]",
+    path: "/finance/template/inventory/item-posting-profiles/[code]",
     handler: (request: any, context: any) => handleItemPostingProfilesDelete(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
@@ -180,7 +180,7 @@ export const apiDefinitions = {
   },
   activate: {
     method: "POST",
-    path: "/finance/inventory/item-posting-profiles/[code]/activate",
+    path: "/finance/template/inventory/item-posting-profiles/[code]/activate",
     handler: (request: any, context: any) => handleItemPostingProfilesActivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
@@ -190,7 +190,7 @@ export const apiDefinitions = {
   },
   deactivate: {
     method: "POST",
-    path: "/finance/inventory/item-posting-profiles/[code]/deactivate",
+    path: "/finance/template/inventory/item-posting-profiles/[code]/deactivate",
     handler: (request: any, context: any) => handleItemPostingProfilesDeactivate(request, context),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
@@ -200,7 +200,7 @@ export const apiDefinitions = {
   },
   batchActivate: {
     method: "POST",
-    path: "/finance/inventory/item-posting-profiles/batch-activate",
+    path: "/finance/template/inventory/item-posting-profiles/batch-activate",
     handler: (request: any) => handleItemPostingProfilesBatchActivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
@@ -219,7 +219,7 @@ export const apiDefinitions = {
   },
   batchDeactivate: {
     method: "POST",
-    path: "/finance/inventory/item-posting-profiles/batch-deactivate",
+    path: "/finance/template/inventory/item-posting-profiles/batch-deactivate",
     handler: (request: any) => handleItemPostingProfilesBatchDeactivate(request),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",

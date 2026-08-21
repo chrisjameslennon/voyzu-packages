@@ -22,7 +22,7 @@ const CODE_PATTERN = /^[A-Z0-9_ -]+$/;
 export function OrganizationInventoryItemPostingProfileDetail({
   profile,
   glAccounts,
-  listPath = "/finance/inventory/item-posting-profiles",
+  listPath = "/finance/template/inventory/item-posting-profiles",
   apiPath = "/api/inventory/item-posting-profiles",
 }: {
   profile: ItemPostingProfileResponseDto;
