@@ -2,6 +2,7 @@ import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies
 import type { UserResponseDto } from "@voyzu/auth/types";
 import { listCompanies } from "@voyzu/erp-core/companies/server";
 import { getCurrentUser } from "@voyzu/auth/users/server";
+import { listCompanyIdsForUser } from "@voyzu/erp-core/company-access/server";
 
 function hasUiAccess(user: UserResponseDto | null): user is UserResponseDto {
   return user?.status === "ACTIVE" && (user.accessMode === "UI" || user.accessMode === "UI_AND_API");
@@ -10,31 +11,34 @@ function hasUiAccess(user: UserResponseDto | null): user is UserResponseDto {
 export function filterSelectableCompanies(
   companies: CompanyResponseDto[],
   user: UserResponseDto | null,
+  assignedCompanyIds: readonly number[] = [],
 ): CompanyResponseDto[] {
-  return filterAccessibleCompanies(companies, user).filter((company) => company.status === "ACTIVE");
+  return filterAccessibleCompanies(companies, user, assignedCompanyIds).filter((company) => company.status === "ACTIVE");
 }
 
 export function filterAccessibleCompanies(
   companies: CompanyResponseDto[],
   user: UserResponseDto | null,
+  assignedCompanyIds: readonly number[] = [],
 ): CompanyResponseDto[] {
   if (!hasUiAccess(user)) return [];
 
   const accessibleCompanies = companies.filter(
     (company) => company.status === "ACTIVE" || company.status === "INACTIVE",
   );
-  if (user.role === "ADMIN" || user.role === "ORGANIZATION_USER") return accessibleCompanies;
+  if (user.role === "ADMIN") return accessibleCompanies;
 
-  const assignedCompanyIds = new Set(user.assignments.map((assignment) => assignment.companyId));
-  return accessibleCompanies.filter((company) => assignedCompanyIds.has(company.id));
+  const assignedIds = new Set(assignedCompanyIds);
+  return accessibleCompanies.filter((company) => assignedIds.has(company.id));
 }
 
 export function resolveCompanySelection(
   companies: CompanyResponseDto[],
   user: UserResponseDto | null,
   requestedCompanyId: number | null,
+  assignedCompanyIds: readonly number[] = [],
 ) {
-  const accessibleCompanies = filterAccessibleCompanies(companies, user);
+  const accessibleCompanies = filterAccessibleCompanies(companies, user, assignedCompanyIds);
   const selectableCompanies = accessibleCompanies.filter((company) => company.status === "ACTIVE");
   const selectedCompany = accessibleCompanies.find((company) => company.id === requestedCompanyId)
     ?? selectableCompanies[0]
@@ -44,16 +48,21 @@ export function resolveCompanySelection(
 }
 
 async function listSelectableCompaniesForCurrentUserUnchecked(): Promise<CompanyResponseDto[]> {
-  return filterSelectableCompanies(await listCompanies(), await getCurrentUser());
+  const [companies, user] = await Promise.all([listCompanies(), getCurrentUser()]);
+  const companyIds = user?.role === "STANDARD" ? await listCompanyIdsForUser(user.id) : [];
+  return filterSelectableCompanies(companies, user, companyIds);
 }
 
 async function listAccessibleCompaniesForCurrentUserUnchecked(): Promise<CompanyResponseDto[]> {
-  return filterAccessibleCompanies(await listCompanies(), await getCurrentUser());
+  const [companies, user] = await Promise.all([listCompanies(), getCurrentUser()]);
+  const companyIds = user?.role === "STANDARD" ? await listCompanyIdsForUser(user.id) : [];
+  return filterAccessibleCompanies(companies, user, companyIds);
 }
 
 async function resolveCompanySelectionForCurrentUserUnchecked(requestedCompanyId: number | null) {
   const [companies, user] = await Promise.all([listCompanies(), getCurrentUser()]);
-  return resolveCompanySelection(companies, user, requestedCompanyId);
+  const companyIds = user?.role === "STANDARD" ? await listCompanyIdsForUser(user.id) : [];
+  return resolveCompanySelection(companies, user, requestedCompanyId, companyIds);
 }
 
 export const listSelectableCompaniesForCurrentUser = listSelectableCompaniesForCurrentUserUnchecked;

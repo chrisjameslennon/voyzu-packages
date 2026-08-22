@@ -57,7 +57,7 @@ async function main() {
          'SYSTEM',
          'SYSTEM'
        FROM company c
-       JOIN finance_country fc ON fc.country_code = c.country_code
+       JOIN finance_country fc ON fc.code = c.country_code
        WHERE c.code = $1
        ON CONFLICT (company_id) DO UPDATE SET
          tax_filing_anchor_month = EXCLUDED.tax_filing_anchor_month,

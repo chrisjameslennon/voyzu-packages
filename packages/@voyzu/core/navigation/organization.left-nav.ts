@@ -13,10 +13,17 @@ import { organizationDimensionsModule } from "@voyzu/core/organization-dimension
 import { organizationInventoryCategoriesModule } from "@voyzu/core/organization-inventory-categories";
 import { organizationInventoryItemsModule } from "@voyzu/core/organization-inventory-items";
 import { organizationReportsModule } from "@voyzu/core/organization-reports";
+import { financeCompaniesModule } from "@voyzu/core/finance-companies";
 
 export const financeTemplateLeftNav = [
   {
     label: "Finance Admin",
+    items: [
+      { label: "Companies", icon: "domain", routeId: financeCompaniesModule.pageRoutes.list.id },
+    ],
+  },
+  {
+    label: "Finance Template",
     items: [
       {
         label: "General Ledger",

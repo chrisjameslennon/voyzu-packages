@@ -7,6 +7,6 @@ export const pageRoutes = {
     path: "/finance",
     Page: OrganizationGlAccountsListPage,
     breadcrumbBase: [{ label: "Finance Admin" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" },
+    auth: { required: true, minRole: "STANDARD" },
   },
 } as const;

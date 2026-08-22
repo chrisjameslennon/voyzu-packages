@@ -19,7 +19,7 @@ export const pageRoutes = {
         label: "Inventory",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   detail: {
     id: "voyzu.organization-inventory-categories.page.detail",
@@ -42,6 +42,6 @@ export const pageRoutes = {
         href: "/finance/template/inventory/categories",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   }
 } as const;

@@ -11,7 +11,7 @@ export const pageRoutes = {
     pageTitle: "Ice Cream Audit Log",
     helpPath: "voyzu-platform-patterns/auditing-patterns",
     breadcrumbBase: [{ label: "Ice Creams" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" },
+    auth: { required: true, minRole: "STANDARD" },
   },
   detail: {
     id: "voyzu.ice-creams.audit.page.detail",
@@ -23,6 +23,6 @@ export const pageRoutes = {
       { label: "Ice Creams" },
       { label: "Audit Log", href: "/ice-creams/audit" },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" },
+    auth: { required: true, minRole: "STANDARD" },
   },
 } as const;

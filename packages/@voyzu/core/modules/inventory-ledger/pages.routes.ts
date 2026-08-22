@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleGetInventoryEntry, handleListInventoryEntries } from "@voyzu/core/inventory-ledger/server";
 import { InventoryLedgerEntriesListPage, InventoryLedgerEntryDetailPage } from "@voyzu/core/inventory-ledger/server";
 
@@ -12,7 +13,7 @@ export const pageRoutes = {
       { label: "Finance" },
       { label: "Inventory" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.inventory-ledger.page.detail",
@@ -25,6 +26,6 @@ export const pageRoutes = {
       { label: "Inventory" },
       { label: "Inventory Ledger Entries", href: "/finance/inventory/ledger" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { ArInvoicesListPage, ArInvoiceDetailPage } from "@voyzu/core/ar-subledger-invoices/server";
 
 export const pageRoutes = {
@@ -12,7 +13,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "Accounts Receivable" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.ar-subledger-invoices.page.detail",
@@ -25,7 +26,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AR Invoices", href: "/finance/subledgers/ar/invoices" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detailPrintable: {
     id: "voyzu.ar-subledger-invoices.page.detail.printable",
@@ -33,6 +34,6 @@ export const pageRoutes = {
     path: "/finance/subledgers/ar/invoices/[documentId]/printable",
     Page: ArInvoiceDetailPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

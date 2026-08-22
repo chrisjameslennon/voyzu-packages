@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleGetArCounterparty, handleListArCounterparties } from "@voyzu/core/ar-subledger-counterparties/server";
 import { ArCounterpartiesListPage, ArCounterpartyDetailPage } from "@voyzu/core/ar-subledger-counterparties/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AR Subledger" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.ar-subledger-counterparties.page.detail",
@@ -26,7 +27,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AR Counterparties", href: "/finance/subledgers/ar/counterparties" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detailPrintable: {
     id: "voyzu.ar-subledger-counterparties.page.detail.printable",
@@ -34,6 +35,6 @@ export const pageRoutes = {
     path: "/finance/subledgers/ar/counterparties/[code]/printable",
     Page: ArCounterpartyDetailPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

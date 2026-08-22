@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleGet as handleGetControlAccount, handleListAp as handleListApControlAccounts, handlePatch as handlePatchControlAccount } from "@voyzu/core/common/control-accounts/server";
 import { CompanyApControlAccountsListPage, CompanyApControlAccountDetailPage } from "@voyzu/core/company-ap-control-accounts/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "Accounts Payable Control Accounts", href: "/finance/settings/control-accounts/ap" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.company-ap-control-accounts.page.detail",
@@ -26,6 +27,6 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "Accounts Payable Control Accounts", href: "/finance/settings/control-accounts/ap" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

@@ -1,3 +1,3 @@
-INSERT INTO application_setting (code, value)
+INSERT INTO voyzu_settings (code, value)
 VALUES ('HOME_PAGE_ROUTE', '/organization/companies')
 ON CONFLICT (code) DO NOTHING;

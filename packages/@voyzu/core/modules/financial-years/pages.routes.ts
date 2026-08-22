@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleClose as handleCloseFinancialYear, handleCloseFinancialPeriod, handleCreate as handleCreateFinancialYear, handleDelete as handleDeleteFinancialYear, handleExportZip as handleExportFinancialYearsZip, handleGet as handleGetFinancialYear, handleList as handleListCompanyFinancialYears, handleListFinancialPeriods, handleOpen as handleOpenFinancialYear, handlePatch as handlePatchFinancialYear, handleReopen as handleReopenFinancialYear, handleReopenFinancialPeriod } from "@voyzu/core/financial-years/server";
 import { FinancialYearsListPage, FinancialYearDetailPage } from "@voyzu/core/financial-years/server";
 
@@ -11,7 +12,7 @@ export const pageRoutes = {
     breadcrumbBase: [
       { label: "Finance" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.financial-years.page.detail",
@@ -23,6 +24,6 @@ export const pageRoutes = {
       { label: "Finance" },
       { label: "Financial Periods", href: "/finance/financial-periods" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

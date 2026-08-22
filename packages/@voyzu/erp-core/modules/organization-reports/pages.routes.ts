@@ -5,7 +5,7 @@ import {
 } from "@voyzu/erp-core/organization-reports/server";
 
 const breadcrumbBase = [{ label: "Organization" }, { label: "Reports" }, { label: "Lists" }] as const;
-const auth = { required: true, minRole: "ORGANIZATION_USER" } as const;
+const auth = { required: true, minRole: "STANDARD" } as const;
 
 export const pageRoutes = {
   companies: { id: "voyzu.organizationReports.page.companies", pageTitle: "Companies", path: "/organization/reports/lists/companies", Page: CompaniesReportPage, breadcrumbBase, auth },

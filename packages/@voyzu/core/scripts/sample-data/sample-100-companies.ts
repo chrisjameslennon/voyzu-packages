@@ -65,7 +65,7 @@ async function main() {
          c.id, c.id, fc.tax_filing_anchor_month, fc.tax_filing_interval_months,
          'SYSTEM', 'SYSTEM'
        FROM company c
-       JOIN finance_country fc ON fc.country_code = c.country_code
+       JOIN finance_country fc ON fc.code = c.country_code
        WHERE c.code = $1
        ON CONFLICT (company_id) DO NOTHING`,
       [code],

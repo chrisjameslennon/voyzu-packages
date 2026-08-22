@@ -1,11 +1,13 @@
 import type { VoyzuPackageNavigationGroup } from "@voyzu/types/framework";
 import { companiesModule } from "../modules/companies/module";
+import { companyAccessModule } from "../modules/company-access/module";
 import { organizationReportsModule } from "../modules/organization-reports/module";
 
 export const organizationLeftNav = [{
   items: [
     { label: "Organization", icon: "hub", path: "/organization", exactMatch: true },
     { label: "Companies", icon: "domain", routeId: companiesModule.pageRoutes.list.id },
+    { label: "Company access", icon: "manage_accounts", routeId: companyAccessModule.pageRoutes.list.id },
   ],
 }, {
   label: "Reports",

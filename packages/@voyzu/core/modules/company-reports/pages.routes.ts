@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleGetTaxLedgerEntriesAudit } from "@voyzu/core/company-reports/tax-ledger-entries-audit/server";
 import { handleGetInventoryLedgerEntriesAudit } from "@voyzu/core/company-reports/inventory-ledger-entries-audit/server";
 import { handleGetApSubledgerEntriesAudit } from "@voyzu/core/company-reports/ap-subledger-entries-audit/server";
@@ -37,7 +38,7 @@ export const pageRoutes = {
       { label: "Finance" },
       { label: "Reports" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   trialBalance: {
     id: "voyzu.companyReports.page.trialBalance",
@@ -49,7 +50,7 @@ export const pageRoutes = {
       { label: "Finance" },
       { label: "Reports" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   taxPosition: {
     id: "voyzu.companyReports.page.taxPosition",
@@ -61,7 +62,7 @@ export const pageRoutes = {
       { label: "Finance" },
       { label: "Reports" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   bankCashMovement: {
     id: "voyzu.companyReports.page.bankCashMovement",
@@ -73,7 +74,7 @@ export const pageRoutes = {
       { label: "Finance" },
       { label: "Reports" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   journalEntries: {
     id: "voyzu.companyReports.page.journalEntries",
@@ -86,7 +87,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Audit" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   accountActivity: {
     id: "voyzu.companyReports.page.accountActivity",
@@ -98,7 +99,7 @@ export const pageRoutes = {
       { label: "Finance" },
       { label: "Company General Ledger" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   financialIntegrity: {
     id: "voyzu.companyReports.page.financialIntegrity",
@@ -111,7 +112,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Audit" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   profitLoss: {
     id: "voyzu.companyReports.page.profitLoss",
@@ -124,7 +125,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Movement" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   profitLossAnalysis: {
     id: "voyzu.companyReports.page.profitLossAnalysis",
@@ -137,7 +138,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Movement" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   taxActivity: {
     id: "voyzu.companyReports.page.taxActivity",
@@ -150,7 +151,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Movement" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   taxActivityReconciliation: {
     id: "voyzu.companyReports.page.taxActivityReconciliation",
@@ -163,7 +164,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Reconciliation" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   arSubledgerEntriesAudit: {
     id: "voyzu.companyReports.page.arSubledgerEntriesAudit",
@@ -176,7 +177,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Audit" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   apSubledgerEntriesAudit: {
     id: "voyzu.companyReports.page.apSubledgerEntriesAudit",
@@ -189,7 +190,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Audit" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   inventoryLedgerEntriesAudit: {
     id: "voyzu.companyReports.page.inventoryLedgerEntriesAudit",
@@ -202,7 +203,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Audit" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   taxLedgerEntriesAudit: {
     id: "voyzu.companyReports.page.taxLedgerEntriesAudit",
@@ -215,7 +216,7 @@ export const pageRoutes = {
       { label: "Reports" },
       { label: "Audit" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   apSubledgerEntriesAuditPrintable: {
     id: "voyzu.companyReports.page.apSubledgerEntriesAudit.printable",
@@ -223,7 +224,7 @@ export const pageRoutes = {
     path: "/finance/reports/ap-subledger-entries-audit/printable",
     Page: ApSubledgerEntriesAuditReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   arSubledgerEntriesAuditPrintable: {
     id: "voyzu.companyReports.page.arSubledgerEntriesAudit.printable",
@@ -231,7 +232,7 @@ export const pageRoutes = {
     path: "/finance/reports/ar-subledger-entries-audit/printable",
     Page: ArSubledgerEntriesAuditReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   balanceSheetPrintable: {
     id: "voyzu.companyReports.page.balanceSheet.printable",
@@ -239,7 +240,7 @@ export const pageRoutes = {
     path: "/finance/reports/balance-sheet/printable",
     Page: BalanceSheetReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   bankCashMovementPrintable: {
     id: "voyzu.companyReports.page.bankCashMovement.printable",
@@ -247,7 +248,7 @@ export const pageRoutes = {
     path: "/finance/reports/bank-cash-movement/printable",
     Page: BankCashMovementReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   financialIntegrityPrintable: {
     id: "voyzu.companyReports.page.financialIntegrity.printable",
@@ -255,7 +256,7 @@ export const pageRoutes = {
     path: "/finance/reports/financial-integrity/printable",
     Page: FinancialIntegrityReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   inventoryLedgerEntriesAuditPrintable: {
     id: "voyzu.companyReports.page.inventoryLedgerEntriesAudit.printable",
@@ -263,7 +264,7 @@ export const pageRoutes = {
     path: "/finance/reports/inventory-ledger-entries-audit/printable",
     Page: InventoryLedgerEntriesAuditReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   journalEntriesPrintable: {
     id: "voyzu.companyReports.page.journalEntries.printable",
@@ -271,7 +272,7 @@ export const pageRoutes = {
     path: "/finance/reports/journal-entries/printable",
     Page: JournalEntriesReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   profitLossPrintable: {
     id: "voyzu.companyReports.page.profitLoss.printable",
@@ -279,7 +280,7 @@ export const pageRoutes = {
     path: "/finance/reports/profit-loss/printable",
     Page: ProfitLossReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   profitLossAnalysisPrintable: {
     id: "voyzu.companyReports.page.profitLossAnalysis.printable",
@@ -287,7 +288,7 @@ export const pageRoutes = {
     path: "/finance/reports/profit-loss-analysis/printable",
     Page: ProfitLossAnalysisReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   taxActivityPrintable: {
     id: "voyzu.companyReports.page.taxActivity.printable",
@@ -295,7 +296,7 @@ export const pageRoutes = {
     path: "/finance/reports/tax-activity/printable",
     Page: TaxActivityReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   taxActivityReconciliationPrintable: {
     id: "voyzu.companyReports.page.taxActivityReconciliation.printable",
@@ -303,7 +304,7 @@ export const pageRoutes = {
     path: "/finance/reports/tax-activity-reconciliation/printable",
     Page: TaxActivityReconciliationReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   taxLedgerEntriesAuditPrintable: {
     id: "voyzu.companyReports.page.taxLedgerEntriesAudit.printable",
@@ -311,7 +312,7 @@ export const pageRoutes = {
     path: "/finance/reports/tax-ledger-entries-audit/printable",
     Page: TaxLedgerEntriesAuditReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   taxPositionPrintable: {
     id: "voyzu.companyReports.page.taxPosition.printable",
@@ -319,7 +320,7 @@ export const pageRoutes = {
     path: "/finance/reports/tax-position/printable",
     Page: TaxPositionReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   trialBalancePrintable: {
     id: "voyzu.companyReports.page.trialBalance.printable",
@@ -327,6 +328,6 @@ export const pageRoutes = {
     path: "/finance/reports/trial-balance/printable",
     Page: TrialBalanceReportPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

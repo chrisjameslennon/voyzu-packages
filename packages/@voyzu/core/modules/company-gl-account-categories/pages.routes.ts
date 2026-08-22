@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleActivate as handleActivateGlAccountCategory, handleBatchActivate as handleBatchActivateGlAccountCategories, handleBatchCreate as handleBatchCreateGlAccountCategories, handleBatchDeactivate as handleBatchDeactivateGlAccountCategories, handleBatchDelete as handleBatchDeleteGlAccountCategories, handleBatchGet as handleBatchGetGlAccountCategories, handleBatchPatch as handleBatchPatchGlAccountCategories, handleBatchUpdate as handleBatchUpdateGlAccountCategories, handleCreate as handleCreateGlAccountCategory, handleDeactivate as handleDeactivateGlAccountCategory, handleDelete as handleDeleteGlAccountCategory, handleFilter as handleFilterGlAccountCategories, handleGet as handleGetGlAccountCategory, handleList as handleListGlAccountCategories, handlePatch as handlePatchGlAccountCategory, handleSearch as handleSearchGlAccountCategories, handleUpdate as handleUpdateGlAccountCategory } from "@voyzu/core/common/gl-account-categories/server";
 import { CompanyGlAccountCategoriesListPage, CompanyGlAccountCategoryDetailPage } from "@voyzu/core/company-gl-account-categories/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "General Ledger" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.company-gl-account-categories.page.detail",
@@ -27,6 +28,6 @@ export const pageRoutes = {
       { label: "General Ledger" },
       { label: "Reporting Categories", href: "/finance/settings/reporting-categories" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

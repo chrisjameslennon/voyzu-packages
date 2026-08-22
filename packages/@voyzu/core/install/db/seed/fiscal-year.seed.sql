@@ -10,7 +10,7 @@ WITH companies AS (
     END AS start_month
   FROM finance_company fco
   JOIN company c ON c.id = fco.company_id
-  JOIN finance_country fc ON fc.country_code = c.country_code
+  JOIN finance_country fc ON fc.code = c.country_code
   WHERE NOT EXISTS (
     SELECT 1 FROM fiscal_year existing WHERE existing.finance_company_id = fco.id
   )

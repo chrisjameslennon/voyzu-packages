@@ -19,7 +19,7 @@ export const pageRoutes = {
         label: "Integration",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   detail: {
     id: "voyzu.organization-financial-document-defaults.page.detail",
@@ -42,6 +42,6 @@ export const pageRoutes = {
         href: "/finance/financial-document-defaults",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   }
 } as const;

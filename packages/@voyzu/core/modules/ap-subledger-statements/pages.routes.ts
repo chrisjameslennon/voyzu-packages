@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleListApCounterpartySummaries } from "@voyzu/core/ap-subledger-statements/server";
 import { ApStatementsListPage, ApStatementDetailPage } from "@voyzu/core/ap-subledger-statements/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "Accounts Payable" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.ap-subledger-statements.page.detail",
@@ -26,7 +27,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AP Statements", href: "/finance/subledgers/ap/statements" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detailPrintable: {
     id: "voyzu.ap-subledger-statements.page.detail.printable",
@@ -34,6 +35,6 @@ export const pageRoutes = {
     path: "/finance/subledgers/ap/statements/[code]/printable",
     Page: ApStatementDetailPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

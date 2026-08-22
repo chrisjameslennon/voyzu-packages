@@ -6,7 +6,7 @@ let selectedFinanceBasePromise: Promise<string> | null = null;
 
 async function selectedFinanceBase(): Promise<string> {
   if (!selectedFinanceBasePromise) {
-    selectedFinanceBasePromise = fetch("/api/company-selection", { cache: "no-store" })
+    selectedFinanceBasePromise = fetch("/api/finance/company-selection", { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) throw new Error("Unable to load selected company");
         const selection = await response.json() as CompanySelectionResponseDto;

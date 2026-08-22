@@ -7,21 +7,21 @@ import type { CompanySelectionUpdateRequestDto } from "@voyzu/erp-core/company-s
 import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
 import { getAvatarColor } from "@voyzu/erp-core/common/client";
 
-import localStyles from "./company-switcher.module.css";
+import localStyles from "./finance-company-switcher.module.css";
 
-interface CompanySwitcherProps {
+interface FinanceCompanySwitcherProps {
   isCollapsed: boolean;
   isTemplateMode?: boolean;
   companyPath?: string;
   templatePath?: string;
 }
 
-export function CompanySwitcher({
+export function FinanceCompanySwitcher({
   isCollapsed,
   isTemplateMode = false,
   companyPath = "/finance/journals",
   templatePath = "/finance",
-}: CompanySwitcherProps) {
+}: FinanceCompanySwitcherProps) {
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
   const [companies, setCompanies] = useState<CompanyResponseDto[]>([]);
@@ -34,7 +34,7 @@ export function CompanySwitcher({
 
     async function loadCompanySelection() {
       try {
-        const selectionResponse = await fetch("/api/company-selection");
+        const selectionResponse = await fetch("/api/finance/company-selection");
         const selectionData = selectionResponse.ok
           ? await selectionResponse.json() as CompanySelectionResponseDto
           : { companies: [], selectedCompany: null, selectedCompanyId: null };
@@ -76,7 +76,7 @@ export function CompanySwitcher({
     setIsSelectingCompanyId(company.id);
 
     try {
-      const response = await fetch("/api/company-selection", {
+      const response = await fetch("/api/finance/company-selection", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

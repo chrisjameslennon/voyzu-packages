@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleActivate as handleActivateGlAccount, handleBatchCreate as handleBatchCreateGlAccounts, handleBatchActivate as handleBatchActivateGlAccounts, handleBatchDeactivate as handleBatchDeactivateGlAccounts, handleBatchDelete as handleBatchDeleteGlAccounts, handleBatchGet as handleBatchGetGlAccounts, handleBatchPatch as handleBatchPatchGlAccounts, handleBatchUpdate as handleBatchUpdateGlAccounts, handleCreate as handleCreateGlAccount, handleDeactivate as handleDeactivateGlAccount, handleDelete as handleDeleteGlAccount, handleFilter as handleFilterGlAccounts, handleGet as handleGetGlAccount, handleList as handleListGlAccounts, handlePatch as handlePatchGlAccount, handleSearch as handleSearchGlAccounts, handleUpdate as handleUpdateGlAccount } from "@voyzu/core/common/gl-accounts/server";
 import { CompanyGlAccountsListPage, CompanyGlAccountDetailPage } from "./server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "General Ledger" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.company-gl-accounts.page.detail",
@@ -27,6 +28,6 @@ export const pageRoutes = {
       { label: "General Ledger" },
       { label: "General Ledger Accounts", href: "/finance/settings/gl-accounts" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

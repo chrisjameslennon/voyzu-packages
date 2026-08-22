@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleActivate as handleActivateItemPostingProfile, handleBatchActivate as handleBatchActivateItemPostingProfiles, handleBatchCreate as handleBatchCreateItemPostingProfiles, handleBatchDeactivate as handleBatchDeactivateItemPostingProfiles, handleBatchDelete as handleBatchDeleteItemPostingProfiles, handleBatchGet as handleBatchGetItemPostingProfiles, handleBatchPatch as handleBatchPatchItemPostingProfiles, handleBatchUpdate as handleBatchUpdateItemPostingProfiles, handleCreate as handleCreateItemPostingProfile, handleDeactivate as handleDeactivateItemPostingProfile, handleDelete as handleDeleteItemPostingProfile, handleFilter as handleFilterItemPostingProfiles, handleGet as handleGetItemPostingProfile, handleList as handleListItemPostingProfiles, handlePatch as handlePatchItemPostingProfile, handleSearch as handleSearchItemPostingProfiles, handleUpdate as handleUpdateItemPostingProfile } from "@voyzu/core/common/inventory-item-posting-profiles/server";
 import { CompanyInventoryItemPostingProfilesListPage, CompanyInventoryItemPostingProfileDetailPage } from "@voyzu/core/company-inventory-item-posting-profiles/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "Integration" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.company-inventory-item-posting-profiles.page.detail",
@@ -27,6 +28,6 @@ export const pageRoutes = {
       { label: "Integration" },
       { label: "Item Posting Profiles", href: "/finance/inventory/item-posting-profiles" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

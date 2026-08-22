@@ -19,7 +19,7 @@ export const pageRoutes = {
         label: "General Ledger",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   detail: {
     id: "voyzu.organization-gl-accounts.page.detail",
@@ -42,6 +42,6 @@ export const pageRoutes = {
         href: "/finance/general-ledger-accounts",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   }
 } as const;

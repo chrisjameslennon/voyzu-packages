@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { ApLedgerEntryEnquiryListPage, ApLedgerEntryEnquiryDetailPage } from "@voyzu/core/ap-subledger-ledger-entry-enquiry/server";
 
 export const pageRoutes = {
@@ -12,7 +13,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "Accounts Payable" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.ap-subledger-ledger-entry-enquiry.page.detail",
@@ -25,6 +26,6 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AP Ledger Entry Enquiry", href: "/finance/subledgers/ap/ledger-entry-enquiry" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

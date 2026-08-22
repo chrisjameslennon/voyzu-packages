@@ -9,7 +9,7 @@ export const pageRoutes = {
     pageTitle: "Ice Creams",
     helpPath: "voyzu-platform-guide/develop-a-new-package",
     breadcrumbBase: [],
-    auth: { required: true, minRole: "ORGANIZATION_USER" },
+    auth: { required: true, minRole: "STANDARD" },
   },
   detail: {
     id: "voyzu.ice-creams.page.detail",
@@ -18,6 +18,6 @@ export const pageRoutes = {
     pageTitle: "Ice Cream",
     helpPath: "voyzu-platform-guide/develop-a-new-package",
     breadcrumbBase: [{ label: "Ice Creams", href: "/ice-creams" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" },
+    auth: { required: true, minRole: "STANDARD" },
   },
 } as const;

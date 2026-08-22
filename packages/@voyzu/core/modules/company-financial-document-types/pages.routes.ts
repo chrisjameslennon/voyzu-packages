@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleBatchGet as handleFinancialDocumentTypeBatchGet, handleFilter as handleFinancialDocumentTypeFilter, handleGet as handleFinancialDocumentTypeGet, handleList as handleFinancialDocumentTypeList, handleSearch as handleFinancialDocumentTypeSearch } from "@voyzu/core/common/financial-document-types/server";
 import { CompanyFinancialDocumentTypesListPage, CompanyFinancialDocumentTypeDetailPage } from "@voyzu/core/company-financial-document-types/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "Integration" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.company-financial-document-types.page.detail",
@@ -28,6 +29,6 @@ export const pageRoutes = {
       { label: "Integration" },
       { label: "Financial Document Types", href: "/finance/integration/financial-document-types" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

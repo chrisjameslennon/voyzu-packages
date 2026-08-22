@@ -13,7 +13,7 @@ export const pageRoutes = {
       { label: "Standard Settings" },
       { label: "Control Accounts" },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   detail: {
     id: "voyzu.organization-tax-control-accounts.page.detail",
@@ -27,6 +27,6 @@ export const pageRoutes = {
       { label: "Control Accounts" },
       { label: "Tax Control Accounts", href: "/finance/control-accounts/tax" },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   }
 } as const;

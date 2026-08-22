@@ -1,4 +1,4 @@
-INSERT INTO finance_country (country_code, financial_period_start_month, tax_filing_anchor_month, tax_filing_interval_months, creation_actor_type, updated_actor_type)
+INSERT INTO finance_country (code, financial_period_start_month, tax_filing_anchor_month, tax_filing_interval_months, creation_actor_type, updated_actor_type)
 VALUES
   ('AD', 'JAN', 12, 3, 'SYSTEM', 'SYSTEM'),
   ('AE', 'JAN', 12, 3, 'SYSTEM', 'SYSTEM'),
@@ -249,7 +249,7 @@ VALUES
   ('ZA', 'JAN', 12, 3, 'SYSTEM', 'SYSTEM'),
   ('ZM', 'JAN', 12, 3, 'SYSTEM', 'SYSTEM'),
   ('ZW', 'JAN', 12, 3, 'SYSTEM', 'SYSTEM')
-ON CONFLICT (country_code) DO UPDATE
+ON CONFLICT (code) DO UPDATE
 SET
     financial_period_start_month = EXCLUDED.financial_period_start_month,
     tax_filing_anchor_month = EXCLUDED.tax_filing_anchor_month,

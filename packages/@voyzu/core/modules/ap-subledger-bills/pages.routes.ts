@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { ApBillsListPage, ApBillDetailPage } from "@voyzu/core/ap-subledger-bills/server";
 
 export const pageRoutes = {
@@ -12,7 +13,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "Accounts Payable" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.ap-subledger-bills.page.detail",
@@ -25,7 +26,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AP Bills", href: "/finance/subledgers/ap/bills" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detailPrintable: {
     id: "voyzu.ap-subledger-bills.page.detail.printable",
@@ -33,6 +34,6 @@ export const pageRoutes = {
     path: "/finance/subledgers/ap/bills/[documentId]/printable",
     Page: ApBillDetailPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

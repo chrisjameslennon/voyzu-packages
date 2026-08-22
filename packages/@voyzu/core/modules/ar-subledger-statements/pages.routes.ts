@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleListArCounterpartySummaries } from "@voyzu/core/ar-subledger-statements/server";
 import { ArStatementsListPage, ArStatementDetailPage } from "@voyzu/core/ar-subledger-statements/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "Accounts Receivable" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.ar-subledger-statements.page.detail",
@@ -26,7 +27,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AR Statements", href: "/finance/subledgers/ar/statements" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detailPrintable: {
     id: "voyzu.ar-subledger-statements.page.detail.printable",
@@ -34,6 +35,6 @@ export const pageRoutes = {
     path: "/finance/subledgers/ar/statements/[code]/printable",
     Page: ArStatementDetailPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

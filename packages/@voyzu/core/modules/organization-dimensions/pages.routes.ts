@@ -16,7 +16,7 @@ export const pageRoutes = {
         label: "Standard Settings",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   detail: {
     id: "voyzu.organization-dimensions.page.detail",
@@ -36,6 +36,6 @@ export const pageRoutes = {
         href: "/finance/dimensions",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   }
 } as const;

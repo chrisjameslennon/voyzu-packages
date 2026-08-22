@@ -7,7 +7,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/country-tax-settings",
     Page: CountryTaxSettingsReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   dimensions: {
     id: "voyzu.organizationReports.page.dimensions",
@@ -16,7 +16,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/dimensions",
     Page: DimensionsReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   financialDocumentTypes: {
     id: "voyzu.organizationReports.page.financialDocumentTypes",
@@ -25,7 +25,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/financial-document-types",
     Page: FinancialDocumentTypesReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   glAccounts: {
     id: "voyzu.organizationReports.page.glAccounts",
@@ -34,7 +34,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/general-ledger-accounts",
     Page: GlAccountsReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   inventoryCategories: {
     id: "voyzu.organizationReports.page.inventoryCategories",
@@ -43,7 +43,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/inventory-categories",
     Page: InventoryCategoriesReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   inventoryItems: {
     id: "voyzu.organizationReports.page.inventoryItems",
@@ -52,7 +52,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/inventory-items",
     Page: InventoryItemsReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   financialDocumentDefaults: {
     id: "voyzu.organizationReports.page.financialDocumentDefaults",
@@ -61,7 +61,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/financial-document-defaults",
     Page: FinancialDocumentDefaultsReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   glReportingCategories: {
     id: "voyzu.organizationReports.page.glReportingCategories",
@@ -70,7 +70,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/general-ledger-reporting-categories",
     Page: ReportingCategoriesReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   ledgerBackedAccountCodes: {
     id: "voyzu.organizationReports.page.ledgerBackedAccountCodes",
@@ -79,7 +79,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/ledger-backed-account-codes",
     Page: LedgerBackedAccountCodesReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   inventoryItemPostingCodes: {
     id: "voyzu.organizationReports.page.inventoryItemPostingCodes",
@@ -88,7 +88,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/inventory-item-posting-codes",
     Page: InventoryItemPostingCodesReportPage,
     breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   dimensionsPrintable: {
     id: "voyzu.organizationReports.page.dimensions.printable",
@@ -96,7 +96,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/dimensions/printable",
     Page: DimensionsReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   financialDocumentTypesPrintable: {
     id: "voyzu.organizationReports.page.financialDocumentTypes.printable",
@@ -104,7 +104,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/financial-document-types/printable",
     Page: FinancialDocumentTypesReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   glAccountsPrintable: {
     id: "voyzu.organizationReports.page.glAccounts.printable",
@@ -112,7 +112,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/general-ledger-accounts/printable",
     Page: GlAccountsReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   inventoryCategoriesPrintable: {
     id: "voyzu.organizationReports.page.inventoryCategories.printable",
@@ -120,7 +120,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/inventory-categories/printable",
     Page: InventoryCategoriesReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   inventoryItemsPrintable: {
     id: "voyzu.organizationReports.page.inventoryItems.printable",
@@ -128,7 +128,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/inventory-items/printable",
     Page: InventoryItemsReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   financialDocumentDefaultsPrintable: {
     id: "voyzu.organizationReports.page.financialDocumentDefaults.printable",
@@ -136,7 +136,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/financial-document-defaults/printable",
     Page: FinancialDocumentDefaultsReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   glReportingCategoriesPrintable: {
     id: "voyzu.organizationReports.page.glReportingCategories.printable",
@@ -144,7 +144,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/general-ledger-reporting-categories/printable",
     Page: ReportingCategoriesReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   inventoryItemPostingCodesPrintable: {
     id: "voyzu.organizationReports.page.inventoryItemPostingCodes.printable",
@@ -152,7 +152,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/inventory-item-posting-codes/printable",
     Page: InventoryItemPostingCodesReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   ledgerBackedAccountCodesPrintable: {
     id: "voyzu.organizationReports.page.ledgerBackedAccountCodes.printable",
@@ -160,7 +160,7 @@ export const pageRoutes = {
     path: "/finance/reports/lists/ledger-backed-account-codes/printable",
     Page: LedgerBackedAccountCodesReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   countryTaxSettingsPrintable: {
     id: "voyzu.organizationReports.page.countryTaxSettings.printable",
@@ -168,6 +168,6 @@ export const pageRoutes = {
     path: "/finance/reports/lists/country-tax-settings/printable",
     Page: CountryTaxSettingsReportPage,
     unframed: true,
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   }
 } as const;

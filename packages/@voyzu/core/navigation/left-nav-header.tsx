@@ -1,7 +1,7 @@
 "use client";
 
 import type { VoyzuSurfaceLeftNavHeaderProps } from "@voyzu/ui-surface/types";
-import { CompanySwitcher } from "@voyzu/erp-core/company-switcher/client";
+import { FinanceCompanySwitcher } from "@voyzu/core/finance-companies/client";
 
 export const leftNavHeaderRootPaths = ["/finance"] as const;
 
@@ -11,7 +11,7 @@ const companyFinancePath = "/finance/journals";
 
 export default function CoreLeftNavHeader({ domainId, isCollapsed }: VoyzuSurfaceLeftNavHeaderProps) {
   return (
-    <CompanySwitcher
+    <FinanceCompanySwitcher
       companyPath={companyFinancePath}
       isCollapsed={isCollapsed}
       isTemplateMode={domainId === financeTemplateDomainId}

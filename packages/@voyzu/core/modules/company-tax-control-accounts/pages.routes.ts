@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleListTaxControlAccounts, handlePatchTaxControlAccount } from "@voyzu/core/common/tax-control-accounts/server";
 import { CompanyTaxControlAccountsPage, CompanyTaxControlAccountDetailPage } from "@voyzu/core/company-tax-control-accounts/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "Control Accounts" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.company-tax-control-accounts.page.detail",
@@ -26,6 +27,6 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "Tax Control Accounts", href: "/finance/settings/control-accounts/tax" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

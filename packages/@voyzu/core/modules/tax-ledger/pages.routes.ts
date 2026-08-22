@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleGetTaxEntry, handleListTaxEntries } from "@voyzu/core/tax-ledger/server";
 import { TaxLedgerEntriesListPage, TaxLedgerEntryDetailPage } from "@voyzu/core/tax-ledger/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "Tax Ledger" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.tax-ledger.page.detail",
@@ -26,6 +27,6 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "Tax Ledger Entries", href: "/finance/subledgers/tax/ledger-entries" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

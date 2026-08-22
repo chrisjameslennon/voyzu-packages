@@ -34,3 +34,4 @@ export {
   type DetailBackSource,
 } from "@voyzu/ui-surface/server";
 export { ledgerName } from "../ledger";
+export { companyFinancePageAuth } from "./company-finance-page-auth";

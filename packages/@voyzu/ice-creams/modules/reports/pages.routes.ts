@@ -14,7 +14,7 @@ export const pageRoutes = {
       { label: "Reports" },
     ],
     apiDocsUrl,
-    auth: { required: true, minRole: "ORGANIZATION_USER" },
+    auth: { required: true, minRole: "STANDARD" },
   },
   allPrintable: {
     id: "voyzu.ice-creams.reports.page.all.printable",
@@ -24,6 +24,6 @@ export const pageRoutes = {
     helpPath: "voyzu-platform-patterns/pdf-generation",
     unframed: true,
     apiDocsUrl,
-    auth: { required: true, minRole: "ORGANIZATION_USER" },
+    auth: { required: true, minRole: "STANDARD" },
   },
 } as const;

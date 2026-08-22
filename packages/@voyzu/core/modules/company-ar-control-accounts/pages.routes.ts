@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleGet as handleGetControlAccount, handleListAr as handleListArControlAccounts, handlePatch as handlePatchControlAccount } from "@voyzu/core/common/control-accounts/server";
 import { CompanyArControlAccountsListPage, CompanyArControlAccountDetailPage } from "@voyzu/core/company-ar-control-accounts/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "Control Accounts" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.company-ar-control-accounts.page.detail",
@@ -26,6 +27,6 @@ export const pageRoutes = {
       { label: "Settings" },
       { label: "Accounts Receivable Control Accounts", href: "/finance/settings/control-accounts/ar" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

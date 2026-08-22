@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { JournalsListPage, JournalDetailPage } from "@voyzu/core/journals/server";
 
 export const pageRoutes = {
@@ -11,7 +12,7 @@ export const pageRoutes = {
       { label: "Finance" },
       { label: "Company General Ledger" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.journals.page.detail",
@@ -24,6 +25,6 @@ export const pageRoutes = {
       { label: "Company General Ledger" },
       { label: "Journal Entries", href: "/finance/journals" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

@@ -1,3 +1,4 @@
+import { companyFinancePageAuth } from "@voyzu/core/common/server";
 import { handleGetApEntry, handleListApEntries } from "@voyzu/core/ap-subledger-ledger-entries/server";
 import { ApLedgerEntriesListPage, ApLedgerEntryDetailPage } from "@voyzu/core/ap-subledger-ledger-entries/server";
 
@@ -13,7 +14,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AP Subledger" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detail: {
     id: "voyzu.ap-subledger-ledger-entries.page.detail",
@@ -26,7 +27,7 @@ export const pageRoutes = {
       { label: "Subledgers" },
       { label: "AP Ledger Entries", href: "/finance/subledgers/ap/ledger-entries" },
     ],
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   },
   detailDocumentPrintable: {
     id: "voyzu.ap-subledger-ledger-entries.page.detail.documentPrintable",
@@ -34,6 +35,6 @@ export const pageRoutes = {
     path: "/finance/subledgers/ap/ledger-entries/[code]/document-printable",
     Page: ApLedgerEntryDetailPage,
     unframed: true,
-    auth: { required: true, minRole: "COMPANY_USER" }
+    auth: companyFinancePageAuth
   }
 } as const;

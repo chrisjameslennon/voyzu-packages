@@ -9,6 +9,6 @@ export const pageRoutes = {
     path: "/organization",
     Page: OrganizationPage,
     breadcrumbBase: [],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   }
 } as const;

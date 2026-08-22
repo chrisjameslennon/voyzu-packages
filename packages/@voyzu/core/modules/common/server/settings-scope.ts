@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 
 import { getDb, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError } from "@voyzu/capability/errors";
+import { listSelectableCompaniesForCurrentUser } from "@voyzu/erp-core/company-switcher/server";
 
 export interface CompanySettingsScope {
   companyId: number;
@@ -81,15 +82,6 @@ async function getActiveCompanyApiContext(companyId: number, db: DbExecutor): Pr
   return { companyId: Number(row.id), companyCode: String(row.code) };
 }
 
-async function getDefaultActiveCompanyId(db: DbExecutor): Promise<number> {
-  const { rows } = await db.query(
-    `SELECT fc.id FROM company c JOIN finance_company fc ON fc.company_id = c.id
-     WHERE fc.is_template = false AND c.status = 'ACTIVE' ORDER BY c.code LIMIT 1`,
-  );
-  if (!rows[0]) throw new BusinessRuleError("No active company is configured");
-  return Number(rows[0].id);
-}
-
 export async function resolveTemplateSettingsScope(db: DbExecutor = getDb()): Promise<CompanySettingsScope> {
   return { companyId: await getTemplateCompanyId(db), isTemplate: true };
 }
@@ -150,17 +142,21 @@ export async function resolveServerSettingsScope(
   const raw = cookieStore.get(SELECTED_COMPANY_COOKIE)?.value
     ?? cookieStore.get(LEGACY_SELECTED_COMPANY_COOKIE)?.value;
   const companyId = raw ? Number.parseInt(raw, 10) : NaN;
-  if (!Number.isInteger(companyId) || companyId <= 0) {
-    return { companyId: await getDefaultActiveCompanyId(db), isTemplate: false };
+  const accessibleCompanies = await listSelectableCompaniesForCurrentUser();
+  const { rows } = await db.query(
+    `SELECT company_id::int
+     FROM finance_company
+     WHERE is_template = false AND company_id IS NOT NULL`,
+  );
+  const financeCompanyIds = new Set(rows.map((row) => Number(row.company_id)));
+  const financeCompanies = accessibleCompanies.filter((company) => financeCompanyIds.has(company.id));
+  const selectedCompany = financeCompanies.find((company) => company.id === companyId)
+    ?? financeCompanies[0]
+    ?? null;
+  if (!selectedCompany) {
+    throw new BusinessRuleError("You do not have access to any companies");
   }
-  try {
-    return await resolveCompanySettingsScope(companyId, db);
-  } catch (err) {
-    if (err instanceof BusinessRuleError) {
-      return { companyId: await getDefaultActiveCompanyId(db), isTemplate: false };
-    }
-    throw err;
-  }
+  return resolveCompanySettingsScope(selectedCompany.id, db);
 }
 
 export async function resolveApiSettingsScope(

@@ -32,7 +32,7 @@ export const pageRoutes = {
         label: "Organization",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   },
   detail: {
     id: "voyzu.companies.page.detail",
@@ -50,6 +50,6 @@ export const pageRoutes = {
         href: "/organization/companies",
       },
     ],
-    auth: { required: true, minRole: "ORGANIZATION_USER" }
+    auth: { required: true, minRole: "STANDARD" }
   }
 } as const;
