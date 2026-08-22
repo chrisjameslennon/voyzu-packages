@@ -33,6 +33,7 @@ import { financialDocumentProcessingEngineModule } from "./modules/financial-doc
 import { financialYearsModule } from "./modules/financial-years/module";
 import { financeTemplateModule } from "./modules/finance-template/module";
 import { financeCompaniesModule } from "./modules/finance-companies/module";
+import { countryTaxSettingsModule } from "./modules/country-tax-settings/module";
 import { inventoryLedgerModule } from "./modules/inventory-ledger/module";
 import { journalsModule } from "./modules/journals/module";
 import { organizationApControlAccountsModule } from "./modules/organization-ap-control-accounts/module";
@@ -55,6 +56,7 @@ import { taxLedgerModule } from "./modules/tax-ledger/module";
 export const coreFinanceTemplateModules = [
   financeTemplateModule,
   financeCompaniesModule,
+  countryTaxSettingsModule,
   organizationBankCashAccountsModule,
   organizationApControlAccountsModule,
   organizationArControlAccountsModule,
@@ -111,6 +113,7 @@ export const corePackage = {
   modules: [
     financeTemplateModule,
     financeCompaniesModule,
+    countryTaxSettingsModule,
     organizationBankCashAccountsModule,
     organizationApControlAccountsModule,
     organizationArControlAccountsModule,

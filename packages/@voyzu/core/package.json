@@ -39,6 +39,10 @@
     "./finance-companies/operations": "./modules/finance-companies/operations.ts",
     "./finance-companies/client": "./modules/finance-companies/client/index.ts",
     "./finance-companies/server": "./modules/finance-companies/server/index.ts",
+    "./country-tax-settings": "./modules/country-tax-settings/module.ts",
+    "./country-tax-settings/operations": "./modules/country-tax-settings/operations.ts",
+    "./country-tax-settings/client": "./modules/country-tax-settings/client/index.ts",
+    "./country-tax-settings/server": "./modules/country-tax-settings/server/index.ts",
     "./scripts/sample-data": {
       "types": "./scripts/sample-data/init.ts",
       "import": "./scripts/sample-data/init.ts"

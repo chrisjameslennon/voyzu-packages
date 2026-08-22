@@ -1,28 +1,28 @@
 import "server-only";
 
-import * as service0 from "./server/lib/company.service";
+import * as service from "./server/lib/company.service";
 
 function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
   return (...args: TArgs): TResult => service(...args);
 }
 
-export const createCompany = operation(service0.createCompany);
-export const getCompany = operation(service0.getCompany);
-export const updateCompany = operation(service0.updateCompany);
-export const patchCompany = operation(service0.patchCompany);
-export const deleteCompany = operation(service0.deleteCompany);
-export const listCompanies = operation(service0.listCompanies);
-export const filterCompanies = operation(service0.filterCompanies);
-export const searchCompanies = operation(service0.searchCompanies);
-export const batchCreateCompanies = operation(service0.batchCreateCompanies);
-export const batchGetCompanies = operation(service0.batchGetCompanies);
-export const batchUpdateCompanies = operation(service0.batchUpdateCompanies);
-export const batchPatchCompanies = operation(service0.batchPatchCompanies);
-export const batchDeleteCompanies = operation(service0.batchDeleteCompanies);
-export const activateCompanies = operation(service0.activateCompanies);
-export const deactivateCompanies = operation(service0.deactivateCompanies);
-export const activateCompany = operation(service0.activateCompany);
-export const deactivateCompany = operation(service0.deactivateCompany);
+export const createCompany = operation(service.createCompany);
+export const getCompany = operation(service.getCompany);
+export const updateCompany = operation(service.updateCompany);
+export const patchCompany = operation(service.patchCompany);
+export const deleteCompany = operation(service.deleteCompany);
+export const listCompanies = operation(service.listCompanies);
+export const filterCompanies = operation(service.filterCompanies);
+export const searchCompanies = operation(service.searchCompanies);
+export const batchCreateCompanies = operation(service.batchCreateCompanies);
+export const batchGetCompanies = operation(service.batchGetCompanies);
+export const batchUpdateCompanies = operation(service.batchUpdateCompanies);
+export const batchPatchCompanies = operation(service.batchPatchCompanies);
+export const batchDeleteCompanies = operation(service.batchDeleteCompanies);
+export const activateCompanies = operation(service.activateCompanies);
+export const deactivateCompanies = operation(service.deactivateCompanies);
+export const activateCompany = operation(service.activateCompany);
+export const deactivateCompany = operation(service.deactivateCompany);
 
 export const operations = {
   createCompany,

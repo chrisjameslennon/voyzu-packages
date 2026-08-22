@@ -14,12 +14,14 @@ import { organizationInventoryCategoriesModule } from "@voyzu/core/organization-
 import { organizationInventoryItemsModule } from "@voyzu/core/organization-inventory-items";
 import { organizationReportsModule } from "@voyzu/core/organization-reports";
 import { financeCompaniesModule } from "@voyzu/core/finance-companies";
+import { countryTaxSettingsModule } from "@voyzu/core/country-tax-settings";
 
 export const financeTemplateLeftNav = [
   {
     label: "Finance Admin",
     items: [
       { label: "Companies", icon: "domain", routeId: financeCompaniesModule.pageRoutes.list.id },
+      { label: "Country Tax Settings", icon: "public", routeId: countryTaxSettingsModule.pageRoutes.list.id },
     ],
   },
   {
@@ -30,7 +32,6 @@ export const financeTemplateLeftNav = [
         icon: "account_balance",
         path: "#organization-settings-general-ledger",
         children: [
-          { label: "Country Tax Settings", routeId: organizationReportsModule.pageRoutes.countryTaxSettings.id },
           { label: "General Ledger Accounts", routeId: organizationGlAccountsModule.pageRoutes.list.id },
           { label: "Reporting Categories", routeId: organizationGlAccountCategoriesModule.pageRoutes.list.id },
         ],
@@ -82,6 +83,7 @@ export const financeTemplateLeftNav = [
         icon: "format_list_bulleted",
         path: "#lists",
         children: [
+          { label: "Country Tax Settings", routeId: organizationReportsModule.pageRoutes.countryTaxSettings.id },
           { label: "Dimensions", routeId: organizationReportsModule.pageRoutes.dimensions.id },
           { label: "Financial Document Defaults", routeId: organizationReportsModule.pageRoutes.financialDocumentDefaults.id },
           { label: "Financial Document Types", routeId: organizationReportsModule.pageRoutes.financialDocumentTypes.id },
