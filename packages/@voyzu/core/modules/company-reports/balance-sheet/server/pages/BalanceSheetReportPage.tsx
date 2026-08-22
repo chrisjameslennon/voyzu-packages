@@ -1,11 +1,11 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import { listCompanies } from "@voyzu/organization/companies/server";
+import { listCompanies } from "@voyzu/erp-core/companies/server";
 import {
   SELECTED_COMPANY_COOKIE,
   parseSelectedCompanyId,
-} from "@voyzu/organization/company-switcher/server";
+} from "@voyzu/erp-core/company-switcher/server";
 
 import { BalanceSheetReport } from "../../client";
 import { BalanceSheetReportTemplate } from "../../templates/BalanceSheetReportTemplate";

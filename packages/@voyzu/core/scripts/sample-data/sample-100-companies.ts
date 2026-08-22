@@ -3,7 +3,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { createCompany } from "@voyzu/organization/companies/server";
+import { createCompany } from "@voyzu/erp-core/companies/server";
 import { ConflictError } from "@voyzu/capability/errors";
 
 const PREFIXES = [
@@ -46,7 +46,7 @@ async function main() {
         name,
         countryCode: country.code,
         baseCurrencyCode: country.currency_code,
-      }, { actorType: "SYSTEM" });
+      });
       created++;
     } catch (err) {
       if (err instanceof ConflictError) {
@@ -55,6 +55,21 @@ async function main() {
         throw err;
       }
     }
+
+    await pool.query(
+      `INSERT INTO finance_company (
+         id, company_id, tax_filing_anchor_month, tax_filing_interval_months,
+         creation_actor_type, updated_actor_type
+       )
+       SELECT
+         c.id, c.id, fc.tax_filing_anchor_month, fc.tax_filing_interval_months,
+         'SYSTEM', 'SYSTEM'
+       FROM company c
+       JOIN finance_country fc ON fc.country_code = c.country_code
+       WHERE c.code = $1
+       ON CONFLICT (company_id) DO NOTHING`,
+      [code],
+    );
   }
 
   console.log(`Generated sample companies: ${created} created, ${skipped} already existed`);
@@ -62,4 +77,3 @@ async function main() {
 }
 
 main();
-

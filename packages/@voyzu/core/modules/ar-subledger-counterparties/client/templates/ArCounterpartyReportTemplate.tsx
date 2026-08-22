@@ -1,5 +1,5 @@
 import type { ArCounterpartyResponseDto } from "@voyzu/core/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
 
 import { arCounterpartyReportCss, arCounterpartyReportStyles as styles } from "./ar-counterparty-report.css";
 

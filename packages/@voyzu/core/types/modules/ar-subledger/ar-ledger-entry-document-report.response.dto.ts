@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
-import { CompanyResponseDto } from "@voyzu/organization/types/modules/companies/company.response.dto";
+import { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies/company.response.dto";
 import { BusinessCode, IsoDate, NonBlankText } from "@voyzu/core/types/constraints";
 
 export const ArLedgerEntryDocumentReportLineDto = StrictObject({

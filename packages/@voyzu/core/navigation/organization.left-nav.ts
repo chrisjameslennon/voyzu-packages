@@ -16,13 +16,14 @@ import { organizationReportsModule } from "@voyzu/core/organization-reports";
 
 export const financeTemplateLeftNav = [
   {
-    label: "Finance Template",
+    label: "Finance Admin",
     items: [
       {
         label: "General Ledger",
         icon: "account_balance",
         path: "#organization-settings-general-ledger",
         children: [
+          { label: "Country Tax Settings", routeId: organizationReportsModule.pageRoutes.countryTaxSettings.id },
           { label: "General Ledger Accounts", routeId: organizationGlAccountsModule.pageRoutes.list.id },
           { label: "Reporting Categories", routeId: organizationGlAccountCategoriesModule.pageRoutes.list.id },
         ],

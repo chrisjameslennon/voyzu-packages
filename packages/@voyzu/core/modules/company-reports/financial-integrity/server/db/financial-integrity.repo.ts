@@ -104,8 +104,8 @@ export class FinancialIntegrityRepo {
            jh.posting_date
          FROM journal_line jl
          JOIN journal_header jh ON jh.id = jl.journal_header_id
-         JOIN gl_account ga ON ga.company_id = jh.company_id AND ga.id = jl.gl_account_id
-         WHERE jh.company_id = $1
+         JOIN gl_account ga ON ga.finance_company_id = jh.finance_company_id AND ga.id = jl.gl_account_id
+         WHERE jh.finance_company_id = $1
            AND jh.status = 'POSTED'
            AND jh.posting_date <= $3
        )
@@ -201,7 +201,7 @@ export class FinancialIntegrityRepo {
        FROM journal_header jh
        LEFT JOIN journal_line jl ON jl.journal_header_id = jh.id
        LEFT JOIN line_dimensions ld ON ld.journal_line_id = jl.id
-       WHERE jh.company_id = $1
+       WHERE jh.finance_company_id = $1
          AND jh.status = 'POSTED'
          AND jh.posting_date >= $2
          AND jh.posting_date <= $3
@@ -281,8 +281,8 @@ export class FinancialIntegrityRepo {
        FROM inventory_ledger_entry_header h
        JOIN journal_header jh ON jh.id = h.journal_header_id
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = h.id
-       JOIN inventory_item item ON item.company_id = h.company_id AND item.id = l.item_id
-       WHERE h.company_id = $1
+       JOIN inventory_item item ON item.finance_company_id = h.finance_company_id AND item.id = l.item_id
+       WHERE h.finance_company_id = $1
          AND h.posting_date >= $2
          AND h.posting_date <= $3
          ${documentTypeClause}
@@ -367,7 +367,7 @@ export class FinancialIntegrityRepo {
          ) ORDER BY l.line_number), '[]'::json) AS lines
        FROM ar_subledger_entry_header h
        JOIN ar_subledger_entry_line l ON l.ar_subledger_entry_header_id = h.id
-       WHERE h.company_id = $1
+       WHERE h.finance_company_id = $1
          AND h.posting_date >= $2
          AND h.posting_date <= $3
          ${documentTypeClause}
@@ -432,7 +432,7 @@ export class FinancialIntegrityRepo {
          ) ORDER BY l.line_number), '[]'::json) AS lines
        FROM ap_subledger_entry_header h
        JOIN ap_subledger_entry_line l ON l.ap_subledger_entry_header_id = h.id
-       WHERE h.company_id = $1
+       WHERE h.finance_company_id = $1
          AND h.posting_date >= $2
          AND h.posting_date <= $3
          ${documentTypeClause}
@@ -492,7 +492,7 @@ export class FinancialIntegrityRepo {
          ) ORDER BY l.line_number), '[]'::json) AS lines
        FROM tax_ledger_entry_header h
        JOIN tax_ledger_entry_line l ON l.tax_ledger_entry_header_id = h.id
-       WHERE h.company_id = $1
+       WHERE h.finance_company_id = $1
          AND h.posting_date >= $2
          AND h.posting_date <= $3
          ${documentTypeClause}
@@ -528,8 +528,8 @@ export class FinancialIntegrityRepo {
          (SELECT COUNT(*)::int
           FROM journal_line jl
           JOIN journal_header jh ON jh.id = jl.journal_header_id
-          LEFT JOIN gl_account ga ON ga.company_id = jh.company_id AND ga.id = jl.gl_account_id
-          WHERE jh.company_id = $1
+          LEFT JOIN gl_account ga ON ga.finance_company_id = jh.finance_company_id AND ga.id = jl.gl_account_id
+          WHERE jh.finance_company_id = $1
             AND jh.posting_date >= $2
             AND jh.posting_date <= $3
             AND ga.id IS NULL) AS missing_gl_account_reference_count,

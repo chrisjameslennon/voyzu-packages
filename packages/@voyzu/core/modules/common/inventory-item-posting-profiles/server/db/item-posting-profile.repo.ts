@@ -7,7 +7,7 @@ import type { InsertItemPostingProfileRow, ItemPostingProfileRow, PatchItemPosti
 
 const SELECT_SQL = `
   SELECT ipp.id::int,
-         ipp.company_id::int,
+         ipp.finance_company_id::int,
          ipp.code AS profile_code,
          ipp.name AS profile_name,
          ipp.description,
@@ -38,23 +38,23 @@ const SELECT_SQL = `
          COALESCE((
            SELECT jsonb_agg(jsonb_build_object('type', 'Inventory Categories', 'code', category.code) ORDER BY category.code)
            FROM inventory_category category
-           WHERE category.company_id = ipp.company_id
+           WHERE category.finance_company_id = ipp.finance_company_id
              AND category.posting_profile_id = ipp.id
          ), '[]'::jsonb) AS linked_by
   FROM item_posting_profile ipp
-  LEFT JOIN gl_account rev ON rev.company_id = ipp.company_id AND rev.id = ipp.revenue_gl_account_id
-  LEFT JOIN gl_account cogs ON cogs.company_id = ipp.company_id AND cogs.id = ipp.cogs_gl_account_id
-  LEFT JOIN gl_account purchase ON purchase.company_id = ipp.company_id AND purchase.id = ipp.purchase_expense_gl_account_id
-  LEFT JOIN gl_account consumption ON consumption.company_id = ipp.company_id AND consumption.id = ipp.consumption_gl_account_id
-  LEFT JOIN gl_account gain ON gain.company_id = ipp.company_id AND gain.id = ipp.adjustment_gain_gl_account_id
-  LEFT JOIN gl_account loss ON loss.company_id = ipp.company_id AND loss.id = ipp.adjustment_loss_gl_account_id
+  LEFT JOIN gl_account rev ON rev.finance_company_id = ipp.finance_company_id AND rev.id = ipp.revenue_gl_account_id
+  LEFT JOIN gl_account cogs ON cogs.finance_company_id = ipp.finance_company_id AND cogs.id = ipp.cogs_gl_account_id
+  LEFT JOIN gl_account purchase ON purchase.finance_company_id = ipp.finance_company_id AND purchase.id = ipp.purchase_expense_gl_account_id
+  LEFT JOIN gl_account consumption ON consumption.finance_company_id = ipp.finance_company_id AND consumption.id = ipp.consumption_gl_account_id
+  LEFT JOIN gl_account gain ON gain.finance_company_id = ipp.finance_company_id AND gain.id = ipp.adjustment_gain_gl_account_id
+  LEFT JOIN gl_account loss ON loss.finance_company_id = ipp.finance_company_id AND loss.id = ipp.adjustment_loss_gl_account_id
 `;
 
 function mapRow(row: Record<string, unknown>): ItemPostingProfileRow {
   return {
     ...row,
     id: Number(row.id),
-    company_id: Number(row.company_id),
+    finance_company_id: Number(row.finance_company_id),
     linked_by: Array.isArray(row.linked_by) ? row.linked_by : [],
     creation_date: row.creation_date instanceof Date ? row.creation_date.toISOString() : String(row.creation_date ?? ""),
     creation_actor_type: row.creation_actor_type as ItemPostingProfileRow["creation_actor_type"],
@@ -169,7 +169,7 @@ export class ItemPostingProfileRepo {
   constructor(private readonly db: DbExecutor) { }
 
   async getGlAccount(companyId: number, code: string): Promise<{ id: number; code: string; accountType: "ASSET" | "LIABILITY" | "EQUITY" | "REVENUE" | "EXPENSE"; status: "ACTIVE" | "INACTIVE" } | null> {
-    const { rows } = await this.db.query(`SELECT id::int, code, account_type, status FROM gl_account WHERE company_id = $1 AND code = $2`, [companyId, code]);
+    const { rows } = await this.db.query(`SELECT id::int, code, account_type, status FROM gl_account WHERE finance_company_id = $1 AND code = $2`, [companyId, code]);
     if (!rows[0]) return null;
     return {
       id: Number(rows[0].id),
@@ -197,40 +197,40 @@ export class ItemPostingProfileRepo {
   }
 
   async insert(row: InsertItemPostingProfileRow): Promise<ItemPostingProfileRow> {
-    const accountIds = await this.resolveAccounts(row.company_id, row);
+    const accountIds = await this.resolveAccounts(row.finance_company_id, row);
     await this.db.query(
       `INSERT INTO item_posting_profile (
-        company_id, code, name, description, is_sold, is_purchased, is_consumed, revenue_gl_account_id, cogs_gl_account_id, purchase_expense_gl_account_id,
+        finance_company_id, code, name, description, is_sold, is_purchased, is_consumed, revenue_gl_account_id, cogs_gl_account_id, purchase_expense_gl_account_id,
         consumption_gl_account_id, adjustment_gain_gl_account_id, adjustment_loss_gl_account_id, status,
         creation_date, creation_actor_type, creation_user_id, creation_mutation_id
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`,
       [
-        row.company_id, row.code, row.name, row.description, row.is_sold, row.is_purchased, row.is_consumed,
+        row.finance_company_id, row.code, row.name, row.description, row.is_sold, row.is_purchased, row.is_consumed,
         accountIds.revenue_gl_account_id, accountIds.cogs_gl_account_id,
         accountIds.purchase_expense_gl_account_id, accountIds.consumption_gl_account_id,
         accountIds.adjustment_gain_gl_account_id, accountIds.adjustment_loss_gl_account_id, row.status,
         row.creation_date, row.creation_actor_type, row.creation_user_id ?? null, row.creation_mutation_id ?? null,
       ],
     );
-    const inserted = await this.get(row.company_id, row.code);
+    const inserted = await this.get(row.finance_company_id, row.code);
     if (!inserted) throw new DataError(`Item posting profile ${row.code} not found after insert`);
     return inserted;
   }
 
   async listAll(companyId: number): Promise<ItemPostingProfileRow[]> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.company_id = $1 ORDER BY ipp.code`, [companyId]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.finance_company_id = $1 ORDER BY ipp.code`, [companyId]);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
   async get(companyId: number, code: string): Promise<ItemPostingProfileRow | null> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.company_id = $1 AND ipp.code = $2`, [companyId, code]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.finance_company_id = $1 AND ipp.code = $2`, [companyId, code]);
     return rows[0] ? mapRow(rows[0]) : null;
   }
 
   async batchGet(companyId: number, codes: string[]): Promise<ItemPostingProfileRow[]> {
     if (!codes.length) return [];
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.company_id = $1 AND ipp.code = ANY($2::text[]) ORDER BY ipp.code`, [companyId, codes]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.finance_company_id = $1 AND ipp.code = ANY($2::text[]) ORDER BY ipp.code`, [companyId, codes]);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -238,7 +238,7 @@ export class ItemPostingProfileRepo {
     const { sql, params } = buildWhere(filters);
     const queryParams: unknown[] = [companyId, ...params];
     const tail = buildOrderLimitOffset(queryParams, options);
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.company_id = $1${sql} ${tail}`, queryParams);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.finance_company_id = $1${sql} ${tail}`, queryParams);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -250,7 +250,7 @@ export class ItemPostingProfileRepo {
       return `ipp.${column}::text ILIKE $${params.length}`;
     });
     const tail = buildOrderLimitOffset(params, options);
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.company_id = $1 AND (${likeParts.join(" OR ")}) ${tail}`, params);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ipp.finance_company_id = $1 AND (${likeParts.join(" OR ")}) ${tail}`, params);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -266,7 +266,7 @@ export class ItemPostingProfileRepo {
            updated_actor_type = $16::actor_type,
            updated_user_id = $17,
            updated_mutation_id = $18::uuid
-       WHERE company_id = $1 AND code = $2`,
+       WHERE finance_company_id = $1 AND code = $2`,
       [
         companyId, code, row.code, row.name, row.description, row.is_sold, row.is_purchased, row.is_consumed,
         accountIds.revenue_gl_account_id, accountIds.cogs_gl_account_id,
@@ -318,7 +318,7 @@ export class ItemPostingProfileRepo {
       await this.db.query(
         `UPDATE item_posting_profile
          SET ${sets.join(", ")}
-         WHERE code = $${vals.length - 1} AND company_id = $${vals.length}`,
+         WHERE code = $${vals.length - 1} AND finance_company_id = $${vals.length}`,
         vals,
       );
     }
@@ -329,7 +329,7 @@ export class ItemPostingProfileRepo {
   }
 
   async delete(companyId: number, code: string): Promise<void> {
-    const { rowCount } = await this.db.query(`DELETE FROM item_posting_profile WHERE company_id = $1 AND code = $2`, [companyId, code]);
+    const { rowCount } = await this.db.query(`DELETE FROM item_posting_profile WHERE finance_company_id = $1 AND code = $2`, [companyId, code]);
     if (!rowCount) throw new DataError(`Item posting profile ${code} not found`);
   }
 }

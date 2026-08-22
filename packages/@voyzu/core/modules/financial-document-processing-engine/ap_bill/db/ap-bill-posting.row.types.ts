@@ -10,7 +10,7 @@ export interface CompanyPostingContextRow {
 
 export interface CounterpartyPostingContextRow {
   id: number;
-  company_id: number;
+  finance_company_id: number;
   code: string;
   name: string;
   status: "ACTIVE" | "INACTIVE";
@@ -148,7 +148,7 @@ export interface TaxAuthorityRow {
 
 export interface InsertApSubledgerEntryRow {
   code: string;
-  company_id: number;
+  finance_company_id: number;
   journal_header_id: number;
   ap_counterparty_id: number;
   document_type_code: "AP_BILL";
@@ -170,7 +170,7 @@ export interface ApSubledgerEntryRow extends InsertApSubledgerEntryRow {
 
 export interface InsertTaxLedgerHeaderRow {
   code: string;
-  company_id: number;
+  finance_company_id: number;
   journal_header_id: number;
   document_type_code: "AP_BILL";
   document_id: string;

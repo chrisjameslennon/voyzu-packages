@@ -5,7 +5,7 @@ export function toDto(row: FinancialPeriodRow): FinancialPeriodResponseDto {
   return {
     id: row.id,
     financialYearId: row.fiscal_year_id,
-    companyId: row.company_id,
+    companyId: row.finance_company_id,
     code: row.code,
     name: row.name,
     startDate: row.start_date,

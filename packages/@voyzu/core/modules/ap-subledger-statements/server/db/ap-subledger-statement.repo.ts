@@ -36,7 +36,7 @@ export class ApSubledgerStatementRepo {
        FROM ap_counterparty c
        JOIN ap_subledger_entry_header e ON e.ap_counterparty_id = c.id
        JOIN ap_subledger_entry_line l ON l.ap_subledger_entry_header_id = e.id
-       WHERE c.company_id = $1
+       WHERE c.finance_company_id = $1
        GROUP BY c.id, c.code, c.name
        ORDER BY c.code`,
       [companyId],
@@ -68,7 +68,7 @@ export class ApSubledgerStatementRepo {
        JOIN ap_subledger_entry_line l ON l.ap_subledger_entry_header_id = e.id
        LEFT JOIN ap_subledger_entry_header target_h ON target_h.id = l.target_entry_header_id
        LEFT JOIN ap_subledger_entry_header source_h ON source_h.id = l.source_entry_header_id
-       WHERE e.company_id = $1
+       WHERE e.finance_company_id = $1
          AND c.code = $2
        GROUP BY e.id, e.code, e.posting_date, h.document_type_code, h.document_type_label, h.document_id,
          COALESCE(target_h.document_id, source_h.document_id),

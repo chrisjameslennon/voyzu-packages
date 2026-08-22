@@ -3,7 +3,6 @@
 import { financeApiUrl } from "@voyzu/core/common/client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
 import type { FinancialYearResponseDto } from "@voyzu/core/types/modules/financial-years";
 import type { TaxActivityResponseDto } from "@voyzu/core/types/modules/company-reports";
 import { Breadcrumbs } from "@voyzu/ui-components";
@@ -50,7 +49,9 @@ function monthName(month: number): string {
   return new Intl.DateTimeFormat(undefined, { month: "short" }).format(new Date(2026, month - 1, 1));
 }
 
-function deriveFilingPeriods(company: Pick<CompanyResponseDto, "taxFilingAnchorMonth" | "taxFilingIntervalMonths">, year: FinancialYearResponseDto | undefined): FilingPeriod[] {
+interface FinanceCompanyFilingSettings { id: number; taxFilingAnchorMonth: number; taxFilingIntervalMonths: number }
+
+function deriveFilingPeriods(company: FinanceCompanyFilingSettings, year: FinancialYearResponseDto | undefined): FilingPeriod[] {
   if (!year) return [];
   const start = parseIso(year.startDate);
   const end = parseIso(year.endDate);
@@ -92,7 +93,7 @@ interface TaxActivityReportProps {
   initialSelectedYearCode: string;
   initialSelectedPeriodValue: string;
   organizationName: string;
-  selectedCompany: Pick<CompanyResponseDto, "id" | "taxFilingAnchorMonth" | "taxFilingIntervalMonths"> | null;
+  selectedCompany: FinanceCompanyFilingSettings | null;
 }
 
 export function TaxActivityReport({

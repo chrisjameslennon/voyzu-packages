@@ -11,10 +11,11 @@ export async function getCompanySettingsUiState(
   db: DbExecutor = getDb(),
 ): Promise<CompanySettingsUiState> {
   const { rows } = await db.query(
-    `SELECT status, use_organization_standard_settings
-       FROM company
-      WHERE id = $1
-        AND status != 'DELETED'`,
+    `SELECT COALESCE(c.status, 'ACTIVE') AS status, fc.use_organization_standard_settings
+       FROM finance_company fc
+       LEFT JOIN company c ON c.id = fc.company_id
+      WHERE fc.id = $1
+        AND (fc.is_template = true OR c.status != 'DELETED')`,
     [companyId],
   );
   const usesOrganizationStandardSettings = rows[0]?.use_organization_standard_settings === true;

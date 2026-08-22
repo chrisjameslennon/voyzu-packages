@@ -519,7 +519,7 @@ async function persistInventoryDocument(context: ResolvedContext, db: DbExecutor
   if (!options.suppressJournalPosting) {
     journalHeader = await journalRepo.insert({
       id: context.reservedJournalHeaderId ?? undefined,
-      company_id: context.data.company!.id,
+      finance_company_id: context.data.company!.id,
       company_code: context.data.company!.code,
       company_name: context.data.company!.name,
       document_type_code: context.request.document_type,
@@ -553,7 +553,7 @@ async function persistInventoryDocument(context: ResolvedContext, db: DbExecutor
   const journalHeaderId = journalHeader?.id ?? options.sourceJournalHeaderId!;
   const ledgerHeader = await txRepo.insertInventoryLedgerHeader({
     code: `${documentPrefix(context.request.document_type)}-${journalHeaderId}`,
-    company_id: context.data.company!.id,
+    finance_company_id: context.data.company!.id,
     journal_header_id: journalHeaderId,
     source_document_type_code: ledgerSourceDocumentType(context.request),
     document_id: context.detailedDocument.document_id,

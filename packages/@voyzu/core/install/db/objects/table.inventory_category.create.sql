@@ -5,7 +5,7 @@
 
 CREATE TABLE IF NOT EXISTS inventory_category (
     id                      BIGSERIAL PRIMARY KEY,
-    company_id              BIGINT NOT NULL,
+    finance_company_id              BIGINT NOT NULL,
     code                    business_code NOT NULL,
     name                    display_name NOT NULL,
     description             description_text NOT NULL,
@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS inventory_category (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_inventory_category_company FOREIGN KEY (company_id) REFERENCES company(id),
-    CONSTRAINT fk_inventory_category_posting_profile FOREIGN KEY (company_id, posting_profile_id) REFERENCES item_posting_profile(company_id, id),
-    CONSTRAINT uq_inventory_category_company_code UNIQUE (company_id, code),
-    CONSTRAINT uq_inventory_category_company_id UNIQUE (company_id, id)
+    CONSTRAINT fk_inventory_category_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_inventory_category_posting_profile FOREIGN KEY (finance_company_id, posting_profile_id) REFERENCES item_posting_profile(finance_company_id, id),
+    CONSTRAINT uq_inventory_category_company_code UNIQUE (finance_company_id, code),
+    CONSTRAINT uq_inventory_category_finance_company_id UNIQUE (finance_company_id, id)
 );

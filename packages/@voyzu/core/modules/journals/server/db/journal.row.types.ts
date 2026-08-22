@@ -5,7 +5,7 @@ export interface JournalHeaderRow {
   ar_subledger_entry_code: string | null;
   ap_subledger_entry_code: string | null;
   tax_ledger_entry_code: string | null;
-  company_id: number;
+  finance_company_id: number;
   company_code: string;
   company_name: string;
   document_type_code: string;
@@ -58,7 +58,7 @@ export interface JournalHeaderRow {
 
 export interface InsertJournalHeaderRow {
   id?: number;
-  company_id: number;
+  finance_company_id: number;
   company_code: string;
   company_name: string;
   document_type_code: string;

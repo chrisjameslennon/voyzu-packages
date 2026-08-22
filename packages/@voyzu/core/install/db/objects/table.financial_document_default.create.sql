@@ -4,7 +4,7 @@
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS financial_document_default (
-    company_id                       BIGINT NOT NULL,
+    finance_company_id                       BIGINT NOT NULL,
     document_code                    TEXT NOT NULL,
     code                             business_code NOT NULL,
     name                             display_name NOT NULL,
@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS financial_document_default (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_financial_document_default_company FOREIGN KEY (company_id) REFERENCES company(id),
-    CONSTRAINT fk_financial_document_default_gl_account FOREIGN KEY (company_id, gl_account_id) REFERENCES gl_account(company_id, id),
-    CONSTRAINT fk_financial_document_default_bank_cash_control_account FOREIGN KEY (company_id, bank_cash_control_account_id) REFERENCES bank_cash_control_account(company_id, id),
+    CONSTRAINT fk_financial_document_default_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_financial_document_default_gl_account FOREIGN KEY (finance_company_id, gl_account_id) REFERENCES gl_account(finance_company_id, id),
+    CONSTRAINT fk_financial_document_default_bank_cash_control_account FOREIGN KEY (finance_company_id, bank_cash_control_account_id) REFERENCES bank_cash_control_account(finance_company_id, id),
     CONSTRAINT fk_financial_document_default_document FOREIGN KEY (document_code) REFERENCES financial_document_type(code),
 
     CONSTRAINT chk_financial_document_default_target
@@ -62,9 +62,9 @@ CREATE TABLE IF NOT EXISTS financial_document_default (
             )
         ),
 
-    CONSTRAINT pk_financial_document_default PRIMARY KEY (company_id, document_code, code)
+    CONSTRAINT pk_financial_document_default PRIMARY KEY (finance_company_id, document_code, code)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS ux_financial_document_default_document_bank_cash_control_account
-    ON financial_document_default(company_id, document_code, bank_cash_control_account_id)
+    ON financial_document_default(finance_company_id, document_code, bank_cash_control_account_id)
     WHERE bank_cash_control_account_id IS NOT NULL;

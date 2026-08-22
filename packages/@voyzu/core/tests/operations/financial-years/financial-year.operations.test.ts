@@ -5,7 +5,7 @@ import type { FinancialYearCreateRequestDto } from "@voyzu/core/types/modules/fi
 import type { FinancialYearResponseDto } from "@voyzu/core/types/modules/financial-years/financial-year.response.dto";
 
 import { getPool } from "@voyzu/capability/db";
-import { listCompanies } from "@voyzu/organization/companies/operations";
+import { listCompanies } from "@voyzu/erp-core/companies/operations";
 import {
   listFinancialYears,
   getFinancialYear,

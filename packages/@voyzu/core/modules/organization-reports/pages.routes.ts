@@ -1,13 +1,21 @@
 import { CompaniesReportPage, CountriesReportPage, CountryTaxSettingsReportPage, CurrenciesReportPage, DimensionsReportPage, FinancialDocumentTypesReportPage, GlAccountsReportPage, InventoryCategoriesReportPage, InventoryItemsReportPage, FinancialDocumentDefaultsReportPage, ReportingCategoriesReportPage, InventoryItemPostingCodesReportPage, LedgerBackedAccountCodesReportPage } from "@voyzu/core/organization-reports/server";
 
 export const pageRoutes = {
+  countryTaxSettings: {
+    id: "voyzu.organizationReports.page.countryTaxSettings",
+    pageTitle: "Country Tax Settings",
+    path: "/finance/reports/lists/country-tax-settings",
+    Page: CountryTaxSettingsReportPage,
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
+    auth: { required: true, minRole: "ORGANIZATION_USER" }
+  },
   dimensions: {
     id: "voyzu.organizationReports.page.dimensions",
     pageTitle: "Dimensions",
     helpPath: "modules-help/organization-financial-settings/reports/dimensions",
     path: "/finance/reports/lists/dimensions",
     Page: DimensionsReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   financialDocumentTypes: {
@@ -16,7 +24,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/reports/financial-document-types",
     path: "/finance/reports/lists/financial-document-types",
     Page: FinancialDocumentTypesReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   glAccounts: {
@@ -25,7 +33,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/reports/general-ledger-accounts",
     path: "/finance/reports/lists/general-ledger-accounts",
     Page: GlAccountsReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   inventoryCategories: {
@@ -34,7 +42,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/reports/inventory-categories",
     path: "/finance/reports/lists/inventory-categories",
     Page: InventoryCategoriesReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   inventoryItems: {
@@ -43,7 +51,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/reports/inventory-items",
     path: "/finance/reports/lists/inventory-items",
     Page: InventoryItemsReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   financialDocumentDefaults: {
@@ -52,7 +60,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/reports/financial-document-defaults",
     path: "/finance/reports/lists/financial-document-defaults",
     Page: FinancialDocumentDefaultsReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   glReportingCategories: {
@@ -61,7 +69,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/reports/general-ledger-reporting-categories",
     path: "/finance/reports/lists/general-ledger-reporting-categories",
     Page: ReportingCategoriesReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   ledgerBackedAccountCodes: {
@@ -70,7 +78,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/reports/ledger-backed-account-codes",
     path: "/finance/reports/lists/ledger-backed-account-codes",
     Page: LedgerBackedAccountCodesReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   inventoryItemPostingCodes: {
@@ -79,7 +87,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/reports/inventory-item-posting-codes",
     path: "/finance/reports/lists/inventory-item-posting-codes",
     Page: InventoryItemPostingCodesReportPage,
-    breadcrumbBase: [{ label: "Finance Template" }, { label: "Reports" }, { label: "Lists" }],
+    breadcrumbBase: [{ label: "Finance Admin" }, { label: "Reports" }, { label: "Lists" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   },
   dimensionsPrintable: {
@@ -151,6 +159,14 @@ export const pageRoutes = {
     pageTitle: "Ledger Backed Account Codes",
     path: "/finance/reports/lists/ledger-backed-account-codes/printable",
     Page: LedgerBackedAccountCodesReportPage,
+    unframed: true,
+    auth: { required: true, minRole: "ORGANIZATION_USER" }
+  },
+  countryTaxSettingsPrintable: {
+    id: "voyzu.organizationReports.page.countryTaxSettings.printable",
+    pageTitle: "Country Tax Settings",
+    path: "/finance/reports/lists/country-tax-settings/printable",
+    Page: CountryTaxSettingsReportPage,
     unframed: true,
     auth: { required: true, minRole: "ORGANIZATION_USER" }
   }

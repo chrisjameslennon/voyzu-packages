@@ -325,7 +325,7 @@ function validateCounterparty(input: ApBillRequestDto, data: ApBillDataValidatio
     errors.push(`AP counterparty ${code} was not found or created`);
     return;
   }
-  if (data.company && data.counterparty.company_id !== data.company.id) errors.push(`AP counterparty ${data.counterparty.code} does not belong to company ${data.company.code}`);
+  if (data.company && data.counterparty.finance_company_id !== data.company.id) errors.push(`AP counterparty ${data.counterparty.code} does not belong to company ${data.company.code}`);
   if (input.ap_counterparty_code && data.counterparty.code !== input.ap_counterparty_code) errors.push(`Resolved AP counterparty ${data.counterparty.code} does not match requested counterparty ${input.ap_counterparty_code}`);
   if (data.counterparty.status !== "ACTIVE") errors.push(`AP counterparty ${data.counterparty.code} is not ACTIVE`);
 }

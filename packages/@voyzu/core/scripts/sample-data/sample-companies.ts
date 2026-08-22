@@ -3,7 +3,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { createCompany } from "@voyzu/organization/companies/server";
+import { createCompany } from "@voyzu/erp-core/companies/server";
 import { ConflictError } from "@voyzu/capability/errors";
 
 const COMPANIES: Record<string, { name: string; suffix: string }> = {
@@ -31,8 +31,7 @@ async function main() {
         name: `${meta.name} ${meta.suffix}`,
         countryCode: country.code,
         baseCurrencyCode: country.currency_code,
-        useOrganizationStandardSettings: country.code !== "NZ",
-      }, { actorType: "SYSTEM" });
+      });
       console.log(`created company SAMP-${country.code}`);
     } catch (err) {
       if (err instanceof ConflictError) {
@@ -41,10 +40,35 @@ async function main() {
         throw err;
       }
     }
+
+    await pool.query(
+      `INSERT INTO finance_company (
+         id, company_id, tax_filing_anchor_month, tax_filing_interval_months,
+         use_organization_standard_settings, is_template,
+         creation_actor_type, updated_actor_type
+       )
+       SELECT
+         c.id,
+         c.id,
+         fc.tax_filing_anchor_month,
+         fc.tax_filing_interval_months,
+         $2,
+         FALSE,
+         'SYSTEM',
+         'SYSTEM'
+       FROM company c
+       JOIN finance_country fc ON fc.country_code = c.country_code
+       WHERE c.code = $1
+       ON CONFLICT (company_id) DO UPDATE SET
+         tax_filing_anchor_month = EXCLUDED.tax_filing_anchor_month,
+         tax_filing_interval_months = EXCLUDED.tax_filing_interval_months,
+         use_organization_standard_settings = EXCLUDED.use_organization_standard_settings,
+         updated_date = NOW(), updated_actor_type = 'SYSTEM'`,
+      [`SAMP-${country.code}`, country.code !== "NZ"],
+    );
   }
 
   await pool.end();
 }
 
 main();
-

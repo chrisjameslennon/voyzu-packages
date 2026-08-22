@@ -4,7 +4,7 @@ import { after, describe, it } from "node:test";
 import type { ArInvoiceRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
 import type { ArReceiptApplicationRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt-application.request.dto";
 import type { ArReceiptRequestDto } from "@voyzu/core/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
-import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies/company.response.dto";
+import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies/company.response.dto";
 import { getPool } from "@voyzu/capability/db";
 import { getArCounterpartyStatement } from "../../../modules/ar-subledger-statements/operations";
 import { processArInvoice, processArReceipt, processArReceiptApplication } from "../../../modules/financial-document-processing-engine/operations";
@@ -68,7 +68,7 @@ async function getCompany(): Promise<CompanyResponseDto> {
             tax_filing_anchor_month AS "taxFilingAnchorMonth",
             tax_filing_interval_months AS "taxFilingIntervalMonths",
             status,
-            EXISTS (SELECT 1 FROM journal_header WHERE company_id = company.id) AS "hasPostings",
+            EXISTS (SELECT 1 FROM journal_header WHERE finance_company_id = company.id) AS "hasPostings",
             creation_date::text AS "creationDate",
             creation_actor_type AS "creationActorType",
             creation_user_id AS "creationUserId",

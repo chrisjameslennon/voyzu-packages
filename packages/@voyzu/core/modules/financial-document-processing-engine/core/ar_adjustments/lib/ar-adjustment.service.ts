@@ -180,7 +180,7 @@ function syntheticInlineCounterparty(request: ArCreditNoteRequestDto | ArOpening
   if (!request.ar_counterparty?.code) throw new InputValidationError("ar_counterparty.code is required");
   return {
     id: 0,
-    company_id: companyId,
+    finance_company_id: companyId,
     code: request.ar_counterparty.code,
     name: request.ar_counterparty.name,
     status: request.ar_counterparty.status,
@@ -1048,7 +1048,7 @@ async function insertTaxLines(repo: ArAdjustmentPostingRepo, context: ResolvedCo
   if (context.documentType !== "AR_CREDIT_NOTE" || generated.taxDetails.length === 0) return [];
   const taxHeader = await repo.insertTaxHeader({
     code: `${CONFIG.AR_CREDIT_NOTE.taxCodePrefix}-${journalHeaderId}`,
-    company_id: context.company.id,
+    finance_company_id: context.company.id,
     journal_header_id: journalHeaderId,
     document_type_code: context.documentType,
     document_id: context.detailedDocument.document_id,
@@ -1129,7 +1129,7 @@ async function processArAdjustmentUnchecked(
 
     const journalHeader = await txJournalRepo.insert({
       id: txContext.reservedJournalHeaderId ?? undefined,
-      company_id: txContext.company.id,
+      finance_company_id: txContext.company.id,
       company_code: txContext.company.code,
       company_name: txContext.company.name,
       document_type_code: documentType,
@@ -1169,7 +1169,7 @@ async function processArAdjustmentUnchecked(
     const postedJournal = await txJournalRepo.setPosted(journalHeader.id, txGenerated.totalDebitBaseAmount, txGenerated.totalCreditBaseAmount);
     const arHeader = await txRepo.insertArHeader({
       code: `${CONFIG[documentType].arCodePrefix}-${journalHeader.id}`,
-      company_id: txContext.company.id,
+      finance_company_id: txContext.company.id,
       journal_header_id: journalHeader.id,
       ar_counterparty_id: txContext.counterparty.id,
       document_type_code: documentType,

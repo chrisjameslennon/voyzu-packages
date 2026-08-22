@@ -75,7 +75,7 @@ export class TrialBalanceSnapshotRepo {
               COUNT(jl.id)::text AS journal_line_count
        FROM journal_header jh
        LEFT JOIN journal_line jl ON jl.journal_header_id = jh.id
-       WHERE jh.company_id = $1
+       WHERE jh.finance_company_id = $1
          AND jh.status = 'POSTED'
          AND jh.posting_date <= $2`,
       [companyId, asAtDate],
@@ -93,7 +93,7 @@ export class TrialBalanceSnapshotRepo {
       `SELECT MAX(max_journal_header_id)::text AS max_journal_header_id,
               COUNT(*)::text AS line_count
        FROM trial_balance_snapshot
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND as_at_date = $2
          AND basis = $3`,
       [companyId, asAtDate, BASIS],
@@ -122,7 +122,7 @@ export class TrialBalanceSnapshotRepo {
 
       await client.query(
         `DELETE FROM trial_balance_snapshot
-         WHERE company_id = $1
+         WHERE finance_company_id = $1
            AND as_at_date = $2
            AND basis = $3`,
         [companyId, reportDate, BASIS],
@@ -132,7 +132,7 @@ export class TrialBalanceSnapshotRepo {
 
       await client.query(
         `INSERT INTO trial_balance_snapshot (
-           company_id,
+           finance_company_id,
            as_at_date,
            basis,
            max_journal_header_id,
@@ -151,7 +151,7 @@ export class TrialBalanceSnapshotRepo {
            balance_amount
          )
          SELECT
-           jh.company_id,
+           jh.finance_company_id,
            $2::date AS as_at_date,
            $3 AS basis,
            $4::bigint AS max_journal_header_id,
@@ -170,13 +170,13 @@ export class TrialBalanceSnapshotRepo {
            SUM(CASE WHEN jl.dr_cr = 'DR' THEN jl.base_currency_amount ELSE -jl.base_currency_amount END) AS balance_amount
          FROM journal_line jl
          JOIN journal_header jh ON jh.id = jl.journal_header_id
-         JOIN gl_account ga ON ga.company_id = $6 AND ga.id = jl.gl_account_id
-         LEFT JOIN gl_account_category gac ON gac.company_id = ga.company_id AND gac.id = ga.account_category_id
-         WHERE jh.company_id = $1
+         JOIN gl_account ga ON ga.finance_company_id = $6 AND ga.id = jl.gl_account_id
+         LEFT JOIN gl_account_category gac ON gac.finance_company_id = ga.finance_company_id AND gac.id = ga.account_category_id
+         WHERE jh.finance_company_id = $1
            AND jh.status = 'POSTED'
            AND jh.posting_date <= $2
          GROUP BY
-           jh.company_id,
+           jh.finance_company_id,
            jl.gl_account_id,
            ga.code,
            ga.name,
@@ -211,7 +211,7 @@ export class TrialBalanceSnapshotRepo {
          credit_amount,
          balance_amount
        FROM trial_balance_snapshot
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND as_at_date = $2
          AND basis = $3
          ${accountTypeClause}
@@ -244,7 +244,7 @@ export class TrialBalanceSnapshotRepo {
       `WITH opening AS (
          SELECT *
          FROM trial_balance_snapshot
-         WHERE company_id = $1
+         WHERE finance_company_id = $1
            AND as_at_date = $2
            AND basis = $4
            AND account_type = ANY($5::account_type[])
@@ -252,7 +252,7 @@ export class TrialBalanceSnapshotRepo {
        closing AS (
          SELECT *
          FROM trial_balance_snapshot
-         WHERE company_id = $1
+         WHERE finance_company_id = $1
            AND as_at_date = $3
            AND basis = $4
            AND account_type = ANY($5::account_type[])
@@ -321,7 +321,7 @@ export class TrialBalanceSnapshotRepo {
       `SELECT
          COALESCE(SUM(-balance_amount), 0) AS profit
        FROM trial_balance_snapshot
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND as_at_date = $2
          AND basis = $3
          AND account_type IN ('REVENUE', 'EXPENSE')`,

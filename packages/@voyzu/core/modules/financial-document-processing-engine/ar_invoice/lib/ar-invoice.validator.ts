@@ -424,7 +424,7 @@ function validateCounterparty(input: ArInvoiceRequestDto, data: ArInvoiceDataVal
     errors.push(`AR counterparty ${code} was not found or created`);
     return;
   }
-  if (data.company && data.counterparty.company_id !== data.company.id) {
+  if (data.company && data.counterparty.finance_company_id !== data.company.id) {
     errors.push(`AR counterparty ${data.counterparty.code} does not belong to company ${data.company.code}`);
   }
   if (input.ar_counterparty_code && data.counterparty.code !== input.ar_counterparty_code) {

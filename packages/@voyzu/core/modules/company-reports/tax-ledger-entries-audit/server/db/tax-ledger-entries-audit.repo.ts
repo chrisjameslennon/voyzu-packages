@@ -5,7 +5,7 @@ const ENTRY_FIELDS: Array<{ key: string; label: string }> = [
   { key: "id", label: "ID" },
   { key: "tax_ledger_entry_code", label: "Tax Ledger Entry Code" },
   { key: "line_number", label: "Line Number" },
-  { key: "company_id", label: "Company ID" },
+  { key: "finance_company_id", label: "Company ID" },
   { key: "journal_header_id", label: "Journal Header ID" },
   { key: "document_id", label: "Document ID" },
   { key: "description", label: "Description" },
@@ -52,7 +52,7 @@ export class TaxLedgerEntriesAuditRepo {
          l.id,
          e.code AS tax_ledger_entry_code,
          l.line_number,
-         e.company_id,
+         e.finance_company_id,
          e.journal_header_id,
          e.document_id,
          e.description,
@@ -77,7 +77,7 @@ export class TaxLedgerEntriesAuditRepo {
        FROM tax_ledger_entry_header e
        JOIN tax_ledger_entry_line l ON l.tax_ledger_entry_header_id = e.id
        JOIN journal_header h ON h.id = e.journal_header_id
-       WHERE e.company_id = $1
+       WHERE e.finance_company_id = $1
          AND e.posting_date BETWEEN $2 AND $3
        ORDER BY e.posting_date ASC, e.code ASC, l.line_number ASC`,
       [companyId, fromDate, toDate],

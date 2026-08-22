@@ -17,18 +17,18 @@ WITH seed (company_code, document_code, code, name, target_type, allowed_account
     ('TEMPLATE', 'TAX_REFUND', 'BANK_CASH_ACCOUNT', 'Tax refund bank / cash account', 'BANK_CASH_ACCOUNT', ARRAY['ASSET']::text[], 'bank_cash_account_code', 'HEADER', NULL, 'BANK_OPERATING', 'ACTIVE')
 )
 INSERT INTO financial_document_default (
-  company_id, document_code, code, name, target_type, allowed_account_types,
+  finance_company_id, document_code, code, name, target_type, allowed_account_types,
   override_property_name, override_scope, gl_account_id, bank_cash_control_account_id,
   status, creation_actor_type, updated_actor_type
 )
-SELECT c.id, s.document_code, s.code, s.name, s.target_type, s.allowed_account_types,
+SELECT fc.id, s.document_code, s.code, s.name, s.target_type, s.allowed_account_types,
   s.override_property_name, s.override_scope, ga.id, bca.id,
   s.status, 'SYSTEM', 'SYSTEM'
 FROM seed s
-JOIN company c ON c.code = s.company_code
-LEFT JOIN gl_account ga ON ga.company_id = c.id AND ga.code = s.gl_account_code
-LEFT JOIN bank_cash_control_account bca ON bca.company_id = c.id AND bca.code = s.bank_cash_control_account_code
-ON CONFLICT (company_id, document_code, code) DO UPDATE SET
+JOIN finance_company fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
+LEFT JOIN gl_account ga ON ga.finance_company_id = fc.id AND ga.code = s.gl_account_code
+LEFT JOIN bank_cash_control_account bca ON bca.finance_company_id = fc.id AND bca.code = s.bank_cash_control_account_code
+ON CONFLICT (finance_company_id, document_code, code) DO UPDATE SET
   name = EXCLUDED.name,
   target_type = EXCLUDED.target_type,
   allowed_account_types = EXCLUDED.allowed_account_types,

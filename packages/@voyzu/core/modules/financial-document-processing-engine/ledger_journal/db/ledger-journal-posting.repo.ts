@@ -87,7 +87,7 @@ function sourceJournalHeaderRow(row: Record<string, unknown>): SourceJournalHead
   return {
     id: Number(row.id),
     code: String(row.code),
-    company_id: Number(row.company_id),
+    finance_company_id: Number(row.finance_company_id),
     company_code: String(row.company_code),
     company_name: String(row.company_name),
     document_type_code: String(row.document_type_code),
@@ -116,9 +116,9 @@ export class LedgerJournalPostingRepo {
 
   async getCompanyByCode(code: string): Promise<CompanyPostingContextRow | null> {
     const { rows } = await this.db.query(
-      `SELECT id, code, name, base_currency_code, status
-       FROM company
-       WHERE code = $1`,
+      `SELECT fc.id, c.code, c.name, c.base_currency_code, c.status
+       FROM finance_company fc JOIN company c ON c.id = fc.company_id
+       WHERE c.code = $1 AND fc.is_template = false`,
       [code],
     );
     return rows[0] ? companyRow(rows[0] as Record<string, unknown>) : null;
@@ -156,7 +156,7 @@ export class LedgerJournalPostingRepo {
          fp.end_date AS period_end_date
        FROM fiscal_period fp
        JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-       WHERE fp.company_id = $1
+       WHERE fp.finance_company_id = $1
          AND $2::date BETWEEN fp.start_date AND fp.end_date
        ORDER BY CASE WHEN fy.status = 'OPEN' AND fp.status = 'OPEN' THEN 0 ELSE 1 END, fp.start_date ASC
        LIMIT 1`,
@@ -170,7 +170,7 @@ export class LedgerJournalPostingRepo {
     const { rows } = await this.db.query(
       `SELECT id, code, name, status
        FROM gl_account
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND code = ANY($2::text[])`,
       [companyId, codes],
     );
@@ -185,41 +185,41 @@ export class LedgerJournalPostingRepo {
               pc.code AS source_code,
               pc.status AS source_status
        FROM financial_document_default pc
-       LEFT JOIN bank_cash_control_account bca ON bca.company_id = pc.company_id AND bca.id = pc.bank_cash_control_account_id
-       JOIN gl_account ga ON ga.company_id = pc.company_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
-       WHERE pc.company_id = $1 AND ga.code = ANY($2::text[])
+       LEFT JOIN bank_cash_control_account bca ON bca.finance_company_id = pc.finance_company_id AND bca.id = pc.bank_cash_control_account_id
+       JOIN gl_account ga ON ga.finance_company_id = pc.finance_company_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
+       WHERE pc.finance_company_id = $1 AND ga.code = ANY($2::text[])
        UNION ALL
        SELECT ga.code AS gl_account_code,
               'CONTROL_ACCOUNT'::text AS source,
               ca.code AS source_code,
               ca.status AS source_status
        FROM ar_control_account ca
-       JOIN gl_account ga ON ga.company_id = ca.company_id AND ga.id = ca.gl_account_id
-       WHERE ca.company_id = $1 AND ga.code = ANY($2::text[])
+       JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
+       WHERE ca.finance_company_id = $1 AND ga.code = ANY($2::text[])
        UNION ALL
        SELECT ga.code AS gl_account_code,
               'CONTROL_ACCOUNT'::text AS source,
               ca.code AS source_code,
               ca.status AS source_status
        FROM ap_control_account ca
-       JOIN gl_account ga ON ga.company_id = ca.company_id AND ga.id = ca.gl_account_id
-       WHERE ca.company_id = $1 AND ga.code = ANY($2::text[])
+       JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
+       WHERE ca.finance_company_id = $1 AND ga.code = ANY($2::text[])
        UNION ALL
         SELECT ga.code AS gl_account_code,
                'TAX_CONTROL_ACCOUNT'::text AS source,
                tmt.code AS source_code,
                tmt.status AS source_status
         FROM tax_control_account tmt
-        JOIN gl_account ga ON ga.company_id = tmt.company_id AND ga.id = tmt.gl_account_id
-        WHERE tmt.company_id = $1 AND ga.code = ANY($2::text[])
+        JOIN gl_account ga ON ga.finance_company_id = tmt.finance_company_id AND ga.id = tmt.gl_account_id
+        WHERE tmt.finance_company_id = $1 AND ga.code = ANY($2::text[])
         UNION ALL
         SELECT ga.code AS gl_account_code,
                'BANK_CASH'::text AS source,
                bca.code AS source_code,
                bca.status AS source_status
         FROM bank_cash_control_account bca
-        JOIN gl_account ga ON ga.company_id = bca.company_id AND ga.id = bca.gl_account_id
-        WHERE bca.company_id = $1 AND ga.code = ANY($2::text[])`,
+        JOIN gl_account ga ON ga.finance_company_id = bca.finance_company_id AND ga.id = bca.gl_account_id
+        WHERE bca.finance_company_id = $1 AND ga.code = ANY($2::text[])`,
       [companyId, codes],
     );
     return rows.map((row: Record<string, unknown>) => protectedLinkRow(row));
@@ -237,8 +237,8 @@ export class LedgerJournalPostingRepo {
          dv.name AS dimension_value_name,
          dv.status AS dimension_value_status
        FROM dimension_value dv
-       JOIN dimension d ON d.company_id = dv.company_id AND d.id = dv.dimension_id
-       WHERE dv.company_id = $1
+       JOIN dimension d ON d.finance_company_id = dv.finance_company_id AND d.id = dv.dimension_id
+       WHERE dv.finance_company_id = $1
          AND (d.code, dv.name) IN (
          SELECT * FROM unnest($2::text[], $3::text[])
        )`,
@@ -251,7 +251,7 @@ export class LedgerJournalPostingRepo {
     const { rows } = await this.db.query(
       `SELECT *
        FROM journal_header
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND code = $2`,
       [companyId, code],
     );

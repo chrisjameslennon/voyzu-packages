@@ -71,10 +71,10 @@ export class ProfitLossRepo {
          END AS amount
        FROM journal_line jl
        JOIN journal_header jh ON jh.id = jl.journal_header_id
-       JOIN gl_account ga ON ga.company_id = jh.company_id AND ga.id = jl.gl_account_id
-       LEFT JOIN gl_account_category gac ON gac.company_id = ga.company_id AND gac.id = ga.account_category_id
+       JOIN gl_account ga ON ga.finance_company_id = jh.finance_company_id AND ga.id = jl.gl_account_id
+       LEFT JOIN gl_account_category gac ON gac.finance_company_id = ga.finance_company_id AND gac.id = ga.account_category_id
        JOIN line_dimensions ld ON ld.journal_line_id = jl.id
-       WHERE jh.company_id = $1
+       WHERE jh.finance_company_id = $1
          AND jh.status = 'POSTED'
          AND jh.posting_date >= $2
          AND jh.posting_date <= $3

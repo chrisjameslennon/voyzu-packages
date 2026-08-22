@@ -19,7 +19,8 @@ const LEGACY_SELECTED_COMPANY_COOKIE = "selectedCompanyId";
 
 async function getTemplateCompanyId(db: DbExecutor): Promise<number> {
   const { rows } = await db.query(
-    "SELECT id FROM company WHERE is_template = true AND status != 'DELETED' ORDER BY id LIMIT 1",
+    `SELECT id FROM finance_company
+     WHERE is_template = true ORDER BY id LIMIT 1`,
   );
   const id = rows[0]?.id == null ? null : Number(rows[0].id);
   if (!id) throw new BusinessRuleError("Template company is not configured");
@@ -31,7 +32,11 @@ async function getCompanySettingsState(
   db: DbExecutor,
 ): Promise<{ id: number; isTemplate: boolean; status: string; useOrganizationStandardSettings: boolean }> {
   const { rows } = await db.query(
-    "SELECT id, is_template, status, use_organization_standard_settings FROM company WHERE id = $1 AND status != 'DELETED'",
+    `SELECT fc.id, fc.is_template, COALESCE(c.status, 'ACTIVE') AS status,
+            fc.use_organization_standard_settings
+     FROM finance_company fc
+     LEFT JOIN company c ON c.id = fc.company_id
+     WHERE fc.id = $1 AND (fc.is_template = true OR c.status != 'DELETED')`,
     [companyId],
   );
   const row = rows[0];
@@ -46,7 +51,9 @@ async function getCompanySettingsState(
 
 async function getActiveCompanyId(companyId: number, db: DbExecutor): Promise<number> {
   const { rows } = await db.query(
-    "SELECT id FROM company WHERE id = $1 AND is_template = false AND status != 'DELETED'",
+    `SELECT fc.id FROM finance_company fc
+     JOIN company c ON c.id = fc.company_id
+     WHERE c.id = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
     [companyId],
   );
   if (!rows[0]) throw new BusinessRuleError(`Company id ${companyId} was not found`);
@@ -55,7 +62,8 @@ async function getActiveCompanyId(companyId: number, db: DbExecutor): Promise<nu
 
 async function getActiveCompanyIdByCode(companyCode: string, db: DbExecutor): Promise<number> {
   const { rows } = await db.query(
-    "SELECT id FROM company WHERE code = $1 AND is_template = false AND status != 'DELETED'",
+    `SELECT fc.id FROM company c JOIN finance_company fc ON fc.company_id = c.id
+     WHERE c.code = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
     [companyCode],
   );
   if (!rows[0]) throw new BusinessRuleError(`Company code ${companyCode} was not found`);
@@ -64,7 +72,8 @@ async function getActiveCompanyIdByCode(companyCode: string, db: DbExecutor): Pr
 
 async function getActiveCompanyApiContext(companyId: number, db: DbExecutor): Promise<CompanyApiContext> {
   const { rows } = await db.query(
-    "SELECT id, code FROM company WHERE id = $1 AND is_template = false AND status != 'DELETED'",
+    `SELECT fc.id, c.code FROM company c JOIN finance_company fc ON fc.company_id = c.id
+     WHERE fc.id = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
     [companyId],
   );
   const row = rows[0];
@@ -74,7 +83,8 @@ async function getActiveCompanyApiContext(companyId: number, db: DbExecutor): Pr
 
 async function getDefaultActiveCompanyId(db: DbExecutor): Promise<number> {
   const { rows } = await db.query(
-    "SELECT id FROM company WHERE is_template = false AND status = 'ACTIVE' ORDER BY code LIMIT 1",
+    `SELECT fc.id FROM company c JOIN finance_company fc ON fc.company_id = c.id
+     WHERE fc.is_template = false AND c.status = 'ACTIVE' ORDER BY c.code LIMIT 1`,
   );
   if (!rows[0]) throw new BusinessRuleError("No active company is configured");
   return Number(rows[0].id);

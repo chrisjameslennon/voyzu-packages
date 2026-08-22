@@ -52,7 +52,7 @@ export interface DimensionValueLookupRow {
 export interface SourceJournalHeaderRow {
   id: number;
   code: string;
-  company_id: number;
+  finance_company_id: number;
   company_code: string;
   company_name: string;
   document_type_code: string;

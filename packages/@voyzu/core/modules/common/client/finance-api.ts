@@ -1,6 +1,6 @@
 "use client";
 
-import type { CompanySelectionResponseDto } from "@voyzu/organization/types/modules/company-switcher";
+import type { CompanySelectionResponseDto } from "@voyzu/erp-core/types/modules/company-switcher";
 
 let selectedFinanceBasePromise: Promise<string> | null = null;
 

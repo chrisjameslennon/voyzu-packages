@@ -47,10 +47,10 @@ describe("detail back navigation", () => {
     assert.equal(
       detailBackHref({
         from: "organizationAudit",
-        fromCode: "/organization/countries/NZ",
+        fromCode: "/settings/localization/countries/NZ",
         fallbackHref: "/organization",
       }),
-      "/organization/countries/NZ",
+      "/settings/localization/countries/NZ",
     );
   });
 
@@ -80,7 +80,7 @@ describe("detail back navigation", () => {
     assert.equal(
       detailBackHref({
         from: "organizationAudit",
-        fromCode: "https://example.com/organization/countries/NZ",
+        fromCode: "https://example.com/settings/localization/countries/NZ",
         fallbackHref: "/organization",
       }),
       "/organization",

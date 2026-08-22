@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/core/common/client";
 import type { ArCounterpartyResponseDto } from "@voyzu/core/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { Badge, Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";

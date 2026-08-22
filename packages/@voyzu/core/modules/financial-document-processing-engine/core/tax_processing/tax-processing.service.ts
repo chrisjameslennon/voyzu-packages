@@ -194,7 +194,9 @@ function account(row: Record<string, unknown>): Account {
 
 async function base(db: DbExecutor, request: TaxProcessingRequestDto, pd: string): Promise<{ company: Company; period: Period; taxAuthority: TaxAuthority }> {
   const companyCode = requiredString(request.company_code, "company_code");
-  const c = await one(db, `SELECT id, code, name, country_code, base_currency_code, status FROM company WHERE code = $1`, [companyCode], company);
+  const c = await one(db, `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status
+    FROM finance_company fc JOIN company c ON c.id = fc.company_id
+    WHERE c.code = $1 AND fc.is_template = false`, [companyCode], company);
   if (!c) throw new BusinessRuleError(`Company ${companyCode} was not found`);
   if (c.status !== "ACTIVE") throw new BusinessRuleError(`Company ${c.code} is not ACTIVE`);
 
@@ -205,7 +207,7 @@ async function base(db: DbExecutor, request: TaxProcessingRequestDto, pd: string
   const p = await one(db, `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
     FROM fiscal_period fp
     JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-    WHERE fp.company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fp.status = 'OPEN' AND fy.status = 'OPEN'
+    WHERE fp.finance_company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fp.status = 'OPEN' AND fy.status = 'OPEN'
     LIMIT 1`, [c.id, pd], period);
   if (!p) throw new BusinessRuleError(`No OPEN fiscal period contains posting date ${pd}`);
   return { company: c, period: p, taxAuthority: authority };
@@ -214,20 +216,20 @@ async function base(db: DbExecutor, request: TaxProcessingRequestDto, pd: string
 async function taxControl(db: DbExecutor, companyId: number, code: TaxMovementCode): Promise<Account> {
   const acc = await one(db, `SELECT tca.code AS tax_control_account_code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
     FROM tax_control_account tca
-    JOIN gl_account ga ON ga.company_id = tca.company_id AND ga.id = tca.gl_account_id
-    WHERE tca.company_id = $1 AND tca.code = $2 AND tca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, code], account);
+    JOIN gl_account ga ON ga.finance_company_id = tca.finance_company_id AND ga.id = tca.gl_account_id
+    WHERE tca.finance_company_id = $1 AND tca.code = $2 AND tca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, code], account);
   if (!acc) throw new BusinessRuleError(`${code} tax control account is not configured`);
   return acc;
 }
 
 async function glAccount(db: DbExecutor, companyId: number, code: string, path: string, allowedAccountTypes?: string[]): Promise<Account> {
-  const acc = await one(db, `SELECT id AS gl_account_id, code AS gl_account_code, name AS gl_account_name FROM gl_account WHERE company_id = $1 AND code = $2 AND status = 'ACTIVE' AND ($3::text[] IS NULL OR account_type = ANY($3::text[]))`, [companyId, code, allowedAccountTypes ?? null], account);
+  const acc = await one(db, `SELECT id AS gl_account_id, code AS gl_account_code, name AS gl_account_name FROM gl_account WHERE finance_company_id = $1 AND code = $2 AND status = 'ACTIVE' AND ($3::text[] IS NULL OR account_type = ANY($3::text[]))`, [companyId, code, allowedAccountTypes ?? null], account);
   if (!acc) throw new BusinessRuleError(`${path} ${code} was not found or is inactive`);
   return acc;
 }
 
 async function postingCode(db: DbExecutor, companyId: number, documentType: TaxProcessingDocumentType, defaultCode: string, requested?: string | null): Promise<Account> {
-  const defaultRow = await one(db, `SELECT target_type, allowed_account_types FROM financial_document_default WHERE company_id = $1 AND document_code = $2 AND code = $3 AND status = 'ACTIVE' LIMIT 1`, [companyId, documentType, defaultCode], (row) => ({
+  const defaultRow = await one(db, `SELECT target_type, allowed_account_types FROM financial_document_default WHERE finance_company_id = $1 AND document_code = $2 AND code = $3 AND status = 'ACTIVE' LIMIT 1`, [companyId, documentType, defaultCode], (row) => ({
     target_type: String(row.target_type),
     allowed_account_types: row.allowed_account_types as string[],
   }));
@@ -237,8 +239,8 @@ async function postingCode(db: DbExecutor, companyId: number, documentType: TaxP
       ? await one(db, `SELECT $3::text AS code, bca.code AS bank_cash_control_account_code,
              bca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
           FROM bank_cash_control_account bca
-          JOIN gl_account ga ON ga.company_id = bca.company_id AND ga.id = bca.gl_account_id
-          WHERE bca.company_id = $1
+          JOIN gl_account ga ON ga.finance_company_id = bca.finance_company_id AND ga.id = bca.gl_account_id
+          WHERE bca.finance_company_id = $1
             AND bca.code = $2
             AND bca.status = 'ACTIVE'
             AND ga.status = 'ACTIVE'
@@ -246,7 +248,7 @@ async function postingCode(db: DbExecutor, companyId: number, documentType: TaxP
           LIMIT 1`, [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
       : await one(db, `SELECT $3::text AS code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
           FROM gl_account ga
-          WHERE ga.company_id = $1
+          WHERE ga.finance_company_id = $1
             AND ga.code = $2
             AND ga.status = 'ACTIVE'
             AND ga.account_type = ANY($4::text[])
@@ -255,9 +257,9 @@ async function postingCode(db: DbExecutor, companyId: number, documentType: TaxP
              COALESCE(pc.gl_account_id, bca.gl_account_id) AS gl_account_id,
              ga.code AS gl_account_code, ga.name AS gl_account_name
       FROM financial_document_default pc
-      LEFT JOIN bank_cash_control_account bca ON bca.company_id = pc.company_id AND bca.id = pc.bank_cash_control_account_id
-      JOIN gl_account ga ON ga.company_id = pc.company_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
-      WHERE pc.company_id = $1
+      LEFT JOIN bank_cash_control_account bca ON bca.finance_company_id = pc.finance_company_id AND bca.id = pc.bank_cash_control_account_id
+      JOIN gl_account ga ON ga.finance_company_id = pc.finance_company_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
+      WHERE pc.finance_company_id = $1
         AND pc.document_code = $2
         AND pc.code = $3
         AND pc.status = 'ACTIVE'
@@ -490,7 +492,7 @@ async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: nu
   const rule = await taxRule(db, ctx.company.country_code);
   const headerCode = `TAX-${ctx.documentType.replace("TAX_", "").replaceAll("_", "-")}-${journalHeaderId}`;
   const header = await db.query(`INSERT INTO tax_ledger_entry_header
-    (code, company_id, journal_header_id, document_type_code, document_id, description, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
+    (code, finance_company_id, journal_header_id, document_type_code, document_id, description, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'POSTED',now(),'SYSTEM') RETURNING id`,
     [headerCode, ctx.company.id, journalHeaderId, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, documentDate(ctx.documentType, ctx.request), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
 
@@ -510,7 +512,7 @@ async function persist(client: DbExecutor, ctx: Context): Promise<TaxProcessingP
   const journalRepo = new JournalRepo(client);
   const header = await journalRepo.insert({
     id: ctx.reservedJournalHeaderId ?? undefined,
-    company_id: ctx.company.id,
+    finance_company_id: ctx.company.id,
     company_code: ctx.company.code,
     company_name: ctx.company.name,
     document_type_code: ctx.documentType,

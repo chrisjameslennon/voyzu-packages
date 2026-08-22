@@ -1,7 +1,7 @@
 import type { ActorType } from "@voyzu/core/types/modules/core";
 export interface DimensionValueRow {
   id: number;
-  company_id: number;
+  finance_company_id: number;
   dimension_id: number;
   name: string;
   status: string;
@@ -18,7 +18,7 @@ export interface DimensionValueRow {
 }
 
 export interface InsertDimensionValueRow {
-  company_id: number;
+  finance_company_id: number;
   dimension_id: number;
   name: string;
   status?: string;

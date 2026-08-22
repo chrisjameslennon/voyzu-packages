@@ -62,7 +62,7 @@ export function toDto(row: FinancialDocumentDefaultRow): FinancialDocumentDefaul
 
 export function toInsertRow(input: FinancialDocumentDefaultCreateRequestDto, companyId: number): InsertFinancialDocumentDefaultRow {
   return {
-    company_id: companyId,
+    finance_company_id: companyId,
     document_code: input.documentCode,
     code: input.code,
     name: input.name,

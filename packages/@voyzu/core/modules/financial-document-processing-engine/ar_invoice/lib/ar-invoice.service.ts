@@ -127,7 +127,7 @@ function syntheticInlineCounterparty(input: ArInvoiceRequestDto, companyId: numb
   if (!input.ar_counterparty?.code) throw new InputValidationError("ar_counterparty.code is required");
   return {
     id: 0,
-    company_id: companyId,
+    finance_company_id: companyId,
     code: input.ar_counterparty.code,
     name: input.ar_counterparty.name,
     status: input.ar_counterparty.status,
@@ -270,7 +270,7 @@ async function resolveContext(repo: ArInvoicePostingRepo, request: ResolvedArInv
     counterparty = preview
       ? syntheticInlineCounterparty(request, company.id, countryCurrency)
       : await repo.upsertCounterparty({
-        company_id: company.id,
+        finance_company_id: company.id,
         code: request.ar_counterparty.code,
         name: request.ar_counterparty.name,
         status: request.ar_counterparty.status,
@@ -637,7 +637,7 @@ async function processArInvoiceUnchecked(
 
     if (request.ar_counterparty?.code) {
       const upserted = await txRepo.upsertCounterparty({
-        company_id: context.data.company!.id,
+        finance_company_id: context.data.company!.id,
         code: request.ar_counterparty.code,
         name: request.ar_counterparty.name,
         status: request.ar_counterparty.status,
@@ -651,7 +651,7 @@ async function processArInvoiceUnchecked(
 
     const journalHeader = await journalRepo.insert({
       id: context.reservedJournalHeaderId ?? undefined,
-      company_id: context.data.company!.id,
+      finance_company_id: context.data.company!.id,
       company_code: context.data.company!.code,
       company_name: context.data.company!.name,
       document_type_code: AR_INVOICE_ENGINE_CODE,
@@ -689,7 +689,7 @@ async function processArInvoiceUnchecked(
     const postedJournal = await journalRepo.setPosted(journalHeader.id, generated.totalDebitBaseAmount, generated.totalCreditBaseAmount);
     const arEntry = await txRepo.insertArSubledgerEntry({
       code: `AR-INV-${journalHeader.id}`,
-      company_id: context.data.company!.id,
+      finance_company_id: context.data.company!.id,
       journal_header_id: journalHeader.id,
       ar_counterparty_id: counterparty.id,
       document_type_code: AR_INVOICE_ENGINE_CODE,
@@ -726,7 +726,7 @@ async function processArInvoiceUnchecked(
     const taxHeader = generated.taxLedgerDetails.length
       ? await txRepo.insertTaxLedgerHeader({
         code: taxLedgerHeaderCode(journalHeader.id),
-        company_id: context.data.company!.id,
+        finance_company_id: context.data.company!.id,
         journal_header_id: journalHeader.id,
         document_type_code: AR_INVOICE_ENGINE_CODE,
         document_id: context.detailedInvoice.document_id,

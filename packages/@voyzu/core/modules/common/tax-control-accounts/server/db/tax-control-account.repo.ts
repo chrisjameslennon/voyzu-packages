@@ -7,25 +7,25 @@ import type { GlAccountLookupRow, TaxControlAccountRow } from "./tax-control-acc
 
 const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
     SELECT DISTINCT posting_company.code
-    FROM company source_company
-    JOIN company posting_company ON (
-      (source_company.is_template = true
-        AND posting_company.organization_id = source_company.organization_id
-        AND posting_company.is_template = false
-        AND posting_company.status != 'DELETED'
-        AND posting_company.use_organization_standard_settings = true)
-      OR (source_company.is_template = false AND posting_company.id = source_company.id)
+    FROM finance_company source_finance_company
+    JOIN finance_company posting_finance_company ON (
+      (source_finance_company.is_template = true
+        AND posting_finance_company.is_template = false
+        AND posting_finance_company.use_organization_standard_settings = true)
+      OR (source_finance_company.is_template = false AND posting_finance_company.id = source_finance_company.id)
     )
+    JOIN company posting_company ON posting_company.id = posting_finance_company.company_id
+      AND posting_company.status != 'DELETED'
     JOIN journal_line jl ON jl.gl_account_id = tmt.gl_account_id
     JOIN journal_header jh ON jh.id = jl.journal_header_id
-      AND jh.company_id = posting_company.id
+      AND jh.finance_company_id = posting_finance_company.id
       AND jh.status = 'POSTED'
-    WHERE source_company.id = tmt.company_id
+    WHERE source_finance_company.id = tmt.finance_company_id
     ORDER BY posting_company.code
   ), ARRAY[]::text[])`;
 
 const SELECT_COLUMNS = `
-  tmt.company_id::int AS company_id,
+  tmt.finance_company_id::int AS finance_company_id,
   tmt.code,
   tmt.ledger,
   tmt.name,
@@ -50,7 +50,7 @@ const SELECT_COLUMNS = `
 function mapRow(row: Record<string, unknown>): TaxControlAccountRow {
   const companiesWithPostings = parsePostgresTextArray(row.companies_with_postings);
   return {
-    company_id: Number(row.company_id),
+    finance_company_id: Number(row.finance_company_id),
     code: String(row.code),
     ledger: "TAX",
     name: String(row.name),
@@ -81,8 +81,8 @@ export class TaxControlAccountRepo {
     const { rows } = await this.db.query(
       `SELECT ${SELECT_COLUMNS}
        FROM tax_control_account tmt
-       JOIN gl_account ga ON ga.company_id = tmt.company_id AND ga.id = tmt.gl_account_id
-       WHERE tmt.company_id = $1
+       JOIN gl_account ga ON ga.finance_company_id = tmt.finance_company_id AND ga.id = tmt.gl_account_id
+       WHERE tmt.finance_company_id = $1
        ORDER BY
          CASE tmt.code
            WHEN 'TAX_ON_SALES' THEN 1
@@ -98,8 +98,8 @@ export class TaxControlAccountRepo {
     const { rows } = await this.db.query(
       `SELECT ${SELECT_COLUMNS}
        FROM tax_control_account tmt
-       JOIN gl_account ga ON ga.company_id = tmt.company_id AND ga.id = tmt.gl_account_id
-       WHERE tmt.company_id = $1
+       JOIN gl_account ga ON ga.finance_company_id = tmt.finance_company_id AND ga.id = tmt.gl_account_id
+       WHERE tmt.finance_company_id = $1
          AND tmt.code = $2`,
       [companyId, code],
     );
@@ -110,7 +110,7 @@ export class TaxControlAccountRepo {
     const { rows } = await this.db.query(
       `SELECT id::int, account_type, status
        FROM gl_account
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND id = $2`,
       [companyId, id],
     );
@@ -130,7 +130,7 @@ export class TaxControlAccountRepo {
            updated_actor_type = $5::actor_type,
            updated_user_id = $6,
            updated_mutation_id = $7::uuid
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND code = $2`,
       [companyId, code, glAccountId, audit.timestamp, audit.actorType, audit.userId, audit.mutationId],
     );

@@ -1,12 +1,13 @@
 import "server-only";
 import type { ReactNode } from "react";
+import { getDb } from "@voyzu/capability/db";
 
 import { listBankCashAccounts } from "@voyzu/core/common/bank-cash-accounts/server";
-import { listCompanies } from "@voyzu/organization/companies/server";
+import { listCompanies } from "@voyzu/erp-core/companies/server";
 import { getOrganizationName } from "@voyzu/core/company-reports/balance-sheet/server";
 import { listControlAccounts } from "@voyzu/core/common/control-accounts/server";
-import { listCountries, listCountriesWithTaxConfiguration } from "@voyzu/organization/countries/server";
-import { listCurrencies } from "@voyzu/organization/currencies/server";
+import { listCountries } from "@voyzu/localization/countries/server";
+import { listCurrencies } from "@voyzu/localization/currencies/server";
 import { listDimensions } from "@voyzu/core/common/dimensions/server";
 import { listFinancialDocumentTypes } from "@voyzu/core/common/financial-document-types/server";
 import { listGlAccountCategories } from "@voyzu/core/common/gl-account-categories/server";
@@ -31,6 +32,28 @@ type ReportPageProps = {
     unframed?: boolean;
   };
 };
+
+async function listCountriesWithTaxConfiguration() {
+  const countries = await listCountries();
+  const db = getDb();
+  const [authorities, rules, components] = await Promise.all([
+    db.query(`SELECT country_code, id, code, name, region_code, jurisdiction_level, status FROM tax_authority WHERE status != 'DELETED' ORDER BY country_code, code`),
+    db.query(`SELECT country_code, id, code, name, region_code, invoice_label, calculation_method, component_count, status FROM tax_rule WHERE status != 'DELETED' ORDER BY country_code, code`),
+    db.query(`SELECT tr.country_code, tc.id, tc.code, tc.tax_rule_code, tc.tax_authority_code, tc.scheme_code, tc.invoice_label, tc.rate, tc.status FROM tax_component tc JOIN tax_rule tr ON tr.country_code = tc.tax_rule_country_code AND tr.code = tc.tax_rule_code WHERE tc.status != 'DELETED' ORDER BY tr.country_code, tc.tax_rule_code, tc.calculation_order, tc.code`),
+  ]);
+  return countries.map((country) => ({
+    ...country,
+    taxAuthorities: authorities.rows.filter((row) => row.country_code === country.code).map((row) => ({
+      id: String(row.id), code: String(row.code), name: String(row.name), regionCode: row.region_code == null ? null : String(row.region_code), jurisdictionLevel: String(row.jurisdiction_level), status: String(row.status),
+    })),
+    taxRules: rules.rows.filter((row) => row.country_code === country.code).map((row) => ({
+      id: String(row.id), code: String(row.code), name: String(row.name), regionCode: row.region_code == null ? null : String(row.region_code), invoiceLabel: String(row.invoice_label), calculationMethod: String(row.calculation_method), componentCount: Number(row.component_count), status: String(row.status),
+    })),
+    taxComponents: components.rows.filter((row) => row.country_code === country.code).map((row) => ({
+      id: String(row.id), code: String(row.code), taxRuleCode: String(row.tax_rule_code), taxAuthorityCode: String(row.tax_authority_code), schemeCode: String(row.scheme_code), invoiceLabel: String(row.invoice_label), rate: Number(row.rate), status: String(row.status),
+    })),
+  }));
+}
 
 function text(value: unknown): string {
   if (value === null || value === undefined) return "";

@@ -7,7 +7,7 @@ import type {
   ApLedgerEntryDocumentReportTotalDto,
   ApSubledgerEntryResponseDto,
 } from "@voyzu/core/types/modules/ap-subledger";
-import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
 
 import { ApBillReportRepo, type ApDocumentLineRow } from "../db/ap-bill-report.repo";
 

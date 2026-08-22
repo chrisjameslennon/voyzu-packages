@@ -56,7 +56,7 @@ export function toDto(row: ItemPostingProfileRow): ItemPostingProfileResponseDto
 
 export function toInsertRow(input: ItemPostingProfileCreateRequestDto, companyId: number): InsertItemPostingProfileRow {
   return {
-    company_id: companyId,
+    finance_company_id: companyId,
     code: normalizeCode(input.profile_code),
     name: input.profile_name.trim(),
     description: input.description.trim(),

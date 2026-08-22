@@ -14,27 +14,27 @@ const SEARCHABLE_COLUMNS = ["code", "type", "bank_name", "bank_branch_name", "ba
 
 const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
            SELECT DISTINCT posting_company.code
-           FROM company source_company
+           FROM finance_company source_finance_company
+           JOIN finance_company posting_finance_company ON (
+             (source_finance_company.is_template = true
+               AND posting_finance_company.is_template = false
+               AND posting_finance_company.use_organization_standard_settings = true)
+             OR (source_finance_company.is_template = false AND posting_finance_company.id = source_finance_company.id)
+           )
            JOIN journal_line jl ON jl.gl_account_id = bca.gl_account_id
            JOIN journal_header jh ON jh.id = jl.journal_header_id
+             AND jh.finance_company_id = posting_finance_company.id
              AND jh.status = 'POSTED'
-           JOIN company posting_company ON posting_company.id = jh.company_id
+           JOIN company posting_company ON posting_company.id = posting_finance_company.company_id
              AND posting_company.status != 'DELETED'
-           WHERE source_company.id = bca.company_id
-             AND (
-               (source_company.is_template = true
-                 AND posting_company.organization_id = source_company.organization_id
-                 AND posting_company.is_template = false
-                 AND posting_company.use_organization_standard_settings = true)
-               OR (source_company.is_template = false AND posting_company.id = source_company.id)
-             )
+           WHERE source_finance_company.id = bca.finance_company_id
            ORDER BY posting_company.code
          ), ARRAY[]::text[])`;
 
 const LINKED_BY_SQL = `COALESCE(ARRAY(
            SELECT DISTINCT fdd.code
            FROM financial_document_default fdd
-           WHERE fdd.company_id = bca.company_id
+           WHERE fdd.finance_company_id = bca.finance_company_id
              AND fdd.bank_cash_control_account_id = bca.id
            ORDER BY fdd.code
          ), ARRAY[]::text[])`;
@@ -47,7 +47,7 @@ const SELECT_SQL = `
          ${COMPANIES_WITH_POSTINGS_SQL} AS companies_with_postings,
          ${LINKED_BY_SQL} AS linked_by
   FROM ${TABLE} bca
-  LEFT JOIN gl_account ga ON ga.company_id = bca.company_id AND ga.id = bca.gl_account_id
+  LEFT JOIN gl_account ga ON ga.finance_company_id = bca.finance_company_id AND ga.id = bca.gl_account_id
 `;
 
 function mapRow(row: Record<string, unknown>): BankCashAccountRow {
@@ -59,7 +59,7 @@ function mapRow(row: Record<string, unknown>): BankCashAccountRow {
   return {
     ...row,
     id: Number(row.id),
-    company_id: Number(row.company_id),
+    finance_company_id: Number(row.finance_company_id),
     gl_account_id: Number(row.gl_account_id),
     creation_date: row.creation_date instanceof Date ? row.creation_date.toISOString() : String(row.creation_date),
     updated_date: row.updated_date instanceof Date ? row.updated_date.toISOString() : String(row.updated_date),
@@ -141,12 +141,12 @@ export class BankCashAccountRepo {
   async insert(row: InsertBankCashAccountRow): Promise<BankCashAccountRow> {
     const { rows } = await this.db.query(
       `INSERT INTO ${TABLE}
-         (company_id, code, ledger, type, gl_account_id, bank_name, bank_branch_name, bank_account_identifier, cash_account_identifier, status,
+         (finance_company_id, code, ledger, type, gl_account_id, bank_name, bank_branch_name, bank_account_identifier, cash_account_identifier, status,
           creation_date, creation_actor_type, creation_user_id, creation_mutation_id)
        VALUES ($1, $2, 'BANK_CASH', $3, $4, $5, $6, $7, $8, COALESCE($9, 'ACTIVE'), $10, $11, $12, $13)
        RETURNING id`,
       [
-        row.company_id,
+        row.finance_company_id,
         row.code,
         row.type,
         row.gl_account_id,
@@ -161,12 +161,12 @@ export class BankCashAccountRepo {
         row.creation_mutation_id ?? null,
       ],
     );
-    return this.getById(row.company_id, Number(rows[0].id));
+    return this.getById(row.finance_company_id, Number(rows[0].id));
   }
 
   async get(companyId: number, code: string): Promise<BankCashAccountRow | null> {
     const { rows } = await this.db.query(
-      `${SELECT_SQL} WHERE bca.company_id = $1 AND bca.code = $2`,
+      `${SELECT_SQL} WHERE bca.finance_company_id = $1 AND bca.code = $2`,
       [companyId, code],
     );
     return rows[0] ? mapRow(rows[0]) : null;
@@ -174,7 +174,7 @@ export class BankCashAccountRepo {
 
   async getById(companyId: number, id: number): Promise<BankCashAccountRow> {
     const { rows } = await this.db.query(
-      `${SELECT_SQL} WHERE bca.company_id = $1 AND bca.id = $2`,
+      `${SELECT_SQL} WHERE bca.finance_company_id = $1 AND bca.id = $2`,
       [companyId, id],
     );
     if (!rows[0]) throw new DataError(`Bank / Cash Account id ${id} not found`);
@@ -182,13 +182,13 @@ export class BankCashAccountRepo {
   }
 
   async listAll(companyId: number): Promise<BankCashAccountRow[]> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE bca.company_id = $1 ORDER BY bca.code ASC`, [companyId]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE bca.finance_company_id = $1 ORDER BY bca.code ASC`, [companyId]);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
   async batchGet(companyId: number, codes: string[]): Promise<BankCashAccountRow[]> {
     if (!codes.length) return [];
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE bca.company_id = $1 AND bca.code = ANY($2::text[]) ORDER BY bca.code ASC`, [companyId, codes]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE bca.finance_company_id = $1 AND bca.code = ANY($2::text[]) ORDER BY bca.code ASC`, [companyId, codes]);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -196,7 +196,7 @@ export class BankCashAccountRepo {
     const { sql, params } = buildWhere(filters);
     const queryParams: unknown[] = [companyId, ...params];
     const tail = buildOrderLimitOffset(queryParams, options);
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE bca.company_id = $1${sql} ${tail}`, queryParams);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE bca.finance_company_id = $1${sql} ${tail}`, queryParams);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -208,7 +208,7 @@ export class BankCashAccountRepo {
       return `bca.${column}::text ILIKE $${params.length}`;
     });
     const tail = buildOrderLimitOffset(params, options);
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE bca.company_id = $1 AND (${likeParts.join(" OR ")}) ${tail}`, params);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE bca.finance_company_id = $1 AND (${likeParts.join(" OR ")}) ${tail}`, params);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -237,7 +237,7 @@ export class BankCashAccountRepo {
     }
     values.push(code);
     const { rows } = await this.db.query(
-      `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE company_id = $${values.length + 1} AND code = $${values.length} RETURNING id`,
+      `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${values.length + 1} AND code = $${values.length} RETURNING id`,
       [...values, companyId],
     );
     if (!rows[0]) throw new DataError(`Bank / Cash Account ${code} not found`);
@@ -255,7 +255,7 @@ export class BankCashAccountRepo {
     const { rows } = await this.db.query(
       `SELECT id, account_type, status
        FROM gl_account
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND id = $2`,
       [companyId, id],
     );
@@ -269,7 +269,7 @@ export class BankCashAccountRepo {
   async getActiveResolved(companyId: number, code: string): Promise<BankCashAccountRow | null> {
     const { rows } = await this.db.query(
       `${SELECT_SQL}
-       WHERE bca.company_id = $1
+       WHERE bca.finance_company_id = $1
          AND bca.code = $2
          AND bca.status = 'ACTIVE'
          AND ga.status = 'ACTIVE'`,

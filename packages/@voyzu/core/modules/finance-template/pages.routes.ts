@@ -3,10 +3,10 @@ import { OrganizationGlAccountsListPage } from "@voyzu/core/organization-gl-acco
 export const pageRoutes = {
   landing: {
     id: "voyzu.financeTemplate.page.landing",
-    pageTitle: "Finance Template",
+    pageTitle: "Finance Admin",
     path: "/finance",
     Page: OrganizationGlAccountsListPage,
-    breadcrumbBase: [{ label: "Finance Template" }],
+    breadcrumbBase: [{ label: "Finance Admin" }],
     auth: { required: true, minRole: "ORGANIZATION_USER" },
   },
 } as const;

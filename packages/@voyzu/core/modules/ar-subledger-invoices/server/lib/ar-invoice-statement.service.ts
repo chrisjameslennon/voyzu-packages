@@ -1,6 +1,6 @@
 import { getDb } from "@voyzu/capability/db";
 import type { ArInvoiceStatementResponseDto, ArSubledgerEntryResponseDto } from "@voyzu/core/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
 import type { ArInvoiceDetailedInvoiceDto } from "@voyzu/core/types/modules/financial-document-types";
 import { listArSubledgerEntries } from "@voyzu/core/ar-subledger-ledger-entries/server";
 

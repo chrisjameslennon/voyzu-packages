@@ -12,12 +12,12 @@ WITH seed (company_code, code, name, description, posting_profile_code, status) 
     ('TEMPLATE', 'SPARE_PARTS', 'Spare Parts', 'Parts held for maintenance repair or replacement', 'SPARE_PARTS', 'ACTIVE'),
     ('TEMPLATE', 'WORK_IN_PROGRESS', 'Work in Progress', 'Part-complete products awaiting further processing', 'WIP_GOODS', 'ACTIVE')
 )
-INSERT INTO inventory_category (company_id, code, name, description, posting_profile_id, status, creation_actor_type, updated_actor_type)
-SELECT c.id, s.code, s.name, s.description, p.id, s.status, 'SYSTEM', 'SYSTEM'
+INSERT INTO inventory_category (finance_company_id, code, name, description, posting_profile_id, status, creation_actor_type, updated_actor_type)
+SELECT fc.id, s.code, s.name, s.description, p.id, s.status, 'SYSTEM', 'SYSTEM'
 FROM seed s
-JOIN company c ON c.code = s.company_code
-JOIN item_posting_profile p ON p.company_id = c.id AND p.code = s.posting_profile_code
-ON CONFLICT (company_id, code) DO UPDATE SET
+JOIN finance_company fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
+JOIN item_posting_profile p ON p.finance_company_id = fc.id AND p.code = s.posting_profile_code
+ON CONFLICT (finance_company_id, code) DO UPDATE SET
   name = EXCLUDED.name,
   description = EXCLUDED.description,
   posting_profile_id = EXCLUDED.posting_profile_id,

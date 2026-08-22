@@ -1,7 +1,7 @@
 "use client";
 
 import type { VoyzuSurfaceLeftNavHeaderProps } from "@voyzu/ui-surface/types";
-import { CompanySwitcher } from "@voyzu/organization/company-switcher/client";
+import { CompanySwitcher } from "@voyzu/erp-core/company-switcher/client";
 
 export const leftNavHeaderRootPaths = ["/finance"] as const;
 

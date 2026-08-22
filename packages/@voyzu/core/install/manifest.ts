@@ -1,5 +1,8 @@
 export const coreInstall = {
   sql: [
+    "./install/db/objects/finance-domains.sql",
+    "./install/db/objects/table.finance_country.create.sql",
+    "./install/db/objects/table.finance_company.create.sql",
     "./install/db/objects/table.financial_document_type.create.sql",
     "./install/db/objects/table.gl_account_category.create.sql",
     "./install/db/objects/table.gl_account.create.sql",
@@ -44,6 +47,8 @@ export const coreInstall = {
     "./install/db/objects/audit-triggers.attach.sql",
   ],
   seedSql: [
+    "./install/db/seed/finance-country.seed.sql",
+    "./install/db/seed/finance-company.seed.sql",
     "./install/db/seed/tax-authority.seed.sql",
     "./install/db/seed/tax-rule.seed.sql",
     "./install/db/seed/tax-component.seed.sql",

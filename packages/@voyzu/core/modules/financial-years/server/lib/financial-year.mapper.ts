@@ -7,7 +7,7 @@ export function toDto(row: FinancialYearRow): FinancialYearResponseDto {
     id: row.id,
     code: row.code,
     name: row.name,
-    companyId: row.company_id,
+    companyId: row.finance_company_id,
     startDate: row.start_date,
     endDate: row.end_date,
     status: row.status as FinancialYearStatus,
@@ -31,7 +31,7 @@ export function toDto(row: FinancialYearRow): FinancialYearResponseDto {
 
 export function toInsertRow(input: FinancialYearCreateRequestDto, companyId: number): InsertFinancialYearRow {
   return {
-    company_id: companyId,
+    finance_company_id: companyId,
     code: input.code,
     name: input.name ?? `Financial Year ${input.code.replace(/^FY-/, "")}`,
     start_date: input.startDate,

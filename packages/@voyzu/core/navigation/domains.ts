@@ -22,7 +22,7 @@ const financeRouteIds = routeIds(coreFinanceModules);
 
 const domains = [
   {
-    label: "Finance Template",
+    label: "Finance Admin",
     routeId: coreFinanceTemplateModules[0].pageRoutes.landing.id,
     routeIds: financeTemplateRouteIds,
     leftNav: financeTemplateLeftNav,

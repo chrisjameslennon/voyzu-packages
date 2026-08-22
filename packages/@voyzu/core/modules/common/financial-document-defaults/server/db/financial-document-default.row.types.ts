@@ -1,6 +1,6 @@
 import type { ActorType } from "@voyzu/core/types/modules/core";
 export interface FinancialDocumentDefaultRow {
-  company_id: number;
+  finance_company_id: number;
   document_code: string;
   code: string;
   name: string;
@@ -31,7 +31,7 @@ export interface FinancialDocumentDefaultRow {
 }
 
 export interface InsertFinancialDocumentDefaultRow {
-  company_id: number;
+  finance_company_id: number;
   document_code: string;
   code: string;
   status?: string;

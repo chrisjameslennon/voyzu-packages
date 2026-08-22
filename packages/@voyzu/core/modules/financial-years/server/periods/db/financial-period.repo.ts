@@ -13,7 +13,7 @@ const SELECT_WITH_DERIVED = `
          EXISTS (
            SELECT 1
            FROM journal_header jh
-           WHERE jh.company_id = fp.company_id
+           WHERE jh.finance_company_id = fp.finance_company_id
              AND jh.status = 'POSTED'
              AND jh.posting_date BETWEEN fp.start_date AND fp.end_date
          ) AS has_postings
@@ -90,7 +90,7 @@ export class FinancialPeriodRepo {
     const fyEnd = new Date(endDate + "T00:00:00");
 
     const sql = `
-      INSERT INTO ${TABLE} (company_id, fiscal_year_id, code, name, start_date, end_date, status, creation_date, creation_actor_type)
+      INSERT INTO ${TABLE} (finance_company_id, fiscal_year_id, code, name, start_date, end_date, status, creation_date, creation_actor_type)
       VALUES ($1, $2, $3, $4, $5, $6, 'OPEN', now(), 'SYSTEM')
       ON CONFLICT (fiscal_year_id, code) DO NOTHING
     `;
@@ -116,7 +116,7 @@ export class FinancialPeriodRepo {
     return {
       ...row,
       id: Number(row.id),
-      company_id: Number(row.company_id),
+      finance_company_id: Number(row.finance_company_id),
       fiscal_year_id: Number(row.fiscal_year_id),
       has_postings: Boolean(row.has_postings),
       start_date: row.start_date instanceof Date

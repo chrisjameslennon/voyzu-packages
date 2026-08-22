@@ -25,7 +25,7 @@ import type {
 } from "./ap-bill-posting.row.types";
 
 interface CounterpartyInputRow {
-  company_id: number;
+  finance_company_id: number;
   code: string;
   name: string;
   status: "ACTIVE" | "INACTIVE";
@@ -58,7 +58,7 @@ function companyRow(row: Record<string, unknown>): CompanyPostingContextRow {
 function counterpartyRow(row: Record<string, unknown>): CounterpartyPostingContextRow {
   return {
     id: Number(row.id),
-    company_id: Number(row.company_id),
+    finance_company_id: Number(row.finance_company_id),
     code: String(row.code),
     name: String(row.name),
     status: row.status as "ACTIVE" | "INACTIVE",
@@ -209,7 +209,9 @@ export class ApBillPostingRepo {
 
   async getCompanyByCode(code: string): Promise<CompanyPostingContextRow | null> {
     const { rows } = await this.db.query(
-      `SELECT id, code, name, country_code, base_currency_code, status FROM company WHERE code = $1`,
+      `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status
+       FROM finance_company fc JOIN company c ON c.id = fc.company_id
+       WHERE c.code = $1 AND fc.is_template = false`,
       [code],
     );
     return rows[0] ? companyRow(rows[0] as Record<string, unknown>) : null;
@@ -232,7 +234,7 @@ export class ApBillPostingRepo {
       `SELECT cp.*, c.currency_code AS country_currency_code
        FROM ap_counterparty cp
        JOIN country c ON c.code = cp.country_code
-       WHERE cp.company_id = $1 AND cp.code = $2`,
+       WHERE cp.finance_company_id = $1 AND cp.code = $2`,
       [companyId, code],
     );
     return rows[0] ? counterpartyRow(rows[0] as Record<string, unknown>) : null;
@@ -242,10 +244,10 @@ export class ApBillPostingRepo {
     const { rows } = await this.db.query(
       `WITH upserted AS (
          INSERT INTO ap_counterparty
-           (company_id, code, name, status, country_code, tax_region_or_province,
+           (finance_company_id, code, name, status, country_code, tax_region_or_province,
             creation_date, creation_actor_type, updated_date, updated_actor_type)
          VALUES ($1,$2,$3,$4,$5,$6,now(),'SYSTEM',now(),'SYSTEM')
-         ON CONFLICT (company_id, code) DO UPDATE
+         ON CONFLICT (finance_company_id, code) DO UPDATE
          SET name = EXCLUDED.name,
              status = EXCLUDED.status,
              country_code = EXCLUDED.country_code,
@@ -257,7 +259,7 @@ export class ApBillPostingRepo {
        SELECT u.*, c.currency_code AS country_currency_code
        FROM upserted u
        JOIN country c ON c.code = u.country_code`,
-      [row.company_id, row.code, row.name, row.status, row.country_code, row.tax_region_or_province],
+      [row.finance_company_id, row.code, row.name, row.status, row.country_code, row.tax_region_or_province],
     );
     return {
       ...counterpartyRow(rows[0] as Record<string, unknown>),
@@ -273,7 +275,7 @@ export class ApBillPostingRepo {
          fp.start_date AS period_start_date, fp.end_date AS period_end_date
        FROM fiscal_period fp
        JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-       WHERE fp.company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date
+       WHERE fp.finance_company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date
        ORDER BY CASE WHEN fy.status = 'OPEN' AND fp.status = 'OPEN' THEN 0 ELSE 1 END, fp.start_date ASC
        LIMIT 1`,
       [companyId, postingDate],
@@ -285,7 +287,7 @@ export class ApBillPostingRepo {
     const { rows } = await this.db.query(
       `SELECT id
        FROM ap_subledger_entry_header
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND ap_counterparty_id = $2
          AND document_type_code = 'AP_BILL'
          AND supplier_invoice_number = $3
@@ -303,7 +305,7 @@ export class ApBillPostingRepo {
               ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name,
               ga.account_type AS gl_account_type, ga.status AS gl_account_status
        FROM gl_account ga
-       WHERE ga.company_id = $1
+       WHERE ga.finance_company_id = $1
          AND ga.code = ANY($2::text[])
          AND ga.account_type IN ('EXPENSE', 'ASSET')`,
       [companyId, codes],
@@ -320,10 +322,10 @@ export class ApBillPostingRepo {
               ga.name AS purchase_gl_account_name, ga.account_type AS purchase_gl_account_type,
               ga.status AS purchase_gl_account_status
        FROM inventory_item ii
-       JOIN inventory_category ic ON ic.company_id = ii.company_id AND ic.id = ii.category_id
-       JOIN item_posting_profile ipp ON ipp.company_id = ic.company_id AND ipp.id = ic.posting_profile_id
-       LEFT JOIN gl_account ga ON ga.company_id = ipp.company_id AND ga.id = ipp.purchase_expense_gl_account_id
-       WHERE ii.company_id = $1 AND ii.code = ANY($2::text[])`,
+       JOIN inventory_category ic ON ic.finance_company_id = ii.finance_company_id AND ic.id = ii.category_id
+       JOIN item_posting_profile ipp ON ipp.finance_company_id = ic.finance_company_id AND ipp.id = ic.posting_profile_id
+       LEFT JOIN gl_account ga ON ga.finance_company_id = ipp.finance_company_id AND ga.id = ipp.purchase_expense_gl_account_id
+       WHERE ii.finance_company_id = $1 AND ii.code = ANY($2::text[])`,
       [companyId, itemCodes],
     );
     return rows.map((row: Record<string, unknown>) => ({
@@ -347,8 +349,8 @@ export class ApBillPostingRepo {
               pc.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name,
               ga.account_type AS gl_account_type, ga.status AS gl_account_status
        FROM financial_document_default pc
-       JOIN gl_account ga ON ga.company_id = pc.company_id AND ga.id = pc.gl_account_id
-       WHERE pc.company_id = $1
+       JOIN gl_account ga ON ga.finance_company_id = pc.finance_company_id AND ga.id = pc.gl_account_id
+       WHERE pc.finance_company_id = $1
          AND pc.document_code = $2
          AND pc.code = $3
        LIMIT 1`,
@@ -363,8 +365,8 @@ export class ApBillPostingRepo {
               ca.status AS control_account_status, ga.id AS gl_account_id, ga.code AS gl_account_code,
               ga.name AS gl_account_name, ga.status AS gl_account_status
        FROM ap_control_account ca
-       JOIN gl_account ga ON ga.company_id = ca.company_id AND ga.id = ca.gl_account_id
-       WHERE ca.company_id = $1 AND ca.code = $2`,
+       JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
+       WHERE ca.finance_company_id = $1 AND ca.code = $2`,
       [companyId, code],
     );
     return rows[0] ? controlAccountRow(rows[0] as Record<string, unknown>) : null;
@@ -376,8 +378,8 @@ export class ApBillPostingRepo {
               ca.status AS control_account_status, ga.id AS gl_account_id, ga.code AS gl_account_code,
               ga.name AS gl_account_name, ga.status AS gl_account_status
        FROM inventory_control_account ca
-       JOIN gl_account ga ON ga.company_id = ca.company_id AND ga.id = ca.gl_account_id
-       WHERE ca.company_id = $1 AND ca.code = 'INVENTORY_CONTROL'`,
+       JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
+       WHERE ca.finance_company_id = $1 AND ca.code = 'INVENTORY_CONTROL'`,
       [companyId],
     );
     return rows[0] ? inventoryControlAccountRow(rows[0] as Record<string, unknown>) : null;
@@ -390,8 +392,8 @@ export class ApBillPostingRepo {
               ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name,
               ga.status AS gl_account_status
        FROM tax_control_account tmt
-       JOIN gl_account ga ON ga.company_id = tmt.company_id AND ga.id = tmt.gl_account_id
-       WHERE tmt.company_id = $1 AND tmt.code = $2`,
+       JOIN gl_account ga ON ga.finance_company_id = tmt.finance_company_id AND ga.id = tmt.gl_account_id
+       WHERE tmt.finance_company_id = $1 AND tmt.code = $2`,
       [companyId, code],
     );
     return rows[0] ? taxMovementControlAccountRow(rows[0] as Record<string, unknown>) : null;
@@ -443,8 +445,8 @@ export class ApBillPostingRepo {
       `SELECT d.id AS dimension_id, d.code AS dimension_code, d.name AS dimension_name, d.status AS dimension_status,
               dv.id AS dimension_value_id, dv.name AS dimension_value_name, dv.status AS dimension_value_status
        FROM dimension_value dv
-       JOIN dimension d ON d.company_id = dv.company_id AND d.id = dv.dimension_id
-       WHERE dv.company_id = $1
+       JOIN dimension d ON d.finance_company_id = dv.finance_company_id AND d.id = dv.dimension_id
+       WHERE dv.finance_company_id = $1
          AND (d.code, dv.name) IN (SELECT * FROM unnest($2::text[], $3::text[]))`,
       [companyId, pairs.map((pair) => pair.dimensionCode), pairs.map((pair) => pair.valueName)],
     );
@@ -454,14 +456,14 @@ export class ApBillPostingRepo {
   async insertApSubledgerEntry(row: InsertApSubledgerEntryRow): Promise<ApSubledgerEntryRow> {
     const { rows } = await this.db.query(
       `INSERT INTO ap_subledger_entry_header
-         (code, company_id, journal_header_id, ap_counterparty_id, document_type_code,
+         (code, finance_company_id, journal_header_id, ap_counterparty_id, document_type_code,
           document_id, supplier_invoice_number, description, memo, document_date,
           posting_date, financial_year_id, financial_period_id, base_currency_code,
           status, creation_date, creation_actor_type)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,'POSTED',now(),'SYSTEM')
        RETURNING id`,
       [
-        row.code, row.company_id, row.journal_header_id, row.ap_counterparty_id,
+        row.code, row.finance_company_id, row.journal_header_id, row.ap_counterparty_id,
         row.document_type_code, row.document_id, row.supplier_invoice_number,
         row.description, row.memo, row.document_date, row.posting_date,
         row.financial_year_id, row.financial_period_id, row.base_currency_code,
@@ -506,13 +508,13 @@ export class ApBillPostingRepo {
   async insertTaxLedgerHeader(row: InsertTaxLedgerHeaderRow): Promise<TaxLedgerHeaderRow> {
     const { rows } = await this.db.query(
       `INSERT INTO tax_ledger_entry_header
-         (code, company_id, journal_header_id, document_type_code, document_id,
+         (code, finance_company_id, journal_header_id, document_type_code, document_id,
           description, document_date, posting_date, financial_year_id,
           financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'POSTED',now(),'SYSTEM')
        RETURNING id`,
       [
-        row.code, row.company_id, row.journal_header_id, row.document_type_code,
+        row.code, row.finance_company_id, row.journal_header_id, row.document_type_code,
         row.document_id, row.description, row.document_date, row.posting_date,
         row.financial_year_id, row.financial_period_id, row.base_currency_code,
       ],

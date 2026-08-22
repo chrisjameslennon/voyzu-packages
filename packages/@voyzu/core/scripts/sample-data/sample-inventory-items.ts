@@ -4,7 +4,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { getCompany } from "@voyzu/organization/companies/server";
+import { getCompany } from "@voyzu/erp-core/companies/server";
 import {
   createInventoryItem,
   getInventoryItem,

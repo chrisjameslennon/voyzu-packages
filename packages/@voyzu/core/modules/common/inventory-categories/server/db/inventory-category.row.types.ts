@@ -4,7 +4,7 @@ import type { OperationReference } from "@voyzu/core/types/modules/core";
 
 export interface InventoryCategoryRow {
   id: number;
-  company_id: number;
+  finance_company_id: number;
   code: string;
   name: string;
   description: string;
@@ -27,7 +27,7 @@ export interface InventoryCategoryRow {
 }
 
 export interface InsertInventoryCategoryRow {
-  company_id: number;
+  finance_company_id: number;
   code: string;
   name: string;
   description: string;

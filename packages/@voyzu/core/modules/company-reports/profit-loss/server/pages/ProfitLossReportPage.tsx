@@ -2,11 +2,11 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-import { listCompanies } from "@voyzu/organization/companies/server";
+import { listCompanies } from "@voyzu/erp-core/companies/server";
 import {
   SELECTED_COMPANY_COOKIE,
   parseSelectedCompanyId,
-} from "@voyzu/organization/company-switcher/server";
+} from "@voyzu/erp-core/company-switcher/server";
 import { listFinancialYears } from "@voyzu/core/financial-years/server";
 import { listPeriods } from "@voyzu/core/financial-years/server";
 

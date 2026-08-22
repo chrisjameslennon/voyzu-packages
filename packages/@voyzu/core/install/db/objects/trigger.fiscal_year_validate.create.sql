@@ -62,13 +62,13 @@ BEGIN
   IF TG_OP = 'INSERT' THEN
     SELECT COUNT(*) INTO v_overlap_count
     FROM fiscal_year
-    WHERE company_id = NEW.company_id
+    WHERE finance_company_id = NEW.finance_company_id
       AND start_date <= NEW.end_date
       AND end_date   >= NEW.start_date;
   ELSE
     SELECT COUNT(*) INTO v_overlap_count
     FROM fiscal_year
-    WHERE company_id = NEW.company_id
+    WHERE finance_company_id = NEW.finance_company_id
       AND id != OLD.id
       AND start_date <= NEW.end_date
       AND end_date   >= NEW.start_date;

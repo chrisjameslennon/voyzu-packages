@@ -74,7 +74,7 @@ function suffix(): string {
 async function createItem(code: string): Promise<void> {
   await getPool().query(
     `INSERT INTO inventory_item (
-       company_id, code, name, description, item_type, category_id, unit_code,
+       finance_company_id, code, name, description, item_type, category_id, unit_code,
        status, creation_date, creation_actor_type
      )
      SELECT co.id,
@@ -82,7 +82,7 @@ async function createItem(code: string): Promise<void> {
             $2,
             $3,
             'INVENTORY',
-            (SELECT c.id FROM inventory_category c WHERE c.company_id = co.id AND c.code = 'RESALE_GOODS' ORDER BY c.id LIMIT 1),
+            (SELECT c.id FROM inventory_category c WHERE c.finance_company_id = co.id AND c.code = 'RESALE_GOODS' ORDER BY c.id LIMIT 1),
             'ea',
             'ACTIVE',
             now(),

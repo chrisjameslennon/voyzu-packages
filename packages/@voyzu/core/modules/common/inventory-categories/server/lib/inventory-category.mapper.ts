@@ -34,7 +34,7 @@ export function toDto(row: InventoryCategoryRow): InventoryCategoryResponseDto {
 
 export function toInsertRow(input: InventoryCategoryCreateRequestDto, companyId: number): InsertInventoryCategoryRow {
   return {
-    company_id: companyId,
+    finance_company_id: companyId,
     code: input.code.trim().toUpperCase().replaceAll(" ", "_"),
     name: input.name.trim(),
     description: input.description.trim(),

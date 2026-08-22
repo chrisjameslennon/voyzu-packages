@@ -85,7 +85,7 @@ External API clients do not use the UI selection cookie. They supply the company
 ## Enforcement rules
 
 - Resolve company context before loading company-owned data.
-- Include `company_id` in reads, writes, joins, and existence checks.
+- Include `finance_company_id` in reads, writes, joins, and existence checks.
 - Never authorize access merely because an ID or code appears in a cookie, URL, body, or query string.
 - Return not found or access denied when a record does not belong to the resolved company.
 - Keep organization pages independent of the Finance selection.

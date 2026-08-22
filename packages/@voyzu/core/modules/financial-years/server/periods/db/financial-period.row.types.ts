@@ -1,7 +1,7 @@
 import type { ActorType } from "@voyzu/core/types/modules/core";
 export interface FinancialPeriodRow {
   id: number;
-  company_id: number;
+  finance_company_id: number;
   fiscal_year_id: number;
   code: string;
   name: string;
@@ -20,7 +20,7 @@ export interface FinancialPeriodRow {
 }
 
 export interface InsertFinancialPeriodRow {
-  company_id: number;
+  finance_company_id: number;
   fiscal_year_id: number;
   code: string;
   name: string;

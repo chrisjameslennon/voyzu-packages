@@ -14,7 +14,7 @@ import type {
 const TABLE = "financial_document_default";
 
 const COLUMNS: readonly string[] = [
-  "company_id", "document_code", "code", "name", "target_type", "allowed_account_types", "override_property_name", "override_scope",
+  "finance_company_id", "document_code", "code", "name", "target_type", "allowed_account_types", "override_property_name", "override_scope",
   "gl_account_id", "bank_cash_control_account_id", "status",
   "creation_date", "creation_actor_type", "creation_user_id", "creation_mutation_id",
   "updated_date", "updated_actor_type", "updated_user_id", "updated_mutation_id",
@@ -117,9 +117,9 @@ const SELECT_SQL = `
          bank_ga.name AS bank_cash_gl_account_name,
          bank_ga.account_type AS bank_cash_gl_account_type`;
 const JOIN_SQL = `
-  LEFT JOIN gl_account ga ON ga.company_id = p.company_id AND ga.id = p.gl_account_id
-  LEFT JOIN bank_cash_control_account bca ON bca.company_id = p.company_id AND bca.id = p.bank_cash_control_account_id
-  LEFT JOIN gl_account bank_ga ON bank_ga.company_id = p.company_id AND bank_ga.id = bca.gl_account_id`;
+  LEFT JOIN gl_account ga ON ga.finance_company_id = p.finance_company_id AND ga.id = p.gl_account_id
+  LEFT JOIN bank_cash_control_account bca ON bca.finance_company_id = p.finance_company_id AND bca.id = p.bank_cash_control_account_id
+  LEFT JOIN gl_account bank_ga ON bank_ga.finance_company_id = p.finance_company_id AND bank_ga.id = bca.gl_account_id`;
 
 export class FinancialDocumentDefaultRepo {
   constructor(private readonly db: DbExecutor) { }
@@ -140,12 +140,12 @@ export class FinancialDocumentDefaultRepo {
     const sql = `INSERT INTO ${TABLE} (${cols.join(", ")}) VALUES (${placeholders}) RETURNING document_code, code`;
 
     const { rows } = await this.db.query(sql, vals);
-    return this.getByKeyInternal(row.company_id, String(rows[0].document_code), String(rows[0].code));
+    return this.getByKeyInternal(row.finance_company_id, String(rows[0].document_code), String(rows[0].code));
   }
 
   async get(companyId: number, documentCode: string, code: string): Promise<FinancialDocumentDefaultRow | null> {
     const { rows } = await this.db.query(
-      `${SELECT_SQL} FROM ${TABLE} p ${JOIN_SQL} WHERE p.company_id = $1 AND p.document_code = $2 AND p.code = $3`,
+      `${SELECT_SQL} FROM ${TABLE} p ${JOIN_SQL} WHERE p.finance_company_id = $1 AND p.document_code = $2 AND p.code = $3`,
       [companyId, documentCode, code],
     );
     return rows[0] ? this.mapRow(rows[0]) : null;
@@ -186,7 +186,7 @@ export class FinancialDocumentDefaultRepo {
     }
 
     vals.push(companyId, documentCode, code);
-    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE company_id = $${vals.length - 2} AND document_code = $${vals.length - 1} AND code = $${vals.length} RETURNING document_code, code`;
+    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 2} AND document_code = $${vals.length - 1} AND code = $${vals.length} RETURNING document_code, code`;
 
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`Posting code ${documentCode}/${code} not found`);
@@ -220,7 +220,7 @@ export class FinancialDocumentDefaultRepo {
     }
 
     vals.push(companyId, documentCode, code);
-    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE company_id = $${vals.length - 2} AND document_code = $${vals.length - 1} AND code = $${vals.length} RETURNING document_code, code`;
+    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 2} AND document_code = $${vals.length - 1} AND code = $${vals.length} RETURNING document_code, code`;
 
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`Posting code ${documentCode}/${code} not found`);
@@ -228,12 +228,12 @@ export class FinancialDocumentDefaultRepo {
   }
 
   async delete(companyId: number, documentCode: string, code: string): Promise<void> {
-    await this.db.query(`DELETE FROM ${TABLE} WHERE company_id = $1 AND document_code = $2 AND code = $3`, [companyId, documentCode, code]);
+    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND document_code = $2 AND code = $3`, [companyId, documentCode, code]);
   }
 
   async listAll(companyId: number): Promise<FinancialDocumentDefaultRow[]> {
     const { rows } = await this.db.query(
-      `${SELECT_SQL} FROM ${TABLE} p ${JOIN_SQL} WHERE p.company_id = $1 ORDER BY p.document_code ASC, p.code ASC`,
+      `${SELECT_SQL} FROM ${TABLE} p ${JOIN_SQL} WHERE p.finance_company_id = $1 ORDER BY p.document_code ASC, p.code ASC`,
       [companyId],
     );
     return rows.map((r: Record<string, unknown>) => this.mapRow(r));
@@ -243,7 +243,7 @@ export class FinancialDocumentDefaultRepo {
     if (!keys.length) return;
     await this.db.query(
       `DELETE FROM ${TABLE}
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND (document_code, code) IN (
          SELECT document_code, code
          FROM UNNEST($2::text[], $3::text[]) AS keys(document_code, code)
@@ -267,7 +267,7 @@ export class FinancialDocumentDefaultRepo {
     const { rows } = await this.db.query(
       `SELECT id, status
        FROM bank_cash_control_account
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND id = $2`,
       [companyId, bankCashControlAccountId],
     );
@@ -278,7 +278,7 @@ export class FinancialDocumentDefaultRepo {
     const { sql: whereSql, params } = buildWhere(filters, "p");
     const shiftedWhere = whereSql.replace(/\$(\d+)/g, (_match, n: string) => `$${Number(n) + 1}`);
     const scopedParams: unknown[] = [companyId, ...params];
-    const scopedWhere = shiftedWhere ? `WHERE p.company_id = $1 AND ${shiftedWhere.slice("WHERE ".length)}` : "WHERE p.company_id = $1";
+    const scopedWhere = shiftedWhere ? `WHERE p.finance_company_id = $1 AND ${shiftedWhere.slice("WHERE ".length)}` : "WHERE p.finance_company_id = $1";
     const tail = buildOrderLimitOffset(scopedParams, options);
     const sql = `${SELECT_SQL} FROM ${TABLE} p ${JOIN_SQL} ${scopedWhere} ${tail}`;
     const { rows } = await this.db.query(sql, scopedParams);
@@ -294,7 +294,7 @@ export class FinancialDocumentDefaultRepo {
       return `p.${col}::text ILIKE $${params.length}`;
     });
     params.push(pattern, pattern, pattern, pattern);
-    const whereSql = `WHERE p.company_id = $1 AND (${likeParts.join(" OR ")}
+    const whereSql = `WHERE p.finance_company_id = $1 AND (${likeParts.join(" OR ")}
       OR ga.code::text ILIKE $${params.length - 3}
       OR ga.name::text ILIKE $${params.length - 2}
       OR bca.code::text ILIKE $${params.length - 1}
@@ -314,7 +314,7 @@ export class FinancialDocumentDefaultRepo {
          SELECT document_code, code
          FROM UNNEST($2::text[], $3::text[]) AS keys(document_code, code)
        )
-         AND p.company_id = $1
+         AND p.finance_company_id = $1
        ORDER BY p.document_code ASC, p.code ASC`,
       [companyId, keys.map((k) => k.documentCode), keys.map((k) => k.code)],
     );
@@ -323,7 +323,7 @@ export class FinancialDocumentDefaultRepo {
 
   async getGlAccount(companyId: number, glAccountId: number): Promise<{ id: number; accountType: "ASSET" | "LIABILITY" | "EQUITY" | "REVENUE" | "EXPENSE"; status: "ACTIVE" | "INACTIVE" } | null> {
     const { rows } = await this.db.query(
-      `SELECT id, account_type, status FROM gl_account WHERE company_id = $1 AND id = $2`,
+      `SELECT id, account_type, status FROM gl_account WHERE finance_company_id = $1 AND id = $2`,
       [companyId, glAccountId],
     );
     return rows[0] ? {
@@ -342,7 +342,7 @@ export class FinancialDocumentDefaultRepo {
   private mapRow(row: Record<string, unknown>): FinancialDocumentDefaultRow {
     return {
       ...row,
-      company_id: Number(row.company_id),
+      finance_company_id: Number(row.finance_company_id),
       gl_account_id: row.gl_account_id == null ? null : Number(row.gl_account_id),
       bank_cash_control_account_id: row.bank_cash_control_account_id == null ? null : Number(row.bank_cash_control_account_id),
       bank_cash_gl_account_id: row.bank_cash_gl_account_id == null ? null : Number(row.bank_cash_gl_account_id),

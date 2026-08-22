@@ -3,7 +3,7 @@ import type { OperationReference } from "@voyzu/core/types/modules/core";
 
 export interface ItemPostingProfileRow {
   id: number;
-  company_id: number;
+  finance_company_id: number;
   profile_code: string;
   profile_name: string;
   description: string;
@@ -35,7 +35,7 @@ export interface ItemPostingProfileRow {
 }
 
 export interface InsertItemPostingProfileRow {
-  company_id: number;
+  finance_company_id: number;
   code: string;
   name: string;
   description: string;

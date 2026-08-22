@@ -44,7 +44,7 @@ export class ArSubledgerStatementRepo {
        FROM ar_counterparty c
        JOIN ar_subledger_entry_header e ON e.ar_counterparty_id = c.id
        JOIN ar_subledger_entry_line l ON l.ar_subledger_entry_header_id = e.id
-       WHERE c.company_id = $1
+       WHERE c.finance_company_id = $1
        GROUP BY c.id, c.code, c.name
        ORDER BY c.code`,
       [companyId],
@@ -76,7 +76,7 @@ export class ArSubledgerStatementRepo {
          JOIN ar_subledger_entry_line l ON l.ar_subledger_entry_header_id = e.id
          LEFT JOIN ar_subledger_entry_line reverse_line ON reverse_line.id = l.reverses_entry_line_id
          LEFT JOIN ar_subledger_entry_header reverse_header ON reverse_header.id = reverse_line.ar_subledger_entry_header_id
-         WHERE e.company_id = $1
+         WHERE e.finance_company_id = $1
            AND c.code = $2
        )
        SELECT

@@ -6,7 +6,7 @@ import { CompanyAuditPanel as AuditPanel } from "@voyzu/core/common/client";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/core/common/client";
 import type { ApCounterpartyResponseDto } from "@voyzu/core/types/modules/ap-subledger";
-import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
+import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
 import { Badge, Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import reportLayout from "@voyzu/ui-layout/css-modules/report.layout.module.css";

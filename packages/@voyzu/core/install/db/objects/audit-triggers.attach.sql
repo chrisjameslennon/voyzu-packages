@@ -192,3 +192,14 @@ CREATE TRIGGER tax_ledger_entry_line_audit_trigger
   FOR EACH ROW
   EXECUTE FUNCTION audit_trigger_fn('@voyzu/core');
 
+DROP TRIGGER IF EXISTS finance_country_audit_trigger ON finance_country;
+CREATE TRIGGER finance_country_audit_trigger
+  BEFORE INSERT OR UPDATE OR DELETE ON finance_country
+  FOR EACH ROW
+  EXECUTE FUNCTION audit_trigger_fn('@voyzu/core');
+
+DROP TRIGGER IF EXISTS finance_company_audit_trigger ON finance_company;
+CREATE TRIGGER finance_company_audit_trigger
+  BEFORE INSERT OR UPDATE OR DELETE ON finance_company
+  FOR EACH ROW
+  EXECUTE FUNCTION audit_trigger_fn('@voyzu/core');

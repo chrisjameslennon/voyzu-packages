@@ -34,7 +34,7 @@ export function toDto(row: DimensionRow, values?: DimensionValueResponseDto[]): 
 
 export function toInsertRow(input: DimensionCreateRequestDto, companyId: number): InsertDimensionRow {
   return {
-    company_id: companyId,
+    finance_company_id: companyId,
     code: input.code,
     name: input.name,
   };

@@ -123,14 +123,15 @@ function localDateString(d: Date): string {
 async function ensureOpenFiscalPeriodFor(companyCode: string, date: string): Promise<void> {
   const pool = getPool();
   const { rows } = await pool.query<{
-    company_id: number;
+    finance_company_id: number;
     fiscal_year_id: number;
     start_date: string;
     end_date: string;
   }>(
-    `SELECT c.id AS company_id, fy.id AS fiscal_year_id, fy.start_date::text, fy.end_date::text
+    `SELECT fc.id AS finance_company_id, fy.id AS fiscal_year_id, fy.start_date::text, fy.end_date::text
        FROM company c
-       JOIN fiscal_year fy ON fy.company_id = c.id
+       JOIN finance_company fc ON fc.company_id = c.id AND fc.is_template = false
+       JOIN fiscal_year fy ON fy.finance_company_id = fc.id
       WHERE c.code = $1
         AND $2::date BETWEEN fy.start_date AND fy.end_date
       LIMIT 1`,
@@ -172,9 +173,9 @@ async function ensureOpenFiscalPeriodFor(companyCode: string, date: string): Pro
     if (updated.rowCount === 0) {
       await pool.query(
         `INSERT INTO fiscal_period
-           (company_id, fiscal_year_id, code, name, start_date, end_date, status, creation_date, creation_actor_type, updated_actor_type)
+           (finance_company_id, fiscal_year_id, code, name, start_date, end_date, status, creation_date, creation_actor_type, updated_actor_type)
          VALUES ($1, $2, $3, $4, $5, $6, 'OPEN', now(), 'SYSTEM', 'SYSTEM')`,
-        [year.company_id, year.fiscal_year_id, code, name, startDate, endDate],
+        [year.finance_company_id, year.fiscal_year_id, code, name, startDate, endDate],
       );
     }
     current = new Date(calendarYear, monthIndex + 1, 1);

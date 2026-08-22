@@ -2,14 +2,14 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-import type { CompanyResponseDto } from "@voyzu/organization/types/modules/companies";
+import { getDb } from "@voyzu/capability/db";
 import type { FinancialYearResponseDto } from "@voyzu/core/types/modules/financial-years";
 
-import { listCompanies } from "@voyzu/organization/companies/server";
+import { listCompanies } from "@voyzu/erp-core/companies/server";
 import {
   SELECTED_COMPANY_COOKIE,
   parseSelectedCompanyId,
-} from "@voyzu/organization/company-switcher/server";
+} from "@voyzu/erp-core/company-switcher/server";
 import { listFinancialYears } from "@voyzu/core/financial-years/server";
 
 import { TaxActivityReconciliationReport } from "../../client";
@@ -30,6 +30,8 @@ interface FilingPeriod {
   endDate: string;
 }
 
+interface FinanceCompanyFilingSettings { id: number; taxFilingAnchorMonth: number; taxFilingIntervalMonths: number }
+
 function todayIso(): string {
   const today = new Date();
   return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -49,7 +51,7 @@ function monthName(month: number): string {
 }
 
 function deriveFilingPeriods(
-  company: Pick<CompanyResponseDto, "taxFilingAnchorMonth" | "taxFilingIntervalMonths">,
+  company: FinanceCompanyFilingSettings,
   year: FinancialYearResponseDto | undefined,
 ): FilingPeriod[] {
   if (!year) return [];
@@ -108,6 +110,17 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
     );
   }
 
+  const financeRows = await getDb().query(
+    `SELECT tax_filing_anchor_month, tax_filing_interval_months FROM finance_company WHERE finance_company_id = $1`,
+    [company.id],
+  );
+  const financeCompany: FinanceCompanyFilingSettings | null = financeRows.rows[0] ? {
+    id: company.id,
+    taxFilingAnchorMonth: Number(financeRows.rows[0].tax_filing_anchor_month),
+    taxFilingIntervalMonths: Number(financeRows.rows[0].tax_filing_interval_months),
+  } : null;
+  if (!financeCompany) return null;
+
   const today = todayIso();
   const allYears = await listFinancialYears(company.id);
   const yearsWithPostings = allYears.filter((year) => year.hasPostings);
@@ -115,7 +128,7 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
     ?? yearsWithPostings[0]
     ?? allYears.find((year) => year.startDate <= today && today <= year.endDate)
     ?? undefined;
-  const filingPeriods = deriveFilingPeriods(company, selectedYear);
+  const filingPeriods = deriveFilingPeriods(financeCompany, selectedYear);
   const defaultPeriod = filingPeriods.find((period) => period.startDate <= today && today <= period.endDate)
     ?? filingPeriods[0]
     ?? null;
@@ -155,8 +168,8 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
       organizationName=""
       selectedCompany={{
         id: company.id,
-        taxFilingAnchorMonth: company.taxFilingAnchorMonth,
-        taxFilingIntervalMonths: company.taxFilingIntervalMonths,
+        taxFilingAnchorMonth: financeCompany.taxFilingAnchorMonth,
+        taxFilingIntervalMonths: financeCompany.taxFilingIntervalMonths,
       }}
     />
   );

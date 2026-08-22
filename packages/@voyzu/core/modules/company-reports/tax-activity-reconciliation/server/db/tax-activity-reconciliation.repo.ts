@@ -109,9 +109,10 @@ export class TaxActivityReconciliationRepo {
   async listTaxAuthoritiesForCompany(companyId: number): Promise<TaxActivityReconciliationAuthorityOptionDto[]> {
     const { rows } = await this.db.query(
       `SELECT ta.code AS tax_authority_code, ta.name AS tax_authority_name
-       FROM company c
+       FROM finance_company fc
+       JOIN company c ON c.id = fc.company_id
        JOIN tax_authority ta ON ta.country_code = c.country_code
-       WHERE c.id = $1
+       WHERE fc.id = $1
          AND ta.status = 'ACTIVE'
        ORDER BY ta.code ASC`,
       [companyId],
@@ -139,9 +140,9 @@ export class TaxActivityReconciliationRepo {
        FROM tax_ledger_entry_header e
        JOIN tax_ledger_entry_line l ON l.tax_ledger_entry_header_id = e.id
        JOIN journal_header h ON h.id = e.journal_header_id
-       JOIN tax_control_account tmt ON tmt.company_id = $4 AND tmt.code = l.tax_movement_type_code
+       JOIN tax_control_account tmt ON tmt.finance_company_id = $4 AND tmt.code = l.tax_movement_type_code
        JOIN tax_authority ta ON ta.id = l.tax_authority_id
-       WHERE e.company_id = $1
+       WHERE e.finance_company_id = $1
          AND e.status = 'POSTED'
          AND h.status = 'POSTED'
          AND tmt.status = 'ACTIVE'
@@ -161,7 +162,7 @@ export class TaxActivityReconciliationRepo {
     const { rows } = await this.db.query(
       `SELECT gl_account_id::int AS gl_account_id
        FROM tax_control_account
-       WHERE company_id = $1
+       WHERE finance_company_id = $1
          AND status = 'ACTIVE'`,
       [settingsCompanyId],
     );

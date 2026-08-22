@@ -16,18 +16,18 @@ const SELECT_SQL = `SELECT ic.*,
       'inactive', (COUNT(*) FILTER (WHERE item.status = 'INACTIVE'))::int
     )
     FROM inventory_item item
-    WHERE item.company_id = ic.company_id
+    WHERE item.finance_company_id = ic.finance_company_id
       AND item.category_id = ic.id
   ) AS number_of_items,
   COALESCE((
     SELECT jsonb_agg(jsonb_build_object('type', 'Inventory Items', 'code', item.code) ORDER BY item.code)
     FROM inventory_item item
-    WHERE item.company_id = ic.company_id
+    WHERE item.finance_company_id = ic.finance_company_id
       AND item.category_id = ic.id
   ), '[]'::jsonb) AS linked_by,
   ipp.code AS posting_profile_code
   FROM ${TABLE} ic
-  JOIN item_posting_profile ipp ON ipp.company_id = ic.company_id AND ipp.id = ic.posting_profile_id`;
+  JOIN item_posting_profile ipp ON ipp.finance_company_id = ic.finance_company_id AND ipp.id = ic.posting_profile_id`;
 
 function mapRow(row: Record<string, unknown>): InventoryCategoryRow {
   const numberOfItems = row.number_of_items && typeof row.number_of_items === "object"
@@ -35,7 +35,7 @@ function mapRow(row: Record<string, unknown>): InventoryCategoryRow {
     : {};
   return {
     id: Number(row.id),
-    company_id: Number(row.company_id),
+    finance_company_id: Number(row.finance_company_id),
     code: String(row.code),
     name: String(row.name),
     description: String(row.description),
@@ -129,7 +129,7 @@ export class InventoryCategoryRepo {
 
   private async resolvePostingProfileId(companyId: number, postingProfileCode: string): Promise<number> {
     const { rows } = await this.db.query(
-      `SELECT id::int FROM item_posting_profile WHERE company_id = $1 AND code = $2`,
+      `SELECT id::int FROM item_posting_profile WHERE finance_company_id = $1 AND code = $2`,
       [companyId, postingProfileCode],
     );
     if (!rows[0]) throw new DataError(`Unknown posting profile ${postingProfileCode}`);
@@ -137,13 +137,13 @@ export class InventoryCategoryRepo {
   }
 
   async insert(row: InsertInventoryCategoryRow): Promise<InventoryCategoryRow> {
-    const postingProfileId = await this.resolvePostingProfileId(row.company_id, row.posting_profile_code);
+    const postingProfileId = await this.resolvePostingProfileId(row.finance_company_id, row.posting_profile_code);
     const { rows } = await this.db.query(
-      `INSERT INTO ${TABLE} (company_id, code, name, description, posting_profile_id, status, creation_date, creation_actor_type, creation_user_id, creation_mutation_id)
+      `INSERT INTO ${TABLE} (finance_company_id, code, name, description, posting_profile_id, status, creation_date, creation_actor_type, creation_user_id, creation_mutation_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING id`,
       [
-        row.company_id,
+        row.finance_company_id,
         row.code,
         row.name,
         row.description,
@@ -155,22 +155,22 @@ export class InventoryCategoryRepo {
         row.creation_mutation_id ?? null,
       ],
     );
-    return this.getById(row.company_id, Number(rows[0].id));
+    return this.getById(row.finance_company_id, Number(rows[0].id));
   }
 
   async listAll(companyId: number): Promise<InventoryCategoryRow[]> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.company_id = $1 ORDER BY ic.code`, [companyId]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.finance_company_id = $1 ORDER BY ic.code`, [companyId]);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
   async get(companyId: number, code: string): Promise<InventoryCategoryRow | null> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.company_id = $1 AND ic.code = $2`, [companyId, code]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.finance_company_id = $1 AND ic.code = $2`, [companyId, code]);
     return rows[0] ? mapRow(rows[0]) : null;
   }
 
   async batchGet(companyId: number, codes: string[]): Promise<InventoryCategoryRow[]> {
     if (!codes.length) return [];
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.company_id = $1 AND ic.code = ANY($2::text[]) ORDER BY ic.code`, [companyId, codes]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.finance_company_id = $1 AND ic.code = ANY($2::text[]) ORDER BY ic.code`, [companyId, codes]);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -178,7 +178,7 @@ export class InventoryCategoryRepo {
     const { sql, params } = buildWhere(filters);
     const queryParams: unknown[] = [companyId, ...params];
     const tail = buildOrderLimitOffset(queryParams, options);
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.company_id = $1${sql} ${tail}`, queryParams);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.finance_company_id = $1${sql} ${tail}`, queryParams);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -190,12 +190,12 @@ export class InventoryCategoryRepo {
       return `ic.${column}::text ILIKE $${params.length}`;
     });
     const tail = buildOrderLimitOffset(params, options);
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.company_id = $1 AND (${likeParts.join(" OR ")}) ${tail}`, params);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.finance_company_id = $1 AND (${likeParts.join(" OR ")}) ${tail}`, params);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
   async getById(companyId: number, id: number): Promise<InventoryCategoryRow> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.company_id = $1 AND ic.id = $2`, [companyId, id]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ic.finance_company_id = $1 AND ic.id = $2`, [companyId, id]);
     if (!rows[0]) throw new DataError(`Inventory category id ${id} not found`);
     return mapRow(rows[0]);
   }
@@ -209,7 +209,7 @@ export class InventoryCategoryRepo {
            updated_actor_type = $7::actor_type,
            updated_user_id = $8,
            updated_mutation_id = $9::uuid
-       WHERE company_id = $1 AND code = $2
+       WHERE finance_company_id = $1 AND code = $2
        RETURNING id`,
       [companyId, code, row.name, row.description, postingProfileId, audit.timestamp, audit.actorType, audit.userId, audit.mutationId],
     );
@@ -259,7 +259,7 @@ export class InventoryCategoryRepo {
     const { rows } = await this.db.query(
       `UPDATE ${TABLE}
        SET ${sets.join(", ")}
-       WHERE code = $${vals.length - 1} AND company_id = $${vals.length}
+       WHERE code = $${vals.length - 1} AND finance_company_id = $${vals.length}
        RETURNING id`,
       vals,
     );
@@ -268,7 +268,7 @@ export class InventoryCategoryRepo {
   }
 
   async delete(companyId: number, code: string): Promise<void> {
-    const { rowCount } = await this.db.query(`DELETE FROM ${TABLE} WHERE company_id = $1 AND code = $2`, [companyId, code]);
+    const { rowCount } = await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND code = $2`, [companyId, code]);
     if (!rowCount) throw new DataError(`Inventory category ${code} not found`);
   }
 }

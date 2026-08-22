@@ -9,7 +9,7 @@ import type { DimensionRow, InsertDimensionRow, UpdateDimensionRow, PatchDimensi
 const TABLE = "dimension";
 
 const COLUMNS: readonly string[] = [
-  "id", "company_id", "code", "name", "status",
+  "id", "finance_company_id", "code", "name", "status",
   "creation_date", "creation_actor_type", "creation_user_id", "creation_mutation_id",
   "updated_date", "updated_actor_type", "updated_user_id", "updated_mutation_id",
 ];
@@ -20,21 +20,21 @@ const SEARCHABLE_COLUMNS: readonly string[] = ["code", "name", "status"];
 
 const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
   SELECT DISTINCT posting_company.code
-  FROM company source_company
-  JOIN company posting_company ON (
-    (source_company.is_template = true
-      AND posting_company.organization_id = source_company.organization_id
-      AND posting_company.is_template = false
-      AND posting_company.status != 'DELETED'
-      AND posting_company.use_organization_standard_settings = true)
-    OR (source_company.is_template = false AND posting_company.id = source_company.id)
+  FROM finance_company source_finance_company
+  JOIN finance_company posting_finance_company ON (
+    (source_finance_company.is_template = true
+      AND posting_finance_company.is_template = false
+      AND posting_finance_company.use_organization_standard_settings = true)
+    OR (source_finance_company.is_template = false AND posting_finance_company.id = source_finance_company.id)
   )
+  JOIN company posting_company ON posting_company.id = posting_finance_company.company_id
+    AND posting_company.status != 'DELETED'
   JOIN journal_line_dimension jld ON jld.dimension_id = d.id
   JOIN journal_line jl ON jl.id = jld.journal_line_id
   JOIN journal_header jh ON jh.id = jl.journal_header_id
-    AND jh.company_id = posting_company.id
+    AND jh.finance_company_id = posting_finance_company.id
     AND jh.status = 'POSTED'
-  WHERE source_company.id = d.company_id
+  WHERE source_finance_company.id = d.finance_company_id
   ORDER BY posting_company.code
 ), ARRAY[]::text[])`;
 
@@ -143,7 +143,7 @@ export class DimensionRepo {
 
   async get(companyId: number, code: string): Promise<DimensionRow | null> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE d.company_id = $1 AND d.code = $2 AND d.status != 'DELETED'`,
+      `${SELECT_WITH_DERIVED} WHERE d.finance_company_id = $1 AND d.code = $2 AND d.status != 'DELETED'`,
       [companyId, code],
     );
     return rows[0] ? this.mapRow(rows[0]) : null;
@@ -174,7 +174,7 @@ export class DimensionRepo {
     }
 
     vals.push(companyId, code);
-    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE company_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
+    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
 
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`Dimension ${code} not found`);
@@ -209,7 +209,7 @@ export class DimensionRepo {
     }
 
     vals.push(companyId, code);
-    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE company_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
+    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
 
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`Dimension ${code} not found`);
@@ -218,11 +218,11 @@ export class DimensionRepo {
   }
 
   async delete(companyId: number, code: string): Promise<void> {
-    await this.db.query(`DELETE FROM ${TABLE} WHERE company_id = $1 AND code = $2`, [companyId, code]);
+    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND code = $2`, [companyId, code]);
   }
   async listAll(companyId: number): Promise<DimensionRow[]> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE d.company_id = $1 AND d.status != 'DELETED' ORDER BY d.code ASC`,
+      `${SELECT_WITH_DERIVED} WHERE d.finance_company_id = $1 AND d.status != 'DELETED' ORDER BY d.code ASC`,
       [companyId],
     );
     return rows.map((r: Record<string, unknown>) => this.mapRow(r));
@@ -232,7 +232,7 @@ export class DimensionRepo {
     const { sql: whereSql, params } = buildWhere(filters);
     const shiftedWhere = whereSql.replace(/\$(\d+)/g, (_match, n: string) => `$${Number(n) + 1}`);
     const scopedParams: unknown[] = [companyId, ...params];
-    const fullWhere = shiftedWhere ? `WHERE d.company_id = $1 AND ${shiftedWhere.slice("WHERE ".length)} AND d.status != 'DELETED'` : `WHERE d.company_id = $1 AND d.status != 'DELETED'`;
+    const fullWhere = shiftedWhere ? `WHERE d.finance_company_id = $1 AND ${shiftedWhere.slice("WHERE ".length)} AND d.status != 'DELETED'` : `WHERE d.finance_company_id = $1 AND d.status != 'DELETED'`;
     const tail = buildOrderLimitOffset(scopedParams, options);
     const sql = `${SELECT_WITH_DERIVED} ${fullWhere} ${tail}`;
     const { rows } = await this.db.query(sql, scopedParams);
@@ -247,7 +247,7 @@ export class DimensionRepo {
       params.push(pattern);
       return `d.${col}::text ILIKE $${params.length}`;
     });
-    const whereSql = `WHERE d.company_id = $1 AND (${likeParts.join(" OR ")}) AND d.status != 'DELETED'`;
+    const whereSql = `WHERE d.finance_company_id = $1 AND (${likeParts.join(" OR ")}) AND d.status != 'DELETED'`;
 
     const tail = buildOrderLimitOffset(params, options);
     const sql = `${SELECT_WITH_DERIVED} ${whereSql} ${tail}`;
@@ -258,7 +258,7 @@ export class DimensionRepo {
   async batchGet(companyId: number, codes: string[]): Promise<DimensionRow[]> {
     if (!codes.length) return [];
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE d.company_id = $1 AND d.code = ANY($2::text[]) AND d.status != 'DELETED' ORDER BY d.code ASC`,
+      `${SELECT_WITH_DERIVED} WHERE d.finance_company_id = $1 AND d.code = ANY($2::text[]) AND d.status != 'DELETED' ORDER BY d.code ASC`,
       [companyId, codes],
     );
     return rows.map((r: Record<string, unknown>) => this.mapRow(r));
@@ -266,7 +266,7 @@ export class DimensionRepo {
 
   async batchDelete(companyId: number, codes: string[]): Promise<void> {
     if (!codes.length) return;
-    await this.db.query(`DELETE FROM ${TABLE} WHERE company_id = $1 AND code = ANY($2::text[])`, [companyId, codes]);
+    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND code = ANY($2::text[])`, [companyId, codes]);
   }
 
   private mapRow(row: Record<string, unknown>): DimensionRow {
@@ -274,7 +274,7 @@ export class DimensionRepo {
     return {
       ...row,
       id: Number(row.id),
-      company_id: Number(row.company_id),
+      finance_company_id: Number(row.finance_company_id),
       has_postings: companiesWithPostings.length > 0,
       companies_with_postings: companiesWithPostings,
       creation_date: row.creation_date instanceof Date

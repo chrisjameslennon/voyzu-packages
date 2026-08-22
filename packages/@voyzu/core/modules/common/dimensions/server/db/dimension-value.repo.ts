@@ -9,21 +9,21 @@ const MUTABLE_COLUMNS: readonly string[] = ["name", "status"];
 
 const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
   SELECT DISTINCT posting_company.code
-  FROM company source_company
-  JOIN company posting_company ON (
-    (source_company.is_template = true
-      AND posting_company.organization_id = source_company.organization_id
-      AND posting_company.is_template = false
-      AND posting_company.status != 'DELETED'
-      AND posting_company.use_organization_standard_settings = true)
-    OR (source_company.is_template = false AND posting_company.id = source_company.id)
+  FROM finance_company source_finance_company
+  JOIN finance_company posting_finance_company ON (
+    (source_finance_company.is_template = true
+      AND posting_finance_company.is_template = false
+      AND posting_finance_company.use_organization_standard_settings = true)
+    OR (source_finance_company.is_template = false AND posting_finance_company.id = source_finance_company.id)
   )
+  JOIN company posting_company ON posting_company.id = posting_finance_company.company_id
+    AND posting_company.status != 'DELETED'
   JOIN journal_line_dimension jld ON jld.dimension_value_id = dv.id
   JOIN journal_line jl ON jl.id = jld.journal_line_id
   JOIN journal_header jh ON jh.id = jl.journal_header_id
-    AND jh.company_id = posting_company.id
+    AND jh.finance_company_id = posting_finance_company.id
     AND jh.status = 'POSTED'
-  WHERE source_company.id = dv.company_id
+  WHERE source_finance_company.id = dv.finance_company_id
   ORDER BY posting_company.code
 ), ARRAY[]::text[])`;
 
@@ -47,13 +47,13 @@ export class DimensionValueRepo {
     const sql = `INSERT INTO ${TABLE} (${cols.join(", ")}) VALUES (${placeholders}) RETURNING *`;
 
     const { rows } = await this.db.query(sql, vals);
-    const inserted = await this.getById(Number(rows[0].company_id), Number(rows[0].id));
+    const inserted = await this.getById(Number(rows[0].finance_company_id), Number(rows[0].id));
     return inserted ?? this.mapRow(rows[0]);
   }
 
   async getById(companyId: number, id: number): Promise<DimensionValueRow | null> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE dv.company_id = $1 AND dv.id = $2 AND dv.status != 'DELETED'`,
+      `${SELECT_WITH_DERIVED} WHERE dv.finance_company_id = $1 AND dv.id = $2 AND dv.status != 'DELETED'`,
       [companyId, id],
     );
     return rows[0] ? this.mapRow(rows[0]) : null;
@@ -61,7 +61,7 @@ export class DimensionValueRepo {
 
   async listByDimensionId(companyId: number, dimensionId: number): Promise<DimensionValueRow[]> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE dv.company_id = $1 AND dv.dimension_id = $2 AND dv.status != 'DELETED' ORDER BY dv.name ASC`,
+      `${SELECT_WITH_DERIVED} WHERE dv.finance_company_id = $1 AND dv.dimension_id = $2 AND dv.status != 'DELETED' ORDER BY dv.name ASC`,
       [companyId, dimensionId],
     );
     return rows.map((r: Record<string, unknown>) => this.mapRow(r));
@@ -69,7 +69,7 @@ export class DimensionValueRepo {
 
   async nameExists(companyId: number, dimensionId: number, name: string, excludeId?: number): Promise<boolean> {
     const values: unknown[] = [companyId, dimensionId, name];
-    let sql = `SELECT 1 FROM ${TABLE} WHERE company_id = $1 AND dimension_id = $2 AND lower(name) = lower($3)`;
+    let sql = `SELECT 1 FROM ${TABLE} WHERE finance_company_id = $1 AND dimension_id = $2 AND lower(name) = lower($3)`;
     if (excludeId !== undefined) {
       values.push(excludeId);
       sql += ` AND id != $4`;
@@ -81,7 +81,7 @@ export class DimensionValueRepo {
 
   async listAll(companyId: number): Promise<DimensionValueRow[]> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE dv.company_id = $1 AND dv.status != 'DELETED' ORDER BY dv.dimension_id ASC, dv.name ASC`,
+      `${SELECT_WITH_DERIVED} WHERE dv.finance_company_id = $1 AND dv.status != 'DELETED' ORDER BY dv.dimension_id ASC, dv.name ASC`,
       [companyId],
     );
     return rows.map((r: Record<string, unknown>) => this.mapRow(r));
@@ -123,7 +123,7 @@ export class DimensionValueRepo {
     }
 
     vals.push(companyId, id);
-    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE company_id = $${vals.length - 1} AND id = $${vals.length} RETURNING *`;
+    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 1} AND id = $${vals.length} RETURNING *`;
 
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`Dimension value ${id} not found`);
@@ -132,7 +132,7 @@ export class DimensionValueRepo {
   }
 
   async deleteById(companyId: number, id: number): Promise<void> {
-    await this.db.query(`DELETE FROM ${TABLE} WHERE company_id = $1 AND id = $2`, [companyId, id]);
+    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND id = $2`, [companyId, id]);
   }
 
   private mapRow(row: Record<string, unknown>): DimensionValueRow {
@@ -140,7 +140,7 @@ export class DimensionValueRepo {
     return {
       ...row,
       id: Number(row.id),
-      company_id: Number(row.company_id),
+      finance_company_id: Number(row.finance_company_id),
       dimension_id: Number(row.dimension_id),
       companies_with_postings: companiesWithPostings,
       has_postings: companiesWithPostings.length > 0,

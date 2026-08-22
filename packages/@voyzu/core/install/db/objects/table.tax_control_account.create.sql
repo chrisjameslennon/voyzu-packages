@@ -4,7 +4,7 @@
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS tax_control_account (
-    company_id              BIGINT NOT NULL,
+    finance_company_id              BIGINT NOT NULL,
     code                    business_code NOT NULL,
     ledger                  TEXT NOT NULL CHECK (ledger = 'TAX'),
     name                    display_name NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS tax_control_account (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT pk_tax_control_account PRIMARY KEY (company_id, code),
-    CONSTRAINT fk_tax_control_account_company FOREIGN KEY (company_id) REFERENCES company(id),
-    CONSTRAINT fk_tax_control_account_gl_account FOREIGN KEY (company_id, gl_account_id) REFERENCES gl_account(company_id, id)
+    CONSTRAINT pk_tax_control_account PRIMARY KEY (finance_company_id, code),
+    CONSTRAINT fk_tax_control_account_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_tax_control_account_gl_account FOREIGN KEY (finance_company_id, gl_account_id) REFERENCES gl_account(finance_company_id, id)
 );
