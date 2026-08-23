@@ -1,0 +1,47 @@
+import { handleGet as handleControlAccountsGet, handleListAr as handleArControlAccountsList, handlePatch as handleControlAccountsPatch } from "@voyzu/finance/common/control-accounts/server";
+import { OrganizationArControlAccountsListPage, OrganizationArControlAccountDetailPage } from "@voyzu/finance/organization-ar-control-accounts/server";
+
+export const pageRoutes = {
+  list: {
+    id: "voyzu.organization-ar-control-accounts.page.list",
+    pageTitle: "Accounts Receivable Control Accounts",
+    helpPath: "modules-help/organization-financial-settings/ar-control-accounts",
+    path: "/finance/control-accounts/ar",
+    Page: OrganizationArControlAccountsListPage,
+    breadcrumbBase: [
+      {
+        label: "Organization",
+      },
+      {
+        label: "Standard Settings",
+      },
+      {
+        label: "Control Accounts",
+      },
+    ],
+    auth: { required: true, minRole: "STANDARD" }
+  },
+  detail: {
+    id: "voyzu.organization-ar-control-accounts.page.detail",
+    pageTitle: "Accounts Receivable Control Accounts",
+    helpPath: "modules-help/organization-financial-settings/ar-control-accounts",
+    path: "/finance/control-accounts/ar/[code]",
+    Page: OrganizationArControlAccountDetailPage,
+    breadcrumbBase: [
+      {
+        label: "Organization",
+      },
+      {
+        label: "Standard Settings",
+      },
+      {
+        label: "Control Accounts",
+      },
+      {
+        label: "Accounts Receivable Control Accounts",
+        href: "/finance/control-accounts/ar",
+      },
+    ],
+    auth: { required: true, minRole: "STANDARD" }
+  }
+} as const;
