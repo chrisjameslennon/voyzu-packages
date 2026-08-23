@@ -32,7 +32,7 @@ export async function CompanyArControlAccountDetailPage({ code }: CompanyArContr
       listPath="/finance/settings/control-accounts/ar"
       auditPath="/settings/audit"
       readOnly={settingsState.readOnly}
-      usesOrganizationStandardSettings={settingsState.usesOrganizationStandardSettings}
+      usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings}
       isArchived={settingsState.isArchived}
     />
   );

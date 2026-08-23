@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS journal_header (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_company           FOREIGN KEY (finance_company_id)             REFERENCES finance_company(id),
+    CONSTRAINT fk_company           FOREIGN KEY (finance_company_id)             REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT fk_financial_year    FOREIGN KEY (financial_year_id)      REFERENCES fiscal_year(id),
     CONSTRAINT fk_financial_period  FOREIGN KEY (financial_period_id)    REFERENCES fiscal_period(id),
     CONSTRAINT fk_base_currency     FOREIGN KEY (base_currency_code)     REFERENCES currency(code),

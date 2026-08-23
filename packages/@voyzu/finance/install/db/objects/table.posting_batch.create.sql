@@ -13,5 +13,5 @@ CREATE TABLE IF NOT EXISTS posting_batch (
     updated_date        audit_timestamp,
     updated_actor_type  actor_type,
 
-    CONSTRAINT fk_posting_batch_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id)
+    CONSTRAINT fk_posting_batch_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id) ON DELETE CASCADE
 );

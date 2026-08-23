@@ -66,14 +66,14 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
     }
   };
 
-  const save = async (useOrganizationStandardSettings = current.useOrganizationStandardSettings) => {
+  const save = async (useFinanceTemplateSettings = current.useFinanceTemplateSettings) => {
     setBusy(true);
     setError("");
     try {
       const payload: FinanceCompanyUpdateRequestDto = {
         taxFilingAnchorMonth: Number(anchorMonth),
         taxFilingIntervalMonths: Number(interval) as 1 | 2 | 3 | 6 | 12,
-        useOrganizationStandardSettings,
+        useFinanceTemplateSettings,
         reportLine1: reportLine1 || undefined,
         reportLine2: reportLine2 || undefined,
         reportFooter: reportFooter || undefined,
@@ -139,7 +139,7 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
             key: "settings", label: "Settings", content: <section className={detail.card}>
               <h2 className={typography.sectionHeading}>Finance Admin standard settings</h2>
               {!current.financeEnabled ? <p>Enable this company for Finance before configuring its settings.</p>
-                : current.useOrganizationStandardSettings ? <>
+                : current.useFinanceTemplateSettings ? <>
                   <p>This company inherits the Finance Admin standard settings. It can be given its own copy, but cannot later be re-coupled.</p>
                   <div className={detail.cardActions}><Button variant="secondary-destructive" disabled={readOnly} onClick={() => setConfirmDecouple(true)}>Use company-specific settings</Button></div>
                 </> : <p>This company uses its own financial settings.</p>}

@@ -21,7 +21,7 @@ export async function CompanyFinancialDocumentTypeDetailPage({ code }: { code?: 
       processor={processor}
       postingTemplate={postingTemplate}
       readOnly={settingsUiState.readOnly}
-      showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

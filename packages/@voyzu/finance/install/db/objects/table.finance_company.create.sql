@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS finance_company (
     report_footer description_text,
     tax_filing_anchor_month INTEGER NOT NULL DEFAULT 3 CHECK (tax_filing_anchor_month BETWEEN 1 AND 12),
     tax_filing_interval_months INTEGER NOT NULL DEFAULT 3 CHECK (tax_filing_interval_months IN (1, 2, 3, 6, 12)),
-    use_organization_standard_settings BOOLEAN NOT NULL DEFAULT TRUE,
+    use_finance_template_settings BOOLEAN NOT NULL DEFAULT TRUE,
     is_template BOOLEAN NOT NULL DEFAULT FALSE,
 
     creation_date audit_timestamp,

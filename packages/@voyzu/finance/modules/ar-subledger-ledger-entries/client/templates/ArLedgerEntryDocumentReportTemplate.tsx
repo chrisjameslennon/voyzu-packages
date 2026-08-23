@@ -24,15 +24,11 @@ function formatDate(value: string | null): string {
 export interface ArLedgerEntryDocumentReportTemplateProps {
   report: ArLedgerEntryDocumentReportResponseDto;
   generatedAt: string;
-  organizationName?: string;
-  showOrganization?: boolean;
 }
 
 export function ArLedgerEntryDocumentReportTemplate({
   report,
   generatedAt,
-  organizationName = "",
-  showOrganization = false,
 }: ArLedgerEntryDocumentReportTemplateProps) {
   const {
     company,
@@ -57,9 +53,6 @@ export function ArLedgerEntryDocumentReportTemplate({
       <style>{`${arDocumentReportCss}\n@media print { @page { size: A4 portrait; } }`}</style>
 
       <header className={localStyles.reportHeader}>
-        {showOrganization && organizationName && (
-          <div className={localStyles.reportOrgNameCentered}>{organizationName}</div>
-        )}
         <div className={localStyles.reportCompanyName}>{company.name}</div>
         <div className={`${localStyles.reportHeaderLine} ${localStyles.reportHeaderLineStrong}`}>
           {documentTypeLabel} {documentId}

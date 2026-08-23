@@ -11,7 +11,7 @@ export const FinanceCompanyResponseDto = StrictObject({
   taxFilingIntervalMonths: Type.Union([
     Type.Literal(1), Type.Literal(2), Type.Literal(3), Type.Literal(6), Type.Literal(12),
   ]),
-  useOrganizationStandardSettings: Type.Boolean(),
+  useFinanceTemplateSettings: Type.Boolean(),
   reportLine1: Type.Optional(Type.String({ maxLength: 80 })),
   reportLine2: Type.Optional(Type.String({ maxLength: 80 })),
   reportFooter: Type.Optional(Type.String({ maxLength: 80 })),

@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS ar_subledger_entry_header (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_ar_header_company          FOREIGN KEY (finance_company_id)           REFERENCES finance_company(id),
+    CONSTRAINT fk_ar_header_company          FOREIGN KEY (finance_company_id)           REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT fk_ar_header_journal          FOREIGN KEY (journal_header_id)    REFERENCES journal_header(id),
     CONSTRAINT fk_ar_header_counterparty     FOREIGN KEY (ar_counterparty_id)   REFERENCES ar_counterparty(id),
     CONSTRAINT fk_ar_header_document_type    FOREIGN KEY (document_type_code) REFERENCES financial_document_type(code),

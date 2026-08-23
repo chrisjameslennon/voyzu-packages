@@ -11,7 +11,6 @@ import { BalanceSheetReport } from "../../client";
 import { BalanceSheetReportTemplate } from "../../templates/BalanceSheetReportTemplate";
 import {
   getBalanceSheet,
-  getOrganizationName,
   listFinancialYearsWithPostings,
 } from "../lib/balance-sheet.service";
 
@@ -32,10 +31,7 @@ export async function BalanceSheetReportPage({ surface }: ReportPageProps = {}) 
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
   const selectedCompanyId = queryCompanyId || parseSelectedCompanyId(cookieStore.get(SELECTED_COMPANY_COOKIE)?.value);
-  const [companies, organizationName] = await Promise.all([
-    listCompanies(),
-    getOrganizationName(),
-  ]);
+  const companies = await listCompanies();
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
   const today = todayIso();
 
@@ -47,7 +43,6 @@ export async function BalanceSheetReportPage({ surface }: ReportPageProps = {}) 
         initialAsAtDate={today}
         initialFinancialYears={[]}
         initialSelectedYearCode=""
-        organizationName={organizationName}
         selectedCompanyId={null}
       />
     );
@@ -66,8 +61,6 @@ export async function BalanceSheetReportPage({ surface }: ReportPageProps = {}) 
       <BalanceSheetReportTemplate
         data={initialData}
         generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-        organizationName={organizationName}
-        showOrganization={query.showOrganization === "true"}
         showCompanyHeader={query.showCompanyHeader !== "false"}
         showCompanyFooter={query.showCompanyFooter !== "false"}
         showAccountCode={query.showAccountCode !== "false"}
@@ -84,7 +77,6 @@ export async function BalanceSheetReportPage({ surface }: ReportPageProps = {}) 
       initialAsAtDate={asAtDate}
       initialFinancialYears={financialYears}
       initialSelectedYearCode={currentYear?.code ?? ""}
-      organizationName={organizationName}
       selectedCompanyId={company.id}
     />
   );

@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS trial_balance_snapshot (
 
     CONSTRAINT fk_trial_balance_snapshot_company
         FOREIGN KEY (finance_company_id)
-        REFERENCES finance_company(id),
+        REFERENCES finance_company(id) ON DELETE CASCADE,
 
     CONSTRAINT fk_trial_balance_snapshot_gl_account
         FOREIGN KEY (gl_account_id)

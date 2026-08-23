@@ -1,7 +1,6 @@
 import "server-only";
 
 import { listCompanies } from "@voyzu/erp-core/companies/server";
-import { getOrganization } from "@voyzu/erp-core/organization/server";
 import { listCountries } from "@voyzu/localization/countries/server";
 import { listCurrencies } from "@voyzu/localization/currencies/server";
 
@@ -68,11 +67,7 @@ async function report<T extends AnyRecord>(
   detailRow?: never,
   inactiveRowsOption?: { label: string; rowClassName: (row: T) => string | undefined },
 ) {
-  const organizationName = (await getOrganization())?.organizationName ?? "";
   const searchParams = props?.surface?.searchParams ?? {};
-  const initialShowOrganization = searchParams.showOrganization === undefined
-    ? true
-    : searchParams.showOrganization === "true";
   const resolvedSectionVisibilityOptions = sectionVisibilityOptions?.map((option) => ({
     ...option,
     initialChecked: searchParams[sectionParamName(option.key)] === undefined
@@ -84,7 +79,6 @@ async function report<T extends AnyRecord>(
     <OrganizationListReportShell
       title={title}
       printablePath={printablePath}
-      initialShowOrganization={initialShowOrganization}
       orientation={orientation}
       sectionVisibilityOptions={resolvedSectionVisibilityOptions}
       inactiveRowsOption={inactiveRowsOption ? {
@@ -95,7 +89,6 @@ async function report<T extends AnyRecord>(
     >
       <OrganizationListReport
         title={title}
-        organizationName={organizationName}
         rows={rows}
         columns={columns}
         rowKey={(row, index) => `${text(row.code) || text(row.id) || "row"}:${index}`}

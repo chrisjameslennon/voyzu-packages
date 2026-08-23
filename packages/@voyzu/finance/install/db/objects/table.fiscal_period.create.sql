@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS fiscal_period (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT fk_fiscal_year FOREIGN KEY (fiscal_year_id) REFERENCES fiscal_year(id),
     CONSTRAINT uq_year_code UNIQUE (fiscal_year_id, code),
     CONSTRAINT chk_date_range CHECK (start_date <= end_date)

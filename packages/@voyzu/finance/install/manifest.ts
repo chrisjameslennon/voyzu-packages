@@ -37,6 +37,7 @@ export const financeInstall = {
     "./install/db/objects/table.tax_ledger_entry_line.create.sql",
     "./install/db/objects/table.financial_document_default.create.sql",
     "./install/db/objects/table.trial_balance_snapshot.create.sql",
+    "./install/db/objects/finance-company-cascades.attach.sql",
     "./install/db/objects/trigger.gl_account_type_match.create.sql",
     "./install/db/objects/trigger.bank_cash_control_account_validate.create.sql",
     "./install/db/objects/trigger.fiscal_year_validate.create.sql",

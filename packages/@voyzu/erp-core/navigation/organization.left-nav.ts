@@ -5,7 +5,6 @@ import { organizationReportsModule } from "../modules/organization-reports/modul
 
 export const organizationLeftNav = [{
   items: [
-    { label: "Organization", icon: "hub", path: "/organization", exactMatch: true },
     { label: "Companies", icon: "domain", routeId: companiesModule.pageRoutes.list.id },
     { label: "Company access", icon: "manage_accounts", routeId: companyAccessModule.pageRoutes.list.id },
   ],

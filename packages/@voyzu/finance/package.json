@@ -27,6 +27,10 @@
       "types": "./voyzu.package.ts",
       "import": "./voyzu.package.ts"
     },
+    "./listeners": {
+      "types": "./listeners.ts",
+      "import": "./listeners.ts"
+    },
     "./navigation/domains": {
       "types": "./navigation/domains.ts",
       "import": "./navigation/domains.ts"

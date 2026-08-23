@@ -60,7 +60,6 @@ export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
         initialFinancialYears={[]}
         initialPeriods={[]}
         initialSelectedYearCode=""
-        organizationName=""
         selectedCompanyId={null}
       />
     );
@@ -87,9 +86,7 @@ export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
       <ProfitLossReportTemplate
         data={initialData}
         generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-        organizationName=""
         showAccountCode={query.showAccountCode === "true"}
-        showOrganization={query.showOrganization === "true"}
         showCompanyHeader={query.showCompanyHeader === "true"}
         showCompanyFooter={query.showCompanyFooter === "true"}
         showReportingCategories={query.showReportingCategories === "true"}
@@ -107,7 +104,6 @@ export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
       initialFinancialYears={yearsWithPostings}
       initialPeriods={periods}
       initialSelectedYearCode={selectedYear?.code ?? ""}
-      organizationName=""
       selectedCompanyId={company.id}
     />
   );

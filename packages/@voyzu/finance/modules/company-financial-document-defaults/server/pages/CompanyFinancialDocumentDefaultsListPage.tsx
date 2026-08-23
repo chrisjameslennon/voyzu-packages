@@ -28,7 +28,7 @@ export async function CompanyFinancialDocumentDefaultsListPage() {
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Financial Document Defaults</h1>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+              showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
               showArchived={settingsUiState.isArchived}
               showReadOnly={settingsUiState.readOnly}
             />

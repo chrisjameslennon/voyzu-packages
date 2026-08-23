@@ -24,7 +24,6 @@ interface OrganizationListReportSection {
 
 interface OrganizationListReportProps<T> {
   title: string;
-  organizationName: string;
   rows: T[];
   columns: OrganizationListReportColumn<T>[];
   rowKey: (row: T, index: number) => string;
@@ -50,7 +49,6 @@ function generatedAt(): string {
 
 export function OrganizationListReport<T>({
   title,
-  organizationName,
   rows,
   columns,
   rowKey,
@@ -66,7 +64,6 @@ export function OrganizationListReport<T>({
     <div className="orgListDocument">
       <style>{organizationListReportCss}</style>
       <header className="orgListDocumentHeader">
-        <div className="orgListOrganizationName">{organizationName}</div>
         <h2 className="orgListReportTitle">{title}</h2>
       </header>
 

@@ -107,7 +107,6 @@ interface ProfitLossReportProps {
   initialFinancialYears: FinancialYearResponseDto[];
   initialPeriods: FinancialPeriodResponseDto[];
   initialSelectedYearCode: string;
-  organizationName: string;
   selectedCompanyId: number | null;
 }
 
@@ -119,7 +118,6 @@ export function ProfitLossReport({
   initialFinancialYears,
   initialPeriods,
   initialSelectedYearCode,
-  organizationName,
   selectedCompanyId,
 }: ProfitLossReportProps) {
   const [data, setData] = useState<ProfitLossResponseDto | null>(initialData);
@@ -132,7 +130,6 @@ export function ProfitLossReport({
   const [rangeLabel, setRangeLabel] = useState("Previous 90 days");
   const [loading, setLoading] = useState(false);
   const [showAccountCode, setShowAccountCode] = useState(false);
-  const [showOrganization, setShowOrganization] = useState(false);
   const [showCompanyHeader, setShowCompanyHeader] = useState(false);
   const [showCompanyFooter, setShowCompanyFooter] = useState(false);
   const [showReportingCategories, setShowReportingCategories] = useState(true);
@@ -256,7 +253,6 @@ export function ProfitLossReport({
   urlParams.set("fromDate", fromDate);
   urlParams.set("toDate", toDate);
   urlParams.set("showAccountCode", String(showAccountCode));
-  urlParams.set("showOrganization", String(showOrganization));
   urlParams.set("showCompanyHeader", String(showCompanyHeader));
   urlParams.set("showCompanyFooter", String(showCompanyFooter));
   urlParams.set("showReportingCategories", String(showReportingCategories));
@@ -267,7 +263,6 @@ export function ProfitLossReport({
   const pdfParams = new URLSearchParams({ orientation: "portrait", path: printableBase, filename: titleToFileSlug(pageTitle), fromDate, toDate });
   if (companyId) pdfParams.set("companyId", String(companyId));
   pdfParams.set("showAccountCode", String(showAccountCode));
-  pdfParams.set("showOrganization", String(showOrganization));
   pdfParams.set("showCompanyHeader", String(showCompanyHeader));
   pdfParams.set("showCompanyFooter", String(showCompanyFooter));
   pdfParams.set("showReportingCategories", String(showReportingCategories));
@@ -321,16 +316,6 @@ export function ProfitLossReport({
         </span>
       ),
       onSelect: () => setShowDecimals((checked) => !checked),
-    },
-    {
-      value: "show-organization",
-      label: (
-        <span className={localStyles.checkboxOption}>
-          <Checkbox checked={showOrganization} onChange={() => undefined} tabIndex={-1} />
-          <span>Show organization name</span>
-        </span>
-      ),
-      onSelect: () => setShowOrganization((checked) => !checked),
     },
     {
       value: "show-company-header",
@@ -447,12 +432,10 @@ export function ProfitLossReport({
               data={data}
               generatedAt={generatedAt}
               showAccountCode={showAccountCode}
-              showOrganization={showOrganization}
               showCompanyHeader={showCompanyHeader}
               showCompanyFooter={showCompanyFooter}
               showReportingCategories={showReportingCategories}
               showDecimals={showDecimals}
-              organizationName={organizationName}
             />
           </div>
         )}

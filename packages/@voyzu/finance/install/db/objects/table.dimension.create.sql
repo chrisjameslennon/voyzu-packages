@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS dimension (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_dimension_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_dimension_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT uq_dimension_company_code UNIQUE (finance_company_id, code),
     CONSTRAINT uq_dimension_finance_company_id UNIQUE (finance_company_id, id)
 );

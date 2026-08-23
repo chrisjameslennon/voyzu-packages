@@ -21,9 +21,6 @@ CREATE TABLE IF NOT EXISTS company (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    organization_id       BIGINT NOT NULL,
-
     CONSTRAINT fk_country FOREIGN KEY (country_code) REFERENCES country(code),
-    CONSTRAINT fk_currency FOREIGN KEY (base_currency_code) REFERENCES currency(code),
-    CONSTRAINT fk_organization FOREIGN KEY (organization_id) REFERENCES organization(id)
+    CONSTRAINT fk_currency FOREIGN KEY (base_currency_code) REFERENCES currency(code)
 );

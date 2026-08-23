@@ -5,7 +5,7 @@ import { NotFoundError } from "@voyzu/capability/errors";
 import { inputValidationError, serverError } from "@voyzu/capability/http";
 
 import { renderBalanceSheetPdfHtml } from "../lib/balance-sheet-pdf-html";
-import { getBalanceSheet, getOrganizationName } from "../lib/balance-sheet.service";
+import { getBalanceSheet } from "../lib/balance-sheet.service";
 
 function booleanParam(searchParams: URLSearchParams, name: string, defaultValue = false): boolean {
   const value = searchParams.get(name);
@@ -39,16 +39,11 @@ export async function handleGetBalanceSheetPdf(request: NextRequest) {
   const filename = safePdfFilename(searchParams.get("filename"));
 
   try {
-    const [data, organizationName] = await Promise.all([
-      getBalanceSheet(companyId, asAtDate),
-      getOrganizationName(),
-    ]);
+    const data = await getBalanceSheet(companyId, asAtDate);
     const html = await renderBalanceSheetPdfHtml({
       data,
       generatedAt,
-      organizationName,
       showAccountCode: booleanParam(searchParams, "showAccountCode"),
-      showOrganization: booleanParam(searchParams, "showOrganization"),
       showCompanyHeader: booleanParam(searchParams, "showCompanyHeader"),
       showCompanyFooter: booleanParam(searchParams, "showCompanyFooter"),
       showReportingCategories: booleanParam(searchParams, "showReportingCategories", true),

@@ -8,7 +8,6 @@ export interface CompanyRow {
   base_currency_code: string;
   currency_name?: string;
   status: string;
-  organization_id: number;
   creation_date: string;
   creation_actor_type: ActorType;
   creation_user_id: string | null;
@@ -25,7 +24,6 @@ export interface InsertCompanyRow {
   country_code: string;
   base_currency_code: string;
   status?: string;
-  organization_id?: number;
   creation_date?: string;
   creation_actor_type?: string;
   creation_user_id?: string | null;

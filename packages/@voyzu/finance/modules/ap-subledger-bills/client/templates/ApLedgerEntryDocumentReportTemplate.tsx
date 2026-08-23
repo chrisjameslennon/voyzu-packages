@@ -24,15 +24,11 @@ function formatDate(value: string | null): string {
 export interface ApLedgerEntryDocumentReportTemplateProps {
   report: ApLedgerEntryDocumentReportResponseDto;
   generatedAt: string;
-  organizationName?: string;
-  showOrganization?: boolean;
 }
 
 export function ApLedgerEntryDocumentReportTemplate({
   report,
   generatedAt,
-  organizationName = "",
-  showOrganization = false,
 }: ApLedgerEntryDocumentReportTemplateProps) {
   const {
     company,
@@ -58,9 +54,6 @@ export function ApLedgerEntryDocumentReportTemplate({
       <style>{`${apDocumentReportCss}\n@media print { @page { size: A4 portrait; } }`}</style>
 
       <header className={localStyles.reportHeader}>
-        {showOrganization && organizationName && (
-          <div className={localStyles.reportOrgNameCentered}>{organizationName}</div>
-        )}
         <div className={localStyles.reportCompanyName}>{company.name}</div>
         <div className={`${localStyles.reportHeaderLine} ${localStyles.reportHeaderLineStrong}`}>
           {documentTypeLabel} {documentId}

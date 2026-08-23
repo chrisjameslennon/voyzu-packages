@@ -34,7 +34,7 @@ export async function CompanyBankCashAccountDetailPage({ code, surface }: Compan
       auditPath="/settings/audit"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/bank-cash-accounts`}
       readOnly={settingsState.readOnly}
-      usesOrganizationStandardSettings={settingsState.usesOrganizationStandardSettings}
+      usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings}
       isArchived={settingsState.isArchived}
       from={normalizeDetailBackSource(searchParams.from)}
       fromCode={searchParams.fromCode}

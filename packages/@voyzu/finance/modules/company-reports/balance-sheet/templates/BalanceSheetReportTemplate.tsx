@@ -143,12 +143,10 @@ export interface BalanceSheetReportTemplateProps {
   data: BalanceSheetResponseDto;
   generatedAt: string;
   showAccountCode?: boolean;
-  showOrganization?: boolean;
   showCompanyHeader?: boolean;
   showCompanyFooter?: boolean;
   showReportingCategories?: boolean;
   showDecimals?: boolean;
-  organizationName?: string;
   includeCss?: boolean;
 }
 
@@ -156,12 +154,10 @@ export function BalanceSheetReportTemplate({
   data,
   generatedAt,
   showAccountCode = false,
-  showOrganization = false,
   showCompanyHeader = false,
   showCompanyFooter = false,
   showReportingCategories = false,
   showDecimals = false,
-  organizationName = "",
   includeCss = true,
 }: BalanceSheetReportTemplateProps) {
   const hasCompanyHeader = showCompanyHeader && Boolean(data.companyReportLine1 || data.companyReportLine2);
@@ -176,9 +172,6 @@ export function BalanceSheetReportTemplate({
       {includeCss && <style>{balanceSheetReportCss}</style>}
 
       <header className="bsReportHeader">
-        {showOrganization && organizationName && (
-          <div className="bsReportOrgNameCentered">{organizationName}</div>
-        )}
         {hasCompanyHeader && (
           <div className="bsReportCompanyHeaderLines">
             {data.companyReportLine1 && <div>{data.companyReportLine1}</div>}
@@ -279,4 +272,3 @@ export function BalanceSheetReportTemplate({
     </div>
   );
 }
-

@@ -34,7 +34,7 @@ export async function CompanyFinancialDocumentDefaultDetailPage({ code, surface 
       fromCode={searchParams.fromCode}
       routePrefix="/finance/integration"
       readOnly={settingsUiState.readOnly}
-      showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

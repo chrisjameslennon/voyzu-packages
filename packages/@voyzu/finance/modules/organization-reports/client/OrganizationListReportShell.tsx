@@ -24,7 +24,6 @@ interface SectionVisibilityOption {
 interface OrganizationListReportShellProps {
   title: string;
   printablePath: string;
-  initialShowOrganization: boolean;
   orientation?: "portrait" | "landscape";
   sectionVisibilityOptions?: SectionVisibilityOption[];
   inactiveRowsOption?: {
@@ -55,14 +54,11 @@ function sectionParams(params: URLSearchParams, visibleSections: Record<string, 
 
 function reportUrl(
   path: string,
-  showOrganization: boolean,
   visibleSections: Record<string, boolean>,
   sectionVisibilityOptions: SectionVisibilityOption[],
   showInactive?: boolean,
 ): string {
-  const params = new URLSearchParams({
-    showOrganization: String(showOrganization),
-  });
+  const params = new URLSearchParams();
   if (showInactive !== undefined) params.set("showInactive", String(showInactive));
   sectionParams(params, visibleSections, sectionVisibilityOptions);
   return `${path}?${params.toString()}`;
@@ -71,7 +67,6 @@ function reportUrl(
 function pdfUrl(
   path: string,
   title: string,
-  showOrganization: boolean,
   visibleSections: Record<string, boolean>,
   sectionVisibilityOptions: SectionVisibilityOption[],
   orientation: "portrait" | "landscape",
@@ -81,7 +76,6 @@ function pdfUrl(
   const params = new URLSearchParams({
     path,
     filename: titleToFileSlug(title),
-    showOrganization: String(showOrganization),
     orientation,
   });
   if (showInactive !== undefined) params.set("showInactive", String(showInactive));
@@ -93,14 +87,12 @@ function pdfUrl(
 export function OrganizationListReportShell({
   title,
   printablePath,
-  initialShowOrganization,
   orientation = "portrait",
   sectionVisibilityOptions = [],
   inactiveRowsOption,
   printable = false,
   children,
 }: OrganizationListReportShellProps) {
-  const [showOrganization, setShowOrganization] = useState(initialShowOrganization);
   const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(sectionVisibilityOptions.map((option) => [option.key, option.initialChecked !== false])),
   );
@@ -108,18 +100,7 @@ export function OrganizationListReportShell({
   const paperWidth = orientation === "landscape" ? "297mm" : "210mm";
 
   const optionItems: DropdownMenuItem[] = useMemo(
-    () => [
-      {
-        value: "show-organization",
-        label: (
-          <span className={localStyles.checkboxOption}>
-            <Checkbox checked={showOrganization} onChange={() => undefined} tabIndex={-1} />
-            <span>Show organization header</span>
-          </span>
-        ),
-        onSelect: () => setShowOrganization((checked) => !checked),
-      },
-      ...sectionVisibilityOptions.map((option) => ({
+    () => sectionVisibilityOptions.map((option) => ({
         value: `show-${option.key}`,
         label: (
           <span className={localStyles.checkboxOption}>
@@ -129,12 +110,10 @@ export function OrganizationListReportShell({
         ),
         onSelect: () => setVisibleSections((current) => ({ ...current, [option.key]: current[option.key] === false })),
       })),
-    ],
-    [sectionVisibilityOptions, showOrganization, visibleSections],
+    [sectionVisibilityOptions, visibleSections],
   );
 
   const documentClassName = [
-    showOrganization ? undefined : "orgListReportHideOrganization",
     inactiveRowsOption && !showInactive ? "orgListReportHideInactive" : undefined,
     ...sectionVisibilityOptions
       .filter((option) => visibleSections[option.key] === false)
@@ -157,15 +136,15 @@ export function OrganizationListReportShell({
   }
 
   const openPrintable = () => {
-    window.open(reportUrl(printablePath, showOrganization, visibleSections, sectionVisibilityOptions, inactiveRowsOption ? showInactive : undefined), "_blank", "noopener,noreferrer");
+    window.open(reportUrl(printablePath, visibleSections, sectionVisibilityOptions, inactiveRowsOption ? showInactive : undefined), "_blank", "noopener,noreferrer");
   };
 
   const openPdf = () => {
-    window.open(pdfUrl(printablePath, title, showOrganization, visibleSections, sectionVisibilityOptions, orientation, "view", inactiveRowsOption ? showInactive : undefined), "_blank", "noopener,noreferrer");
+    window.open(pdfUrl(printablePath, title, visibleSections, sectionVisibilityOptions, orientation, "view", inactiveRowsOption ? showInactive : undefined), "_blank", "noopener,noreferrer");
   };
 
   const downloadPdf = () => {
-    window.location.href = pdfUrl(printablePath, title, showOrganization, visibleSections, sectionVisibilityOptions, orientation, "download", inactiveRowsOption ? showInactive : undefined);
+    window.location.href = pdfUrl(printablePath, title, visibleSections, sectionVisibilityOptions, orientation, "download", inactiveRowsOption ? showInactive : undefined);
   };
 
   return (
@@ -191,13 +170,17 @@ export function OrganizationListReportShell({
           </div>
         ) : null}
         <div className={layout.slotToolbarRight}>
-          <DropdownMenu
-            trigger={<Button variant="plain" icon="tune" title="Options" />}
-            items={optionItems}
-            alignment="right"
-            closeOnSelect={false}
-          />
-          <div className={listStyles.divider} />
+          {optionItems.length > 0 ? (
+            <>
+              <DropdownMenu
+                trigger={<Button variant="plain" icon="tune" title="Options" />}
+                items={optionItems}
+                alignment="right"
+                closeOnSelect={false}
+              />
+              <div className={listStyles.divider} />
+            </>
+          ) : null}
           <Button variant="secondary" icon="open_in_new" title="Printable Page" onClick={openPrintable} />
           <Button variant="secondary" icon="picture_as_pdf" title="View PDF" onClick={openPdf} />
           <Button variant="secondary" icon="download" title="Download PDF" onClick={downloadPdf} />

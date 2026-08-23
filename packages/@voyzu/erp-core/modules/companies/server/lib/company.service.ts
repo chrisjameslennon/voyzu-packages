@@ -1,5 +1,6 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
+import { events as platformEvents } from "@voyzu/capability/events";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/erp-core/common/server";
 import type {
   CompanyBatchPatchRequestDto,
@@ -11,6 +12,7 @@ import type {
 } from "@voyzu/erp-core/types/modules/companies";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 
+import { events } from "../../events";
 import { CompanyRepo } from "../db/company.repo";
 import type { CompanyRow } from "../db/company.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./company.mapper";
@@ -27,12 +29,6 @@ function normalizeCodes(codes: string[]): string[] {
   return [...new Set(codes.map((code) => code.trim().toUpperCase()).filter(Boolean))];
 }
 
-async function getOrganizationId(db: DbExecutor): Promise<number> {
-  const { rows } = await db.query(`SELECT id FROM organization WHERE status != 'DELETED' ORDER BY id LIMIT 1`);
-  if (!rows[0]) throw new DataError("Organization not found");
-  return Number(rows[0].id);
-}
-
 function translateWriteError(error: unknown, notFoundMessage?: string): never {
   if (error instanceof DataError && notFoundMessage) throw new NotFoundError(notFoundMessage);
   if (error instanceof Error && error.message.includes("duplicate key value")) {
@@ -44,10 +40,7 @@ function translateWriteError(error: unknown, notFoundMessage?: string): never {
 export async function createCompany(input: CompanyCreateRequestDto): Promise<CompanyResponseDto> {
   try {
     return await withTransaction(async (db) => {
-      const row = {
-        ...toInsertRow(input),
-        organization_id: await getOrganizationId(db),
-      };
+      const row = toInsertRow(input);
       const created = await new CompanyRepo(db).insert(withCreationAudit(row, await createCreationAuditStamp()));
       return enrichRow(created);
     });
@@ -75,21 +68,30 @@ export async function updateCompany(code: string, input: CompanyUpdateRequestDto
 
 export async function patchCompany(code: string, input: CompanyPatchRequestDto): Promise<CompanyResponseDto> {
   try {
-    const row = await new CompanyRepo(getDb()).patch(
-      code.trim().toUpperCase(),
-      withUpdateAudit(toPatchRow(input), await createUpdateAuditStamp()),
-    );
-    return enrichRow(row);
+    return await withTransaction(async (db) => {
+      const row = await new CompanyRepo(db).patch(
+        code.trim().toUpperCase(),
+        withUpdateAudit(toPatchRow(input), await createUpdateAuditStamp()),
+      );
+      const company = await enrichRow(row);
+      await platformEvents.dispatch(events.companyUpdated, company, { transaction: db });
+      return company;
+    });
   } catch (error) {
     return translateWriteError(error, `Company ${code} not found`);
   }
 }
 
 export async function deleteCompany(code: string): Promise<void> {
-  const normalized = code.trim().toUpperCase();
-  const repo = new CompanyRepo(getDb());
-  if (!(await repo.get(normalized))) throw new NotFoundError(`Company ${normalized} not found`);
-  await repo.delete(normalized);
+  await withTransaction(async (db) => {
+    const normalized = code.trim().toUpperCase();
+    const repo = new CompanyRepo(db);
+    const row = await repo.get(normalized);
+    if (!row) throw new NotFoundError(`Company ${normalized} not found`);
+    const company = await enrichRow(row);
+    await platformEvents.dispatch(events.companyDeleted, company, { transaction: db });
+    await repo.delete(normalized);
+  });
 }
 
 export async function listCompanies(): Promise<CompanyResponseDto[]> {
@@ -108,11 +110,10 @@ export async function batchCreateCompanies(inputs: CompanyCreateRequestDto[]): P
   try {
     return await withTransaction(async (db) => {
       const repo = new CompanyRepo(db);
-      const organizationId = await getOrganizationId(db);
       const audit = await createCreationAuditStamp();
       const rows: CompanyRow[] = [];
       for (const input of inputs) {
-        rows.push(await repo.insert(withCreationAudit({ ...toInsertRow(input), organization_id: organizationId }, audit)));
+        rows.push(await repo.insert(withCreationAudit(toInsertRow(input), audit)));
       }
       return enrichRows(rows);
     });
@@ -159,12 +160,17 @@ export async function batchPatchCompanies(inputs: CompanyBatchPatchRequestDto[])
 export async function batchDeleteCompanies(codes: string[]): Promise<void> {
   const normalized = normalizeCodes(codes);
   if (!normalized.length) throw new InputValidationError("At least one company code is required");
-  const repo = new CompanyRepo(getDb());
-  const rows = await repo.batchGet(normalized);
-  const found = new Set(rows.map((row) => row.code));
-  const missing = normalized.filter((code) => !found.has(code));
-  if (missing.length) throw new NotFoundError(`Company ${missing.join(", ")} not found`);
-  await repo.batchDelete(normalized);
+  await withTransaction(async (db) => {
+    const repo = new CompanyRepo(db);
+    const rows = await repo.batchGet(normalized);
+    const found = new Set(rows.map((row) => row.code));
+    const missing = normalized.filter((code) => !found.has(code));
+    if (missing.length) throw new NotFoundError(`Company ${missing.join(", ")} not found`);
+    for (const company of await enrichRows(rows)) {
+      await platformEvents.dispatch(events.companyDeleted, company, { transaction: db });
+    }
+    await repo.batchDelete(normalized);
+  });
 }
 
 async function transitionStatus(codes: string[], status: "ACTIVE" | "INACTIVE"): Promise<CompanyResponseDto[]> {

@@ -19,7 +19,7 @@ export async function CompanyGlAccountsListPage() {
       accounts={accounts}
       categories={categories}
       readOnly={settingsState.readOnly}
-      usesOrganizationStandardSettings={settingsState.usesOrganizationStandardSettings}
+      usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings}
       isArchived={settingsState.isArchived}
     />
   );

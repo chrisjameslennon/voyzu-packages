@@ -141,22 +141,18 @@ interface ProfitLossAnalysisReportTemplateProps {
   data: ProfitLossAnalysisResponseDto;
   generatedAt: string;
   showAccountCode?: boolean;
-  showOrganization?: boolean;
   showCompanyHeader?: boolean;
   showCompanyFooter?: boolean;
   showDecimals?: boolean;
-  organizationName?: string;
 }
 
 export function ProfitLossAnalysisReportTemplate({
   data,
   generatedAt,
   showAccountCode = false,
-  showOrganization = false,
   showCompanyHeader = false,
   showCompanyFooter = false,
   showDecimals = false,
-  organizationName = "",
 }: ProfitLossAnalysisReportTemplateProps) {
   const hasCompanyHeader = showCompanyHeader && Boolean(data.companyReportLine1 || data.companyReportLine2);
   const hasCompanyFooter = showCompanyFooter && Boolean(data.companyReportFooter);
@@ -175,9 +171,6 @@ export function ProfitLossAnalysisReportTemplate({
       <style>{"@media print { @page { size: A4 landscape; } }"}</style>
 
       <header className={styles.reportHeader}>
-        {showOrganization && organizationName && (
-          <div className="reportOrgNameCentered">{organizationName}</div>
-        )}
         {hasCompanyHeader && (
           <div className="reportCompanyHeaderLines">
             {data.companyReportLine1 && <div>{data.companyReportLine1}</div>}

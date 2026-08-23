@@ -21,7 +21,7 @@ interface CompanyGlAccountCategoryDetailProps {
   listPath?: string;
   auditPath?: string;
   apiPath?: string;
-  showOrganizationBaseSettings?: boolean;
+  showFinanceTemplateSettings?: boolean;
   showArchived?: boolean;
   readOnly?: boolean;
 }
@@ -31,7 +31,7 @@ export function CompanyGlAccountCategoryDetail({
   listPath = "/organization/chart-of-accounts/reporting-categories",
   auditPath = "/settings/audit",
   apiPath = "/api/organization/gl-account-categories",
-  showOrganizationBaseSettings = false,
+  showFinanceTemplateSettings = false,
   showArchived = false,
   readOnly = false,
 }: CompanyGlAccountCategoryDetailProps) {
@@ -90,7 +90,7 @@ export function CompanyGlAccountCategoryDetail({
           </div>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showOrganizationBaseSettings={showOrganizationBaseSettings}
+              showFinanceTemplateSettings={showFinanceTemplateSettings}
               showArchived={showArchived}
               showReadOnly={readOnly}
             />

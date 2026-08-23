@@ -24,15 +24,11 @@ function formatDate(value: string): string {
 export interface ArInvoiceReportTemplateProps {
   statement: ArInvoiceStatementResponseDto;
   generatedAt: string;
-  organizationName?: string;
-  showOrganization?: boolean;
 }
 
 export function ArInvoiceReportTemplate({
   statement,
   generatedAt,
-  organizationName = "",
-  showOrganization = false,
 }: ArInvoiceReportTemplateProps) {
   const { company, invoice } = statement;
   const totalApplied = statement.transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
@@ -42,9 +38,6 @@ export function ArInvoiceReportTemplate({
       <style>{`${arInvoiceReportCss}\n@media print { @page { size: A4 portrait; } }`}</style>
 
       <header className={localStyles.reportHeader}>
-        {showOrganization && organizationName && (
-          <div className={localStyles.reportOrgNameCentered}>{organizationName}</div>
-        )}
         <div className={localStyles.reportCompanyName}>{company.name}</div>
         <div className={`${localStyles.reportHeaderLine} ${localStyles.reportHeaderLineStrong}`}>
           Invoice {invoice.document_id}

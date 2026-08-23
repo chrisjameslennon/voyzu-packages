@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS dimension_value (
     CONSTRAINT dimension_value_name_len   CHECK (length(name) BETWEEN 1 AND 14),
     CONSTRAINT dimension_value_name_trim  CHECK (name = btrim(name)),
     CONSTRAINT dimension_value_name_chars CHECK (name ~ '^[A-Za-z0-9 _-]+$'),
-    CONSTRAINT fk_dimension_value_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_dimension_value_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT fk_dimension_value_dimension FOREIGN KEY (finance_company_id, dimension_id) REFERENCES dimension(finance_company_id, id) ON DELETE CASCADE,
     CONSTRAINT dimension_value_dimension_id_id_unique UNIQUE (finance_company_id, dimension_id, id),
     CONSTRAINT dimension_value_legacy_dimension_id_unique UNIQUE (dimension_id, id),

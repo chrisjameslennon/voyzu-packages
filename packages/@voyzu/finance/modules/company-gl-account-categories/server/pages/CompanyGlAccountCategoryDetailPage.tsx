@@ -28,7 +28,7 @@ export async function CompanyGlAccountCategoryDetailPage({ code }: CompanyGlAcco
       auditPath="/settings/audit"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/gl-account-categories`}
       readOnly={settingsUiState.readOnly}
-      showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS financial_document_default (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_financial_document_default_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_financial_document_default_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT fk_financial_document_default_gl_account FOREIGN KEY (finance_company_id, gl_account_id) REFERENCES gl_account(finance_company_id, id),
     CONSTRAINT fk_financial_document_default_bank_cash_control_account FOREIGN KEY (finance_company_id, bank_cash_control_account_id) REFERENCES bank_cash_control_account(finance_company_id, id),
     CONSTRAINT fk_financial_document_default_document FOREIGN KEY (document_code) REFERENCES financial_document_type(code),

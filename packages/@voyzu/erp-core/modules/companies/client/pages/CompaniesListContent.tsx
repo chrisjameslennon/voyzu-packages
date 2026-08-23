@@ -7,7 +7,7 @@ import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies
 import layoutStyles from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import type { DropdownMenuItem } from "@voyzu/ui-components";
 import type { FilterState, FilterTab } from "@voyzu/ui-components";
-import { Toast } from "@voyzu/ui-components";
+import { ConfirmDialog, Toast } from "@voyzu/ui-components";
 import { CompaniesTable } from "./CompaniesTable";
 import { CompaniesToolbar } from "./CompaniesToolbar";
 
@@ -27,6 +27,8 @@ export function CompaniesListContent({ companies: data, onCompaniesChange }: Com
   const [activeFilters, setActiveFilters] = useState<FilterState>({});
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [refreshing, setRefreshing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -122,6 +124,35 @@ export function CompaniesListContent({ companies: data, onCompaniesChange }: Com
     }
   };
 
+  const deleteSelected = async () => {
+    if (selectedCompanies.length === 0 || deleting) return;
+    setDeleting(true);
+    try {
+      const response = await fetch("/api/organization/companies/batch/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ codes: selectedCompanies.map((company) => company.code) }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => null) as { message?: string } | null;
+        setToastMessage(body?.message ?? "Unable to delete company");
+        setToastVisible(true);
+        return;
+      }
+
+      const deletedIds = new Set(selectedCompanies.map((company) => company.id));
+      const deletedName = selectedCompanies[0]?.name ?? "company";
+      onCompaniesChange(data.filter((company) => !deletedIds.has(company.id)));
+      setSelectedIds(new Set());
+      setIsDeleteOpen(false);
+      setToastMessage(`Deleted ${deletedName}`);
+      setToastVisible(true);
+      router.refresh();
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleExport = async (rows: CompanyResponseDto[], filename: string) => {
     const exportColumns = [
       { key: "code", label: "Code" },
@@ -174,6 +205,8 @@ export function CompaniesListContent({ companies: data, onCompaniesChange }: Com
     <>
       <CompaniesToolbar
         refreshing={refreshing}
+        deleting={deleting}
+        hasSelection={selectedCompanies.length > 0}
         search={search}
         filterTabs={filterTabs}
         filters={activeFilters}
@@ -186,6 +219,7 @@ export function CompaniesListContent({ companies: data, onCompaniesChange }: Com
         }}
         onRemoveFilter={handleRemoveFilter}
         onClearSearch={() => setSearch("")}
+        onDelete={() => setIsDeleteOpen(true)}
         onRefresh={() => { void refresh(); }}
         onSearch={handleSearch}
       />
@@ -202,6 +236,16 @@ export function CompaniesListContent({ companies: data, onCompaniesChange }: Com
           />
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={isDeleteOpen}
+        title="Delete Company"
+        message="Deleting this company will permanently delete any associated financial and other records associated with this company. Make sure you have a full backup before proceeding."
+        confirmLabel="Delete"
+        confirmVariant="danger"
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={() => { void deleteSelected(); }}
+      />
 
       <Toast isVisible={toastVisible} onClose={() => setToastVisible(false)} message={toastMessage} />
     </>

@@ -92,7 +92,6 @@ interface TaxActivityReportProps {
   initialFinancialYears: FinancialYearResponseDto[];
   initialSelectedYearCode: string;
   initialSelectedPeriodValue: string;
-  organizationName: string;
   selectedCompany: FinanceCompanyFilingSettings | null;
 }
 
@@ -102,7 +101,6 @@ export function TaxActivityReport({
   initialFinancialYears,
   initialSelectedYearCode,
   initialSelectedPeriodValue,
-  organizationName,
   selectedCompany,
 }: TaxActivityReportProps) {
   const [data, setData] = useState<TaxActivityResponseDto | null>(initialData);
@@ -110,7 +108,6 @@ export function TaxActivityReport({
   const [selectedYearCode, setSelectedYearCode] = useState(initialSelectedYearCode);
   const [selectedPeriodValue, setSelectedPeriodValue] = useState(initialSelectedPeriodValue);
   const [loading, setLoading] = useState(false);
-  const [showOrganization, setShowOrganization] = useState(false);
   const [showCompanyHeader, setShowCompanyHeader] = useState(false);
   const [showCompanyFooter, setShowCompanyFooter] = useState(false);
   const [showDecimals, setShowDecimals] = useState(false);
@@ -190,7 +187,6 @@ export function TaxActivityReport({
     urlParams.set("periodEndDate", selectedPeriod.endDate);
     urlParams.set("periodLabel", selectedPeriod.label);
   }
-  urlParams.set("showOrganization", String(showOrganization));
   urlParams.set("showCompanyHeader", String(showCompanyHeader));
   urlParams.set("showCompanyFooter", String(showCompanyFooter));
   urlParams.set("showDecimals", String(showDecimals));
@@ -202,7 +198,6 @@ export function TaxActivityReport({
 
   const optionItems: DropdownMenuItem[] = [
     { value: "show-decimals", label: <span className={localStyles.checkboxOption}><Checkbox checked={showDecimals} onChange={() => undefined} tabIndex={-1} /><span>Show decimals</span></span>, onSelect: () => setShowDecimals((checked) => !checked) },
-    { value: "show-organization", label: <span className={localStyles.checkboxOption}><Checkbox checked={showOrganization} onChange={() => undefined} tabIndex={-1} /><span>Show organization name</span></span>, onSelect: () => setShowOrganization((checked) => !checked) },
     { value: "show-company-header", label: <span className={localStyles.checkboxOption}><Checkbox checked={showCompanyHeader} onChange={() => undefined} tabIndex={-1} /><span>Show company header</span></span>, onSelect: () => setShowCompanyHeader((checked) => !checked) },
     { value: "show-company-footer", label: <span className={localStyles.checkboxOption}><Checkbox checked={showCompanyFooter} onChange={() => undefined} tabIndex={-1} /><span>Show company footer</span></span>, onSelect: () => setShowCompanyFooter((checked) => !checked) },
   ];
@@ -241,7 +236,7 @@ export function TaxActivityReport({
         {loading && <div style={{ padding: "2rem", color: "var(--voyzu-color-text-muted)" }}>Loading...</div>}
         {!loading && data && (
           <div className={layout.document} style={{ maxWidth: `${A4_LANDSCAPE_WIDTH_MM}mm` }}>
-            <TaxActivityReportTemplate data={data} generatedAt={generatedAt} showOrganization={showOrganization} showCompanyHeader={showCompanyHeader} showCompanyFooter={showCompanyFooter} showDecimals={showDecimals} organizationName={organizationName} />
+            <TaxActivityReportTemplate data={data} generatedAt={generatedAt} showCompanyHeader={showCompanyHeader} showCompanyFooter={showCompanyFooter} showDecimals={showDecimals} />
           </div>
         )}
         {!loading && !data && <div style={{ padding: "2rem", color: "var(--voyzu-color-text-muted)" }}>No data available. Select a company to view the tax return.</div>}

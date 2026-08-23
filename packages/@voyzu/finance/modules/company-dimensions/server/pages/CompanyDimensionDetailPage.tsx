@@ -28,7 +28,7 @@ export async function CompanyDimensionDetailPage({ code }: CompanyDimensionDetai
       auditPath="/settings/audit"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/dimensions`}
       readOnly={settingsUiState.readOnly}
-      showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

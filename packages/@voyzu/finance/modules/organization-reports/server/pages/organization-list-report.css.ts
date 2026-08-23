@@ -13,15 +13,6 @@ export const organizationListReportCss = `
   border-bottom: 1px solid #222;
 }
 
-.orgListOrganizationName {
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.orgListReportHideOrganization .orgListOrganizationName {
-  display: none;
-}
-
 .orgListReportHideInactive .orgListInactiveRow {
   display: none;
 }

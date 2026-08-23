@@ -18,7 +18,7 @@ const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
            JOIN finance_company posting_finance_company ON (
              (source_finance_company.is_template = true
                AND posting_finance_company.is_template = false
-               AND posting_finance_company.use_organization_standard_settings = true)
+               AND posting_finance_company.use_finance_template_settings = true)
              OR (source_finance_company.is_template = false AND posting_finance_company.id = source_finance_company.id)
            )
            JOIN journal_line jl ON jl.gl_account_id = bca.gl_account_id

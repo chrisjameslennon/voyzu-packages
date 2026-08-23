@@ -32,7 +32,7 @@ export async function CompanyGlAccountCategoriesListPage() {
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Reporting Categories</h1>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+              showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
               showArchived={settingsUiState.isArchived}
               showReadOnly={settingsUiState.readOnly}
             />

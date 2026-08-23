@@ -31,7 +31,7 @@ export async function CompanyApControlAccountDetailPage({ code }: CompanyApContr
       listPath="/finance/settings/control-accounts/ap"
       auditPath="/settings/audit"
       readOnly={settingsState.readOnly}
-      usesOrganizationStandardSettings={settingsState.usesOrganizationStandardSettings}
+      usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings}
       isArchived={settingsState.isArchived}
     />
   );

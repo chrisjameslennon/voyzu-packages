@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS tax_ledger_entry_header (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_tax_header_company          FOREIGN KEY (finance_company_id)          REFERENCES finance_company(id),
+    CONSTRAINT fk_tax_header_company          FOREIGN KEY (finance_company_id)          REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT fk_tax_header_journal          FOREIGN KEY (journal_header_id)   REFERENCES journal_header(id),
     CONSTRAINT fk_tax_header_document_type    FOREIGN KEY (document_type_code) REFERENCES financial_document_type(code),
     CONSTRAINT fk_tax_header_financial_year   FOREIGN KEY (financial_year_id)   REFERENCES fiscal_year(id),

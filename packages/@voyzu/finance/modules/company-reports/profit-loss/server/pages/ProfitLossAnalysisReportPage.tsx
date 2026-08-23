@@ -73,7 +73,6 @@ export async function ProfitLossAnalysisReportPage({ surface }: ReportPageProps 
         initialPeriods={[]}
         initialSelectedYearCode=""
         dimensions={[]}
-        organizationName=""
         selectedCompanyId={null}
       />
     );
@@ -103,9 +102,7 @@ export async function ProfitLossAnalysisReportPage({ surface }: ReportPageProps 
       <ProfitLossAnalysisReportTemplate
         data={initialData}
         generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-        organizationName=""
         showAccountCode={query.showAccountCode === "true"}
-        showOrganization={query.showOrganization === "true"}
         showCompanyHeader={query.showCompanyHeader === "true"}
         showCompanyFooter={query.showCompanyFooter === "true"}
         showDecimals={query.showDecimals === "true"}
@@ -123,7 +120,6 @@ export async function ProfitLossAnalysisReportPage({ surface }: ReportPageProps 
       initialPeriods={periods}
       initialSelectedYearCode={selectedYear?.code ?? ""}
       dimensions={dimensions}
-      organizationName=""
       selectedCompanyId={company.id}
     />
   );

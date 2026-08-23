@@ -33,7 +33,7 @@ export async function CompanyBankCashAccountsListPage() {
           </div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Bank / Cash Accounts</h1>
           <div className={layoutStyles.slotTitleMeta}>
-            <CompanySettingsTitleBadges showOrganizationBaseSettings={settingsState.usesOrganizationStandardSettings} showArchived={settingsState.isArchived} showReadOnly={settingsState.readOnly} />
+            <CompanySettingsTitleBadges showFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings} showArchived={settingsState.isArchived} showReadOnly={settingsState.readOnly} />
           </div>
           <div className={layoutStyles.slotTitleByline}>
             <p className={typography.headingByline}>

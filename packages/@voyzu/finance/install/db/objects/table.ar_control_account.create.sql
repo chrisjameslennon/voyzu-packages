@@ -26,6 +26,6 @@ CREATE TABLE IF NOT EXISTS ar_control_account (
     deletion_mutation_id UUID,
 
     CONSTRAINT pk_ar_control_account PRIMARY KEY (finance_company_id, code),
-    CONSTRAINT fk_ar_control_account_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_ar_control_account_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT fk_ar_control_account_gl_account FOREIGN KEY (finance_company_id, gl_account_id) REFERENCES gl_account(finance_company_id, id)
 );

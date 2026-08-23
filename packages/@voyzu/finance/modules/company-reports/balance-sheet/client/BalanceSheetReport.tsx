@@ -31,7 +31,6 @@ interface BalanceSheetReportProps {
   initialAsAtDate: string;
   initialFinancialYears: FinancialYearResponseDto[];
   initialSelectedYearCode: string;
-  organizationName: string;
   selectedCompanyId: number | null;
 }
 
@@ -41,7 +40,6 @@ export function BalanceSheetReport({
   initialAsAtDate,
   initialFinancialYears,
   initialSelectedYearCode,
-  organizationName,
   selectedCompanyId,
 }: BalanceSheetReportProps) {
   const [data, setData] = useState<BalanceSheetResponseDto | null>(initialData);
@@ -50,7 +48,6 @@ export function BalanceSheetReport({
   const [selectedYearCode, setSelectedYearCode] = useState(initialSelectedYearCode);
   const [loading, setLoading] = useState(false);
   const [showAccountCode, setShowAccountCode] = useState(false);
-  const [showOrganization, setShowOrganization] = useState(false);
   const [showCompanyHeader, setShowCompanyHeader] = useState(false);
   const [showCompanyFooter, setShowCompanyFooter] = useState(false);
   const [showReportingCategories, setShowReportingCategories] = useState(true);
@@ -137,7 +134,6 @@ export function BalanceSheetReport({
     const params = new URLSearchParams({
       filename: "balance-sheet",
       showAccountCode: String(showAccountCode),
-      showOrganization: String(showOrganization),
       showCompanyHeader: String(showCompanyHeader),
       showCompanyFooter: String(showCompanyFooter),
       showReportingCategories: String(showReportingCategories),
@@ -152,7 +148,6 @@ export function BalanceSheetReport({
     showCompanyFooter,
     showCompanyHeader,
     showDecimals,
-    showOrganization,
     showReportingCategories,
   ]);
 
@@ -191,16 +186,6 @@ export function BalanceSheetReport({
         </span>
       ),
       onSelect: () => setShowDecimals((v) => !v),
-    },
-    {
-      value: "show-organization",
-      label: (
-        <span className={localStyles.checkboxOption}>
-          <Checkbox checked={showOrganization} onChange={() => undefined} tabIndex={-1} />
-          <span>Show organization name</span>
-        </span>
-      ),
-      onSelect: () => setShowOrganization((v) => !v),
     },
     {
       value: "show-company-header",
@@ -289,12 +274,10 @@ export function BalanceSheetReport({
               data={data}
               generatedAt={generatedAt}
               showAccountCode={showAccountCode}
-              showOrganization={showOrganization}
               showCompanyHeader={showCompanyHeader}
               showCompanyFooter={showCompanyFooter}
               showReportingCategories={showReportingCategories}
               showDecimals={showDecimals}
-              organizationName={organizationName}
             />
           </div>
         )}

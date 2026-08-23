@@ -20,7 +20,7 @@ export async function CompanyTaxControlAccountsPage() {
         <div className={layoutStyles.slotTitle}>
           <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>account_tree</span></div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Tax Control Accounts</h1>
-          <div className={layoutStyles.slotTitleMeta}><CompanySettingsTitleBadges showOrganizationBaseSettings={settingsState.usesOrganizationStandardSettings} showArchived={settingsState.isArchived} showReadOnly={settingsState.readOnly} /></div>
+          <div className={layoutStyles.slotTitleMeta}><CompanySettingsTitleBadges showFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings} showArchived={settingsState.isArchived} showReadOnly={settingsState.readOnly} /></div>
           <div className={layoutStyles.slotTitleByline}><p className={typography.headingByline}>Tax control accounts define the general ledger accounts used by tax workflows.</p></div>
         </div>
       </header>

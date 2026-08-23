@@ -3,21 +3,21 @@
 import { Badge } from "@voyzu/ui-components";
 
 export interface CompanySettingsTitleBadgesProps {
-  showOrganizationBaseSettings: boolean;
+  showFinanceTemplateSettings: boolean;
   showArchived: boolean;
   showReadOnly: boolean;
 }
 
 export function CompanySettingsTitleBadges({
-  showOrganizationBaseSettings,
+  showFinanceTemplateSettings,
   showArchived,
   showReadOnly,
 }: CompanySettingsTitleBadgesProps) {
   return (
     <>
-      {showOrganizationBaseSettings ? (
+      {showFinanceTemplateSettings ? (
         <Badge variant="soft" size="x-small" color="neutral" icon="link">
-          Organization base settings
+          Finance template settings
         </Badge>
       ) : null}
       {showArchived ? (

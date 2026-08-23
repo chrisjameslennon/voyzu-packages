@@ -33,15 +33,11 @@ function memoOrDescription(memo: string | null, description: string) {
 export interface ArCounterpartyStatementReportTemplateProps {
   statement: ArCounterpartyStatementResponseDto;
   generatedAt: string;
-  organizationName?: string;
-  showOrganization?: boolean;
 }
 
 export function ArCounterpartyStatementReportTemplate({
   statement,
   generatedAt,
-  organizationName = "",
-  showOrganization = false,
 }: ArCounterpartyStatementReportTemplateProps) {
   const { company } = statement;
   let runningBalance = 0;
@@ -70,9 +66,6 @@ export function ArCounterpartyStatementReportTemplate({
       <style>{`${arStatementReportCss}\n@media print { @page { size: A4 landscape; } }`}</style>
 
       <header className={localStyles.reportHeader}>
-        {showOrganization && organizationName && (
-          <div className={localStyles.reportOrgNameCentered}>{organizationName}</div>
-        )}
         <div className={localStyles.reportCompanyName}>{company.name}</div>
         <div className={`${localStyles.reportHeaderLine} ${localStyles.reportHeaderLineStrong}`}>Customer Statement</div>
         <div className={localStyles.reportHeaderLine}>As at {formatDate(statement.asAtDate)}</div>

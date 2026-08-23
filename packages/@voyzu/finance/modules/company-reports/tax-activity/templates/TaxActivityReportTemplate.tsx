@@ -34,21 +34,17 @@ function totalContribution(line: TaxActivityLineDto): number {
 interface TaxActivityReportTemplateProps {
   data: TaxActivityResponseDto;
   generatedAt: string;
-  showOrganization?: boolean;
   showCompanyHeader?: boolean;
   showCompanyFooter?: boolean;
   showDecimals?: boolean;
-  organizationName?: string;
 }
 
 export function TaxActivityReportTemplate({
   data,
   generatedAt,
-  showOrganization = false,
   showCompanyHeader = false,
   showCompanyFooter = false,
   showDecimals = false,
-  organizationName = "",
 }: TaxActivityReportTemplateProps) {
   const hasCompanyHeader = showCompanyHeader && Boolean(data.companyReportLine1 || data.companyReportLine2);
   const hasCompanyFooter = showCompanyFooter && Boolean(data.companyReportFooter);
@@ -64,7 +60,6 @@ export function TaxActivityReportTemplate({
       <style>{"@media print { @page { size: A4 landscape; } }"}</style>
 
       <header className={styles.reportHeader}>
-        {showOrganization && organizationName && <div className={styles.reportOrgNameCentered}>{organizationName}</div>}
         {hasCompanyHeader && (
           <div className={styles.reportCompanyHeaderLines}>
             {data.companyReportLine1 && <div>{data.companyReportLine1}</div>}

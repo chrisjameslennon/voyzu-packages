@@ -84,7 +84,6 @@ interface ProfitLossAnalysisReportProps {
   initialPeriods: FinancialPeriodResponseDto[];
   initialSelectedYearCode: string;
   dimensions: DimensionResponseDto[];
-  organizationName: string;
   selectedCompanyId: number | null;
 }
 
@@ -97,7 +96,6 @@ export function ProfitLossAnalysisReport({
   initialPeriods,
   initialSelectedYearCode,
   dimensions,
-  organizationName,
   selectedCompanyId,
 }: ProfitLossAnalysisReportProps) {
   const [data, setData] = useState<ProfitLossAnalysisResponseDto | null>(initialData);
@@ -113,7 +111,6 @@ export function ProfitLossAnalysisReport({
   const [breakdownValuesByDimension, setBreakdownValuesByDimension] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(false);
   const [showAccountCode, setShowAccountCode] = useState(false);
-  const [showOrganization, setShowOrganization] = useState(false);
   const [showCompanyHeader, setShowCompanyHeader] = useState(false);
   const [showCompanyFooter, setShowCompanyFooter] = useState(false);
   const [showDecimals, setShowDecimals] = useState(false);
@@ -330,7 +327,6 @@ export function ProfitLossAnalysisReport({
   const optionItems: DropdownMenuItem[] = [
     { value: "show-account-code", label: <span className={localStyles.checkboxOption}><Checkbox checked={showAccountCode} onChange={() => undefined} tabIndex={-1} /><span>Show account code</span></span>, onSelect: () => setShowAccountCode((checked) => !checked) },
     { value: "show-decimals", label: <span className={localStyles.checkboxOption}><Checkbox checked={showDecimals} onChange={() => undefined} tabIndex={-1} /><span>Show decimals</span></span>, onSelect: () => setShowDecimals((checked) => !checked) },
-    { value: "show-organization", label: <span className={localStyles.checkboxOption}><Checkbox checked={showOrganization} onChange={() => undefined} tabIndex={-1} /><span>Show organization name</span></span>, onSelect: () => setShowOrganization((checked) => !checked) },
     { value: "show-company-header", label: <span className={localStyles.checkboxOption}><Checkbox checked={showCompanyHeader} onChange={() => undefined} tabIndex={-1} /><span>Show company header</span></span>, onSelect: () => setShowCompanyHeader((checked) => !checked) },
     { value: "show-company-footer", label: <span className={localStyles.checkboxOption}><Checkbox checked={showCompanyFooter} onChange={() => undefined} tabIndex={-1} /><span>Show company footer</span></span>, onSelect: () => setShowCompanyFooter((checked) => !checked) },
   ];
@@ -350,7 +346,6 @@ export function ProfitLossAnalysisReport({
   urlParams.set("dimensionFilters", JSON.stringify(filterPayload));
   if (breakdownPayload) urlParams.set("breakdown", JSON.stringify(breakdownPayload));
   urlParams.set("showAccountCode", String(showAccountCode));
-  urlParams.set("showOrganization", String(showOrganization));
   urlParams.set("showCompanyHeader", String(showCompanyHeader));
   urlParams.set("showCompanyFooter", String(showCompanyFooter));
   urlParams.set("showDecimals", String(showDecimals));
@@ -368,7 +363,6 @@ export function ProfitLossAnalysisReport({
   if (companyId) pdfParams.set("companyId", String(companyId));
   if (breakdownPayload) pdfParams.set("breakdown", JSON.stringify(breakdownPayload));
   pdfParams.set("showAccountCode", String(showAccountCode));
-  pdfParams.set("showOrganization", String(showOrganization));
   pdfParams.set("showCompanyHeader", String(showCompanyHeader));
   pdfParams.set("showCompanyFooter", String(showCompanyFooter));
   pdfParams.set("showDecimals", String(showDecimals));
@@ -492,11 +486,9 @@ export function ProfitLossAnalysisReport({
               data={data}
               generatedAt={generatedAt}
               showAccountCode={showAccountCode}
-              showOrganization={showOrganization}
               showCompanyHeader={showCompanyHeader}
               showCompanyFooter={showCompanyFooter}
               showDecimals={showDecimals}
-              organizationName={organizationName}
             />
           </div>
         )}

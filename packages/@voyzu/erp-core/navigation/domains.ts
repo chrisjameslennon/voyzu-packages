@@ -11,7 +11,7 @@ function routeIds(modules: readonly VoyzuPackageModuleDefinition[]) {
 
 const domains = [{
   label: "Organization",
-  routeId: organizationModules[0].pageRoutes.detail.id,
+  routeId: organizationModules[0].pageRoutes.list.id,
   routeIds: routeIds(organizationModules),
   leftNav: organizationLeftNav,
 }] as const satisfies readonly VoyzuPackageNavigationDomain[];

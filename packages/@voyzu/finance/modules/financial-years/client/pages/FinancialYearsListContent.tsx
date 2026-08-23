@@ -245,7 +245,7 @@ export function FinancialYearsListContent({
   const hasSearch = search.trim().length > 0;
 
   const createYear = async (value: FinancialYearCreateRequestDto): Promise<string | undefined> => {
-    if (readOnly) return "Financial periods are read only while this company uses organization standard settings";
+    if (readOnly) return "Financial periods are read only while this company uses finance template settings";
     if (!companyId) return "Select a company before creating a financial year";
     const response = await fetch(await financeApiUrl(`/financial-years`), {
       method: "POST",

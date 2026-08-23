@@ -7,7 +7,7 @@ import type { CompanyRow, InsertCompanyRow, PatchCompanyRow, UpdateCompanyRow } 
 
 const TABLE = "company";
 const COLUMNS = [
-  "id", "code", "name", "country_code", "base_currency_code", "status", "organization_id",
+  "id", "code", "name", "country_code", "base_currency_code", "status",
   "creation_date", "creation_actor_type", "creation_user_id", "creation_mutation_id",
   "updated_date", "updated_actor_type", "updated_user_id", "updated_mutation_id",
 ] as const;
@@ -188,7 +188,7 @@ export class CompanyRepo {
   }
 
   private mapRow(row: Record<string, unknown>): CompanyRow {
-    return { ...row, id: Number(row.id), organization_id: Number(row.organization_id),
+    return { ...row, id: Number(row.id),
       creation_mutation_id: row.creation_mutation_id == null ? null : String(row.creation_mutation_id),
       updated_mutation_id: row.updated_mutation_id == null ? null : String(row.updated_mutation_id),
       creation_date: row.creation_date instanceof Date ? row.creation_date.toISOString() : String(row.creation_date),

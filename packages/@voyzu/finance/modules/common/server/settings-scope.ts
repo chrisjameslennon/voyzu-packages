@@ -31,10 +31,10 @@ async function getTemplateCompanyId(db: DbExecutor): Promise<number> {
 async function getCompanySettingsState(
   companyId: number,
   db: DbExecutor,
-): Promise<{ id: number; isTemplate: boolean; status: string; useOrganizationStandardSettings: boolean }> {
+): Promise<{ id: number; isTemplate: boolean; status: string; useFinanceTemplateSettings: boolean }> {
   const { rows } = await db.query(
     `SELECT fc.id, fc.is_template, COALESCE(c.status, 'ACTIVE') AS status,
-            fc.use_organization_standard_settings
+            fc.use_finance_template_settings
      FROM finance_company fc
      LEFT JOIN company c ON c.id = fc.company_id
      WHERE fc.id = $1 AND (fc.is_template = true OR c.status != 'DELETED')`,
@@ -46,7 +46,7 @@ async function getCompanySettingsState(
     id: Number(row.id),
     isTemplate: row.is_template === true,
     status: String(row.status),
-    useOrganizationStandardSettings: row.use_organization_standard_settings === true,
+    useFinanceTemplateSettings: row.use_finance_template_settings === true,
   };
 }
 
@@ -115,7 +115,7 @@ export async function resolveEffectiveSettingsCompanyId(
   db: DbExecutor = getDb(),
 ): Promise<number> {
   const state = await getCompanySettingsState(companyId, db);
-  if (state.isTemplate || !state.useOrganizationStandardSettings) return state.id;
+  if (state.isTemplate || !state.useFinanceTemplateSettings) return state.id;
   return getTemplateCompanyId(db);
 }
 
@@ -127,8 +127,8 @@ export async function assertCompanySettingsWritable(
   if (!state.isTemplate && state.status === "INACTIVE") {
     throw new BusinessRuleError("This company has been archived, so its settings are read only.");
   }
-  if (!state.isTemplate && state.useOrganizationStandardSettings) {
-    throw new BusinessRuleError("This company uses organization standard settings, so settings are read only here.");
+  if (!state.isTemplate && state.useFinanceTemplateSettings) {
+    throw new BusinessRuleError("This company uses finance template settings, so settings are read only here.");
   }
 }
 

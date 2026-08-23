@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS gl_account (
 
     CONSTRAINT fk_gl_account_company
         FOREIGN KEY (finance_company_id)
-        REFERENCES finance_company(id),
+        REFERENCES finance_company(id) ON DELETE CASCADE,
 
     CONSTRAINT fk_account_category
         FOREIGN KEY (finance_company_id, account_category_id)

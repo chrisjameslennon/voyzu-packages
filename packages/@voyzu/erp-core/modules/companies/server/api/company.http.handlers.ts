@@ -14,6 +14,10 @@ import type { CompanyUpdateRequestDto } from "@voyzu/erp-core/types/modules/comp
 import type { CompanyPatchRequestDto } from "@voyzu/erp-core/types/modules/companies";
 import type { CompanyBatchUpdateRequestDto } from "@voyzu/erp-core/types/modules/companies";
 import type { CompanyBatchPatchRequestDto } from "@voyzu/erp-core/types/modules/companies";
+import {
+  SELECTED_COMPANY_COOKIE,
+  parseSelectedCompanyId,
+} from "@voyzu/erp-core/company-switcher/server";
 
 import { businessRuleError, conflictError, notFoundError, serverError, inputValidationError } from "@voyzu/capability/http";
 import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
@@ -39,6 +43,24 @@ import {
   deactivateCompanies,
   deactivateCompany,
 } from "../lib/company.service";
+
+function clearSelectedCompanyCookieIfDeleted(
+  request: NextRequest,
+  response: NextResponse,
+  deletedCompanies: CompanyResponseDto[],
+): void {
+  const selectedCompanyId = parseSelectedCompanyId(
+    request.cookies.get(SELECTED_COMPANY_COOKIE)?.value,
+  );
+  if (!selectedCompanyId || !deletedCompanies.some((company) => company.id === selectedCompanyId)) return;
+
+  response.cookies.set(SELECTED_COMPANY_COOKIE, "", {
+    httpOnly: true,
+    maxAge: 0,
+    path: "/",
+    sameSite: "lax",
+  });
+}
 
 
 
@@ -183,7 +205,7 @@ export async function handlePatch(
 
 
 export async function handleDelete(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ code: string }> },
 ): Promise<
   NextResponse<
@@ -195,8 +217,11 @@ export async function handleDelete(
 > {
   try {
     const { code } = await params;
+    const company = await getCompany(code);
     await deleteCompany(code);
-    return noContent();
+    const response = noContent();
+    if (company) clearSelectedCompanyCookieIfDeleted(req, response, [company]);
+    return response;
   } catch (err) {
     if (err instanceof BusinessRuleError) return businessRuleError(err.message) as never;
     if (err instanceof NotFoundError) return notFoundError(err.message);
@@ -293,8 +318,11 @@ export async function handleBatchDelete(
 > {
   try {
     const { codes } = await parseBody<CodesRequestDto>(req);
+    const companies = await batchGetCompanies(codes);
     await batchDeleteCompanies(codes);
-    return noContent();
+    const response = noContent();
+    clearSelectedCompanyCookieIfDeleted(req, response, companies);
+    return response;
   } catch (err) {
     if (err instanceof InputValidationError) return inputValidationError(err.message);
     if (err instanceof BusinessRuleError) return businessRuleError(err.message) as never;

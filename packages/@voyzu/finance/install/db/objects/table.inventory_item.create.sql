@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS inventory_item (
     deletion_user_id TEXT,
     deletion_mutation_id UUID,
 
-    CONSTRAINT fk_inventory_item_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id),
+    CONSTRAINT fk_inventory_item_company FOREIGN KEY (finance_company_id) REFERENCES finance_company(id) ON DELETE CASCADE,
     CONSTRAINT fk_inventory_item_category FOREIGN KEY (finance_company_id, category_id) REFERENCES inventory_category(finance_company_id, id),
     CONSTRAINT uq_inventory_item_company_code UNIQUE (finance_company_id, code),
     CONSTRAINT uq_inventory_item_finance_company_id UNIQUE (finance_company_id, id),

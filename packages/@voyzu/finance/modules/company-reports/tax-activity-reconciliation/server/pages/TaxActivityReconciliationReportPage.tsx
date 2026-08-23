@@ -104,7 +104,6 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
         initialFinancialYears={[]}
         initialSelectedYearCode=""
         initialSelectedPeriodValue=""
-        organizationName=""
         selectedCompany={null}
       />
     );
@@ -149,8 +148,6 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
       <TaxActivityReconciliationReportTemplate
         data={initialData}
         generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-        organizationName=""
-        showOrganization={query.showOrganization === "true"}
         showCompanyHeader={query.showCompanyHeader === "true"}
         showCompanyFooter={query.showCompanyFooter === "true"}
         showDecimals={query.showDecimals === "true"}
@@ -165,7 +162,6 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
       initialFinancialYears={yearsWithPostings}
       initialSelectedYearCode={selectedYear?.code ?? ""}
       initialSelectedPeriodValue={selectedPeriod?.value ?? ""}
-      organizationName=""
       selectedCompany={{
         id: company.id,
         taxFilingAnchorMonth: financeCompany.taxFilingAnchorMonth,

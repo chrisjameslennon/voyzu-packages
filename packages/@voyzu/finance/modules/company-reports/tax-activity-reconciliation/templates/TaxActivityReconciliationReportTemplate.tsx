@@ -47,21 +47,17 @@ const SETTLEMENT_GROUPS: Array<{ key: string; label: string; lineKey: TaxActivit
 interface Props {
   data: TaxActivityReconciliationResponseDto;
   generatedAt: string;
-  showOrganization: boolean;
   showCompanyHeader: boolean;
   showCompanyFooter: boolean;
   showDecimals: boolean;
-  organizationName?: string;
 }
 
 export function TaxActivityReconciliationReportTemplate({
   data,
   generatedAt,
-  showOrganization,
   showCompanyHeader,
   showCompanyFooter,
   showDecimals,
-  organizationName,
 }: Props) {
   const hasCompanyHeader = showCompanyHeader && Boolean(data.companyReportLine1 || data.companyReportLine2);
   const hasCompanyFooter = showCompanyFooter && Boolean(data.companyReportFooter);
@@ -97,7 +93,6 @@ export function TaxActivityReconciliationReportTemplate({
   return (
     <div className={styles.reportPage}>
       <style>{taxPositionReportTemplateCss}</style>
-      {showOrganization && organizationName && <div className={styles.reportOrgNameCentered}>{organizationName}</div>}
       <header className={styles.reportHeader}>
         <div>
           <h1>{data.companyName}</h1>

@@ -20,7 +20,6 @@ function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) =
 
 export const getApSubledgerEntriesAudit = operation(service0.getApSubledgerEntriesAudit);
 export const getArSubledgerEntriesAudit = operation(service1.getArSubledgerEntriesAudit);
-export const getOrganizationName = operation(service2.getOrganizationName);
 export const listFinancialYearsWithPostings = operation(service2.listFinancialYearsWithPostings);
 export const getBalanceSheet = operation(service2.getBalanceSheet);
 export const getBankCashMovement = operation(service3.getBankCashMovement);
@@ -38,7 +37,6 @@ export const getTrialBalance = operation(service12.getTrialBalance);
 export const operations = {
   getApSubledgerEntriesAudit,
   getArSubledgerEntriesAudit,
-  getOrganizationName,
   listFinancialYearsWithPostings,
   getBalanceSheet,
   getBankCashMovement,

@@ -4,7 +4,6 @@ import { getDb } from "@voyzu/capability/db";
 
 import { listBankCashAccounts } from "@voyzu/finance/common/bank-cash-accounts/server";
 import { listCompanies } from "@voyzu/erp-core/companies/server";
-import { getOrganizationName } from "@voyzu/finance/company-reports/balance-sheet/server";
 import { listControlAccounts } from "@voyzu/finance/common/control-accounts/server";
 import { listCountries } from "@voyzu/localization/countries/server";
 import { listCurrencies } from "@voyzu/localization/currencies/server";
@@ -119,11 +118,7 @@ async function report<T extends AnyRecord>(
   detailRow?: { content: (row: T) => ReactNode; className?: string },
   inactiveRowsOption?: { label: string; rowClassName: (row: T) => string | undefined },
 ) {
-  const organizationName = await getOrganizationName();
   const searchParams = props?.surface?.searchParams ?? {};
-  const initialShowOrganization = searchParams.showOrganization === undefined
-    ? true
-    : searchParams.showOrganization === "true";
   const resolvedSectionVisibilityOptions = sectionVisibilityOptions?.map((option) => ({
     ...option,
     initialChecked: searchParams[sectionParamName(option.key)] === undefined
@@ -135,7 +130,6 @@ async function report<T extends AnyRecord>(
     <OrganizationListReportShell
       title={title}
       printablePath={printablePath}
-      initialShowOrganization={initialShowOrganization}
       orientation={orientation}
       sectionVisibilityOptions={resolvedSectionVisibilityOptions}
       inactiveRowsOption={inactiveRowsOption ? {
@@ -146,7 +140,6 @@ async function report<T extends AnyRecord>(
     >
       <OrganizationListReport
         title={title}
-        organizationName={organizationName}
         rows={rows}
         columns={columns}
         rowKey={(row, index) => `${text(row.code) || text(row.id) || "row"}:${index}`}
@@ -188,12 +181,11 @@ function taxRate(rate: number): string {
   return `${Number((rate * 100).toFixed(6))}%`;
 }
 
-function countryTaxSettingsDocument(organizationName: string, countries: Awaited<ReturnType<typeof listCountriesWithTaxConfiguration>>) {
+function countryTaxSettingsDocument(countries: Awaited<ReturnType<typeof listCountriesWithTaxConfiguration>>) {
   return (
     <div className="orgListDocument orgListCountryTaxDocument">
       <style>{organizationListReportCss}</style>
       <header className="orgListDocumentHeader">
-        <div className="orgListOrganizationName">{organizationName}</div>
         <h2 className="orgListReportTitle">Country Tax Settings</h2>
       </header>
 
@@ -272,20 +264,13 @@ function countryTaxSettingsDocument(organizationName: string, countries: Awaited
 }
 
 export async function CountryTaxSettingsReportPage(props?: ReportPageProps) {
-  const [organizationName, countries] = await Promise.all([
-    getOrganizationName(),
-    listCountriesWithTaxConfiguration(),
-  ]);
+  const countries = await listCountriesWithTaxConfiguration();
   const searchParams = props?.surface?.searchParams ?? {};
-  const initialShowOrganization = searchParams.showOrganization === undefined
-    ? true
-    : searchParams.showOrganization === "true";
 
   return (
     <OrganizationListReportShell
       title="Country Tax Settings"
       printablePath="/finance/reports/lists/country-tax-settings/printable"
-      initialShowOrganization={initialShowOrganization}
       orientation="landscape"
       inactiveRowsOption={{
         label: "Show inactive Countries",
@@ -293,7 +278,7 @@ export async function CountryTaxSettingsReportPage(props?: ReportPageProps) {
       }}
       printable={props?.surface?.unframed === true}
     >
-      {countryTaxSettingsDocument(organizationName, countries)}
+      {countryTaxSettingsDocument(countries)}
     </OrganizationListReportShell>
   );
 }

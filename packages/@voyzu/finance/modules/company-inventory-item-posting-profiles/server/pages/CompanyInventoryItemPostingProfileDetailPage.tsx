@@ -30,7 +30,7 @@ export async function CompanyInventoryItemPostingProfileDetailPage({ code }: Com
       listPath="/finance/inventory/item-posting-profiles"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/inventory/item-posting-profiles`}
       readOnly={settingsUiState.readOnly}
-      showOrganizationBaseSettings={settingsUiState.usesOrganizationStandardSettings}
+      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

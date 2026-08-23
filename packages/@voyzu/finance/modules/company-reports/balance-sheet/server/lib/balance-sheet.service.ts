@@ -42,11 +42,6 @@ async function fetchCompany(db: DbExecutor, companyId: number): Promise<{ name: 
   };
 }
 
-export async function getOrganizationName(): Promise<string> {
-  const { rows } = await getDb().query(`SELECT organization_name FROM organization LIMIT 1`);
-  return rows[0]?.organization_name != null ? String(rows[0].organization_name) : "";
-}
-
 async function listFinancialYearsWithPostingsUnchecked(companyId: number): Promise<FinancialYearResponseDto[]> {
   const { rows } = await getDb().query(
     `SELECT fy.*,

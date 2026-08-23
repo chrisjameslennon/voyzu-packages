@@ -23,5 +23,5 @@ export async function CompanyGlAccountDetailPage({ code }: CompanyGlAccountDetai
   ]);
   if (!account) notFound();
 
-  return <CompanyGlAccountDetail account={account} categories={categories} readOnly={settingsState.readOnly} usesOrganizationStandardSettings={settingsState.usesOrganizationStandardSettings} isArchived={settingsState.isArchived} />;
+  return <CompanyGlAccountDetail account={account} categories={categories} readOnly={settingsState.readOnly} usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings} isArchived={settingsState.isArchived} />;
 }

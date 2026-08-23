@@ -9,6 +9,8 @@ import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 
 interface CompaniesToolbarProps {
   refreshing: boolean;
+  deleting: boolean;
+  hasSelection: boolean;
   search: string;
   hasSearch: boolean;
   filterTabs: FilterTab[];
@@ -18,12 +20,15 @@ interface CompaniesToolbarProps {
   onClearFilters: () => void;
   onRemoveFilter: (key: string) => void;
   onClearSearch: () => void;
+  onDelete: () => void;
   onRefresh: () => void;
   onSearch: (value: string) => void;
 }
 
 export function CompaniesToolbar({
   refreshing,
+  deleting,
+  hasSelection,
   search,
   hasSearch,
   filterTabs,
@@ -33,6 +38,7 @@ export function CompaniesToolbar({
   onClearFilters,
   onRemoveFilter,
   onClearSearch,
+  onDelete,
   onRefresh,
   onSearch,
 }: CompaniesToolbarProps) {
@@ -62,6 +68,14 @@ export function CompaniesToolbar({
 
         <div className={layoutStyles.slotToolbarRight}>
           <div className={listStyles.toolbarActions}>
+            <Button
+              variant="secondary-destructive"
+              icon="delete"
+              disabled={!hasSelection || deleting}
+              title="Delete selected"
+              onClick={onDelete}
+            />
+            <div className={listStyles.divider} />
             <Button
               variant="plain"
               icon="sync"

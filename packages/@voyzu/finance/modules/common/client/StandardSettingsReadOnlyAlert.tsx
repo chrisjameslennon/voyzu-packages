@@ -7,8 +7,8 @@ export function StandardSettingsReadOnlyAlert() {
     <Alert
       variant="soft"
       color="info"
-      title="Organization standard settings are enabled"
-      text="This company uses organization standard settings, so settings are read only here."
+      title="Finance template settings are enabled"
+      text="This company uses finance template settings, so settings are read only here."
       dismissable
     />
   );

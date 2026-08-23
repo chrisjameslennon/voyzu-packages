@@ -30,7 +30,7 @@ interface FinanceCompanyRow {
   finance_company_id: number | null;
   tax_filing_anchor_month: number;
   tax_filing_interval_months: 1 | 2 | 3 | 6 | 12;
-  use_organization_standard_settings: boolean;
+  use_finance_template_settings: boolean;
   report_line_1: string | null;
   report_line_2: string | null;
   report_footer: string | null;
@@ -46,7 +46,7 @@ const SELECT_SQL = `
     fc.id::int AS finance_company_id,
     COALESCE(fc.tax_filing_anchor_month, finance_country.tax_filing_anchor_month, 3)::int AS tax_filing_anchor_month,
     COALESCE(fc.tax_filing_interval_months, finance_country.tax_filing_interval_months, 3)::int AS tax_filing_interval_months,
-    COALESCE(fc.use_organization_standard_settings, true) AS use_organization_standard_settings,
+    COALESCE(fc.use_finance_template_settings, true) AS use_finance_template_settings,
     fc.report_line_1, fc.report_line_2, fc.report_footer,
     EXISTS (SELECT 1 FROM journal_header j WHERE j.finance_company_id = fc.id) AS has_postings
   FROM company c
@@ -84,7 +84,7 @@ function toDto(row: FinanceCompanyRow): FinanceCompanyResponseDto {
     financeEnabled: row.finance_company_id != null,
     taxFilingAnchorMonth: Number(row.tax_filing_anchor_month),
     taxFilingIntervalMonths: Number(row.tax_filing_interval_months) as 1 | 2 | 3 | 6 | 12,
-    useOrganizationStandardSettings: row.use_organization_standard_settings,
+    useFinanceTemplateSettings: row.use_finance_template_settings,
     ...(row.report_line_1 != null && { reportLine1: row.report_line_1 }),
     ...(row.report_line_2 != null && { reportLine2: row.report_line_2 }),
     ...(row.report_footer != null && { reportFooter: row.report_footer }),
@@ -218,7 +218,7 @@ export async function activateFinanceCompany(code: string): Promise<FinanceCompa
     const inserted = await db.query(
       `INSERT INTO finance_company (
          company_id, tax_filing_anchor_month, tax_filing_interval_months,
-         use_organization_standard_settings, is_template
+         use_finance_template_settings, is_template
        ) VALUES ($1, $2, $3, true, false)
        ON CONFLICT (company_id) DO NOTHING
        RETURNING id::int`,
@@ -409,11 +409,11 @@ export async function updateFinanceCompany(
     const current = await findByCode(code, db);
     if (!current) throw new NotFoundError(`Company ${code} not found`);
     if (!current.financeCompanyId) throw new BusinessRuleError(`Company ${code} is not enabled for Finance`);
-    if (!current.useOrganizationStandardSettings && input.useOrganizationStandardSettings) {
+    if (!current.useFinanceTemplateSettings && input.useFinanceTemplateSettings) {
       throw new BusinessRuleError("A company cannot be re-coupled to Finance Admin standard settings");
     }
 
-    if (current.useOrganizationStandardSettings && !input.useOrganizationStandardSettings) {
+    if (current.useFinanceTemplateSettings && !input.useFinanceTemplateSettings) {
       await copyTemplateSettings(current.financeCompanyId, db);
     }
 
@@ -421,7 +421,7 @@ export async function updateFinanceCompany(
       `UPDATE finance_company SET
          tax_filing_anchor_month = $2,
          tax_filing_interval_months = $3,
-         use_organization_standard_settings = $4,
+         use_finance_template_settings = $4,
          report_line_1 = NULLIF($5, ''), report_line_2 = NULLIF($6, ''),
          report_footer = NULLIF($7, '')
        WHERE id = $1`,
@@ -429,7 +429,7 @@ export async function updateFinanceCompany(
         current.financeCompanyId,
         input.taxFilingAnchorMonth,
         input.taxFilingIntervalMonths,
-        input.useOrganizationStandardSettings,
+        input.useFinanceTemplateSettings,
         input.reportLine1 ?? "",
         input.reportLine2 ?? "",
         input.reportFooter ?? "",
@@ -439,4 +439,15 @@ export async function updateFinanceCompany(
     if (!updated) throw new NotFoundError(`Company ${code} not found after update`);
     return updated;
   });
+}
+
+export async function deleteFinanceCompanyForErpCompany(
+  companyId: number,
+  db: DbExecutor,
+): Promise<void> {
+  await db.query(
+    `DELETE FROM finance_company
+     WHERE company_id = $1 AND is_template = false`,
+    [companyId],
+  );
 }

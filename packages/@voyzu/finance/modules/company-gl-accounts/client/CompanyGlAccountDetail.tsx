@@ -29,11 +29,11 @@ interface CompanyGlAccountDetailProps {
   account: GlAccountResponseDto;
   categories: GlAccountCategoryResponseDto[];
   readOnly?: boolean;
-  usesOrganizationStandardSettings?: boolean;
+  usesFinanceTemplateSettings?: boolean;
   isArchived?: boolean;
 }
 
-export function CompanyGlAccountDetail({ account, categories, readOnly = false, usesOrganizationStandardSettings = false, isArchived = false }: CompanyGlAccountDetailProps) {
+export function CompanyGlAccountDetail({ account, categories, readOnly = false, usesFinanceTemplateSettings = false, isArchived = false }: CompanyGlAccountDetailProps) {
   const router = useRouter();
   const [currentAccount, setCurrentAccount] = useState(account);
   const [code, setCode] = useState(account.code);
@@ -142,7 +142,7 @@ export function CompanyGlAccountDetail({ account, categories, readOnly = false, 
             <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>{name || currentAccount.name}</h1>
           </div>
           <div className={layoutStyles.slotTitleMeta}>
-            <CompanySettingsTitleBadges showOrganizationBaseSettings={usesOrganizationStandardSettings} showArchived={isArchived} showReadOnly={readOnly} />
+            <CompanySettingsTitleBadges showFinanceTemplateSettings={usesFinanceTemplateSettings} showArchived={isArchived} showReadOnly={readOnly} />
           </div>
         </div>
         <div className={layoutStyles.slotActions}>
