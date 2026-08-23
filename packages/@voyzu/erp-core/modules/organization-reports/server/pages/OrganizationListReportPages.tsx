@@ -1,6 +1,6 @@
 import "server-only";
 
-import { listCompanies } from "@voyzu/erp-core/companies/server";
+import { listOrganizations } from "@voyzu/erp-core/organizations/server";
 import { listCountries } from "@voyzu/localization/countries/server";
 import { listCurrencies } from "@voyzu/localization/currencies/server";
 
@@ -100,16 +100,16 @@ async function report<T extends AnyRecord>(
   );
 }
 
-export async function CompaniesReportPage(props?: ReportPageProps) {
-  const rows = await listCompanies();
-  return report("Companies", "/organization/reports/lists/companies/printable", rowsOf(rows), [
+export async function OrganizationsReportPage(props?: ReportPageProps) {
+  const rows = await listOrganizations();
+  return report("Organizations", "/organization/reports/lists/organizations/printable", rowsOf(rows), [
     widthColumn("code", "Code", "14%"),
     nowrapWidthColumn("name", "Name", "36%"),
     nowrapWidthColumn("country.name", "Country", "22%"),
     widthColumn("baseCurrencyCode", "Currency", "13%"),
     widthColumn("status", "Status", "15%"),
   ], props, undefined, "portrait", undefined, undefined, {
-    ...inactiveRowsOption("Show inactive Companies"),
+    ...inactiveRowsOption("Show inactive Organizations"),
   });
 }
 

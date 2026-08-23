@@ -60,8 +60,8 @@ export class InventoryLedgerRepo {
        JOIN journal_header jh ON jh.id = h.journal_header_id
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = h.id
        JOIN inventory_item item ON item.id = l.item_id
-       JOIN inventory_control_account control ON control.finance_company_id = h.finance_company_id AND control.code = l.inventory_control_account_code
-       JOIN gl_account gl ON gl.finance_company_id = h.finance_company_id AND gl.id = control.gl_account_id
+       JOIN inventory_control_account control ON control.finance_organization_id = h.finance_organization_id AND control.code = l.inventory_control_account_code
+       JOIN gl_account gl ON gl.finance_organization_id = h.finance_organization_id AND gl.id = control.gl_account_id
        LEFT JOIN LATERAL (
          SELECT json_agg(json_build_object(
            'controlAccountCode', grouped.control_account_code,
@@ -77,13 +77,13 @@ export class InventoryLedgerRepo {
                   balance_gl.name AS gl_account_name,
                   SUM(line.book_value_delta)::float AS balance
            FROM inventory_ledger_entry_line line
-           JOIN inventory_control_account balance_control ON balance_control.finance_company_id = h.finance_company_id AND balance_control.code = line.inventory_control_account_code
-           JOIN gl_account balance_gl ON balance_gl.finance_company_id = h.finance_company_id AND balance_gl.id = balance_control.gl_account_id
+           JOIN inventory_control_account balance_control ON balance_control.finance_organization_id = h.finance_organization_id AND balance_control.code = line.inventory_control_account_code
+           JOIN gl_account balance_gl ON balance_gl.finance_organization_id = h.finance_organization_id AND balance_gl.id = balance_control.gl_account_id
            WHERE line.inventory_ledger_entry_header_id = h.id
            GROUP BY line.inventory_control_account_code, balance_control.name, balance_gl.code, balance_gl.name
          ) grouped
        ) control_balances ON true
-       WHERE h.finance_company_id = $1
+       WHERE h.finance_organization_id = $1
        ORDER BY h.posting_date DESC, h.id DESC, l.line_number ASC`,
       [companyId],
     );
@@ -97,8 +97,8 @@ export class InventoryLedgerRepo {
        JOIN journal_header jh ON jh.id = h.journal_header_id
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = h.id
        JOIN inventory_item item ON item.id = l.item_id
-       JOIN inventory_control_account control ON control.finance_company_id = h.finance_company_id AND control.code = l.inventory_control_account_code
-       JOIN gl_account gl ON gl.finance_company_id = h.finance_company_id AND gl.id = control.gl_account_id
+       JOIN inventory_control_account control ON control.finance_organization_id = h.finance_organization_id AND control.code = l.inventory_control_account_code
+       JOIN gl_account gl ON gl.finance_organization_id = h.finance_organization_id AND gl.id = control.gl_account_id
        LEFT JOIN LATERAL (
          SELECT json_agg(json_build_object(
            'controlAccountCode', grouped.control_account_code,
@@ -114,13 +114,13 @@ export class InventoryLedgerRepo {
                   balance_gl.name AS gl_account_name,
                   SUM(line.book_value_delta)::float AS balance
            FROM inventory_ledger_entry_line line
-           JOIN inventory_control_account balance_control ON balance_control.finance_company_id = h.finance_company_id AND balance_control.code = line.inventory_control_account_code
-           JOIN gl_account balance_gl ON balance_gl.finance_company_id = h.finance_company_id AND balance_gl.id = balance_control.gl_account_id
+           JOIN inventory_control_account balance_control ON balance_control.finance_organization_id = h.finance_organization_id AND balance_control.code = line.inventory_control_account_code
+           JOIN gl_account balance_gl ON balance_gl.finance_organization_id = h.finance_organization_id AND balance_gl.id = balance_control.gl_account_id
            WHERE line.inventory_ledger_entry_header_id = h.id
            GROUP BY line.inventory_control_account_code, balance_control.name, balance_gl.code, balance_gl.name
          ) grouped
        ) control_balances ON true
-       WHERE h.finance_company_id = $1
+       WHERE h.finance_organization_id = $1
          AND h.code = $2
        ORDER BY l.line_number ASC`,
       [companyId, code],

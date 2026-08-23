@@ -1,10 +1,10 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
-import { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 import { PositiveId } from "../../constraints";
 
 export const FinanceCompanyResponseDto = StrictObject({
-  ...CompanyResponseDto.properties,
+  ...OrganizationResponseDto.properties,
   financeCompanyId: Type.Union([PositiveId, Type.Null()]),
   financeEnabled: Type.Boolean(),
   taxFilingAnchorMonth: Type.Integer({ minimum: 1, maximum: 12 }),

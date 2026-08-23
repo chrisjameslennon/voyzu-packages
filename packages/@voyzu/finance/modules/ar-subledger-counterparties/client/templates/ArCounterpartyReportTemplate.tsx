@@ -1,5 +1,5 @@
 import type { ArCounterpartyResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 
 import { arCounterpartyReportCss, arCounterpartyReportStyles as styles } from "./ar-counterparty-report.css";
 
@@ -8,7 +8,7 @@ export function ArCounterpartyReportTemplate({
   counterparty,
   generatedAt,
 }: {
-  company: CompanyResponseDto;
+  company: OrganizationResponseDto;
   counterparty: ArCounterpartyResponseDto;
   generatedAt: string;
 }) {

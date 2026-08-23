@@ -39,7 +39,7 @@ interface CompanyRow {
 
 interface CounterpartyRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   status: "ACTIVE" | "INACTIVE";
@@ -137,7 +137,7 @@ function companyRow(row: Record<string, unknown>): CompanyRow {
 function counterpartyRow(row: Record<string, unknown>): CounterpartyRow {
   return {
     id: Number(row.id),
-    finance_company_id: Number(row.finance_company_id),
+    finance_organization_id: Number(row.finance_organization_id),
     code: String(row.code),
     name: String(row.name),
     status: row.status as "ACTIVE" | "INACTIVE",
@@ -190,7 +190,7 @@ function documentProcessorRow(row: Record<string, unknown>): DocumentProcessorRo
 
 async function getCompany(db: DbExecutor, code: string): Promise<CompanyRow | null> {
   return one(db, `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status
-    FROM finance_company fc JOIN company c ON c.id = fc.company_id
+    FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
     WHERE c.code = $1 AND fc.is_template = false`, [code], companyRow);
 }
 
@@ -216,16 +216,16 @@ function assertDocumentCapabilities(processor: DocumentProcessorRow, request: Re
 }
 
 async function getCounterparty(db: DbExecutor, companyId: number, code: string): Promise<CounterpartyRow | null> {
-  return one(db, `SELECT cp.*, c.currency_code AS country_currency_code FROM ar_counterparty cp JOIN country c ON c.code = cp.country_code WHERE cp.finance_company_id = $1 AND cp.code = $2`, [companyId, code], counterpartyRow);
+  return one(db, `SELECT cp.*, c.currency_code AS country_currency_code FROM ar_counterparty cp JOIN country c ON c.code = cp.country_code WHERE cp.finance_organization_id = $1 AND cp.code = $2`, [companyId, code], counterpartyRow);
 }
 
 async function upsertCounterparty(db: DbExecutor, companyId: number, input: NonNullable<ArReceiptRequestDto["ar_counterparty"]>): Promise<CounterpartyRow & { was_created: boolean }> {
   const { rows } = await db.query(
     `WITH upserted AS (
        INSERT INTO ar_counterparty
-         (finance_company_id, code, name, status, country_code, tax_region_or_province, creation_date, creation_actor_type, updated_date, updated_actor_type)
+         (finance_organization_id, code, name, status, country_code, tax_region_or_province, creation_date, creation_actor_type, updated_date, updated_actor_type)
        VALUES ($1,$2,$3,$4,$5,$6,now(),'SYSTEM',now(),'SYSTEM')
-       ON CONFLICT (finance_company_id, code) DO UPDATE
+       ON CONFLICT (finance_organization_id, code) DO UPDATE
        SET name = EXCLUDED.name, status = EXCLUDED.status, country_code = EXCLUDED.country_code,
            tax_region_or_province = EXCLUDED.tax_region_or_province, updated_date = now(), updated_actor_type = 'SYSTEM'
        RETURNING *, (xmax = 0) AS was_created
@@ -240,7 +240,7 @@ async function getPeriod(db: DbExecutor, companyId: number, postingDate: string)
   return one(db,
     `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
      FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-     WHERE fp.finance_company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fy.status = 'OPEN' AND fp.status = 'OPEN'
+     WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fy.status = 'OPEN' AND fp.status = 'OPEN'
      LIMIT 1`,
     [companyId, postingDate],
     periodRow,
@@ -253,8 +253,8 @@ async function getCashAccount(db: DbExecutor, companyId: number, code: string | 
       ? `SELECT $3::text AS code, bca.code AS bank_cash_control_account_code,
             bca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
          FROM bank_cash_control_account bca
-         JOIN gl_account ga ON ga.finance_company_id = bca.finance_company_id AND ga.id = bca.gl_account_id
-         WHERE bca.finance_company_id = $1
+         JOIN gl_account ga ON ga.finance_organization_id = bca.finance_organization_id AND ga.id = bca.gl_account_id
+         WHERE bca.finance_organization_id = $1
            AND bca.code = $2
            AND bca.status = 'ACTIVE'
            AND ga.status = 'ACTIVE'
@@ -263,9 +263,9 @@ async function getCashAccount(db: DbExecutor, companyId: number, code: string | 
       : `SELECT pc.code, bca.code AS bank_cash_control_account_code,
             bca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
        FROM financial_document_default pc
-       JOIN bank_cash_control_account bca ON bca.finance_company_id = pc.finance_company_id AND bca.id = pc.bank_cash_control_account_id
-       JOIN gl_account ga ON ga.finance_company_id = bca.finance_company_id AND ga.id = bca.gl_account_id
-       WHERE pc.finance_company_id = $1
+       JOIN bank_cash_control_account bca ON bca.finance_organization_id = pc.finance_organization_id AND bca.id = pc.bank_cash_control_account_id
+       JOIN gl_account ga ON ga.finance_organization_id = bca.finance_organization_id AND ga.id = bca.gl_account_id
+       WHERE pc.finance_organization_id = $1
          AND pc.document_code = $2
          AND pc.code = $3
          AND pc.status = 'ACTIVE'
@@ -282,8 +282,8 @@ async function getCashAccount(db: DbExecutor, companyId: number, code: string | 
 async function getControlAccount(db: DbExecutor, companyId: number, code: typeof AR_RECEIVABLE_CONTROL_CODE | typeof AR_UNAPPLIED_CASH_CONTROL_CODE): Promise<AccountRow | null> {
   return one(db,
     `SELECT ca.code AS control_account_code, ca.name AS control_account_name, ca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-     FROM ar_control_account ca JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
-     WHERE ca.finance_company_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,
+     FROM ar_control_account ca JOIN gl_account ga ON ga.finance_organization_id = ca.finance_organization_id AND ga.id = ca.gl_account_id
+     WHERE ca.finance_organization_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,
     [companyId, code],
     accountRow,
   );
@@ -309,7 +309,7 @@ async function findOpenInvoice(db: DbExecutor, companyId: number, counterpartyId
          AND l.control_account_code = $4
          AND l.dr_cr = 'CR'
      ) applied_lines ON true
-     WHERE e.finance_company_id = $1 AND e.ar_counterparty_id = $2
+     WHERE e.finance_organization_id = $1 AND e.ar_counterparty_id = $2
        AND h.document_type_code = 'AR_INVOICE' AND h.document_id = $3
      LIMIT 1`,
     [companyId, counterpartyId, documentId, AR_RECEIVABLE_CONTROL_CODE],
@@ -335,7 +335,7 @@ async function resolveContext(db: DbExecutor, request: ResolvedArReceiptRequestD
     if (preview) {
       counterparty = {
         id: 0,
-        finance_company_id: company.id,
+        finance_organization_id: company.id,
         code: request.ar_counterparty.code ?? "",
         name: request.ar_counterparty.name,
         status: request.ar_counterparty.status,
@@ -589,7 +589,7 @@ async function insertArHeader(db: DbExecutor, context: Context, journalHeaderId:
   const code = `AR-RCT-${journalHeaderId}`;
   const { rows } = await db.query(
     `INSERT INTO ar_subledger_entry_header
-     (code, finance_company_id, journal_header_id, ar_counterparty_id, document_type_code,
+     (code, finance_organization_id, journal_header_id, ar_counterparty_id, document_type_code,
         document_id, description, memo, document_date, posting_date, financial_year_id,
         financial_period_id, base_currency_code, status,
         creation_date, creation_actor_type)
@@ -651,7 +651,7 @@ async function processArReceiptUnchecked(input: ArReceiptRequestDto, options: Pr
     const journalRepo = new JournalRepo(client);
     const header = await journalRepo.insert({
       id: txContext.reservedJournalHeaderId ?? undefined,
-      finance_company_id: txContext.company.id,
+      finance_organization_id: txContext.company.id,
       company_code: txContext.company.code,
       company_name: txContext.company.name,
       document_type_code: AR_RECEIPT_ENGINE_CODE,

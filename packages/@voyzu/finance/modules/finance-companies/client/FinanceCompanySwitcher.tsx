@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { CompanySelectionResponseDto } from "@voyzu/erp-core/types/modules/company-switcher";
-import type { CompanySelectionUpdateRequestDto } from "@voyzu/erp-core/company-switcher/types";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationSelectionResponseDto } from "@voyzu/erp-core/types/modules/organization-switcher";
+import type { OrganizationSelectionUpdateRequestDto } from "@voyzu/erp-core/organization-switcher/types";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 import { getAvatarColor } from "@voyzu/erp-core/common/client";
 
 import localStyles from "./finance-company-switcher.module.css";
@@ -24,25 +24,25 @@ export function FinanceCompanySwitcher({
 }: FinanceCompanySwitcherProps) {
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
-  const [companies, setCompanies] = useState<CompanyResponseDto[]>([]);
-  const [selectedCompany, setSelectedCompany] = useState<CompanyResponseDto | null>(null);
+  const [companies, setCompanies] = useState<OrganizationResponseDto[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<OrganizationResponseDto | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isSelectingCompanyId, setIsSelectingCompanyId] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadCompanySelection() {
+    async function loadOrganizationSelection() {
       try {
         const selectionResponse = await fetch("/api/finance/company-selection");
         const selectionData = selectionResponse.ok
-          ? await selectionResponse.json() as CompanySelectionResponseDto
-          : { companies: [], selectedCompany: null, selectedCompanyId: null };
+          ? await selectionResponse.json() as OrganizationSelectionResponseDto
+          : { organizations: [], selectedOrganization: null, selectedOrganizationId: null };
 
         if (cancelled) return;
 
-        setCompanies(selectionData.companies);
-        setSelectedCompany(selectionData.selectedCompany ?? selectionData.companies[0] ?? null);
+        setCompanies(selectionData.organizations);
+        setSelectedCompany(selectionData.selectedOrganization ?? selectionData.organizations[0] ?? null);
       } catch {
         if (!cancelled) {
           setCompanies([]);
@@ -51,7 +51,7 @@ export function FinanceCompanySwitcher({
       }
     }
 
-    void loadCompanySelection();
+    void loadOrganizationSelection();
     return () => {
       cancelled = true;
     };
@@ -72,7 +72,7 @@ export function FinanceCompanySwitcher({
 
   const displayName = isTemplateMode ? "Finance Admin" : selectedCompany?.name ?? "Select Company";
 
-  const selectCompany = async (company: CompanyResponseDto) => {
+  const selectCompany = async (company: OrganizationResponseDto) => {
     setIsSelectingCompanyId(company.id);
 
     try {
@@ -81,7 +81,7 @@ export function FinanceCompanySwitcher({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ companyId: company.id } satisfies CompanySelectionUpdateRequestDto),
+        body: JSON.stringify({ organizationId: company.id } satisfies OrganizationSelectionUpdateRequestDto),
       });
 
       if (!response.ok) return;

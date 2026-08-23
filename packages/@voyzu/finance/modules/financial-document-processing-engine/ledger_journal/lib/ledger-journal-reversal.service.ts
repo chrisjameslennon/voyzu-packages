@@ -249,7 +249,7 @@ async function processLedgerJournalReversalUnchecked(
 
     const header = await journalRepo.insert({
       id: reservedJournalHeaderId ?? undefined,
-      finance_company_id: txContext.data.company!.id,
+      finance_organization_id: txContext.data.company!.id,
       company_code: txContext.data.company!.code,
       company_name: txContext.data.company!.name,
       document_type_code: LEDGER_JOURNAL_REVERSAL_ENGINE_CODE,

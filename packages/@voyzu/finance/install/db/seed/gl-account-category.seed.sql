@@ -26,10 +26,10 @@ WITH seed (company_code, code, name, account_type, sequence, status) AS (
     ('TEMPLATE', 'REVENUE_OPERATING', 'Operating Revenue', 'REVENUE', 600, 'ACTIVE'),
     ('TEMPLATE', 'REVENUE_OTHER', 'Other Income', 'REVENUE', 650, 'ACTIVE')
 )
-INSERT INTO gl_account_category (finance_company_id, code, name, account_type, sequence, status, creation_actor_type, updated_actor_type)
+INSERT INTO gl_account_category (finance_organization_id, code, name, account_type, sequence, status, creation_actor_type, updated_actor_type)
 SELECT fc.id, s.code, s.name, s.account_type, s.sequence, s.status, 'SYSTEM', 'SYSTEM'
-FROM seed s JOIN finance_company fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
-ON CONFLICT (finance_company_id, code) DO UPDATE SET
+FROM seed s JOIN finance_organization fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
+ON CONFLICT (finance_organization_id, code) DO UPDATE SET
     name = EXCLUDED.name,
     account_type = EXCLUDED.account_type,
     sequence = EXCLUDED.sequence,

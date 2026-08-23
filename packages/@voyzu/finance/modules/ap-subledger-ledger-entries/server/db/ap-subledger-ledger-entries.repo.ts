@@ -88,8 +88,8 @@ export class ApSubledgerRepo {
          ORDER BY line.line_number ASC
          LIMIT 1
        ) first_line ON true
-       JOIN ap_control_account ca ON ca.finance_company_id = $2 AND ca.code = first_line.control_account_code
-       JOIN gl_account ga ON ga.finance_company_id = $2 AND ga.id = ca.gl_account_id
+       JOIN ap_control_account ca ON ca.finance_organization_id = $2 AND ca.code = first_line.control_account_code
+       JOIN gl_account ga ON ga.finance_organization_id = $2 AND ga.id = ca.gl_account_id
        LEFT JOIN LATERAL (${AP_HEADER_AMOUNT_SUBQUERY}) header_amount ON true
        LEFT JOIN LATERAL (
          SELECT json_agg(json_build_object(
@@ -106,8 +106,8 @@ export class ApSubledgerRepo {
                   balance_ga.name AS gl_account_name,
                   SUM(CASE WHEN line.dr_cr = 'CR' THEN line.base_currency_amount ELSE -line.base_currency_amount END)::float AS balance
            FROM ap_subledger_entry_line line
-           JOIN ap_control_account balance_ca ON balance_ca.finance_company_id = $2 AND balance_ca.code = line.control_account_code
-           JOIN gl_account balance_ga ON balance_ga.finance_company_id = $2 AND balance_ga.id = balance_ca.gl_account_id
+           JOIN ap_control_account balance_ca ON balance_ca.finance_organization_id = $2 AND balance_ca.code = line.control_account_code
+           JOIN gl_account balance_ga ON balance_ga.finance_organization_id = $2 AND balance_ga.id = balance_ca.gl_account_id
            WHERE line.ap_subledger_entry_header_id = e.id
            GROUP BY line.control_account_code, balance_ca.name, balance_ga.code, balance_ga.name
          ) grouped
@@ -153,7 +153,7 @@ export class ApSubledgerRepo {
          ORDER BY tax.id ASC
          LIMIT 1
        ) tax_entry ON true
-       WHERE e.finance_company_id = $1
+       WHERE e.finance_organization_id = $1
        ORDER BY e.posting_date DESC, e.id DESC`,
       [companyId, settingsCompanyId],
     );
@@ -174,8 +174,8 @@ export class ApSubledgerRepo {
          ORDER BY line.line_number ASC
          LIMIT 1
        ) first_line ON true
-       JOIN ap_control_account ca ON ca.finance_company_id = $3 AND ca.code = first_line.control_account_code
-       JOIN gl_account ga ON ga.finance_company_id = $3 AND ga.id = ca.gl_account_id
+       JOIN ap_control_account ca ON ca.finance_organization_id = $3 AND ca.code = first_line.control_account_code
+       JOIN gl_account ga ON ga.finance_organization_id = $3 AND ga.id = ca.gl_account_id
        LEFT JOIN LATERAL (${AP_HEADER_AMOUNT_SUBQUERY}) header_amount ON true
        LEFT JOIN LATERAL (
          SELECT json_agg(json_build_object(
@@ -192,8 +192,8 @@ export class ApSubledgerRepo {
                   balance_ga.name AS gl_account_name,
                   SUM(CASE WHEN line.dr_cr = 'CR' THEN line.base_currency_amount ELSE -line.base_currency_amount END)::float AS balance
            FROM ap_subledger_entry_line line
-           JOIN ap_control_account balance_ca ON balance_ca.finance_company_id = $3 AND balance_ca.code = line.control_account_code
-           JOIN gl_account balance_ga ON balance_ga.finance_company_id = $3 AND balance_ga.id = balance_ca.gl_account_id
+           JOIN ap_control_account balance_ca ON balance_ca.finance_organization_id = $3 AND balance_ca.code = line.control_account_code
+           JOIN gl_account balance_ga ON balance_ga.finance_organization_id = $3 AND balance_ga.id = balance_ca.gl_account_id
            WHERE line.ap_subledger_entry_header_id = e.id
            GROUP BY line.control_account_code, balance_ca.name, balance_ga.code, balance_ga.name
          ) grouped
@@ -239,7 +239,7 @@ export class ApSubledgerRepo {
          ORDER BY tax.id ASC
          LIMIT 1
        ) tax_entry ON true
-       WHERE e.finance_company_id = $1
+       WHERE e.finance_organization_id = $1
          AND e.code = $2
        LIMIT 1`,
       [companyId, code, settingsCompanyId],

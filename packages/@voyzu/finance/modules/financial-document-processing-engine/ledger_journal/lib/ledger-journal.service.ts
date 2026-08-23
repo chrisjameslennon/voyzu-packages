@@ -267,7 +267,7 @@ async function processLedgerJournalUnchecked(
 
     const journalHeader = await journalRepo.insert({
       id: reservedJournalHeaderId ?? undefined,
-      finance_company_id: context.data.company!.id,
+      finance_organization_id: context.data.company!.id,
       company_code: context.data.company!.code,
       company_name: context.data.company!.name,
       document_type_code: LEDGER_JOURNAL_ENGINE_CODE,

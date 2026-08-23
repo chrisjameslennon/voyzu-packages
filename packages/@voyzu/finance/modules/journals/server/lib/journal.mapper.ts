@@ -57,7 +57,7 @@ export function toDto(
     arSubledgerEntryCode: row.ar_subledger_entry_code,
     apSubledgerEntryCode: row.ap_subledger_entry_code,
     taxLedgerEntryCode: row.tax_ledger_entry_code,
-    companyId: row.finance_company_id,
+    companyId: row.finance_organization_id,
     companyCode: row.company_code,
     companyName: row.company_name,
     documentTypeCode: row.document_type_code,

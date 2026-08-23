@@ -61,7 +61,7 @@ type Account = {
   control_account_name?: string;
 };
 type Company = { id: number; code: string; name: string; country_code: string; base_currency_code: string; status: string };
-type Counterparty = { id: number; finance_company_id: number; code: string; name: string; status: "ACTIVE" | "INACTIVE"; country_code: string; tax_region_or_province: string | null };
+type Counterparty = { id: number; finance_organization_id: number; code: string; name: string; status: "ACTIVE" | "INACTIVE"; country_code: string; tax_region_or_province: string | null };
 type Period = { financial_year_id: number; financial_year_code: string; financial_period_id: number; financial_period_code: string };
 type OpenItem = { id: number; code: string; document_type_code: string; document_id: string; journal_code: string; open_amount: number; original_bill?: ApBillDetailedDocumentDto | null };
 type DocumentProcessor = { code: string; status: string; supports_dimensions: boolean; cash_movement: boolean; supports_items: boolean };
@@ -164,7 +164,7 @@ function company(row: Record<string, unknown>): Company {
 }
 
 function counterparty(row: Record<string, unknown>): Counterparty {
-  return { id: Number(row.id), finance_company_id: Number(row.finance_company_id), code: String(row.code), name: String(row.name), status: row.status as "ACTIVE" | "INACTIVE", country_code: String(row.country_code), tax_region_or_province: row.tax_region_or_province == null ? null : String(row.tax_region_or_province) };
+  return { id: Number(row.id), finance_organization_id: Number(row.finance_organization_id), code: String(row.code), name: String(row.name), status: row.status as "ACTIVE" | "INACTIVE", country_code: String(row.country_code), tax_region_or_province: row.tax_region_or_province == null ? null : String(row.tax_region_or_province) };
 }
 
 function period(row: Record<string, unknown>): Period {
@@ -228,19 +228,19 @@ function openItem(row: Record<string, unknown>): OpenItem {
 async function base(db: DbExecutor, request: RequestDto, postingDateValue: string, documentType: ApProcessingDocumentType): Promise<{ company: Company; counterparty: Counterparty; period: Period; documentProcessor: DocumentProcessor }> {
   const companyCode = requiredString(request.company_code, "company_code");
   const c = await one(db, `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status
-    FROM finance_company fc JOIN company c ON c.id = fc.company_id
+    FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
     WHERE c.code = $1 AND fc.is_template = false`, [companyCode], company);
   if (!c) throw new BusinessRuleError(`Company ${companyCode} was not found`);
   if (c.status !== "ACTIVE") throw new BusinessRuleError(`Company ${c.code} is not ACTIVE`);
   const processor = await one(db, `SELECT code, status, supports_dimensions, cash_movement, supports_items FROM financial_document_type WHERE code = $1`, [documentType], documentProcessor);
   if (!processor || processor.status !== "ACTIVE") throw new BusinessRuleError(`${documentType} document processor is not active`);
   const cpCode = requiredString(request.ap_counterparty_code, "ap_counterparty_code");
-  const cp = await one(db, `SELECT * FROM ap_counterparty WHERE finance_company_id = $1 AND code = $2`, [c.id, cpCode], counterparty);
+  const cp = await one(db, `SELECT * FROM ap_counterparty WHERE finance_organization_id = $1 AND code = $2`, [c.id, cpCode], counterparty);
   if (!cp) throw new BusinessRuleError(`AP counterparty ${cpCode} was not found`);
   if (cp.status !== "ACTIVE") throw new BusinessRuleError(`AP counterparty ${cp.code} is not ACTIVE`);
   const p = await one(db, `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
     FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-    WHERE fp.finance_company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fp.status = 'OPEN' AND fy.status = 'OPEN'
+    WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fp.status = 'OPEN' AND fy.status = 'OPEN'
     LIMIT 1`, [c.id, postingDateValue], period);
   if (!p) throw new BusinessRuleError(`No OPEN fiscal period contains posting date ${postingDateValue}`);
   return { company: c, counterparty: cp, period: p, documentProcessor: processor };
@@ -275,14 +275,14 @@ function assertDocumentCapabilities(documentType: ApProcessingDocumentType, inpu
 
 async function control(db: DbExecutor, companyId: number, code: typeof AP_TRADE | typeof AP_UNAPPLIED): Promise<Account> {
   const acc = await one(db, `SELECT ca.code AS control_account_code, ca.name AS control_account_name, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-    FROM ap_control_account ca JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
-    WHERE ca.finance_company_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, code], account);
+    FROM ap_control_account ca JOIN gl_account ga ON ga.finance_organization_id = ca.finance_organization_id AND ga.id = ca.gl_account_id
+    WHERE ca.finance_organization_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, code], account);
   if (!acc) throw new BusinessRuleError(`${code} control account is not configured`);
   return acc;
 }
 
 async function postingCode(db: DbExecutor, companyId: number, doc: ApProcessingDocumentType | "AP_BILL", defaultCode: string, requested?: string | null): Promise<Account> {
-  const defaultRow = await one(db, `SELECT target_type, allowed_account_types FROM financial_document_default WHERE finance_company_id = $1 AND document_code = $2 AND code = $3 AND status = 'ACTIVE' LIMIT 1`, [companyId, doc, defaultCode], (row) => ({
+  const defaultRow = await one(db, `SELECT target_type, allowed_account_types FROM financial_document_default WHERE finance_organization_id = $1 AND document_code = $2 AND code = $3 AND status = 'ACTIVE' LIMIT 1`, [companyId, doc, defaultCode], (row) => ({
     target_type: String(row.target_type),
     allowed_account_types: row.allowed_account_types as string[],
   }));
@@ -293,8 +293,8 @@ async function postingCode(db: DbExecutor, companyId: number, doc: ApProcessingD
       ? await one(db, `SELECT $3::text AS code, bca.code AS bank_cash_control_account_code,
              bca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
           FROM bank_cash_control_account bca
-          JOIN gl_account ga ON ga.finance_company_id = bca.finance_company_id AND ga.id = bca.gl_account_id
-          WHERE bca.finance_company_id = $1
+          JOIN gl_account ga ON ga.finance_organization_id = bca.finance_organization_id AND ga.id = bca.gl_account_id
+          WHERE bca.finance_organization_id = $1
             AND bca.code = $2
             AND bca.status = 'ACTIVE'
             AND ga.status = 'ACTIVE'
@@ -302,7 +302,7 @@ async function postingCode(db: DbExecutor, companyId: number, doc: ApProcessingD
           LIMIT 1`, [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
       : await one(db, `SELECT $3::text AS code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
           FROM gl_account ga
-          WHERE ga.finance_company_id = $1
+          WHERE ga.finance_organization_id = $1
             AND ga.code = $2
             AND ga.status = 'ACTIVE'
             AND ga.account_type = ANY($4::text[])
@@ -311,9 +311,9 @@ async function postingCode(db: DbExecutor, companyId: number, doc: ApProcessingD
              COALESCE(pc.gl_account_id, bca.gl_account_id) AS gl_account_id,
              ga.code AS gl_account_code, ga.name AS gl_account_name
       FROM financial_document_default pc
-      LEFT JOIN bank_cash_control_account bca ON bca.finance_company_id = pc.finance_company_id AND bca.id = pc.bank_cash_control_account_id
-      JOIN gl_account ga ON ga.finance_company_id = pc.finance_company_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
-      WHERE pc.finance_company_id = $1
+      LEFT JOIN bank_cash_control_account bca ON bca.finance_organization_id = pc.finance_organization_id AND bca.id = pc.bank_cash_control_account_id
+      JOIN gl_account ga ON ga.finance_organization_id = pc.finance_organization_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
+      WHERE pc.finance_organization_id = $1
         AND pc.document_code = $2
         AND pc.code = $3
         AND pc.status = 'ACTIVE'
@@ -386,7 +386,7 @@ async function openBill(db: DbExecutor, companyId: number, counterpartyId: numbe
     JOIN journal_header h ON h.id = e.journal_header_id
     LEFT JOIN LATERAL (SELECT SUM(base_currency_amount) AS amount FROM ap_subledger_entry_line l WHERE l.ap_subledger_entry_header_id = e.id AND l.control_account_code = $4 AND l.dr_cr = 'CR') bill ON true
     LEFT JOIN LATERAL (SELECT SUM(base_currency_amount) AS amount FROM ap_subledger_entry_line l WHERE l.target_entry_header_id = e.id AND l.control_account_code = $4 AND l.dr_cr = 'DR') applied ON true
-    WHERE e.finance_company_id = $1 AND e.ap_counterparty_id = $2 AND h.document_type_code IN ('AP_BILL', 'AP_OPENING_BALANCE') AND h.document_id = $3
+    WHERE e.finance_organization_id = $1 AND e.ap_counterparty_id = $2 AND h.document_type_code IN ('AP_BILL', 'AP_OPENING_BALANCE') AND h.document_id = $3
     LIMIT 1`, [companyId, counterpartyId, docId, AP_TRADE], openItem);
 }
 
@@ -397,7 +397,7 @@ async function openPayment(db: DbExecutor, companyId: number, counterpartyId: nu
     JOIN journal_header h ON h.id = e.journal_header_id
     LEFT JOIN LATERAL (SELECT SUM(base_currency_amount) AS amount FROM ap_subledger_entry_line l WHERE l.ap_subledger_entry_header_id = e.id AND l.control_account_code = $4 AND l.dr_cr = 'DR') pay ON true
     LEFT JOIN LATERAL (SELECT SUM(base_currency_amount) AS amount FROM ap_subledger_entry_line l WHERE l.source_entry_header_id = e.id AND l.control_account_code = $4 AND l.dr_cr = 'CR') used ON true
-    WHERE e.finance_company_id = $1 AND e.ap_counterparty_id = $2 AND h.document_type_code IN ('AP_PAYMENT', 'AP_CREDIT_NOTE') AND h.document_id = $3
+    WHERE e.finance_organization_id = $1 AND e.ap_counterparty_id = $2 AND h.document_type_code IN ('AP_PAYMENT', 'AP_CREDIT_NOTE') AND h.document_id = $3
     LIMIT 1`, [companyId, counterpartyId, docId, AP_UNAPPLIED], openItem);
 }
 
@@ -407,7 +407,7 @@ async function unappliedBalance(db: DbExecutor, companyId: number, counterpartyI
     WHEN l.control_account_code = $3 AND l.dr_cr = 'CR' THEN -l.base_currency_amount
     ELSE 0 END), 0), 0)::float AS amount
     FROM ap_subledger_entry_header e JOIN ap_subledger_entry_line l ON l.ap_subledger_entry_header_id = e.id
-    WHERE e.finance_company_id = $1 AND e.ap_counterparty_id = $2`, [companyId, counterpartyId, AP_UNAPPLIED]);
+    WHERE e.finance_organization_id = $1 AND e.ap_counterparty_id = $2`, [companyId, counterpartyId, AP_UNAPPLIED]);
   return Number(rows[0]?.amount ?? 0);
 }
 
@@ -776,8 +776,8 @@ async function buildSimpleAdjustment(db: DbExecutor, documentType: ApProcessingD
 
 async function taxControl(db: DbExecutor, companyId: number): Promise<Account> {
   const acc = await one(db, `SELECT ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-    FROM tax_control_account tmt JOIN gl_account ga ON ga.finance_company_id = tmt.finance_company_id AND ga.id = tmt.gl_account_id
-    WHERE tmt.finance_company_id = $1 AND tmt.code = $2 AND tmt.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, TAX_ON_PURCHASES], account);
+    FROM tax_control_account tmt JOIN gl_account ga ON ga.finance_organization_id = tmt.finance_organization_id AND ga.id = tmt.gl_account_id
+    WHERE tmt.finance_organization_id = $1 AND tmt.code = $2 AND tmt.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, TAX_ON_PURCHASES], account);
   if (!acc) throw new BusinessRuleError(`${TAX_ON_PURCHASES} tax control account is not configured`);
   return acc;
 }
@@ -796,7 +796,7 @@ async function processApDocumentUnchecked(documentType: ApProcessingDocumentType
 
 async function persist(client: DbExecutor, ctx: Context): Promise<ApProcessingPostingResponseDto> {
   const journalRepo = new JournalRepo(client);
-  const header = await journalRepo.insert({ id: ctx.reservedJournalHeaderId ?? undefined, finance_company_id: ctx.company.id, company_code: ctx.company.code, company_name: ctx.company.name, document_type_code: ctx.documentType, document_type_label: LABELS[ctx.documentType], document_id: ctx.detailed.document_id, description: ctx.detailed.generated_description, document_snapshot_json: ctx.request, detailed_document_snapshot_json: ctx.detailed, posting_engine_code: ctx.documentType, document_date: documentDate(ctx), posting_date: ctx.detailed.posting_date, financial_year_id: ctx.period.financial_year_id, financial_year_code: ctx.period.financial_year_code, financial_period_id: ctx.period.financial_period_id, financial_period_code: ctx.period.financial_period_code, base_currency_code: ctx.company.base_currency_code, memo: ctx.detailed.memo, ...toJournalBankCashFields(ctx.bankCashDetails) });
+  const header = await journalRepo.insert({ id: ctx.reservedJournalHeaderId ?? undefined, finance_organization_id: ctx.company.id, company_code: ctx.company.code, company_name: ctx.company.name, document_type_code: ctx.documentType, document_type_label: LABELS[ctx.documentType], document_id: ctx.detailed.document_id, description: ctx.detailed.generated_description, document_snapshot_json: ctx.request, detailed_document_snapshot_json: ctx.detailed, posting_engine_code: ctx.documentType, document_date: documentDate(ctx), posting_date: ctx.detailed.posting_date, financial_year_id: ctx.period.financial_year_id, financial_year_code: ctx.period.financial_year_code, financial_period_id: ctx.period.financial_period_id, financial_period_code: ctx.period.financial_period_code, base_currency_code: ctx.company.base_currency_code, memo: ctx.detailed.memo, ...toJournalBankCashFields(ctx.bankCashDetails) });
   const insertedLines: JournalLineRow[] = [];
   for (const line of ctx.journalLines) insertedLines.push(await journalRepo.insertLine({ journal_header_id: header.id, ...line }));
   const debit = round(ctx.journalLines.filter((l) => l.dr_cr === "DR").reduce((s, l) => s + l.base_currency_amount, 0));
@@ -815,7 +815,7 @@ async function persist(client: DbExecutor, ctx: Context): Promise<ApProcessingPo
 async function insertApHeader(db: DbExecutor, ctx: Context, journalHeaderId: number): Promise<{ id: number; code: string }> {
   const code = `AP-${ctx.documentType.replace("AP_", "").replaceAll("_", "-")}-${journalHeaderId}`;
   const { rows } = await db.query(`INSERT INTO ap_subledger_entry_header
-    (code, finance_company_id, journal_header_id, ap_counterparty_id, document_type_code, document_id, supplier_invoice_number, description, memo, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
+    (code, finance_organization_id, journal_header_id, ap_counterparty_id, document_type_code, document_id, supplier_invoice_number, description, memo, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
     VALUES ($1,$2,$3,$4,$5,$6,NULL,$7,$8,$9,$10,$11,$12,$13,'POSTED',now(),'SYSTEM') RETURNING id`,
     [code, ctx.company.id, journalHeaderId, ctx.counterparty.id, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, ctx.detailed.memo, documentDate(ctx), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
   return { id: Number(rows[0].id), code };
@@ -843,7 +843,7 @@ function apLineType(documentType: ApProcessingDocumentType, detail: ApProcessing
 async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: number): Promise<ApProcessingTaxLedgerDetailDto[]> {
   const headerCode = `TAX-${ctx.documentType.replace("AP_", "").replaceAll("_", "-")}-${journalHeaderId}`;
   const header = await db.query(`INSERT INTO tax_ledger_entry_header
-    (code, finance_company_id, journal_header_id, document_type_code, document_id, description, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
+    (code, finance_organization_id, journal_header_id, document_type_code, document_id, description, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'POSTED',now(),'SYSTEM') RETURNING id`,
     [headerCode, ctx.company.id, journalHeaderId, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, documentDate(ctx), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
 

@@ -4,7 +4,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { getCompany } from "@voyzu/erp-core/companies/server";
+import { getOrganization } from "@voyzu/erp-core/organizations/server";
 import {
   createInventoryItem,
   getInventoryItem,
@@ -39,7 +39,7 @@ const ITEMS: InventoryItemCreateRequestDto[] = [
 ];
 
 async function main(): Promise<void> {
-  const company = await getCompany(COMPANY_CODE);
+  const company = await getOrganization(COMPANY_CODE);
   if (!company) throw new Error(`Sample company ${COMPANY_CODE} was not found`);
 
   for (const item of ITEMS) {

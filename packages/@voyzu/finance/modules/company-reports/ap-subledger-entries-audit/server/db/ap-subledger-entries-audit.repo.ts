@@ -6,7 +6,7 @@ const ENTRY_FIELDS: Array<{ key: string; label: string }> = [
   { key: "ap_subledger_entry_code", label: "AP Subledger Entry Code" },
   { key: "line_number", label: "Line Number" },
   { key: "line_type", label: "Line Type" },
-  { key: "finance_company_id", label: "Company ID" },
+  { key: "finance_organization_id", label: "Company ID" },
   { key: "journal_header_id", label: "Journal Header ID" },
   { key: "document_id", label: "Document ID" },
   { key: "ap_counterparty_id", label: "AP Counterparty ID" },
@@ -50,7 +50,7 @@ export class ApSubledgerEntriesAuditRepo {
          e.code AS ap_subledger_entry_code,
          l.line_number,
          l.line_type,
-         e.finance_company_id,
+         e.finance_organization_id,
          e.journal_header_id,
          e.document_id,
          e.ap_counterparty_id,
@@ -71,7 +71,7 @@ export class ApSubledgerEntriesAuditRepo {
        FROM ap_subledger_entry_header e
        JOIN ap_subledger_entry_line l ON l.ap_subledger_entry_header_id = e.id
        JOIN journal_header h ON h.id = e.journal_header_id
-       WHERE e.finance_company_id = $1
+       WHERE e.finance_organization_id = $1
          AND e.posting_date BETWEEN $2 AND $3
        ORDER BY e.posting_date ASC, e.code ASC, l.line_number ASC`,
       [companyId, fromDate, toDate],

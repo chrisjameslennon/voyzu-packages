@@ -3,7 +3,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { createCompany } from "@voyzu/erp-core/companies/server";
+import { createOrganization } from "@voyzu/erp-core/organizations/server";
 import { ConflictError } from "@voyzu/capability/errors";
 
 const COMPANIES: Record<string, { name: string; suffix: string }> = {
@@ -26,7 +26,7 @@ async function main() {
     if (!meta) continue;
 
     try {
-      await createCompany({
+      await createOrganization({
         code: `SAMP-${country.code}`,
         name: `${meta.name} ${meta.suffix}`,
         countryCode: country.code,
@@ -42,8 +42,8 @@ async function main() {
     }
 
     await pool.query(
-      `INSERT INTO finance_company (
-         id, company_id, tax_filing_anchor_month, tax_filing_interval_months,
+      `INSERT INTO finance_organization (
+         id, organization_id, tax_filing_anchor_month, tax_filing_interval_months,
          use_finance_template_settings, is_template,
          creation_actor_type, updated_actor_type
        )
@@ -56,10 +56,10 @@ async function main() {
          FALSE,
          'SYSTEM',
          'SYSTEM'
-       FROM company c
+       FROM organization c
        JOIN finance_country fc ON fc.code = c.country_code
        WHERE c.code = $1
-       ON CONFLICT (company_id) DO UPDATE SET
+       ON CONFLICT (organization_id) DO UPDATE SET
          tax_filing_anchor_month = EXCLUDED.tax_filing_anchor_month,
          tax_filing_interval_months = EXCLUDED.tax_filing_interval_months,
          use_finance_template_settings = EXCLUDED.use_finance_template_settings,

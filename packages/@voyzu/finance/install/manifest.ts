@@ -2,7 +2,7 @@ export const financeInstall = {
   sql: [
     "./install/db/objects/finance-domains.sql",
     "./install/db/objects/table.finance_country.create.sql",
-    "./install/db/objects/table.finance_company.create.sql",
+    "./install/db/objects/table.finance_organization.create.sql",
     "./install/db/objects/table.financial_document_type.create.sql",
     "./install/db/objects/table.gl_account_category.create.sql",
     "./install/db/objects/table.gl_account.create.sql",
@@ -37,7 +37,7 @@ export const financeInstall = {
     "./install/db/objects/table.tax_ledger_entry_line.create.sql",
     "./install/db/objects/table.financial_document_default.create.sql",
     "./install/db/objects/table.trial_balance_snapshot.create.sql",
-    "./install/db/objects/finance-company-cascades.attach.sql",
+    "./install/db/objects/finance-organization-cascades.attach.sql",
     "./install/db/objects/trigger.gl_account_type_match.create.sql",
     "./install/db/objects/trigger.bank_cash_control_account_validate.create.sql",
     "./install/db/objects/trigger.fiscal_year_validate.create.sql",
@@ -49,7 +49,7 @@ export const financeInstall = {
   ],
   seedSql: [
     "./install/db/seed/finance-country.seed.sql",
-    "./install/db/seed/finance-company.seed.sql",
+    "./install/db/seed/finance-organization.seed.sql",
     "./install/db/seed/tax-authority.seed.sql",
     "./install/db/seed/tax-rule.seed.sql",
     "./install/db/seed/tax-component.seed.sql",

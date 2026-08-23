@@ -28,7 +28,7 @@ async function fetchCompany(companyId: number): Promise<{
 }> {
   const { rows } = await getDb().query(
     `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code
-     FROM company c JOIN finance_company fc ON fc.company_id = c.id WHERE fc.id = $1`,
+     FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id WHERE fc.id = $1`,
     [companyId],
   );
   if (!rows[0]) throw new NotFoundError(`Company id ${companyId} not found`);

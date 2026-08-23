@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { getDb } from "@voyzu/capability/db";
 
 import { listBankCashAccounts } from "@voyzu/finance/common/bank-cash-accounts/server";
-import { listCompanies } from "@voyzu/erp-core/companies/server";
+import { listOrganizations } from "@voyzu/erp-core/organizations/server";
 import { listControlAccounts } from "@voyzu/finance/common/control-accounts/server";
 import { listCountries } from "@voyzu/localization/countries/server";
 import { listCurrencies } from "@voyzu/localization/currencies/server";
@@ -152,7 +152,7 @@ async function report<T extends AnyRecord>(
 }
 
 export async function CompaniesReportPage(props?: ReportPageProps) {
-  const rows = await listCompanies();
+  const rows = await listOrganizations();
   return report("Companies", "/finance/reports/lists/companies/printable", rowsOf(rows), [
     widthColumn("code", "Code", "14%"),
     nowrapWidthColumn("name", "Name", "36%"),

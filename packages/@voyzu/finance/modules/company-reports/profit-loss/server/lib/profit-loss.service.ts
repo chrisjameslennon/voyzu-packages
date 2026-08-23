@@ -13,7 +13,7 @@ import type { ProfitLossDimensionSourceLine } from "../db/profit-loss.repo";
 
 async function fetchCompany(db: ReturnType<typeof getDb>, companyId: number): Promise<{ name: string; reportLine1: string | null; reportLine2: string | null; reportFooter: string | null; baseCurrencyCode: string }> {
   const { rows } = await db.query(
-    `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code FROM company c JOIN finance_company fc ON fc.company_id = c.id WHERE fc.id = $1`,
+    `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id WHERE fc.id = $1`,
     [companyId],
   );
   if (!rows[0]) throw new NotFoundError(`Company id ${companyId} not found`);
@@ -114,8 +114,8 @@ async function validateDimensionSelections(
   const { rows } = await db.query(
     `SELECT d.code AS dimension_code, d.name AS dimension_name, dv.name AS value_name
      FROM dimension d
-     LEFT JOIN dimension_value dv ON dv.finance_company_id = d.finance_company_id AND dv.dimension_id = d.id AND dv.status = 'ACTIVE'
-     WHERE d.finance_company_id = $1 AND d.status = 'ACTIVE'
+     LEFT JOIN dimension_value dv ON dv.finance_organization_id = d.finance_organization_id AND dv.dimension_id = d.id AND dv.status = 'ACTIVE'
+     WHERE d.finance_organization_id = $1 AND d.status = 'ACTIVE'
      ORDER BY d.name, dv.name`,
     [companyId],
   );

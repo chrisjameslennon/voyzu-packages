@@ -1,5 +1,5 @@
 import { getDb } from "@voyzu/capability/db";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 import type {
   ApCounterpartyStatementApplicationDto,
   ApCounterpartyStatementGroupDto,
@@ -29,7 +29,7 @@ async function listApCounterpartySummariesUnchecked(companyId: number): Promise<
 }
 
 async function getApCounterpartyStatementUnchecked(
-  company: CompanyResponseDto,
+  company: OrganizationResponseDto,
   counterpartyCode: string,
 ): Promise<ApCounterpartyStatementResponseDto | null> {
   const rows = await repo().listCounterpartyStatementRows(company.id, counterpartyCode);

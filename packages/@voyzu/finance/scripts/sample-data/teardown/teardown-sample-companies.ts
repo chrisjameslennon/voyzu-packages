@@ -10,7 +10,7 @@ async function main() {
 
   try {
     const companyRes = await client.query<{ id: number; code: string }>(
-      `SELECT id, code FROM company WHERE code LIKE 'SAMP-%' ORDER BY code`,
+      `SELECT id, code FROM organization WHERE code LIKE 'SAMP-%' ORDER BY code`,
     );
 
     if (!companyRes.rows.length) {
@@ -27,7 +27,7 @@ async function main() {
         [`public.${table}`],
       );
       if (!tableRes.rows[0]?.exists) return 0;
-      const { rowCount } = await client.query(`DELETE FROM ${table} WHERE finance_company_id = ANY($1)`, [companyIds]);
+      const { rowCount } = await client.query(`DELETE FROM ${table} WHERE finance_organization_id = ANY($1)`, [companyIds]);
       return rowCount ?? 0;
     };
 
@@ -38,128 +38,128 @@ async function main() {
     await client.query(
       `UPDATE journal_header
        SET reversal_of_journal_id = NULL, reversed_by_journal_id = NULL
-       WHERE finance_company_id = ANY($1)`,
+       WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
 
     // audit_change → audit_event (no cascade defined)
     const { rowCount: auditChanges } = await client.query(
       `DELETE FROM audit_change
-       WHERE audit_event_id IN (SELECT id FROM audit_event WHERE company_id = ANY($1))`,
+       WHERE audit_event_id IN (SELECT id FROM audit_event WHERE organization_id = ANY($1))`,
       [companyIds],
     );
 
     // Subledger entries (reference journal_header, ar_counterparty, fiscal_year, fiscal_period)
     const { rowCount: taxEntries } = await client.query(
-      `DELETE FROM tax_ledger_entry_header WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM tax_ledger_entry_header WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: inventoryLedgerEntries } = await client.query(
-      `DELETE FROM inventory_ledger_entry_header WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM inventory_ledger_entry_header WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const taxSubledgerEntries = await deleteOptionalCompanyRows("tax_subledger_entry");
     const { rowCount: arEntries } = await client.query(
-      `DELETE FROM ar_subledger_entry_header WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM ar_subledger_entry_header WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: apEntries } = await client.query(
-      `DELETE FROM ap_subledger_entry_header WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM ap_subledger_entry_header WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
 
     // journal_line (journal_line_dimension cascades automatically via ON DELETE CASCADE)
     const { rowCount: journalLines } = await client.query(
       `DELETE FROM journal_line
-       WHERE journal_header_id IN (SELECT id FROM journal_header WHERE finance_company_id = ANY($1))`,
+       WHERE journal_header_id IN (SELECT id FROM journal_header WHERE finance_organization_id = ANY($1))`,
       [companyIds],
     );
     const { rowCount: journalHeaders } = await client.query(
-      `DELETE FROM journal_header WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM journal_header WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
 
     const { rowCount: counterparties } = await client.query(
-      `DELETE FROM ar_counterparty WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM ar_counterparty WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: apCounterparties } = await client.query(
-      `DELETE FROM ap_counterparty WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM ap_counterparty WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const counterpartiesGeneric = await deleteOptionalCompanyRows("counterparty");
     const { rowCount: auditEvents } = await client.query(
-      `DELETE FROM audit_event WHERE company_id = ANY($1)`,
+      `DELETE FROM audit_event WHERE organization_id = ANY($1)`,
       [companyIds],
     );
 
     const { rowCount: periods } = await client.query(
-      `DELETE FROM fiscal_period WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM fiscal_period WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: years } = await client.query(
-      `DELETE FROM fiscal_year WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM fiscal_year WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
 
     const { rowCount: inventoryItems } = await client.query(
-      `DELETE FROM inventory_item WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM inventory_item WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: inventoryCategories } = await client.query(
-      `DELETE FROM inventory_category WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM inventory_category WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: itemPostingProfiles } = await client.query(
-      `DELETE FROM item_posting_profile WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM item_posting_profile WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
 
     const { rowCount: financialDocumentDefaults } = await client.query(
-      `DELETE FROM financial_document_default WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM financial_document_default WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
 
     const { rowCount: dimensionValues } = await client.query(
-      `DELETE FROM dimension_value WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM dimension_value WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: dimensions } = await client.query(
-      `DELETE FROM dimension WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM dimension WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
 
     const { rowCount: bankCashAccounts } = await client.query(
-      `DELETE FROM bank_cash_control_account WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM bank_cash_control_account WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: inventoryControlAccounts } = await client.query(
-      `DELETE FROM inventory_control_account WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM inventory_control_account WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: taxControlAccounts } = await client.query(
-      `DELETE FROM tax_control_account WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM tax_control_account WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: apControlAccountsSettings } = await client.query(
-      `DELETE FROM ap_control_account WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM ap_control_account WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: arControlAccountsSettings } = await client.query(
-      `DELETE FROM ar_control_account WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM ar_control_account WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: glAccounts } = await client.query(
-      `DELETE FROM gl_account WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM gl_account WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
     const { rowCount: glAccountCategories } = await client.query(
-      `DELETE FROM gl_account_category WHERE finance_company_id = ANY($1)`,
+      `DELETE FROM gl_account_category WHERE finance_organization_id = ANY($1)`,
       [companyIds],
     );
 
     const { rowCount: companies } = await client.query(
-      `DELETE FROM company WHERE id = ANY($1)`,
+      `DELETE FROM organization WHERE id = ANY($1)`,
       [companyIds],
     );
 

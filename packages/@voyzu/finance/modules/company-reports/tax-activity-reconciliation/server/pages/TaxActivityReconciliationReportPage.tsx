@@ -5,11 +5,11 @@ import { cookies } from "next/headers";
 import { getDb } from "@voyzu/capability/db";
 import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
 
-import { listCompanies } from "@voyzu/erp-core/companies/server";
+import { listOrganizations } from "@voyzu/erp-core/organizations/server";
 import {
-  SELECTED_COMPANY_COOKIE,
-  parseSelectedCompanyId,
-} from "@voyzu/erp-core/company-switcher/server";
+  SELECTED_ORGANIZATION_COOKIE,
+  parseSelectedOrganizationId,
+} from "@voyzu/erp-core/organization-switcher/server";
 import { listFinancialYears } from "@voyzu/finance/financial-years/server";
 
 import { TaxActivityReconciliationReport } from "../../client";
@@ -92,8 +92,8 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
   const cookieStore = await cookies();
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || parseSelectedCompanyId(cookieStore.get(SELECTED_COMPANY_COOKIE)?.value);
-  const companies = await listCompanies();
+  const selectedCompanyId = queryCompanyId || parseSelectedOrganizationId(cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value);
+  const companies = await listOrganizations();
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
 
   if (!company) {
@@ -110,7 +110,7 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
   }
 
   const financeRows = await getDb().query(
-    `SELECT tax_filing_anchor_month, tax_filing_interval_months FROM finance_company WHERE finance_company_id = $1`,
+    `SELECT tax_filing_anchor_month, tax_filing_interval_months FROM finance_organization WHERE finance_organization_id = $1`,
     [company.id],
   );
   const financeCompany: FinanceCompanyFilingSettings | null = financeRows.rows[0] ? {

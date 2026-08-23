@@ -1,7 +1,7 @@
 import type { AccountType, Status } from "@voyzu/finance/types/modules/core";
 import type { ActorType } from "@voyzu/finance/types/modules/core";
 export interface TaxControlAccountRow {
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   ledger: "TAX";
   name: string;

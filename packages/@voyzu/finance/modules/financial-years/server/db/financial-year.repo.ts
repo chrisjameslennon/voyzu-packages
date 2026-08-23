@@ -13,7 +13,7 @@ import type { FinancialYearRow, InsertFinancialYearRow, PatchFinancialYearRow } 
 const TABLE = "fiscal_year";
 
 const COLUMNS: readonly string[] = [
-  "id", "finance_company_id", "code", "name", "start_date", "end_date", "status",
+  "id", "finance_organization_id", "code", "name", "start_date", "end_date", "status",
   "creation_date", "creation_actor_type", "creation_user_id", "creation_mutation_id",
   "updated_date", "updated_actor_type", "updated_user_id", "updated_mutation_id",
 ];
@@ -23,7 +23,7 @@ const SELECT_WITH_DERIVED = `
          EXISTS (
            SELECT 1
            FROM journal_header jh
-           WHERE jh.finance_company_id = fy.finance_company_id
+           WHERE jh.finance_organization_id = fy.finance_organization_id
              AND jh.status = 'POSTED'
              AND jh.posting_date BETWEEN fy.start_date AND fy.end_date
          ) AS has_postings
@@ -41,11 +41,11 @@ export class FinancialYearRepo {
 
   async insert(row: InsertFinancialYearRow): Promise<FinancialYearRow> {
     const { rows } = await this.db.query(
-      `INSERT INTO ${TABLE} (finance_company_id, code, name, start_date, end_date, status, creation_date, creation_actor_type, creation_user_id, creation_mutation_id)
+      `INSERT INTO ${TABLE} (finance_organization_id, code, name, start_date, end_date, status, creation_date, creation_actor_type, creation_user_id, creation_mutation_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
       [
-        row.finance_company_id,
+        row.finance_organization_id,
         row.code,
         row.name,
         row.start_date,
@@ -62,7 +62,7 @@ export class FinancialYearRepo {
 
   async get(companyId: number, code: string): Promise<FinancialYearRow | null> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE fy.finance_company_id = $1 AND fy.code = $2`,
+      `${SELECT_WITH_DERIVED} WHERE fy.finance_organization_id = $1 AND fy.code = $2`,
       [companyId, code],
     );
     return rows[0] ? this.mapRow(rows[0]) : null;
@@ -104,7 +104,7 @@ export class FinancialYearRepo {
 
     vals.push(companyId, code);
 
-    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
+    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_organization_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`Financial year ${code} not found`);
     return (await this.get(companyId, String(rows[0].code))) ?? this.mapRow(rows[0]);
@@ -125,14 +125,14 @@ export class FinancialYearRepo {
 
   async delete(companyId: number, code: string): Promise<void> {
     await this.db.query(
-      `DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND code = $2`,
+      `DELETE FROM ${TABLE} WHERE finance_organization_id = $1 AND code = $2`,
       [companyId, code],
     );
   }
 
   async listByCompany(companyId: number): Promise<FinancialYearRow[]> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE fy.finance_company_id = $1 ORDER BY fy.start_date ASC`,
+      `${SELECT_WITH_DERIVED} WHERE fy.finance_organization_id = $1 ORDER BY fy.start_date ASC`,
       [companyId],
     );
     return rows.map((r: Record<string, unknown>) => this.mapRow(r));
@@ -158,7 +158,7 @@ export class FinancialYearRepo {
     return {
       ...row,
       id: Number(row.id),
-      finance_company_id: Number(row.finance_company_id),
+      finance_organization_id: Number(row.finance_organization_id),
       has_postings: Boolean(row.has_postings),
       start_date: row.start_date instanceof Date
         ? localDateString(row.start_date)

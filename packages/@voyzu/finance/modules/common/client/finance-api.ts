@@ -1,6 +1,6 @@
 "use client";
 
-import type { CompanySelectionResponseDto } from "@voyzu/erp-core/types/modules/company-switcher";
+import type { OrganizationSelectionResponseDto } from "@voyzu/erp-core/types/modules/organization-switcher";
 
 let selectedFinanceBasePromise: Promise<string> | null = null;
 
@@ -9,10 +9,10 @@ async function selectedFinanceBase(): Promise<string> {
     selectedFinanceBasePromise = fetch("/api/finance/company-selection", { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) throw new Error("Unable to load selected company");
-        const selection = await response.json() as CompanySelectionResponseDto;
-        const company = selection.selectedCompany
-          ?? selection.companies.find((item) => item.id === selection.selectedCompanyId)
-          ?? selection.companies[0];
+        const selection = await response.json() as OrganizationSelectionResponseDto;
+        const company = selection.selectedOrganization
+          ?? selection.organizations.find((item) => item.id === selection.selectedOrganizationId)
+          ?? selection.organizations[0];
         if (!company?.code) throw new Error("No selected company is available");
         return `/api/finance/${encodeURIComponent(company.code)}`;
       });

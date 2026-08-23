@@ -79,7 +79,7 @@ export interface InventoryBalanceRow {
 
 export interface InsertInventoryLedgerHeaderRow {
   code: string;
-  finance_company_id: number;
+  finance_organization_id: number;
   journal_header_id: number;
   source_document_type_code: string;
   document_id: string;

@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS bank_cash_control_account;
 DROP TABLE IF EXISTS gl_account;
 DROP TABLE IF EXISTS gl_account_category;
 DROP TABLE IF EXISTS financial_document_type;
-DROP TABLE IF EXISTS finance_company;
+DROP TABLE IF EXISTS finance_organization;
 DROP TABLE IF EXISTS finance_country;
 
 DROP FUNCTION IF EXISTS journal_line_validate_fn();

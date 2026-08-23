@@ -67,8 +67,8 @@ async function postForCompany(config: SampleCompanyConfig) {
         const existing = await getPool().query<{ code: string }>(
           `SELECT h.code
              FROM journal_header h
-             JOIN finance_company fc ON fc.id = h.finance_company_id
-             JOIN company c ON c.id = fc.company_id
+             JOIN finance_organization fc ON fc.id = h.finance_organization_id
+             JOIN organization c ON c.id = fc.organization_id
             WHERE c.code = $1 AND h.document_id = $2
             LIMIT 1`,
           [config.companyCode, journal.document_id],

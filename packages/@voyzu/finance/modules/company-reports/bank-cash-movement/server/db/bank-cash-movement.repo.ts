@@ -47,7 +47,7 @@ export class BankCashMovementRepo {
     const { rows } = await this.db.query(
       `SELECT code
        FROM bank_cash_control_account
-       WHERE finance_company_id = $1
+       WHERE finance_organization_id = $1
          AND code = $2`,
       [settingsCompanyId, bankCashCode],
     );
@@ -83,7 +83,7 @@ export class BankCashMovementRepo {
        JOIN LATERAL (
          SELECT bca.code, bca.type
          FROM bank_cash_control_account bca
-         WHERE bca.finance_company_id = $5
+         WHERE bca.finance_organization_id = $5
            AND bca.gl_account_id = cash_line.gl_account_id
            AND ($4::text IS NULL OR bca.code = $4)
          ORDER BY
@@ -92,7 +92,7 @@ export class BankCashMovementRepo {
            bca.id ASC
          LIMIT 1
        ) bank_cash ON true
-       WHERE j.finance_company_id = $1
+       WHERE j.finance_organization_id = $1
          AND j.posting_date BETWEEN $2 AND $3
          AND j.status = 'POSTED'
        ORDER BY j.posting_date ASC, j.code ASC, cash_line.line_number ASC`,
@@ -105,7 +105,7 @@ export class BankCashMovementRepo {
     const { rows } = await this.db.query(
       `SELECT DISTINCT gl_account_id::int AS gl_account_id
        FROM bank_cash_control_account
-       WHERE finance_company_id = $1
+       WHERE finance_organization_id = $1
          AND ($2::text IS NULL OR code = $2)`,
       [settingsCompanyId, bankCashCode ?? null],
     );

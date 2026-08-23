@@ -34,7 +34,7 @@ async function createItem(code: string, overrides: { isSold?: boolean; isPurchas
   const pool = getPool();
   await pool.query(
     `INSERT INTO inventory_item (
-       finance_company_id, code, name, description, item_type, category_id, unit_code,
+       finance_organization_id, code, name, description, item_type, category_id, unit_code,
        status, creation_date, creation_actor_type
      )
      SELECT co.id,
@@ -42,12 +42,12 @@ async function createItem(code: string, overrides: { isSold?: boolean; isPurchas
             $2,
             $3,
             'INVENTORY',
-            (SELECT c.id FROM inventory_category c WHERE c.finance_company_id = co.id AND c.code = $4 ORDER BY c.id LIMIT 1),
+            (SELECT c.id FROM inventory_category c WHERE c.finance_organization_id = co.id AND c.code = $4 ORDER BY c.id LIMIT 1),
             'ea',
             'ACTIVE',
             now(),
             'SYSTEM'
-     FROM company co
+     FROM organization co
      WHERE co.code = 'ACME'
      ORDER BY co.id
      LIMIT 1`,

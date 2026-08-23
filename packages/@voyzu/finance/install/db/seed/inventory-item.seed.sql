@@ -6,12 +6,12 @@ WITH seed (company_code, code, name, description, item_type, category_code, unit
     ('TEMPLATE', 'NON-OFFICE', 'Office Supplies', 'Office supplies purchased and expensed without inventory tracking', 'NON_INVENTORY', 'NON_INVENTORY', 'ea', 'ACTIVE'),
     ('TEMPLATE', 'SVC-LABOUR', 'Labour Services', 'Labour services sold or purchased', 'SERVICE', 'CONSULTING_SERVICES', 'hour', 'ACTIVE')
 )
-INSERT INTO inventory_item (finance_company_id, code, name, description, item_type, category_id, unit_code, status, creation_actor_type, updated_actor_type)
+INSERT INTO inventory_item (finance_organization_id, code, name, description, item_type, category_id, unit_code, status, creation_actor_type, updated_actor_type)
 SELECT fc.id, s.code, s.name, s.description, s.item_type, cat.id, s.unit_code, s.status, 'SYSTEM', 'SYSTEM'
 FROM seed s
-JOIN finance_company fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
-JOIN inventory_category cat ON cat.finance_company_id = fc.id AND cat.code = s.category_code
-ON CONFLICT (finance_company_id, code) DO UPDATE SET
+JOIN finance_organization fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
+JOIN inventory_category cat ON cat.finance_organization_id = fc.id AND cat.code = s.category_code
+ON CONFLICT (finance_organization_id, code) DO UPDATE SET
   name = EXCLUDED.name,
   description = EXCLUDED.description,
   item_type = EXCLUDED.item_type,

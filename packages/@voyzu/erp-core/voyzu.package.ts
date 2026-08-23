@@ -1,28 +1,28 @@
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
-import { companiesModule } from "./modules/companies/module";
-import { companySwitcherModule } from "./modules/company-switcher/module";
-import { companyAccessModule } from "./modules/company-access/module";
+import { organizationsModule } from "./modules/organizations/module";
+import { organizationSwitcherModule } from "./modules/organization-switcher/module";
+import { organizationAccessModule } from "./modules/organization-access/module";
 import { organizationReportsModule } from "./modules/organization-reports/module";
 
 export const organizationModules = [
-  companiesModule,
-  companyAccessModule,
+  organizationsModule,
+  organizationAccessModule,
   organizationReportsModule,
 ] as const;
 
 export const erpCorePackage = {
   modules: [
-    companiesModule,
-    companyAccessModule,
+    organizationsModule,
+    organizationAccessModule,
     organizationReportsModule,
-    companySwitcherModule,
+    organizationSwitcherModule,
   ],
   install: {
     sql: [
-      "./install/db/objects/table.company.create.sql",
-      "./install/db/objects/table.company-user-access.create.sql",
-      "./install/db/objects/audit-company-reference.attach.sql",
+      "./install/db/objects/table.organization.create.sql",
+      "./install/db/objects/table.organization-user-access.create.sql",
+      "./install/db/objects/audit-organization-reference.attach.sql",
       "./install/db/objects/audit-triggers.attach.sql"
     ],
     seedSql: [

@@ -43,7 +43,7 @@ function processorRow(row: Record<string, unknown>): DocumentProcessorRow {
 function counterpartyRow(row: Record<string, unknown>): CounterpartyRow {
   return {
     id: Number(row.id),
-    finance_company_id: Number(row.finance_company_id),
+    finance_organization_id: Number(row.finance_organization_id),
     code: String(row.code),
     name: String(row.name),
     status: row.status as "ACTIVE" | "INACTIVE",
@@ -140,7 +140,7 @@ export class ArAdjustmentPostingRepo {
 
   async getCompany(code: string): Promise<CompanyRow | null> {
     const { rows } = await this.db.query(`SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status
-      FROM finance_company fc JOIN company c ON c.id = fc.company_id
+      FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
       WHERE c.code = $1 AND fc.is_template = false`, [code]);
     return rows[0] ? companyRow(rows[0] as Record<string, unknown>) : null;
   }
@@ -159,7 +159,7 @@ export class ArAdjustmentPostingRepo {
     const { rows } = await this.db.query(
       `SELECT cp.*, c.currency_code AS country_currency_code
        FROM ar_counterparty cp JOIN country c ON c.code = cp.country_code
-       WHERE cp.finance_company_id = $1 AND cp.code = $2`,
+       WHERE cp.finance_organization_id = $1 AND cp.code = $2`,
       [companyId, code],
     );
     return rows[0] ? counterpartyRow(rows[0] as Record<string, unknown>) : null;
@@ -169,9 +169,9 @@ export class ArAdjustmentPostingRepo {
     const { rows } = await this.db.query(
       `WITH upserted AS (
          INSERT INTO ar_counterparty
-           (finance_company_id, code, name, status, country_code, tax_region_or_province, creation_date, creation_actor_type, updated_date, updated_actor_type)
+           (finance_organization_id, code, name, status, country_code, tax_region_or_province, creation_date, creation_actor_type, updated_date, updated_actor_type)
          VALUES ($1,$2,$3,$4,$5,$6,now(),'SYSTEM',now(),'SYSTEM')
-         ON CONFLICT (finance_company_id, code) DO UPDATE
+         ON CONFLICT (finance_organization_id, code) DO UPDATE
          SET name = EXCLUDED.name, status = EXCLUDED.status, country_code = EXCLUDED.country_code,
              tax_region_or_province = EXCLUDED.tax_region_or_province, updated_date = now(), updated_actor_type = 'SYSTEM'
          RETURNING *, (xmax = 0) AS was_created
@@ -186,7 +186,7 @@ export class ArAdjustmentPostingRepo {
     const { rows } = await this.db.query(
       `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
        FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-       WHERE fp.finance_company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fy.status = 'OPEN' AND fp.status = 'OPEN'
+       WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fy.status = 'OPEN' AND fp.status = 'OPEN'
        LIMIT 1`,
       [companyId, postingDate],
     );
@@ -196,8 +196,8 @@ export class ArAdjustmentPostingRepo {
   async getControlAccount(companyId: number, code: "AR_TRADE_RECEIVABLES" | "AR_UNAPPLIED_CASH"): Promise<AccountRow | null> {
     const { rows } = await this.db.query(
       `SELECT ca.code AS control_account_code, ca.name AS control_account_name, ca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-       FROM ar_control_account ca JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
-       WHERE ca.finance_company_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,
+       FROM ar_control_account ca JOIN gl_account ga ON ga.finance_organization_id = ca.finance_organization_id AND ga.id = ca.gl_account_id
+       WHERE ca.finance_organization_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,
       [companyId, code],
     );
     return rows[0] ? accountRow(rows[0] as Record<string, unknown>) : null;
@@ -207,7 +207,7 @@ export class ArAdjustmentPostingRepo {
     const { rows: defaultRows } = await this.db.query(
       `SELECT target_type, allowed_account_types
        FROM financial_document_default
-       WHERE finance_company_id = $1 AND document_code = $2 AND code = $3 AND status = 'ACTIVE'
+       WHERE finance_organization_id = $1 AND document_code = $2 AND code = $3 AND status = 'ACTIVE'
        LIMIT 1`,
       [companyId, documentCode, defaultCode],
     );
@@ -220,8 +220,8 @@ export class ArAdjustmentPostingRepo {
           `SELECT $3::text AS code, bca.code AS bank_cash_control_account_code,
                   bca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
            FROM bank_cash_control_account bca
-           JOIN gl_account ga ON ga.finance_company_id = bca.finance_company_id AND ga.id = bca.gl_account_id
-           WHERE bca.finance_company_id = $1
+           JOIN gl_account ga ON ga.finance_organization_id = bca.finance_organization_id AND ga.id = bca.gl_account_id
+           WHERE bca.finance_organization_id = $1
              AND bca.code = $2
              AND bca.status = 'ACTIVE'
              AND ga.status = 'ACTIVE'
@@ -232,7 +232,7 @@ export class ArAdjustmentPostingRepo {
         : await this.db.query(
           `SELECT $3::text AS code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
            FROM gl_account ga
-           WHERE ga.finance_company_id = $1
+           WHERE ga.finance_organization_id = $1
              AND ga.code = $2
              AND ga.status = 'ACTIVE'
              AND ga.account_type = ANY($4::text[])
@@ -244,9 +244,9 @@ export class ArAdjustmentPostingRepo {
                 COALESCE(pc.gl_account_id, bca.gl_account_id) AS gl_account_id,
                 ga.code AS gl_account_code, ga.name AS gl_account_name
          FROM financial_document_default pc
-         LEFT JOIN bank_cash_control_account bca ON bca.finance_company_id = pc.finance_company_id AND bca.id = pc.bank_cash_control_account_id
-         JOIN gl_account ga ON ga.finance_company_id = pc.finance_company_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
-         WHERE pc.finance_company_id = $1
+         LEFT JOIN bank_cash_control_account bca ON bca.finance_organization_id = pc.finance_organization_id AND bca.id = pc.bank_cash_control_account_id
+         JOIN gl_account ga ON ga.finance_organization_id = pc.finance_organization_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
+         WHERE pc.finance_organization_id = $1
            AND pc.document_code = $2
            AND pc.code = $3
            AND pc.status = 'ACTIVE'
@@ -264,7 +264,7 @@ export class ArAdjustmentPostingRepo {
     const { rows } = await this.db.query(
       `SELECT ga.code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
        FROM gl_account ga
-       WHERE ga.finance_company_id = $1
+       WHERE ga.finance_organization_id = $1
          AND ga.code = ANY($2::text[])
          AND ga.status = 'ACTIVE'
          AND ga.account_type = 'REVENUE'`,
@@ -277,8 +277,8 @@ export class ArAdjustmentPostingRepo {
     const { rows } = await this.db.query(
       `SELECT tmt.code AS tax_movement_type_code, tmt.gl_account_id AS gl_account_id,
               ga.code AS gl_account_code, ga.name AS gl_account_name
-       FROM tax_control_account tmt JOIN gl_account ga ON ga.finance_company_id = tmt.finance_company_id AND ga.id = tmt.gl_account_id
-       WHERE tmt.finance_company_id = $1 AND tmt.code = $2 AND tmt.status = 'ACTIVE' AND ga.status = 'ACTIVE'
+       FROM tax_control_account tmt JOIN gl_account ga ON ga.finance_organization_id = tmt.finance_organization_id AND ga.id = tmt.gl_account_id
+       WHERE tmt.finance_organization_id = $1 AND tmt.code = $2 AND tmt.status = 'ACTIVE' AND ga.status = 'ACTIVE'
        LIMIT 1`,
       [companyId, code],
     );
@@ -326,10 +326,10 @@ export class ArAdjustmentPostingRepo {
     const { rows } = await this.db.query(
       `SELECT d.id AS dimension_id, d.code AS dimension_code, d.name AS dimension_name, d.status AS dimension_status,
               dv.id AS dimension_value_id, dv.name AS dimension_value_name, dv.status AS dimension_value_status
-       FROM dimension d JOIN dimension_value dv ON dv.finance_company_id = d.finance_company_id AND dv.dimension_id = d.id
+       FROM dimension d JOIN dimension_value dv ON dv.finance_organization_id = d.finance_organization_id AND dv.dimension_id = d.id
        JOIN jsonb_to_recordset($1::jsonb) AS requested(dimension_code text, value_name text)
          ON requested.dimension_code = d.code AND requested.value_name = dv.name
-       WHERE d.finance_company_id = $2`,
+       WHERE d.finance_organization_id = $2`,
       [JSON.stringify(pairs.map((pair) => ({ dimension_code: pair.dimensionCode, value_name: pair.valueName }))), companyId],
     );
     return rows.map((row: Record<string, unknown>) => dimensionValueRow(row));
@@ -356,7 +356,7 @@ export class ArAdjustmentPostingRepo {
            AND l.control_account_code = 'AR_TRADE_RECEIVABLES'
            AND l.dr_cr = 'CR'
        ) applied_lines ON true
-       WHERE e.finance_company_id = $1 AND e.ar_counterparty_id = $2
+       WHERE e.finance_organization_id = $1 AND e.ar_counterparty_id = $2
          AND h.document_type_code IN ('AR_INVOICE', 'AR_OPENING_BALANCE') AND h.document_id = $3
        LIMIT 1`,
       [companyId, counterpartyId, documentCode],
@@ -384,7 +384,7 @@ export class ArAdjustmentPostingRepo {
            AND l.control_account_code = 'AR_UNAPPLIED_CASH'
            AND l.dr_cr = 'DR'
        ) applied_lines ON true
-       WHERE e.finance_company_id = $1 AND e.ar_counterparty_id = $2
+       WHERE e.finance_organization_id = $1 AND e.ar_counterparty_id = $2
          AND h.document_type_code IN ('AR_CREDIT_NOTE', 'AR_RECEIPT') AND h.document_id = $3
        LIMIT 1`,
       [companyId, counterpartyId, documentCode],
@@ -405,7 +405,7 @@ export class ArAdjustmentPostingRepo {
        ), 0), 0)::float AS open_amount
        FROM ar_subledger_entry_header e
        JOIN ar_subledger_entry_line l ON l.ar_subledger_entry_header_id = e.id
-       WHERE e.finance_company_id = $1
+       WHERE e.finance_organization_id = $1
          AND e.ar_counterparty_id = $2`,
       [companyId, counterpartyId],
     );
@@ -415,14 +415,14 @@ export class ArAdjustmentPostingRepo {
   async insertArHeader(input: InsertArHeaderInput): Promise<{ id: number; code: string }> {
     const { rows } = await this.db.query(
       `INSERT INTO ar_subledger_entry_header
-         (code, finance_company_id, journal_header_id, ar_counterparty_id, document_type_code,
+         (code, finance_organization_id, journal_header_id, ar_counterparty_id, document_type_code,
           document_id, description, memo, document_date, posting_date, financial_year_id,
           financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'POSTED',now(),'SYSTEM')
        RETURNING id, code`,
       [
         input.code,
-        input.finance_company_id,
+        input.finance_organization_id,
         input.journal_header_id,
         input.ar_counterparty_id,
         input.document_type_code,
@@ -474,14 +474,14 @@ export class ArAdjustmentPostingRepo {
   async insertTaxHeader(input: InsertTaxHeaderInput): Promise<{ id: number; code: string }> {
     const { rows } = await this.db.query(
       `INSERT INTO tax_ledger_entry_header
-         (code, finance_company_id, journal_header_id, document_type_code, document_id,
+         (code, finance_organization_id, journal_header_id, document_type_code, document_id,
           description, document_date, posting_date, financial_year_id,
           financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'POSTED',now(),'SYSTEM')
        RETURNING id, code`,
       [
         input.code,
-        input.finance_company_id,
+        input.finance_organization_id,
         input.journal_header_id,
         input.document_type_code,
         input.document_id,

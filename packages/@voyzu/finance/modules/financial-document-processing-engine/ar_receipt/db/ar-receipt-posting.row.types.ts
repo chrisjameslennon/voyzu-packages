@@ -10,7 +10,7 @@ export interface ReceiptCompanyContextRow {
 
 export interface ReceiptCounterpartyContextRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   status: string;
@@ -62,7 +62,7 @@ export interface InvoiceOpenItemRow {
 
 export interface InsertReceiptArSubledgerEntryRow {
   ar_subledger_entry_code: string;
-  finance_company_id: number;
+  finance_organization_id: number;
   journal_header_id: number;
   ar_counterparty_id: number;
   control_account_code: "AR_TRADE_RECEIVABLES" | "AR_UNAPPLIED_CASH";

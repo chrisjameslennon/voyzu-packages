@@ -1,7 +1,7 @@
 import type { AccountType, ActorType, GlAccountPointerReference } from "@voyzu/finance/types/modules/core";
 export interface GlAccountRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   account_type: AccountType;
@@ -23,7 +23,7 @@ export interface GlAccountRow {
 }
 
 export interface InsertGlAccountRow {
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   account_type: AccountType;

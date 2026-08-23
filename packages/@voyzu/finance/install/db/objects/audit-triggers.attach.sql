@@ -198,8 +198,8 @@ CREATE TRIGGER finance_country_audit_trigger
   FOR EACH ROW
   EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
 
-DROP TRIGGER IF EXISTS finance_company_audit_trigger ON finance_company;
-CREATE TRIGGER finance_company_audit_trigger
-  BEFORE INSERT OR UPDATE OR DELETE ON finance_company
+DROP TRIGGER IF EXISTS finance_organization_audit_trigger ON finance_organization;
+CREATE TRIGGER finance_organization_audit_trigger
+  BEFORE INSERT OR UPDATE OR DELETE ON finance_organization
   FOR EACH ROW
   EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');

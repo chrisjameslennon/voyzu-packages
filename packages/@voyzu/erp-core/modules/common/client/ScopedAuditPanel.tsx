@@ -11,7 +11,7 @@ export interface ScopedAuditPanelProps extends Omit<AuditPanelProps, "onNavigate
 }
 
 interface ScopedAuditPanelInternalProps extends ScopedAuditPanelProps {
-  backSource: Extract<DetailBackSource, "companyAudit" | "organizationAudit">;
+  backSource: Extract<DetailBackSource, "organizationAudit" | "organizationAudit">;
 }
 
 function withMutationId(auditHref: string | undefined, mutationId: string | null | undefined) {

@@ -81,12 +81,12 @@ WITH seed (company_code, code, name, account_type, category_code, status) AS (
     ('TEMPLATE', '810000', 'Bank Fees', 'EXPENSE', 'EXPENSE_INTEREST', 'ACTIVE'),
     ('TEMPLATE', '820000', 'Doubtful Debt Expense', 'EXPENSE', 'EXPENSE_OPERATING', 'ACTIVE')
 )
-INSERT INTO gl_account (finance_company_id, code, name, account_type, account_category_id, status, creation_actor_type, updated_actor_type)
+INSERT INTO gl_account (finance_organization_id, code, name, account_type, account_category_id, status, creation_actor_type, updated_actor_type)
 SELECT fc.id, s.code, s.name, s.account_type, cat.id, s.status, 'SYSTEM', 'SYSTEM'
 FROM seed s
-JOIN finance_company fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
-LEFT JOIN gl_account_category cat ON cat.finance_company_id = fc.id AND cat.code = s.category_code
-ON CONFLICT (finance_company_id, code) DO UPDATE SET
+JOIN finance_organization fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
+LEFT JOIN gl_account_category cat ON cat.finance_organization_id = fc.id AND cat.code = s.category_code
+ON CONFLICT (finance_organization_id, code) DO UPDATE SET
   name = EXCLUDED.name,
   account_type = EXCLUDED.account_type,
   account_category_id = EXCLUDED.account_category_id,

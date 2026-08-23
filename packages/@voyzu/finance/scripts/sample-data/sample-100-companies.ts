@@ -3,7 +3,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { createCompany } from "@voyzu/erp-core/companies/server";
+import { createOrganization } from "@voyzu/erp-core/organizations/server";
 import { ConflictError } from "@voyzu/capability/errors";
 
 const PREFIXES = [
@@ -41,7 +41,7 @@ async function main() {
     const name = `${prefix} ${suffix} ${pad(i)}`;
 
     try {
-      await createCompany({
+      await createOrganization({
         code,
         name,
         countryCode: country.code,
@@ -57,17 +57,17 @@ async function main() {
     }
 
     await pool.query(
-      `INSERT INTO finance_company (
-         id, company_id, tax_filing_anchor_month, tax_filing_interval_months,
+      `INSERT INTO finance_organization (
+         id, organization_id, tax_filing_anchor_month, tax_filing_interval_months,
          creation_actor_type, updated_actor_type
        )
        SELECT
          c.id, c.id, fc.tax_filing_anchor_month, fc.tax_filing_interval_months,
          'SYSTEM', 'SYSTEM'
-       FROM company c
+       FROM organization c
        JOIN finance_country fc ON fc.code = c.country_code
        WHERE c.code = $1
-       ON CONFLICT (company_id) DO NOTHING`,
+       ON CONFLICT (organization_id) DO NOTHING`,
       [code],
     );
   }

@@ -125,7 +125,7 @@ export class InventoryProcessingRepo {
   async getCompanyByCode(code: string): Promise<CompanyPostingContextRow | null> {
     const { rows } = await this.db.query(
       `SELECT fc.id, c.code, c.name, c.base_currency_code, c.status
-       FROM finance_company fc JOIN company c ON c.id = fc.company_id
+       FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
        WHERE c.code = $1 AND fc.is_template = false`,
       [code],
     );
@@ -148,7 +148,7 @@ export class InventoryProcessingRepo {
          fp.start_date AS period_start_date, fp.end_date AS period_end_date
        FROM fiscal_period fp
        JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-       WHERE fp.finance_company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date
+       WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date
        ORDER BY CASE WHEN fy.status = 'OPEN' AND fp.status = 'OPEN' THEN 0 ELSE 1 END, fp.start_date ASC
        LIMIT 1`,
       [companyId, postingDate],
@@ -165,8 +165,8 @@ export class InventoryProcessingRepo {
               ga.account_type AS control_gl_account_type,
               ga.status AS control_gl_account_status
        FROM inventory_control_account ca
-       JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
-       WHERE ca.finance_company_id = $1
+       JOIN gl_account ga ON ga.finance_organization_id = ca.finance_organization_id AND ga.id = ca.gl_account_id
+       WHERE ca.finance_organization_id = $1
          AND ca.code = 'INVENTORY_CONTROL'`,
       [companyId],
     );
@@ -202,13 +202,13 @@ export class InventoryProcessingRepo {
               adjustment_loss.account_type AS adjustment_loss_gl_account_type,
               adjustment_loss.status AS adjustment_loss_gl_account_status
        FROM inventory_item ii
-       JOIN inventory_category ic ON ic.finance_company_id = ii.finance_company_id AND ic.id = ii.category_id
-       JOIN item_posting_profile ipp ON ipp.finance_company_id = ic.finance_company_id AND ipp.id = ic.posting_profile_id
-       LEFT JOIN gl_account cogs ON cogs.finance_company_id = ipp.finance_company_id AND cogs.id = ipp.cogs_gl_account_id
-       LEFT JOIN gl_account consumption ON consumption.finance_company_id = ipp.finance_company_id AND consumption.id = ipp.consumption_gl_account_id
-       LEFT JOIN gl_account adjustment_gain ON adjustment_gain.finance_company_id = ipp.finance_company_id AND adjustment_gain.id = ipp.adjustment_gain_gl_account_id
-       LEFT JOIN gl_account adjustment_loss ON adjustment_loss.finance_company_id = ipp.finance_company_id AND adjustment_loss.id = ipp.adjustment_loss_gl_account_id
-       WHERE ii.finance_company_id = $1
+       JOIN inventory_category ic ON ic.finance_organization_id = ii.finance_organization_id AND ic.id = ii.category_id
+       JOIN item_posting_profile ipp ON ipp.finance_organization_id = ic.finance_organization_id AND ipp.id = ic.posting_profile_id
+       LEFT JOIN gl_account cogs ON cogs.finance_organization_id = ipp.finance_organization_id AND cogs.id = ipp.cogs_gl_account_id
+       LEFT JOIN gl_account consumption ON consumption.finance_organization_id = ipp.finance_organization_id AND consumption.id = ipp.consumption_gl_account_id
+       LEFT JOIN gl_account adjustment_gain ON adjustment_gain.finance_organization_id = ipp.finance_organization_id AND adjustment_gain.id = ipp.adjustment_gain_gl_account_id
+       LEFT JOIN gl_account adjustment_loss ON adjustment_loss.finance_organization_id = ipp.finance_organization_id AND adjustment_loss.id = ipp.adjustment_loss_gl_account_id
+       WHERE ii.finance_organization_id = $1
          AND ii.code = ANY($2::text[])`,
       [companyId, codes],
     );
@@ -243,8 +243,8 @@ export class InventoryProcessingRepo {
       `SELECT d.id AS dimension_id, d.code AS dimension_code, d.name AS dimension_name, d.status AS dimension_status,
               dv.id AS dimension_value_id, dv.name AS dimension_value_name, dv.status AS dimension_value_status
        FROM dimension_value dv
-       JOIN dimension d ON d.finance_company_id = dv.finance_company_id AND d.id = dv.dimension_id
-       WHERE dv.finance_company_id = $1
+       JOIN dimension d ON d.finance_organization_id = dv.finance_organization_id AND d.id = dv.dimension_id
+       WHERE dv.finance_organization_id = $1
          AND (d.code, dv.name) IN (SELECT * FROM unnest($2::text[], $3::text[]))`,
       [companyId, pairs.map((pair) => pair.dimensionCode), pairs.map((pair) => pair.valueName)],
     );
@@ -254,13 +254,13 @@ export class InventoryProcessingRepo {
   async insertInventoryLedgerHeader(row: InsertInventoryLedgerHeaderRow): Promise<InventoryLedgerHeaderRow> {
     const { rows } = await this.db.query(
       `INSERT INTO inventory_ledger_entry_header
-         (code, finance_company_id, journal_header_id, source_document_type_code, document_id,
+         (code, finance_organization_id, journal_header_id, source_document_type_code, document_id,
           description, memo, document_date, posting_date, financial_year_id,
           financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'POSTED',now(),'SYSTEM')
        RETURNING id`,
       [
-        row.code, row.finance_company_id, row.journal_header_id, row.source_document_type_code,
+        row.code, row.finance_organization_id, row.journal_header_id, row.source_document_type_code,
         row.document_id, row.description, row.memo, row.document_date, row.posting_date,
         row.financial_year_id, row.financial_period_id, row.base_currency_code,
       ],

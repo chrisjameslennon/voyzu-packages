@@ -14,7 +14,7 @@ import type {
 const TABLE = "gl_account";
 
 const COLUMNS: readonly string[] = [
-  "id", "finance_company_id", "code", "name", "account_type", "account_category_id", "status",
+  "id", "finance_organization_id", "code", "name", "account_type", "account_category_id", "status",
   "creation_date", "creation_actor_type", "creation_user_id", "creation_mutation_id",
   "updated_date", "updated_actor_type", "updated_user_id", "updated_mutation_id",
 ];
@@ -28,22 +28,22 @@ const SEARCHABLE_COLUMNS: readonly string[] = [
 ];
 
 const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
-  SELECT DISTINCT posting_company.code
-  FROM finance_company source_finance_company
-  JOIN finance_company posting_finance_company ON (
-    (source_finance_company.is_template = true
-      AND posting_finance_company.is_template = false
-      AND posting_finance_company.use_finance_template_settings = true)
-    OR (source_finance_company.is_template = false AND posting_finance_company.id = source_finance_company.id)
+  SELECT DISTINCT posting_organization.code
+  FROM finance_organization source_finance_organization
+  JOIN finance_organization posting_finance_organization ON (
+    (source_finance_organization.is_template = true
+      AND posting_finance_organization.is_template = false
+      AND posting_finance_organization.use_finance_template_settings = true)
+    OR (source_finance_organization.is_template = false AND posting_finance_organization.id = source_finance_organization.id)
   )
-  JOIN company posting_company ON posting_company.id = posting_finance_company.company_id
-    AND posting_company.status != 'DELETED'
+  JOIN organization posting_organization ON posting_organization.id = posting_finance_organization.organization_id
+    AND posting_organization.status != 'DELETED'
   JOIN journal_line jl ON jl.gl_account_id = a.id
   JOIN journal_header jh ON jh.id = jl.journal_header_id
-    AND jh.finance_company_id = posting_finance_company.id
+    AND jh.finance_organization_id = posting_finance_organization.id
     AND jh.status = 'POSTED'
-  WHERE source_finance_company.id = a.finance_company_id
-  ORDER BY posting_company.code
+  WHERE source_finance_organization.id = a.finance_organization_id
+  ORDER BY posting_organization.code
 ), ARRAY[]::text[])`;
 
 type LinkedByRow = GlAccountRow["linked_by"][number];
@@ -137,19 +137,19 @@ export class GlAccountRepo {
     const { rows: linkRows } = await this.db.query(
       `SELECT DISTINCT gl_account_id::int AS gl_account_id, pointer_type, code
        FROM (
-         SELECT gl_account_id, 'Accounts Receivable Control Accounts' AS pointer_type, code FROM ar_control_account WHERE finance_company_id = $2
+         SELECT gl_account_id, 'Accounts Receivable Control Accounts' AS pointer_type, code FROM ar_control_account WHERE finance_organization_id = $2
          UNION ALL
-          SELECT gl_account_id, 'Accounts Payable Control Accounts' AS pointer_type, code FROM ap_control_account WHERE finance_company_id = $2
+          SELECT gl_account_id, 'Accounts Payable Control Accounts' AS pointer_type, code FROM ap_control_account WHERE finance_organization_id = $2
          UNION ALL
-          SELECT gl_account_id, 'Tax Control Accounts' AS pointer_type, code FROM tax_control_account WHERE finance_company_id = $2
+          SELECT gl_account_id, 'Tax Control Accounts' AS pointer_type, code FROM tax_control_account WHERE finance_organization_id = $2
          UNION ALL
-          SELECT gl_account_id, 'Inventory Control Accounts' AS pointer_type, code FROM inventory_control_account WHERE finance_company_id = $2
+          SELECT gl_account_id, 'Inventory Control Accounts' AS pointer_type, code FROM inventory_control_account WHERE finance_organization_id = $2
          UNION ALL
-          SELECT gl_account_id, 'Bank / Cash Accounts' AS pointer_type, code FROM bank_cash_control_account WHERE finance_company_id = $2
+          SELECT gl_account_id, 'Bank / Cash Accounts' AS pointer_type, code FROM bank_cash_control_account WHERE finance_organization_id = $2
          UNION ALL
           SELECT gl_account_id, 'Financial Document Defaults' AS pointer_type, code
           FROM financial_document_default
-          WHERE finance_company_id = $2 AND gl_account_id IS NOT NULL
+          WHERE finance_organization_id = $2 AND gl_account_id IS NOT NULL
          UNION ALL
           SELECT account_link.gl_account_id, 'Item Posting Profiles' AS pointer_type, ipp.code
           FROM item_posting_profile ipp
@@ -162,11 +162,11 @@ export class GlAccountRepo {
               (ipp.adjustment_gain_gl_account_id),
               (ipp.adjustment_loss_gl_account_id)
           ) account_link(gl_account_id)
-          WHERE ipp.finance_company_id = $2 AND account_link.gl_account_id IS NOT NULL
+          WHERE ipp.finance_organization_id = $2 AND account_link.gl_account_id IS NOT NULL
        ) linked
        WHERE gl_account_id = ANY($1::int[])
        ORDER BY pointer_type ASC, code ASC`,
-      [ids, rows[0].finance_company_id],
+      [ids, rows[0].finance_organization_id],
     );
     const linksByAccountId = new Map<number, LinkedByRow[]>();
     for (const row of linkRows as Array<Record<string, unknown>>) {
@@ -210,8 +210,8 @@ export class GlAccountRepo {
     const { rows } = await this.db.query(
       `SELECT a.*, c.code AS category_code, c.name AS category_name, ${COMPANIES_WITH_POSTINGS_SQL} AS companies_with_postings
        FROM ${TABLE} a
-       LEFT JOIN gl_account_category c ON c.finance_company_id = a.finance_company_id AND c.id = a.account_category_id
-       WHERE a.finance_company_id = $1 AND a.code = $2 AND a.status != 'DELETED'`,
+       LEFT JOIN gl_account_category c ON c.finance_organization_id = a.finance_organization_id AND c.id = a.account_category_id
+       WHERE a.finance_organization_id = $1 AND a.code = $2 AND a.status != 'DELETED'`,
       [companyId, code],
     );
     return rows[0] ? this.withLinkedByOne(this.mapRow(rows[0])) : null;
@@ -242,7 +242,7 @@ export class GlAccountRepo {
     }
 
     vals.push(companyId, code);
-    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
+    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_organization_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
 
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`GL account ${code} not found`);
@@ -276,7 +276,7 @@ export class GlAccountRepo {
     }
 
     vals.push(companyId, code);
-    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
+    const sql = `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_organization_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
 
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`GL account ${code} not found`);
@@ -284,14 +284,14 @@ export class GlAccountRepo {
   }
 
   async delete(companyId: number, code: string): Promise<void> {
-    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND code = $2`, [companyId, code]);
+    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_organization_id = $1 AND code = $2`, [companyId, code]);
   }
   async listAll(companyId: number): Promise<GlAccountRow[]> {
     const { rows } = await this.db.query(
       `SELECT a.*, c.code AS category_code, c.name AS category_name, ${COMPANIES_WITH_POSTINGS_SQL} AS companies_with_postings
        FROM ${TABLE} a
-       LEFT JOIN gl_account_category c ON c.finance_company_id = a.finance_company_id AND c.id = a.account_category_id
-       WHERE a.finance_company_id = $1 AND a.status != 'DELETED'
+       LEFT JOIN gl_account_category c ON c.finance_organization_id = a.finance_organization_id AND c.id = a.account_category_id
+       WHERE a.finance_organization_id = $1 AND a.status != 'DELETED'
        ORDER BY a.code ASC`,
       [companyId],
     );
@@ -300,12 +300,12 @@ export class GlAccountRepo {
 
   async filter(companyId: number, filters: Filter[], options?: ListOptions): Promise<GlAccountRow[]> {
     const { sql: whereSql, params } = buildWhere(filters, "a");
-    const fullWhere = whereSql ? `${whereSql} AND a.finance_company_id = $${params.length + 1} AND a.status != 'DELETED'` : `WHERE a.finance_company_id = $${params.length + 1} AND a.status != 'DELETED'`;
+    const fullWhere = whereSql ? `${whereSql} AND a.finance_organization_id = $${params.length + 1} AND a.status != 'DELETED'` : `WHERE a.finance_organization_id = $${params.length + 1} AND a.status != 'DELETED'`;
     params.push(companyId);
     const tail = buildOrderLimitOffset(params, options);
     const sql = `SELECT a.*, c.code AS category_code, c.name AS category_name, ${COMPANIES_WITH_POSTINGS_SQL} AS companies_with_postings
                  FROM ${TABLE} a
-                 LEFT JOIN gl_account_category c ON c.finance_company_id = a.finance_company_id AND c.id = a.account_category_id
+                 LEFT JOIN gl_account_category c ON c.finance_organization_id = a.finance_organization_id AND c.id = a.account_category_id
                  ${fullWhere} ${tail}`;
     const { rows } = await this.db.query(sql, params);
     return this.withLinkedBy(rows.map((r: Record<string, unknown>) => this.mapRow(r)));
@@ -320,12 +320,12 @@ export class GlAccountRepo {
       return `a.${col}::text ILIKE $${params.length}`;
     });
     params.push(companyId);
-    const whereSql = `WHERE (${likeParts.join(" OR ")}) AND a.finance_company_id = $${params.length} AND a.status != 'DELETED'`;
+    const whereSql = `WHERE (${likeParts.join(" OR ")}) AND a.finance_organization_id = $${params.length} AND a.status != 'DELETED'`;
 
     const tail = buildOrderLimitOffset(params, options);
     const sql = `SELECT a.*, c.code AS category_code, c.name AS category_name, ${COMPANIES_WITH_POSTINGS_SQL} AS companies_with_postings
                  FROM ${TABLE} a
-                 LEFT JOIN gl_account_category c ON c.finance_company_id = a.finance_company_id AND c.id = a.account_category_id
+                 LEFT JOIN gl_account_category c ON c.finance_organization_id = a.finance_organization_id AND c.id = a.account_category_id
                  ${whereSql} ${tail}`;
     const { rows } = await this.db.query(sql, params);
     return this.withLinkedBy(rows.map((r: Record<string, unknown>) => this.mapRow(r)));
@@ -337,8 +337,8 @@ export class GlAccountRepo {
     const { rows } = await this.db.query(
       `SELECT a.*, c.code AS category_code, c.name AS category_name, ${COMPANIES_WITH_POSTINGS_SQL} AS companies_with_postings
        FROM ${TABLE} a
-       LEFT JOIN gl_account_category c ON c.finance_company_id = a.finance_company_id AND c.id = a.account_category_id
-       WHERE a.finance_company_id = $1 AND a.code = ANY($2::text[]) AND a.status != 'DELETED' ORDER BY a.code ASC`,
+       LEFT JOIN gl_account_category c ON c.finance_organization_id = a.finance_organization_id AND c.id = a.account_category_id
+       WHERE a.finance_organization_id = $1 AND a.code = ANY($2::text[]) AND a.status != 'DELETED' ORDER BY a.code ASC`,
       [companyId, codes],
     );
     return this.withLinkedBy(rows.map((r: Record<string, unknown>) => this.mapRow(r)));
@@ -346,7 +346,7 @@ export class GlAccountRepo {
 
   async batchDelete(companyId: number, codes: string[]): Promise<void> {
     if (!codes.length) return;
-    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND code = ANY($2::text[])`, [companyId, codes]);
+    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_organization_id = $1 AND code = ANY($2::text[])`, [companyId, codes]);
   }
 
   private mapRow(row: Record<string, unknown>): GlAccountRow {
@@ -354,7 +354,7 @@ export class GlAccountRepo {
     return {
       ...row,
       id: Number(row.id),
-      finance_company_id: Number(row.finance_company_id),
+      finance_organization_id: Number(row.finance_organization_id),
       account_category_id: row.account_category_id != null ? Number(row.account_category_id) : null,
       creation_date: row.creation_date instanceof Date
         ? row.creation_date.toISOString()

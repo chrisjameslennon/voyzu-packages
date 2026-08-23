@@ -4,7 +4,7 @@ import { after, describe, it } from "node:test";
 import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
 import type { ArReceiptApplicationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt-application.request.dto";
 import type { ArReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies/company.response.dto";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations/organization.response.dto";
 import { getPool } from "@voyzu/capability/db";
 import { getArCounterpartyStatement } from "../../../modules/ar-subledger-statements/operations";
 import { processArInvoice, processArReceipt, processArReceiptApplication } from "../../../modules/financial-document-processing-engine/operations";
@@ -45,7 +45,7 @@ function suffix(): string {
   return String(Date.now()).slice(-8);
 }
 
-async function getCompany(): Promise<CompanyResponseDto> {
+async function getCompany(): Promise<OrganizationResponseDto> {
   const pool = getPool();
   const { rows } = await pool.query<{
     id: number;
@@ -53,29 +53,29 @@ async function getCompany(): Promise<CompanyResponseDto> {
     name: string;
     countryCode: string;
     baseCurrencyCode: string;
-    status: CompanyResponseDto["status"];
+    status: OrganizationResponseDto["status"];
     taxFilingAnchorMonth: number;
     taxFilingIntervalMonths: 1 | 2 | 3 | 6 | 12;
     hasPostings: boolean;
     creationDate: string;
-    creationActorType: CompanyResponseDto["audit"]["created"]["actorType"];
+    creationActorType: OrganizationResponseDto["audit"]["created"]["actorType"];
     creationUserId: string | null;
     updatedDate: string;
-    updatedActorType: CompanyResponseDto["audit"]["updated"]["actorType"];
+    updatedActorType: OrganizationResponseDto["audit"]["updated"]["actorType"];
     updatedUserId: string | null;
   }>(
     `SELECT id, code, name, country_code AS "countryCode", base_currency_code AS "baseCurrencyCode",
             tax_filing_anchor_month AS "taxFilingAnchorMonth",
             tax_filing_interval_months AS "taxFilingIntervalMonths",
             status,
-            EXISTS (SELECT 1 FROM journal_header WHERE finance_company_id = company.id) AS "hasPostings",
+            EXISTS (SELECT 1 FROM journal_header WHERE finance_organization_id = company.id) AS "hasPostings",
             creation_date::text AS "creationDate",
             creation_actor_type AS "creationActorType",
             creation_user_id AS "creationUserId",
             updated_date::text AS "updatedDate",
             updated_actor_type AS "updatedActorType",
             updated_user_id AS "updatedUserId"
-     FROM company
+     FROM organization
      WHERE code = 'ACME'`,
   );
   const row = rows[0];

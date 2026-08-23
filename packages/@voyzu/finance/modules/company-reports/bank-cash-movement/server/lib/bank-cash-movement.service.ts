@@ -7,7 +7,7 @@ import { BankCashMovementRepo } from "../db/bank-cash-movement.repo";
 async function fetchCompany(companyId: number): Promise<{ name: string; baseCurrencyCode: string }> {
   const { rows } = await getDb().query(
     `SELECT c.name, c.base_currency_code
-       FROM finance_company fc JOIN company c ON c.id = fc.company_id
+       FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
       WHERE fc.id = $1 AND fc.is_template = false`,
     [companyId],
   );

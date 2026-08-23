@@ -60,7 +60,7 @@ export class TaxLedgerRepo {
        JOIN journal_header h ON h.id = e.journal_header_id
        JOIN tax_rule tr ON tr.id = l.tax_rule_id
        JOIN tax_authority ta ON ta.id = l.tax_authority_id
-       LEFT JOIN tax_control_account tmt ON tmt.finance_company_id = $3 AND tmt.code = l.tax_movement_type_code
+       LEFT JOIN tax_control_account tmt ON tmt.finance_organization_id = $3 AND tmt.code = l.tax_movement_type_code
        LEFT JOIN LATERAL (
          SELECT ar.code
          FROM ar_subledger_entry_header ar
@@ -75,7 +75,7 @@ export class TaxLedgerRepo {
          ORDER BY ap.id ASC
          LIMIT 1
        ) ap_entry ON true
-       WHERE e.finance_company_id = $1
+       WHERE e.finance_organization_id = $1
          AND e.code = $2
        GROUP BY
          e.id,
@@ -144,7 +144,7 @@ export class TaxLedgerRepo {
        JOIN journal_header h ON h.id = e.journal_header_id
        JOIN tax_rule tr ON tr.id = l.tax_rule_id
        JOIN tax_authority ta ON ta.id = l.tax_authority_id
-       LEFT JOIN tax_control_account tmt ON tmt.finance_company_id = $2 AND tmt.code = l.tax_movement_type_code
+       LEFT JOIN tax_control_account tmt ON tmt.finance_organization_id = $2 AND tmt.code = l.tax_movement_type_code
        LEFT JOIN LATERAL (
          SELECT ar.code
          FROM ar_subledger_entry_header ar
@@ -159,7 +159,7 @@ export class TaxLedgerRepo {
          ORDER BY ap.id ASC
          LIMIT 1
        ) ap_entry ON true
-       WHERE e.finance_company_id = $1
+       WHERE e.finance_organization_id = $1
        GROUP BY
          e.id,
          e.code,

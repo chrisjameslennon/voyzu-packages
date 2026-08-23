@@ -9,7 +9,7 @@ export class ApSubledgerCounterpartyRepo {
     const { rows } = await this.db.query(
       `SELECT
          c.id::int AS id,
-         c.finance_company_id::int AS finance_company_id,
+         c.finance_organization_id::int AS finance_organization_id,
          c.code,
          c.name,
          c.status,
@@ -26,7 +26,7 @@ export class ApSubledgerCounterpartyRepo {
          c.updated_mutation_id::text AS updated_mutation_id
        FROM ap_counterparty c
        LEFT JOIN country ON country.code = c.country_code
-       WHERE c.finance_company_id = $1
+       WHERE c.finance_organization_id = $1
        ORDER BY c.code ASC`,
       [companyId],
     );
@@ -37,7 +37,7 @@ export class ApSubledgerCounterpartyRepo {
     const { rows } = await this.db.query(
       `SELECT
          c.id::int AS id,
-         c.finance_company_id::int AS finance_company_id,
+         c.finance_organization_id::int AS finance_organization_id,
          c.code,
          c.name,
          c.status,
@@ -54,7 +54,7 @@ export class ApSubledgerCounterpartyRepo {
          c.updated_mutation_id::text AS updated_mutation_id
        FROM ap_counterparty c
        LEFT JOIN country ON country.code = c.country_code
-       WHERE c.finance_company_id = $1
+       WHERE c.finance_organization_id = $1
          AND c.code = $2
        LIMIT 1`,
       [companyId, code],

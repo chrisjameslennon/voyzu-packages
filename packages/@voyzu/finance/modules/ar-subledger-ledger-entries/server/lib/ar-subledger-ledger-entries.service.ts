@@ -5,7 +5,7 @@ import type {
   ArLedgerEntryDocumentReportResponseDto,
   ArLedgerEntryDocumentReportTotalDto,
 } from "@voyzu/finance/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 import { getDb } from "@voyzu/capability/db";
 import { getAuditActors } from "@voyzu/finance/common/server";
 
@@ -303,7 +303,7 @@ function documentTotals(documentTypeCode: string, lineRows: ArDocumentLineRow[])
 }
 
 export async function getArLedgerEntryDocumentReport(
-  company: CompanyResponseDto,
+  company: OrganizationResponseDto,
   entry: ArSubledgerEntryResponseDto,
 ): Promise<ArLedgerEntryDocumentReportResponseDto | null> {
   const [lineRows, appliedTransactions, applications] = await Promise.all([

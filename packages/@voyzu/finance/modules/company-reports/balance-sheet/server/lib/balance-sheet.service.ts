@@ -28,7 +28,7 @@ function previousDateString(date: string): string {
 
 async function fetchCompany(db: DbExecutor, companyId: number): Promise<{ name: string; reportLine1: string | null; reportLine2: string | null; reportFooter: string | null; baseCurrencyCode: string }> {
   const { rows } = await db.query(
-    `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code FROM company c JOIN finance_company fc ON fc.company_id = c.id WHERE fc.id = $1`,
+    `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id WHERE fc.id = $1`,
     [companyId],
   );
   if (!rows[0]) throw new NotFoundError(`Company id ${companyId} not found`);
@@ -48,12 +48,12 @@ async function listFinancialYearsWithPostingsUnchecked(companyId: number): Promi
        EXISTS (
          SELECT 1
          FROM journal_header jh
-         WHERE jh.finance_company_id = fy.finance_company_id
+         WHERE jh.finance_organization_id = fy.finance_organization_id
            AND jh.status = 'POSTED'
            AND jh.posting_date BETWEEN fy.start_date AND fy.end_date
        ) AS has_postings
      FROM fiscal_year fy
-     WHERE fy.finance_company_id = $1
+     WHERE fy.finance_organization_id = $1
      ORDER BY fy.start_date ASC`,
     [companyId],
   );
@@ -62,7 +62,7 @@ async function listFinancialYearsWithPostingsUnchecked(companyId: number): Promi
     id: Number(row.id),
     code: String(row.code),
     name: String(row.name),
-    companyId: Number(row.finance_company_id),
+    companyId: Number(row.finance_organization_id),
     startDate: localDateString(row.start_date),
     endDate: localDateString(row.end_date),
     status: String(row.status) as FinancialYearResponseDto["status"],

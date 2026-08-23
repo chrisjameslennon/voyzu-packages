@@ -1,7 +1,7 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
 import { EntryType } from "@voyzu/finance/types/modules/core";
-import { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies/company.response.dto";
+import { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations/organization.response.dto";
 import { BusinessCode, CurrencyCode, IsoDate, NonBlankText } from "@voyzu/finance/types/constraints";
 
 export const ArCounterpartyStatementApplicationDto = StrictObject({
@@ -37,7 +37,7 @@ export const ArCounterpartyStatementGroupDto = StrictObject({
 export type ArCounterpartyStatementGroupDto = Type.Static<typeof ArCounterpartyStatementGroupDto>;
 
 export const ArCounterpartyStatementResponseDto = StrictObject({
-  company: CompanyResponseDto,
+  company: OrganizationResponseDto,
   counterpartyCode: BusinessCode,
   counterpartyName: NonBlankText,
   baseCurrencyCode: CurrencyCode,

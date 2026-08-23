@@ -13,7 +13,7 @@ const TABLE = "gl_account_category";
 
 const COLUMNS = [
   "id",
-  "finance_company_id",
+  "finance_organization_id",
   "code",
   "name",
   "account_type",
@@ -33,25 +33,25 @@ const MUTABLE_COLUMNS = ["name", "account_type", "sequence"] as const;
 const SEARCHABLE_COLUMNS = ["code", "name", "account_type", "status"] as const;
 
 const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
-           SELECT DISTINCT posting_company.code
-           FROM finance_company source_finance_company
-           JOIN finance_company posting_finance_company ON (
-             (source_finance_company.is_template = true
-               AND posting_finance_company.is_template = false
-               AND posting_finance_company.use_finance_template_settings = true)
-             OR (source_finance_company.is_template = false AND posting_finance_company.id = source_finance_company.id)
+           SELECT DISTINCT posting_organization.code
+           FROM finance_organization source_finance_organization
+           JOIN finance_organization posting_finance_organization ON (
+             (source_finance_organization.is_template = true
+               AND posting_finance_organization.is_template = false
+               AND posting_finance_organization.use_finance_template_settings = true)
+             OR (source_finance_organization.is_template = false AND posting_finance_organization.id = source_finance_organization.id)
            )
-           JOIN company posting_company ON posting_company.id = posting_finance_company.company_id
-             AND posting_company.status != 'DELETED'
-           JOIN gl_account ga ON ga.finance_company_id = gac.finance_company_id
+           JOIN organization posting_organization ON posting_organization.id = posting_finance_organization.organization_id
+             AND posting_organization.status != 'DELETED'
+           JOIN gl_account ga ON ga.finance_organization_id = gac.finance_organization_id
              AND ga.account_category_id = gac.id
              AND ga.status != 'DELETED'
            JOIN journal_line jl ON jl.gl_account_id = ga.id
            JOIN journal_header jh ON jh.id = jl.journal_header_id
-             AND jh.finance_company_id = posting_finance_company.id
+             AND jh.finance_organization_id = posting_finance_organization.id
              AND jh.status = 'POSTED'
-           WHERE source_finance_company.id = gac.finance_company_id
-           ORDER BY posting_company.code
+           WHERE source_finance_organization.id = gac.finance_organization_id
+           ORDER BY posting_organization.code
          ), ARRAY[]::text[])`;
 
 const SELECT_WITH_DERIVED = `
@@ -60,7 +60,7 @@ const SELECT_WITH_DERIVED = `
          COALESCE((
            SELECT jsonb_agg(jsonb_build_object('type', 'General Ledger Accounts', 'code', linked_account.code) ORDER BY linked_account.code)
            FROM gl_account linked_account
-           WHERE linked_account.finance_company_id = gac.finance_company_id
+           WHERE linked_account.finance_organization_id = gac.finance_organization_id
              AND linked_account.account_category_id = gac.id
              AND linked_account.status != 'DELETED'
          ), '[]'::jsonb) AS linked_by
@@ -162,12 +162,12 @@ export class GlAccountCategoryRepo {
       `INSERT INTO ${TABLE} (${columns.join(", ")}) VALUES (${placeholders}) RETURNING id`,
       values,
     );
-    return this.getById(row.finance_company_id, Number(rows[0].id));
+    return this.getById(row.finance_organization_id, Number(rows[0].id));
   }
 
   async get(companyId: number, code: string): Promise<GlAccountCategoryRow | null> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE gac.finance_company_id = $1 AND gac.code = $2 AND gac.status != 'DELETED'`,
+      `${SELECT_WITH_DERIVED} WHERE gac.finance_organization_id = $1 AND gac.code = $2 AND gac.status != 'DELETED'`,
       [companyId, code],
     );
     return rows[0] ? this.mapRow(rows[0]) : null;
@@ -175,7 +175,7 @@ export class GlAccountCategoryRepo {
 
   async getById(companyId: number, id: number): Promise<GlAccountCategoryRow> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE gac.finance_company_id = $1 AND gac.id = $2`,
+      `${SELECT_WITH_DERIVED} WHERE gac.finance_organization_id = $1 AND gac.id = $2`,
       [companyId, id],
     );
     if (!rows[0]) throw new DataError(`GL account category id ${id} not found`);
@@ -207,7 +207,7 @@ export class GlAccountCategoryRepo {
     values.push(companyId, code);
 
     const { rows } = await this.db.query(
-      `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${values.length - 1} AND code = $${values.length} RETURNING id`,
+      `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_organization_id = $${values.length - 1} AND code = $${values.length} RETURNING id`,
       values,
     );
     if (!rows[0]) throw new DataError(`GL account category ${code} not found`);
@@ -241,7 +241,7 @@ export class GlAccountCategoryRepo {
 
     values.push(companyId, code);
     const { rows } = await this.db.query(
-      `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${values.length - 1} AND code = $${values.length} RETURNING id`,
+      `UPDATE ${TABLE} SET ${sets.join(", ")} WHERE finance_organization_id = $${values.length - 1} AND code = $${values.length} RETURNING id`,
       values,
     );
     if (!rows[0]) throw new DataError(`GL account category ${code} not found`);
@@ -249,12 +249,12 @@ export class GlAccountCategoryRepo {
   }
 
   async delete(companyId: number, code: string): Promise<void> {
-    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND code = $2`, [companyId, code]);
+    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_organization_id = $1 AND code = $2`, [companyId, code]);
   }
 
   async listAll(companyId: number): Promise<GlAccountCategoryRow[]> {
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE gac.finance_company_id = $1 AND gac.status != 'DELETED' ORDER BY gac.sequence ASC, gac.code ASC`,
+      `${SELECT_WITH_DERIVED} WHERE gac.finance_organization_id = $1 AND gac.status != 'DELETED' ORDER BY gac.sequence ASC, gac.code ASC`,
       [companyId],
     );
     return rows.map((row: Record<string, unknown>) => this.mapRow(row));
@@ -263,8 +263,8 @@ export class GlAccountCategoryRepo {
   async filter(companyId: number, filters: Filter[], options?: ListOptions): Promise<GlAccountCategoryRow[]> {
     const { sql: whereSql, params } = buildWhere(filters);
     const fullWhere = whereSql
-      ? `${whereSql} AND gac.finance_company_id = $${params.length + 1} AND gac.status != 'DELETED'`
-      : `WHERE gac.finance_company_id = $${params.length + 1} AND gac.status != 'DELETED'`;
+      ? `${whereSql} AND gac.finance_organization_id = $${params.length + 1} AND gac.status != 'DELETED'`
+      : `WHERE gac.finance_organization_id = $${params.length + 1} AND gac.status != 'DELETED'`;
     params.push(companyId);
     const tail = buildOrderLimitOffset(params, options);
     const { rows } = await this.db.query(`${SELECT_WITH_DERIVED} ${fullWhere} ${tail}`, params);
@@ -279,7 +279,7 @@ export class GlAccountCategoryRepo {
       return `${column}::text ILIKE $${params.length}`;
     });
     params.push(companyId);
-    const whereSql = `WHERE (${likeParts.join(" OR ")}) AND gac.finance_company_id = $${params.length} AND gac.status != 'DELETED'`;
+    const whereSql = `WHERE (${likeParts.join(" OR ")}) AND gac.finance_organization_id = $${params.length} AND gac.status != 'DELETED'`;
     const tail = buildOrderLimitOffset(params, options);
     const { rows } = await this.db.query(`${SELECT_WITH_DERIVED} ${whereSql} ${tail}`, params);
     return rows.map((row: Record<string, unknown>) => this.mapRow(row));
@@ -288,7 +288,7 @@ export class GlAccountCategoryRepo {
   async batchGet(companyId: number, codes: string[]): Promise<GlAccountCategoryRow[]> {
     if (!codes.length) return [];
     const { rows } = await this.db.query(
-      `${SELECT_WITH_DERIVED} WHERE gac.finance_company_id = $1 AND gac.code = ANY($2::text[]) AND gac.status != 'DELETED' ORDER BY gac.sequence ASC, gac.code ASC`,
+      `${SELECT_WITH_DERIVED} WHERE gac.finance_organization_id = $1 AND gac.code = ANY($2::text[]) AND gac.status != 'DELETED' ORDER BY gac.sequence ASC, gac.code ASC`,
       [companyId, codes],
     );
     return rows.map((row: Record<string, unknown>) => this.mapRow(row));
@@ -296,14 +296,14 @@ export class GlAccountCategoryRepo {
 
   async batchDelete(companyId: number, codes: string[]): Promise<void> {
     if (!codes.length) return;
-    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_company_id = $1 AND code = ANY($2::text[])`, [companyId, codes]);
+    await this.db.query(`DELETE FROM ${TABLE} WHERE finance_organization_id = $1 AND code = ANY($2::text[])`, [companyId, codes]);
   }
   private mapRow(row: Record<string, unknown>): GlAccountCategoryRow {
     const companiesWithPostings = parsePostgresTextArray(row.companies_with_postings);
     return {
       ...row,
       id: Number(row.id),
-      finance_company_id: Number(row.finance_company_id),
+      finance_organization_id: Number(row.finance_organization_id),
       sequence: Number(row.sequence),
       creation_date: row.creation_date instanceof Date ? row.creation_date.toISOString() : String(row.creation_date),
       updated_date: row.updated_date instanceof Date ? row.updated_date.toISOString() : String(row.updated_date),

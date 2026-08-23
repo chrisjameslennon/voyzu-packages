@@ -7,7 +7,7 @@ import type { InsertInventoryItemRow, InventoryItemRow, PatchInventoryItemRow, U
 
 const SELECT_SQL = `
   SELECT ii.id::int,
-         ii.finance_company_id::int,
+         ii.finance_organization_id::int,
          ii.code AS item_code,
          ii.name AS item_name,
          ii.description,
@@ -32,7 +32,7 @@ const SELECT_SQL = `
          ii.updated_user_id,
          ii.updated_mutation_id
   FROM inventory_item ii
-  JOIN inventory_category ic ON ic.finance_company_id = ii.finance_company_id AND ic.id = ii.category_id
+  JOIN inventory_category ic ON ic.finance_organization_id = ii.finance_organization_id AND ic.id = ii.category_id
 `;
 
 const MUTABLE_COLUMNS = [
@@ -47,7 +47,7 @@ const SEARCHABLE_COLUMNS = ["code", "name", "description", "item_type", "unit_co
 function mapRow(row: Record<string, unknown>): InventoryItemRow {
   return {
     id: Number(row.id),
-    finance_company_id: Number(row.finance_company_id),
+    finance_organization_id: Number(row.finance_organization_id),
     item_code: String(row.item_code),
     item_name: String(row.item_name),
     description: String(row.description),
@@ -140,44 +140,44 @@ export class InventoryItemRepo {
   constructor(private readonly db: DbExecutor) { }
 
   async resolveCategoryId(companyId: number, categoryCode: string): Promise<number> {
-    const category = await this.db.query(`SELECT id::int FROM inventory_category WHERE finance_company_id = $1 AND code = $2`, [companyId, categoryCode]);
+    const category = await this.db.query(`SELECT id::int FROM inventory_category WHERE finance_organization_id = $1 AND code = $2`, [companyId, categoryCode]);
     if (!category.rows[0]) throw new DataError(`Unknown category ${categoryCode}`);
     return Number(category.rows[0].id);
   }
 
   async insert(row: InsertInventoryItemRow): Promise<InventoryItemRow> {
-    const categoryId = await this.resolveCategoryId(row.finance_company_id, row.category_code);
+    const categoryId = await this.resolveCategoryId(row.finance_organization_id, row.category_code);
     await this.db.query(
       `INSERT INTO inventory_item (
-        finance_company_id, code, name, description, item_type, category_id, unit_code,
+        finance_organization_id, code, name, description, item_type, category_id, unit_code,
         status, quantity_on_hand_derived, book_value_derived, avg_unit_book_value_derived,
         creation_date, creation_actor_type, creation_user_id, creation_mutation_id
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
       [
-        row.finance_company_id, row.code, row.name, row.description, row.item_type, categoryId, row.unit_code,
+        row.finance_organization_id, row.code, row.name, row.description, row.item_type, categoryId, row.unit_code,
         row.status, row.quantity_on_hand_derived, row.book_value_derived, row.avg_unit_book_value_derived,
         row.creation_date, row.creation_actor_type, row.creation_user_id ?? null, row.creation_mutation_id ?? null,
       ],
     );
-    const inserted = await this.get(row.finance_company_id, row.code);
+    const inserted = await this.get(row.finance_organization_id, row.code);
     if (!inserted) throw new DataError(`Inventory item ${row.code} not found after insert`);
     return inserted;
   }
 
   async listAll(companyId: number): Promise<InventoryItemRow[]> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_company_id = $1 ORDER BY ii.code`, [companyId]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_organization_id = $1 ORDER BY ii.code`, [companyId]);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
   async get(companyId: number, code: string): Promise<InventoryItemRow | null> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_company_id = $1 AND ii.code = $2`, [companyId, code]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_organization_id = $1 AND ii.code = $2`, [companyId, code]);
     return rows[0] ? mapRow(rows[0]) : null;
   }
 
   async batchGet(companyId: number, codes: string[]): Promise<InventoryItemRow[]> {
     if (!codes.length) return [];
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_company_id = $1 AND ii.code = ANY($2::text[]) ORDER BY ii.code`, [companyId, codes]);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_organization_id = $1 AND ii.code = ANY($2::text[]) ORDER BY ii.code`, [companyId, codes]);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -185,7 +185,7 @@ export class InventoryItemRepo {
     const { sql, params } = buildWhere(filters);
     const queryParams: unknown[] = [companyId, ...params];
     const tail = buildOrderLimitOffset(queryParams, options);
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_company_id = $1${sql} ${tail}`, queryParams);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_organization_id = $1${sql} ${tail}`, queryParams);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -197,7 +197,7 @@ export class InventoryItemRepo {
       return `ii.${column}::text ILIKE $${params.length}`;
     });
     const tail = buildOrderLimitOffset(params, options);
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_company_id = $1 AND (${likeParts.join(" OR ")}) ${tail}`, params);
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE ii.finance_organization_id = $1 AND (${likeParts.join(" OR ")}) ${tail}`, params);
     return rows.map((row: Record<string, unknown>) => mapRow(row));
   }
 
@@ -208,7 +208,7 @@ export class InventoryItemRepo {
        SET name = $3, description = $4, item_type = $5, category_id = $6,
            unit_code = $7, quantity_on_hand_derived = $8, book_value_derived = $9, avg_unit_book_value_derived = $10,
            updated_date = $11::timestamptz, updated_actor_type = $12::actor_type, updated_user_id = $13, updated_mutation_id = $14::uuid
-       WHERE finance_company_id = $1 AND code = $2`,
+       WHERE finance_organization_id = $1 AND code = $2`,
       [
         companyId, code, row.name, row.description, row.item_type, categoryId,
         row.unit_code, row.quantity_on_hand_derived, row.book_value_derived, row.avg_unit_book_value_derived,
@@ -223,7 +223,7 @@ export class InventoryItemRepo {
   async patch(companyId: number, code: string, updates: PatchInventoryItemRow): Promise<InventoryItemRow> {
     const refs: Record<string, number> = {};
     if (updates.category_code) {
-      const { rows } = await this.db.query(`SELECT id::int FROM inventory_category WHERE finance_company_id = $1 AND code = $2`, [companyId, updates.category_code]);
+      const { rows } = await this.db.query(`SELECT id::int FROM inventory_category WHERE finance_organization_id = $1 AND code = $2`, [companyId, updates.category_code]);
       if (!rows[0]) throw new DataError(`Unknown category ${updates.category_code}`);
       refs.category_id = Number(rows[0].id);
     }
@@ -256,7 +256,7 @@ export class InventoryItemRepo {
       const { rows } = await this.db.query(
         `UPDATE inventory_item
          SET ${sets.join(", ")}
-         WHERE code = $${vals.length - 1} AND finance_company_id = $${vals.length}
+         WHERE code = $${vals.length - 1} AND finance_organization_id = $${vals.length}
          RETURNING code`,
         vals,
       );
@@ -269,7 +269,7 @@ export class InventoryItemRepo {
   }
 
   async delete(companyId: number, code: string): Promise<void> {
-    const { rowCount } = await this.db.query(`DELETE FROM inventory_item WHERE finance_company_id = $1 AND code = $2`, [companyId, code]);
+    const { rowCount } = await this.db.query(`DELETE FROM inventory_item WHERE finance_organization_id = $1 AND code = $2`, [companyId, code]);
     if (!rowCount) throw new DataError(`Inventory item ${code} not found`);
   }
 

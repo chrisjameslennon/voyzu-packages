@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
-import { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies/company.response.dto";
+import { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations/organization.response.dto";
 import { BusinessCode, IsoDate, NonBlankText } from "@voyzu/finance/types/constraints";
 
 export const ApLedgerEntryDocumentReportLineDto = StrictObject({
@@ -53,7 +53,7 @@ export const ApLedgerEntryDocumentReportTotalDto = StrictObject({
 export type ApLedgerEntryDocumentReportTotalDto = Type.Static<typeof ApLedgerEntryDocumentReportTotalDto>;
 
 export const ApLedgerEntryDocumentReportResponseDto = StrictObject({
-  company: CompanyResponseDto,
+  company: OrganizationResponseDto,
   documentTypeCode: BusinessCode,
   documentTypeLabel: Type.String(),
   documentId: Type.String(),

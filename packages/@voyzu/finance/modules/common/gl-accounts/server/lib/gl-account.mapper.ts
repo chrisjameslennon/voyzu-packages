@@ -44,7 +44,7 @@ export function toDto(row: GlAccountRow): GlAccountResponseDto {
 
 export function toInsertRow(input: GlAccountCreateRequestDto, companyId: number): InsertGlAccountRow {
   return {
-    finance_company_id: companyId,
+    finance_organization_id: companyId,
     code: input.code,
     name: input.name,
     account_type: input.accountType,

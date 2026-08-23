@@ -126,7 +126,7 @@ function syntheticInlineCounterparty(input: ApBillRequestDto, companyId: number,
   if (!input.ap_counterparty?.code) throw new InputValidationError("ap_counterparty.code is required");
   return {
     id: 0,
-    finance_company_id: companyId,
+    finance_organization_id: companyId,
     code: input.ap_counterparty.code,
     name: input.ap_counterparty.name,
     status: input.ap_counterparty.status,
@@ -280,7 +280,7 @@ async function resolveContext(repo: ApBillPostingRepo, request: ResolvedApBillRe
     counterparty = preview
       ? syntheticInlineCounterparty(request, company.id, countryCurrency)
       : await repo.upsertCounterparty({
-        finance_company_id: company.id,
+        finance_organization_id: company.id,
         code: request.ap_counterparty.code,
         name: request.ap_counterparty.name,
         status: request.ap_counterparty.status,
@@ -659,7 +659,7 @@ async function processApBillUnchecked(input: ApBillRequestDto, options: ProcessA
 
     if (request.ap_counterparty?.code) {
       const upserted = await txRepo.upsertCounterparty({
-        finance_company_id: context.data.company!.id,
+        finance_organization_id: context.data.company!.id,
         code: request.ap_counterparty.code,
         name: request.ap_counterparty.name,
         status: request.ap_counterparty.status,
@@ -673,7 +673,7 @@ async function processApBillUnchecked(input: ApBillRequestDto, options: ProcessA
 
     const journalHeader = await journalRepo.insert({
       id: context.reservedJournalHeaderId ?? undefined,
-      finance_company_id: context.data.company!.id,
+      finance_organization_id: context.data.company!.id,
       company_code: context.data.company!.code,
       company_name: context.data.company!.name,
       document_type_code: AP_BILL_ENGINE_CODE,
@@ -705,7 +705,7 @@ async function processApBillUnchecked(input: ApBillRequestDto, options: ProcessA
 
     const apEntry = await txRepo.insertApSubledgerEntry({
       code: `AP-BILL-${journalHeader.id}`,
-      finance_company_id: context.data.company!.id,
+      finance_organization_id: context.data.company!.id,
       journal_header_id: journalHeader.id,
       ap_counterparty_id: counterparty.id,
       document_type_code: AP_BILL_ENGINE_CODE,
@@ -741,7 +741,7 @@ async function processApBillUnchecked(input: ApBillRequestDto, options: ProcessA
     const taxHeader = generated.taxLedgerDetails.length
       ? await txRepo.insertTaxLedgerHeader({
         code: taxLedgerHeaderCode(journalHeader.id),
-        finance_company_id: context.data.company!.id,
+        finance_organization_id: context.data.company!.id,
         journal_header_id: journalHeader.id,
         document_type_code: AP_BILL_ENGINE_CODE,
         document_id: context.detailedDocument.document_id,

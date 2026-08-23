@@ -39,7 +39,7 @@ function mapJournalRow(row: Record<string, unknown>): JournalHeaderRow {
   return {
     ...row,
     id: Number(row.id),
-    finance_company_id: Number(row.finance_company_id),
+    finance_organization_id: Number(row.finance_organization_id),
     financial_year_id: Number(row.financial_year_id),
     financial_period_id: Number(row.financial_period_id),
     number_lines: Number(row.number_lines ?? 0),
@@ -122,7 +122,7 @@ export class JournalRepo {
 
   async listByCompany(companyId: number): Promise<JournalHeaderRow[]> {
     const { rows } = await this.db.query(
-      `${JOURNAL_SELECT} WHERE j.finance_company_id = $1 ORDER BY j.id DESC`,
+      `${JOURNAL_SELECT} WHERE j.finance_organization_id = $1 ORDER BY j.id DESC`,
       [companyId],
     );
     return rows.map((r: Record<string, unknown>) => mapJournalRow(r));
@@ -130,7 +130,7 @@ export class JournalRepo {
 
   async get(companyId: number, code: string): Promise<JournalHeaderRow | null> {
     const { rows } = await this.db.query(
-      `${JOURNAL_SELECT} WHERE j.finance_company_id = $1 AND j.code = $2`,
+      `${JOURNAL_SELECT} WHERE j.finance_organization_id = $1 AND j.code = $2`,
       [companyId, code],
     );
     return rows[0] ? mapJournalRow(rows[0]) : null;
@@ -152,7 +152,7 @@ export class JournalRepo {
     const param = (index: number) => `$${index + offset}`;
     const { rows } = await this.db.query(
       `INSERT INTO ${JOURNAL_TABLE}
-         (${idColumn}code, finance_company_id, company_code, company_name,
+         (${idColumn}code, finance_organization_id, company_code, company_name,
           document_type_code, document_type_label,
           document_id, description,
           document_snapshot_json, detailed_document_snapshot_json,
@@ -171,7 +171,7 @@ export class JournalRepo {
       [
         ...(row.id != null ? [row.id] : []),
         tempCode,
-        row.finance_company_id, row.company_code, row.company_name,
+        row.finance_organization_id, row.company_code, row.company_name,
         row.document_type_code, row.document_type_label,
         row.document_id, row.description,
         row.document_snapshot_json ?? {}, row.detailed_document_snapshot_json ?? {},
@@ -234,7 +234,7 @@ export class JournalRepo {
     sets.push(`updated_date = now()`, `updated_actor_type = 'SYSTEM'`);
     vals.push(companyId, code);
 
-    const sql = `UPDATE ${JOURNAL_TABLE} SET ${sets.join(", ")} WHERE finance_company_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
+    const sql = `UPDATE ${JOURNAL_TABLE} SET ${sets.join(", ")} WHERE finance_organization_id = $${vals.length - 1} AND code = $${vals.length} RETURNING *`;
     const { rows } = await this.db.query(sql, vals);
     if (!rows[0]) throw new DataError(`Journal ${code} not found`);
     return this.get(companyId, code).then((r) => {
@@ -251,12 +251,12 @@ export class JournalRepo {
            total_credit_base_amount = $2,
            updated_date = now(),
            updated_actor_type = 'SYSTEM'
-       WHERE id = $3 RETURNING id, finance_company_id, code`,
+       WHERE id = $3 RETURNING id, finance_organization_id, code`,
       [totalDr, totalCr, id],
     );
     if (!rows[0]) throw new DataError(`Journal id ${id} not found`);
     const r = rows[0] as Record<string, unknown>;
-    const updated = await this.get(Number(r.finance_company_id), String(r.code));
+    const updated = await this.get(Number(r.finance_organization_id), String(r.code));
     if (!updated) throw new DataError(`Journal id ${id} not found after post`);
     return updated;
   }
@@ -272,7 +272,7 @@ export class JournalRepo {
 
   async delete(companyId: number, code: string): Promise<void> {
     await this.db.query(
-      `DELETE FROM ${JOURNAL_TABLE} WHERE finance_company_id = $1 AND code = $2`,
+      `DELETE FROM ${JOURNAL_TABLE} WHERE finance_organization_id = $1 AND code = $2`,
       [companyId, code],
     );
   }

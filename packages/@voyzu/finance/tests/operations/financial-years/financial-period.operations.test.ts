@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it, before, after } from "node:test";
 
 import { getPool } from "@voyzu/capability/db";
-import { listCompanies } from "@voyzu/erp-core/companies/operations";
+import { listOrganizations } from "@voyzu/erp-core/organizations/operations";
 import { getFinancialYear } from "../../../modules/financial-years/operations";
 import {
   listPeriods,
@@ -17,7 +17,7 @@ let companyId: number;
 let fyId: number;
 
 before(async () => {
-  const companies = await listCompanies();
+  const companies = await listOrganizations();
   const company = companies.find((c) => c.code === "ACME") ?? companies[0];
   if (!company) throw new Error("ACME company not found — run seed scripts first");
   companyId = company.id;

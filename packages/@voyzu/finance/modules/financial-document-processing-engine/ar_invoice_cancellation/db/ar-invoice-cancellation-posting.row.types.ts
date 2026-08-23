@@ -8,7 +8,7 @@ export interface InvoiceCancellationCompanyContextRow {
 
 export interface InvoiceCancellationCounterpartyContextRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   status: string;
@@ -70,7 +70,7 @@ export interface InvoiceCancellationOpenInvoiceRow {
 
 export interface InsertInvoiceCancellationArSubledgerEntryRow {
   ar_subledger_entry_code: string;
-  finance_company_id: number;
+  finance_organization_id: number;
   journal_header_id: number;
   ar_counterparty_id: number;
   control_account_code: "AR_TRADE_RECEIVABLES";
@@ -90,7 +90,7 @@ export interface InvoiceCancellationArSubledgerEntryRow extends InsertInvoiceCan
 
 export interface InsertInvoiceCancellationTaxLedgerHeaderRow {
   code: string;
-  finance_company_id: number;
+  finance_organization_id: number;
   journal_header_id: number;
   document_type_code: "AR_INVOICE_CANCELLATION";
   document_id: string;

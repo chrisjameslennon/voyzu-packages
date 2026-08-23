@@ -1,22 +1,22 @@
 import type { VoyzuEventContext } from "@voyzu/capability/events";
 
-import { deleteFinanceCompanyForErpCompany } from "./modules/finance-companies/server/lib/finance-company.service";
+import { deleteFinanceCompanyForErpOrganization } from "./modules/finance-companies/server/lib/finance-company.service";
 
-type CompanyDeletedPayload = {
+type OrganizationDeletedPayload = {
   id: number;
 };
 
-async function handleCompanyDeleted(
-  company: CompanyDeletedPayload,
+async function handleOrganizationDeleted(
+  organization: OrganizationDeletedPayload,
   context: VoyzuEventContext,
 ): Promise<void> {
-  await deleteFinanceCompanyForErpCompany(company.id, context.transaction);
+  await deleteFinanceCompanyForErpOrganization(organization.id, context.transaction);
 }
 
 export const listeners = [
   {
-    event: "@voyzu/erp-core.companies.companyDeleted",
-    handler: handleCompanyDeleted,
+    event: "@voyzu/erp-core.organizations.organizationDeleted",
+    handler: handleOrganizationDeleted,
   },
 ] as const;
 

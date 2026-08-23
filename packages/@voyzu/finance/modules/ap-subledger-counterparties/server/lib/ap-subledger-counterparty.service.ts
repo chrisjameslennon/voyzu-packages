@@ -12,7 +12,7 @@ async function toCounterpartyDto(row: Awaited<ReturnType<ApSubledgerCounterparty
   const auditActors = await getAuditActors(row);
   const dto: ApCounterpartyResponseDto = {
     id: row.id,
-    companyId: row.finance_company_id,
+    companyId: row.finance_organization_id,
     code: row.code,
     name: row.name,
     status: row.status,

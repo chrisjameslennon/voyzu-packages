@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { CompanyAuditPanel as AuditPanel } from "@voyzu/finance/common/client";
 import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/finance/common/client";
 import type { ArCounterpartyResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { Badge, Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
@@ -25,7 +25,7 @@ export function ArCounterpartyDetail({
   company,
   counterparty,
 }: {
-  company: CompanyResponseDto;
+  company: OrganizationResponseDto;
   counterparty: ArCounterpartyResponseDto;
 }) {
   const generatedAt = useMemo(

@@ -85,7 +85,7 @@ function validData(): ArInvoiceDataValidationContext {
     },
     counterparty: {
       id: 10,
-      finance_company_id: 1,
+      finance_organization_id: 1,
       code: "CUST_TEST",
       name: "Customer Test",
       status: "ACTIVE",
@@ -381,7 +381,7 @@ describe("AR_INVOICE data validation", () => {
     ["inactive document processor", "AR_INVOICE document processor is not ACTIVE", (data) => { data.documentProcessor!.status = "INACTIVE"; }],
     ["dimensions unsupported", "AR_INVOICE does not support dimensions", (data) => { data.documentProcessor!.supports_dimensions = false; }, validRequest({ dimensions: { DEPARTMENT: "SALES" } })],
     ["missing counterparty", "AR counterparty CUST_TEST was not found or created", (data) => { data.counterparty = null; }],
-    ["counterparty company mismatch", "AR counterparty CUST_TEST does not belong to company ACME", (data) => { data.counterparty!.finance_company_id = 999; }],
+    ["counterparty company mismatch", "AR counterparty CUST_TEST does not belong to company ACME", (data) => { data.counterparty!.finance_organization_id = 999; }],
     ["counterparty code mismatch", "Resolved AR counterparty OTHER does not match requested counterparty CUST_TEST", (data) => { data.counterparty!.code = "OTHER"; }],
     ["inline counterparty mismatch", "Resolved AR counterparty CUST_TEST does not match inline counterparty INLINE_CUST", () => {}, validRequest({ ar_counterparty_code: null, ar_counterparty: { code: "INLINE_CUST", name: "Inline", status: "ACTIVE", country_code: "NZ" } })],
     ["inactive counterparty", "AR counterparty CUST_TEST is not ACTIVE", (data) => { data.counterparty!.status = "INACTIVE"; }],

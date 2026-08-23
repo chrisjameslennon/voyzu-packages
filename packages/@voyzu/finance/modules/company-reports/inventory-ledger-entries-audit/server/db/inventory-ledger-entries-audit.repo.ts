@@ -6,7 +6,7 @@ const ENTRY_FIELDS: Array<{ key: string; label: string }> = [
   { key: "inventory_ledger_entry_code", label: "Inventory Ledger Entry Code" },
   { key: "line_number", label: "Line Number" },
   { key: "movement_type_code", label: "Movement Type Code" },
-  { key: "finance_company_id", label: "Company ID" },
+  { key: "finance_organization_id", label: "Company ID" },
   { key: "journal_header_id", label: "Journal Header ID" },
   { key: "source_document_type_code", label: "Source Document Type Code" },
   { key: "document_id", label: "Document ID" },
@@ -56,7 +56,7 @@ export class InventoryLedgerEntriesAuditRepo {
          e.code AS inventory_ledger_entry_code,
          l.line_number,
          l.movement_type_code,
-         e.finance_company_id,
+         e.finance_organization_id,
          e.journal_header_id,
          e.source_document_type_code,
          e.document_id,
@@ -84,7 +84,7 @@ export class InventoryLedgerEntriesAuditRepo {
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = e.id
        JOIN inventory_item item ON item.id = l.item_id
        JOIN journal_header h ON h.id = e.journal_header_id
-       WHERE e.finance_company_id = $1
+       WHERE e.finance_organization_id = $1
          AND e.posting_date BETWEEN $2 AND $3
        ORDER BY e.posting_date ASC, e.code ASC, l.line_number ASC`,
       [companyId, fromDate, toDate],

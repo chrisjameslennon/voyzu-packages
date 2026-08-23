@@ -5,7 +5,7 @@ import type {
   ArCounterpartyStatementResponseDto,
   ArCounterpartySummaryResponseDto,
 } from "@voyzu/finance/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 
 import { ArSubledgerStatementRepo } from "../db/ar-subledger-statement.repo";
 
@@ -29,7 +29,7 @@ async function listArCounterpartySummariesUnchecked(companyId: number): Promise<
 }
 
 async function getArCounterpartyStatementUnchecked(
-  company: CompanyResponseDto,
+  company: OrganizationResponseDto,
   counterpartyCode: string,
 ): Promise<ArCounterpartyStatementResponseDto | null> {
   const rows = await repo().listCounterpartyStatementRows(company.id, counterpartyCode);

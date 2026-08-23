@@ -1,6 +1,6 @@
 export interface ApCounterpartyRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   status: "ACTIVE" | "INACTIVE";

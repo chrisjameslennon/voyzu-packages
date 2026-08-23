@@ -4,11 +4,11 @@ import { cookies } from "next/headers";
 
 import type { ProfitLossBreakdownDto, ProfitLossDimensionSelectionDto } from "@voyzu/finance/types/modules/company-reports";
 
-import { listCompanies } from "@voyzu/erp-core/companies/server";
+import { listOrganizations } from "@voyzu/erp-core/organizations/server";
 import {
-  SELECTED_COMPANY_COOKIE,
-  parseSelectedCompanyId,
-} from "@voyzu/erp-core/company-switcher/server";
+  SELECTED_ORGANIZATION_COOKIE,
+  parseSelectedOrganizationId,
+} from "@voyzu/erp-core/organization-switcher/server";
 import { listDimensions } from "@voyzu/finance/common/dimensions/server";
 import { listFinancialYears } from "@voyzu/finance/financial-years/server";
 import { listPeriods } from "@voyzu/finance/financial-years/server";
@@ -56,8 +56,8 @@ export async function ProfitLossAnalysisReportPage({ surface }: ReportPageProps 
   const cookieStore = await cookies();
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || parseSelectedCompanyId(cookieStore.get(SELECTED_COMPANY_COOKIE)?.value);
-  const companies = await listCompanies();
+  const selectedCompanyId = queryCompanyId || parseSelectedOrganizationId(cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value);
+  const companies = await listOrganizations();
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
   const fallbackFromDate = previous90DaysStartIso();
   const fallbackToDate = todayIso();

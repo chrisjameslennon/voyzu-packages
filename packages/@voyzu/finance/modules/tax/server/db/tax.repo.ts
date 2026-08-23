@@ -156,7 +156,7 @@ export class TaxRepo {
        FROM tax_ledger_entry_header e
        JOIN tax_ledger_entry_line l ON l.tax_ledger_entry_header_id = e.id
        JOIN tax_authority ta ON ta.id = l.tax_authority_id
-       WHERE e.finance_company_id = $1
+       WHERE e.finance_organization_id = $1
          AND e.status != 'DELETED'
          AND ta.status != 'DELETED'
        GROUP BY

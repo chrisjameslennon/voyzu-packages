@@ -4,7 +4,7 @@ import type { JournalEntriesFieldDto, JournalEntriesLineDto } from "@voyzu/finan
 const HEADER_FIELDS: Array<{ key: string; label: string }> = [
   { key: "journal_id", label: "Journal ID" },
   { key: "journal_code", label: "Journal Code" },
-  { key: "finance_company_id", label: "Company ID" },
+  { key: "finance_organization_id", label: "Company ID" },
   { key: "company_code", label: "Company Code" },
   { key: "company_name", label: "Company Name" },
   { key: "document_type_code", label: "Document Type Code" },
@@ -65,7 +65,7 @@ export class JournalEntriesRepo {
       `SELECT
          jh.id AS journal_id,
          jh.code AS journal_code,
-         jh.finance_company_id,
+         jh.finance_organization_id,
          jh.company_code,
          jh.company_name,
          jh.document_type_code,
@@ -101,7 +101,7 @@ export class JournalEntriesRepo {
          jl.memo AS line_memo
        FROM journal_header jh
        JOIN journal_line jl ON jl.journal_header_id = jh.id
-       WHERE jh.finance_company_id = $1
+       WHERE jh.finance_organization_id = $1
          AND jh.posting_date BETWEEN $2 AND $3
        ORDER BY jh.posting_date ASC, jh.code ASC, jl.line_number ASC`,
       [companyId, fromDate, toDate],

@@ -1,6 +1,6 @@
 import { getDb } from "@voyzu/capability/db";
 import type { ArInvoiceStatementResponseDto, ArSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 import type { ArInvoiceDetailedInvoiceDto } from "@voyzu/finance/types/modules/financial-document-types";
 import { listArSubledgerEntries } from "@voyzu/finance/ar-subledger-ledger-entries/server";
 
@@ -67,7 +67,7 @@ async function listAppliedTransactions(entryId: number): Promise<ArInvoiceApplie
     .sort((a, b) => a.posting_date.localeCompare(b.posting_date) || a.code.localeCompare(b.code));
 }
 
-async function buildInvoice(company: CompanyResponseDto, entry: ArSubledgerEntryResponseDto): Promise<ArInvoiceDetailedInvoiceDto> {
+async function buildInvoice(company: OrganizationResponseDto, entry: ArSubledgerEntryResponseDto): Promise<ArInvoiceDetailedInvoiceDto> {
   const lines = await listInvoiceLineRows(entry.id);
   const net = roundMoney(lines.reduce((sum, line) => sum + (line.net_amount ?? 0), 0));
   const tax = roundMoney(lines.reduce((sum, line) => sum + (line.tax_amount ?? 0), 0));
@@ -111,7 +111,7 @@ async function buildInvoice(company: CompanyResponseDto, entry: ArSubledgerEntry
   };
 }
 
-async function getArInvoiceStatementUnchecked(company: CompanyResponseDto, documentId: string): Promise<ArInvoiceStatementResponseDto | null> {
+async function getArInvoiceStatementUnchecked(company: OrganizationResponseDto, documentId: string): Promise<ArInvoiceStatementResponseDto | null> {
   const entries = await listArSubledgerEntries(company.id);
   const invoiceEntry = entries.find((entry) => entry.documentTypeCode === "AR_INVOICE" && entry.documentId === documentId && entry.entryType === "DEBIT");
   if (!invoiceEntry) return null;

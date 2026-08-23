@@ -46,7 +46,7 @@ export function toDto(row: InventoryItemRow): InventoryItemResponseDto {
 
 export function toInsertRow(input: InventoryItemCreateRequestDto, companyId: number): InsertInventoryItemRow {
   return {
-    finance_company_id: companyId,
+    finance_organization_id: companyId,
     code: normalizeCode(input.item_code),
     name: input.item_name.trim(),
     description: input.description.trim(),

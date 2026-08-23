@@ -32,7 +32,7 @@ interface CompanyRow {
 
 interface CounterpartyRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   status: string;
@@ -148,7 +148,7 @@ function companyRow(row: Record<string, unknown>): CompanyRow {
 }
 
 function counterpartyRow(row: Record<string, unknown>): CounterpartyRow {
-  return { id: Number(row.id), finance_company_id: Number(row.finance_company_id), code: String(row.code), name: String(row.name), status: String(row.status) };
+  return { id: Number(row.id), finance_organization_id: Number(row.finance_organization_id), code: String(row.code), name: String(row.name), status: String(row.status) };
 }
 
 function periodRow(row: Record<string, unknown>): PeriodRow {
@@ -222,19 +222,19 @@ function mapDimensionValues(rows: DimensionValueRow[]): Map<string, DimensionVal
 
 async function getCompany(db: DbExecutor, code: string): Promise<CompanyRow | null> {
   return one(db, `SELECT fc.id, c.code, c.name, c.base_currency_code, c.status
-    FROM finance_company fc JOIN company c ON c.id = fc.company_id
+    FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
     WHERE c.code = $1 AND fc.is_template = false`, [code], companyRow);
 }
 
 async function getCounterparty(db: DbExecutor, companyId: number, code: string): Promise<CounterpartyRow | null> {
-  return one(db, `SELECT id, finance_company_id, code, name, status FROM ar_counterparty WHERE finance_company_id = $1 AND code = $2`, [companyId, code], counterpartyRow);
+  return one(db, `SELECT id, finance_organization_id, code, name, status FROM ar_counterparty WHERE finance_organization_id = $1 AND code = $2`, [companyId, code], counterpartyRow);
 }
 
 async function getPeriod(db: DbExecutor, companyId: number, postingDate: string): Promise<PeriodRow | null> {
   return one(db,
     `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
      FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-     WHERE fp.finance_company_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fy.status = 'OPEN' AND fp.status = 'OPEN'
+     WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fy.status = 'OPEN' AND fp.status = 'OPEN'
      LIMIT 1`,
     [companyId, postingDate],
     periodRow,
@@ -244,8 +244,8 @@ async function getPeriod(db: DbExecutor, companyId: number, postingDate: string)
 async function getArControlAccount(db: DbExecutor, companyId: number): Promise<ControlAccountRow | null> {
   return one(db,
     `SELECT ca.code AS control_account_code, ca.name AS control_account_name, ca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-     FROM ar_control_account ca JOIN gl_account ga ON ga.finance_company_id = ca.finance_company_id AND ga.id = ca.gl_account_id
-     WHERE ca.finance_company_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,
+     FROM ar_control_account ca JOIN gl_account ga ON ga.finance_organization_id = ca.finance_organization_id AND ga.id = ca.gl_account_id
+     WHERE ca.finance_organization_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,
     [companyId, AR_CONTROL],
     controlAccountRow,
   );
@@ -254,8 +254,8 @@ async function getArControlAccount(db: DbExecutor, companyId: number): Promise<C
 async function getTaxMovementAccount(db: DbExecutor, companyId: number): Promise<TaxMovementAccountRow | null> {
   return one(db,
     `SELECT tmt.code AS tax_movement_type_code, tmt.gl_account_id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-     FROM tax_control_account tmt JOIN gl_account ga ON ga.finance_company_id = tmt.finance_company_id AND ga.id = tmt.gl_account_id
-     WHERE tmt.finance_company_id = $1 AND tmt.code = $2 AND tmt.status = 'ACTIVE' AND ga.status = 'ACTIVE'
+     FROM tax_control_account tmt JOIN gl_account ga ON ga.finance_organization_id = tmt.finance_organization_id AND ga.id = tmt.gl_account_id
+     WHERE tmt.finance_organization_id = $1 AND tmt.code = $2 AND tmt.status = 'ACTIVE' AND ga.status = 'ACTIVE'
      LIMIT 1`,
     [companyId, TAX_MOVEMENT],
     taxMovementAccountRow,
@@ -284,7 +284,7 @@ async function getOpenInvoice(db: DbExecutor, companyId: number, counterpartyId:
          AND l.control_account_code = $4
          AND l.dr_cr = 'CR'
      ) applied_lines ON true
-     WHERE e.finance_company_id = $1 AND e.ar_counterparty_id = $2
+     WHERE e.finance_organization_id = $1 AND e.ar_counterparty_id = $2
        AND h.document_type_code = 'AR_INVOICE' AND h.status = 'POSTED' AND h.document_id = $3
      LIMIT 1`,
     [companyId, counterpartyId, documentId, AR_CONTROL],
@@ -297,7 +297,7 @@ async function listRevenuePostingCodes(db: DbExecutor, companyId: number, codes:
   const { rows } = await db.query(
     `SELECT ga.code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
      FROM gl_account ga
-     WHERE ga.finance_company_id = $1
+     WHERE ga.finance_organization_id = $1
        AND ga.status = 'ACTIVE'
        AND ga.account_type = 'REVENUE'
        AND ga.code = ANY($2::text[])`,
@@ -311,10 +311,10 @@ async function listDimensionValues(db: DbExecutor, companyId: number, pairs: Arr
   const { rows } = await db.query(
     `SELECT d.id AS dimension_id, d.code AS dimension_code, d.name AS dimension_name,
             dv.id AS dimension_value_id, dv.name AS dimension_value_name
-     FROM dimension d JOIN dimension_value dv ON dv.finance_company_id = d.finance_company_id AND dv.dimension_id = d.id
+     FROM dimension d JOIN dimension_value dv ON dv.finance_organization_id = d.finance_organization_id AND dv.dimension_id = d.id
      JOIN jsonb_to_recordset($1::jsonb) AS requested(dimension_code text, value_name text)
        ON requested.dimension_code = d.code AND requested.value_name = dv.name
-     WHERE d.finance_company_id = $2`,
+     WHERE d.finance_organization_id = $2`,
     [JSON.stringify(pairs.map((pair) => ({ dimension_code: pair.dimensionCode, value_name: pair.valueName }))), companyId],
   );
   return rows.map((row: Record<string, unknown>) => dimensionValueRow(row));
@@ -581,7 +581,7 @@ async function insertArEntry(db: DbExecutor, context: Context, journalHeaderId: 
   const code = `AR-WD-${journalHeaderId}`;
   const { rows } = await db.query(
     `INSERT INTO ar_subledger_entry_header
-       (code, finance_company_id, journal_header_id, ar_counterparty_id, document_type_code,
+       (code, finance_organization_id, journal_header_id, ar_counterparty_id, document_type_code,
         document_id, description, memo, document_date, posting_date, financial_year_id,
         financial_period_id, base_currency_code, status,
         creation_date, creation_actor_type)
@@ -652,7 +652,7 @@ async function insertTaxHeader(db: DbExecutor, context: Context, journalHeaderId
   const code = `TAX-WD-${journalHeaderId}`;
   const { rows } = await db.query(
     `INSERT INTO tax_ledger_entry_header
-       (code, finance_company_id, journal_header_id, document_type_code, document_id,
+       (code, finance_organization_id, journal_header_id, document_type_code, document_id,
         description, document_date, posting_date, financial_year_id,
         financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
      VALUES ($1,$2,$3,'AR_INVOICE_CANCELLATION',$4,$5,$6,$7,$8,$9,$10,'POSTED',now(),'SYSTEM')
@@ -747,7 +747,7 @@ async function processArInvoiceCancellationUnchecked(input: ArInvoiceCancellatio
 
     const header = await journalRepo.insert({
       id: txContext.reservedJournalHeaderId ?? undefined,
-      finance_company_id: txContext.company.id,
+      finance_organization_id: txContext.company.id,
       company_code: txContext.company.code,
       company_name: txContext.company.name,
       document_type_code: DOCUMENT_TYPE,

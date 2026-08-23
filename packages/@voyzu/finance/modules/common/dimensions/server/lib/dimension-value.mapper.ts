@@ -28,7 +28,7 @@ export function toValueDto(row: DimensionValueRow): DimensionValueResponseDto {
 
 export function toInsertValueRow(companyId: number, dimensionId: number, input: DimensionValueCreateRequestDto): InsertDimensionValueRow {
   return {
-    finance_company_id: companyId,
+    finance_organization_id: companyId,
     dimension_id: dimensionId,
     name: input.name,
     ...(input.status !== undefined && { status: input.status }),

@@ -14,7 +14,7 @@ import type {
 
 export function toInsertRow(input: GlAccountCategoryCreateRequestDto, companyId: number): InsertGlAccountCategoryRow {
   return {
-    finance_company_id: companyId,
+    finance_organization_id: companyId,
     code: input.code,
     name: input.name,
     account_type: input.accountType,

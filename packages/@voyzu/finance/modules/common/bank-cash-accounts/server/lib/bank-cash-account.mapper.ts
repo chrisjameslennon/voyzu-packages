@@ -47,7 +47,7 @@ export function toDto(row: BankCashAccountRow): BankCashAccountResponseDto {
 
 export function toInsertRow(input: BankCashAccountCreateRequestDto, companyId: number): InsertBankCashAccountRow {
   return {
-    finance_company_id: companyId,
+    finance_organization_id: companyId,
     code: input.code,
     type: input.type,
     gl_account_id: input.glAccountId,

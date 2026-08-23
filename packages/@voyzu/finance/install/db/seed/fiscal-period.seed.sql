@@ -1,6 +1,6 @@
 WITH proposed AS (
   SELECT
-    fy.finance_company_id,
+    fy.finance_organization_id,
     fy.id AS fiscal_year_id,
     month_start::date AS start_date,
     (month_start + INTERVAL '1 month - 1 day')::date AS end_date,
@@ -17,11 +17,11 @@ WITH proposed AS (
     )
 )
 INSERT INTO fiscal_period (
-  finance_company_id, fiscal_year_id, code, name, start_date, end_date, status,
+  finance_organization_id, fiscal_year_id, code, name, start_date, end_date, status,
   creation_actor_type, updated_actor_type
 )
 SELECT
-  p.finance_company_id,
+  p.finance_organization_id,
   p.fiscal_year_id,
   upper(to_char(p.start_date, 'MON')),
   trim(to_char(p.start_date, 'Month')),

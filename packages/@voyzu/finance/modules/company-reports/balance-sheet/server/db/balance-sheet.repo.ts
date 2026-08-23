@@ -49,7 +49,7 @@ export class BalanceSheetRepo {
     const { rows } = await this.db.query(
       `SELECT start_date::text, end_date::text
        FROM fiscal_year
-       WHERE finance_company_id = $1
+       WHERE finance_organization_id = $1
          AND $2::date BETWEEN start_date AND end_date
        ORDER BY start_date DESC
        LIMIT 1`,

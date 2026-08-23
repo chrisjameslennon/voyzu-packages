@@ -7,7 +7,7 @@ import type {
   ApLedgerEntryDocumentReportTotalDto,
   ApSubledgerEntryResponseDto,
 } from "@voyzu/finance/types/modules/ap-subledger";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 
 import { ApBillReportRepo, type ApDocumentLineRow } from "../db/ap-bill-report.repo";
 
@@ -60,7 +60,7 @@ function documentTotals(documentTypeCode: string, rows: ApDocumentLineRow[], tax
 }
 
 async function getApLedgerEntryDocumentReportUnchecked(
-  company: CompanyResponseDto,
+  company: OrganizationResponseDto,
   entry: ApSubledgerEntryResponseDto,
 ): Promise<ApLedgerEntryDocumentReportResponseDto | null> {
   const [lineRows, taxSummaryRows, appliedTransactions, applicationRows] = await Promise.all([

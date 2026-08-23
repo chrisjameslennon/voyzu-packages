@@ -5,7 +5,7 @@ import type { FinancialYearCreateRequestDto } from "@voyzu/finance/types/modules
 import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years/financial-year.response.dto";
 
 import { getPool } from "@voyzu/capability/db";
-import { listCompanies } from "@voyzu/erp-core/companies/operations";
+import { listOrganizations } from "@voyzu/erp-core/organizations/operations";
 import {
   listFinancialYears,
   getFinancialYear,
@@ -32,7 +32,7 @@ function yearDates(startIso: string): { startDate: string; endDate: string } {
 }
 
 before(async () => {
-  const companies = await listCompanies();
+  const companies = await listOrganizations();
   const company = companies[0];
   if (!company) throw new Error("No companies found — run seed scripts before running financial year tests");
   companyId = company.id;

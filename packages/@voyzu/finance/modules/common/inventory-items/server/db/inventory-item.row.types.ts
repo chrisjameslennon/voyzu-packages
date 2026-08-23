@@ -2,7 +2,7 @@ import type { ActorType } from "@voyzu/finance/types/modules/core";
 
 export interface InventoryItemRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   item_code: string;
   item_name: string;
   description: string;
@@ -25,7 +25,7 @@ export interface InventoryItemRow {
 }
 
 export interface InsertInventoryItemRow {
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   description: string;
@@ -42,7 +42,7 @@ export interface InsertInventoryItemRow {
   creation_mutation_id?: string | null;
 }
 
-export interface UpdateInventoryItemRow extends Omit<InsertInventoryItemRow, "finance_company_id" | "code" | "status" | "creation_user_id" | "creation_mutation_id"> {
+export interface UpdateInventoryItemRow extends Omit<InsertInventoryItemRow, "finance_organization_id" | "code" | "status" | "creation_user_id" | "creation_mutation_id"> {
   updated_user_id?: string | null;
   updated_actor_type?: ActorType;
   updated_date?: string;

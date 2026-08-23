@@ -12,7 +12,7 @@ WITH seed (company_code, code, name, description, is_sold, is_purchased, is_cons
     ('TEMPLATE', 'WIP_GOODS', 'Work in Progress', 'Part-complete goods held as work-in-progress inventory during production', FALSE, FALSE, TRUE, NULL, NULL, NULL, '504000', '405000', '505000', 'ACTIVE')
 )
 INSERT INTO item_posting_profile (
-  finance_company_id, code, name, description, is_sold, is_purchased, is_consumed,
+  finance_organization_id, code, name, description, is_sold, is_purchased, is_consumed,
   revenue_gl_account_id, cogs_gl_account_id, purchase_expense_gl_account_id,
   consumption_gl_account_id, adjustment_gain_gl_account_id, adjustment_loss_gl_account_id,
   status, creation_actor_type, updated_actor_type
@@ -21,14 +21,14 @@ SELECT fc.id, s.code, s.name, s.description, s.is_sold, s.is_purchased, s.is_con
   revenue.id, cogs.id, purchase.id, consumption.id, gain.id, loss.id,
   s.status, 'SYSTEM', 'SYSTEM'
 FROM seed s
-JOIN finance_company fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
-LEFT JOIN gl_account revenue ON revenue.finance_company_id = fc.id AND revenue.code = s.revenue_code
-LEFT JOIN gl_account cogs ON cogs.finance_company_id = fc.id AND cogs.code = s.cogs_code
-LEFT JOIN gl_account purchase ON purchase.finance_company_id = fc.id AND purchase.code = s.purchase_expense_code
-LEFT JOIN gl_account consumption ON consumption.finance_company_id = fc.id AND consumption.code = s.consumption_code
-LEFT JOIN gl_account gain ON gain.finance_company_id = fc.id AND gain.code = s.adjustment_gain_code
-LEFT JOIN gl_account loss ON loss.finance_company_id = fc.id AND loss.code = s.adjustment_loss_code
-ON CONFLICT (finance_company_id, code) DO UPDATE SET
+JOIN finance_organization fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
+LEFT JOIN gl_account revenue ON revenue.finance_organization_id = fc.id AND revenue.code = s.revenue_code
+LEFT JOIN gl_account cogs ON cogs.finance_organization_id = fc.id AND cogs.code = s.cogs_code
+LEFT JOIN gl_account purchase ON purchase.finance_organization_id = fc.id AND purchase.code = s.purchase_expense_code
+LEFT JOIN gl_account consumption ON consumption.finance_organization_id = fc.id AND consumption.code = s.consumption_code
+LEFT JOIN gl_account gain ON gain.finance_organization_id = fc.id AND gain.code = s.adjustment_gain_code
+LEFT JOIN gl_account loss ON loss.finance_organization_id = fc.id AND loss.code = s.adjustment_loss_code
+ON CONFLICT (finance_organization_id, code) DO UPDATE SET
   name = EXCLUDED.name,
   description = EXCLUDED.description,
   is_sold = EXCLUDED.is_sold,

@@ -1,6 +1,6 @@
 import type { ActorType } from "@voyzu/finance/types/modules/core";
 export interface ControlAccountRow {
-  finance_company_id: number;
+  finance_organization_id: number;
   ledger: "ACCOUNTS_RECEIVABLE" | "ACCOUNTS_PAYABLE";
   code: string;
   name: string;

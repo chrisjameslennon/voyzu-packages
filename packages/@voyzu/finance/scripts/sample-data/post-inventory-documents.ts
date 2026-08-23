@@ -42,8 +42,8 @@ async function cleanupInventoryScenario(): Promise<void> {
   const directJournalIds = await pool.query<{ id: number }>(
     `SELECT h.id
        FROM journal_header h
-       JOIN finance_company fc ON fc.id = h.finance_company_id
-       JOIN company c ON c.id = fc.company_id
+       JOIN finance_organization fc ON fc.id = h.finance_organization_id
+       JOIN organization c ON c.id = fc.organization_id
       WHERE c.code = $1
         AND h.document_id = ANY($2::text[])`,
     [COMPANY_CODE, SAMPLE_DOCUMENT_IDS],
@@ -51,8 +51,8 @@ async function cleanupInventoryScenario(): Promise<void> {
   const generatedInventoryJournalIds = await pool.query<{ id: number }>(
     `SELECT h.id
        FROM journal_header h
-       JOIN finance_company fc ON fc.id = h.finance_company_id
-       JOIN company c ON c.id = fc.company_id
+       JOIN finance_organization fc ON fc.id = h.finance_organization_id
+       JOIN organization c ON c.id = fc.organization_id
       WHERE c.code = $1
         AND h.document_type_code IN ('INVENTORY_RECEIPT', 'INVENTORY_ISSUE', 'INVENTORY_ADJUSTMENT')
         AND h.document_snapshot_json->'source'->>'source_document_id' = ANY($2::text[])`,

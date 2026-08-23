@@ -1,6 +1,6 @@
 import type { AccountType, ActorType, OperationReference } from "@voyzu/finance/types/modules/core";
 export interface InsertGlAccountCategoryRow {
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   account_type: AccountType;
@@ -33,7 +33,7 @@ export interface PatchGlAccountCategoryRow {
 
 export interface GlAccountCategoryRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   account_type: AccountType;

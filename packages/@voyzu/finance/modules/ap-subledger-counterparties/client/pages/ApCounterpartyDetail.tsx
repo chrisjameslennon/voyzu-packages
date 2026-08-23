@@ -6,7 +6,7 @@ import { CompanyAuditPanel as AuditPanel } from "@voyzu/finance/common/client";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/finance/common/client";
 import type { ApCounterpartyResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
-import type { CompanyResponseDto } from "@voyzu/erp-core/types/modules/companies";
+import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 import { Badge, Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import reportLayout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
@@ -21,7 +21,7 @@ function value(value: string | number | null | undefined) {
   return String(value);
 }
 
-export function ApCounterpartyDetail({ company, counterparty }: { company: CompanyResponseDto; counterparty: ApCounterpartyResponseDto }) {
+export function ApCounterpartyDetail({ company, counterparty }: { company: OrganizationResponseDto; counterparty: ApCounterpartyResponseDto }) {
   const generatedAt = useMemo(
     () => new Date().toLocaleString("en-GB", {
       day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",

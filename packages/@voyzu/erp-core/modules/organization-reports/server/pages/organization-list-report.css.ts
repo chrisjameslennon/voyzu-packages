@@ -105,25 +105,25 @@ export const organizationListReportCss = `
   color: #777;
 }
 
-.orgListCompanyReportSettings {
+.orgListOrganizationReportSettings {
   display: grid;
   gap: 0.15rem;
 }
 
-.orgListCompanyReportHeadings {
+.orgListOrganizationReportHeadings {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
 
-.orgListCompanyReportSettings span {
+.orgListOrganizationReportSettings span {
   color: #64748b;
   font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.orgListCompanyReportSettingsRow td {
+.orgListOrganizationReportSettingsRow td {
   padding-top: 0.15rem;
   padding-bottom: 0.45rem;
   border-bottom-color: #94a3b8;

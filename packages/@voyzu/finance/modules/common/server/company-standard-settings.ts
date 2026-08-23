@@ -12,8 +12,8 @@ export async function getCompanySettingsUiState(
 ): Promise<CompanySettingsUiState> {
   const { rows } = await db.query(
     `SELECT COALESCE(c.status, 'ACTIVE') AS status, fc.use_finance_template_settings
-       FROM finance_company fc
-       LEFT JOIN company c ON c.id = fc.company_id
+       FROM finance_organization fc
+       LEFT JOIN organization c ON c.id = fc.organization_id
       WHERE fc.id = $1
         AND (fc.is_template = true OR c.status != 'DELETED')`,
     [companyId],

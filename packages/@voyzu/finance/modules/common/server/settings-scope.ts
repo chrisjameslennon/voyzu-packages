@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 import { getDb, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError } from "@voyzu/capability/errors";
-import { listSelectableCompaniesForCurrentUser } from "@voyzu/erp-core/company-switcher/server";
+import { listSelectableOrganizationsForCurrentUser } from "@voyzu/erp-core/organization-switcher/server";
 
 export interface CompanySettingsScope {
   companyId: number;
@@ -15,12 +15,12 @@ export interface CompanyApiContext {
   companyCode: string;
 }
 
-const SELECTED_COMPANY_COOKIE = "voyzuSelectedCompanyId";
-const LEGACY_SELECTED_COMPANY_COOKIE = "selectedCompanyId";
+const SELECTED_ORGANIZATION_COOKIE = "voyzuSelectedCompanyId";
+const LEGACY_SELECTED_ORGANIZATION_COOKIE = "selectedCompanyId";
 
 async function getTemplateCompanyId(db: DbExecutor): Promise<number> {
   const { rows } = await db.query(
-    `SELECT id FROM finance_company
+    `SELECT id FROM finance_organization
      WHERE is_template = true ORDER BY id LIMIT 1`,
   );
   const id = rows[0]?.id == null ? null : Number(rows[0].id);
@@ -35,8 +35,8 @@ async function getCompanySettingsState(
   const { rows } = await db.query(
     `SELECT fc.id, fc.is_template, COALESCE(c.status, 'ACTIVE') AS status,
             fc.use_finance_template_settings
-     FROM finance_company fc
-     LEFT JOIN company c ON c.id = fc.company_id
+     FROM finance_organization fc
+     LEFT JOIN organization c ON c.id = fc.organization_id
      WHERE fc.id = $1 AND (fc.is_template = true OR c.status != 'DELETED')`,
     [companyId],
   );
@@ -52,8 +52,8 @@ async function getCompanySettingsState(
 
 async function getActiveCompanyId(companyId: number, db: DbExecutor): Promise<number> {
   const { rows } = await db.query(
-    `SELECT fc.id FROM finance_company fc
-     JOIN company c ON c.id = fc.company_id
+    `SELECT fc.id FROM finance_organization fc
+     JOIN organization c ON c.id = fc.organization_id
      WHERE c.id = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
     [companyId],
   );
@@ -63,7 +63,7 @@ async function getActiveCompanyId(companyId: number, db: DbExecutor): Promise<nu
 
 async function getActiveCompanyIdByCode(companyCode: string, db: DbExecutor): Promise<number> {
   const { rows } = await db.query(
-    `SELECT fc.id FROM company c JOIN finance_company fc ON fc.company_id = c.id
+    `SELECT fc.id FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id
      WHERE c.code = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
     [companyCode],
   );
@@ -73,7 +73,7 @@ async function getActiveCompanyIdByCode(companyCode: string, db: DbExecutor): Pr
 
 async function getActiveCompanyApiContext(companyId: number, db: DbExecutor): Promise<CompanyApiContext> {
   const { rows } = await db.query(
-    `SELECT fc.id, c.code FROM company c JOIN finance_company fc ON fc.company_id = c.id
+    `SELECT fc.id, c.code FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id
      WHERE fc.id = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
     [companyId],
   );
@@ -139,16 +139,16 @@ export async function resolveServerSettingsScope(
   if (mode === "template") return resolveTemplateSettingsScope(db);
 
   const cookieStore = await cookies();
-  const raw = cookieStore.get(SELECTED_COMPANY_COOKIE)?.value
-    ?? cookieStore.get(LEGACY_SELECTED_COMPANY_COOKIE)?.value;
+  const raw = cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value
+    ?? cookieStore.get(LEGACY_SELECTED_ORGANIZATION_COOKIE)?.value;
   const companyId = raw ? Number.parseInt(raw, 10) : NaN;
-  const accessibleCompanies = await listSelectableCompaniesForCurrentUser();
+  const accessibleCompanies = await listSelectableOrganizationsForCurrentUser();
   const { rows } = await db.query(
-    `SELECT company_id::int
-     FROM finance_company
-     WHERE is_template = false AND company_id IS NOT NULL`,
+    `SELECT organization_id::int
+     FROM finance_organization
+     WHERE is_template = false AND organization_id IS NOT NULL`,
   );
-  const financeCompanyIds = new Set(rows.map((row) => Number(row.company_id)));
+  const financeCompanyIds = new Set(rows.map((row) => Number(row.organization_id)));
   const financeCompanies = accessibleCompanies.filter((company) => financeCompanyIds.has(company.id));
   const selectedCompany = financeCompanies.find((company) => company.id === companyId)
     ?? financeCompanies[0]

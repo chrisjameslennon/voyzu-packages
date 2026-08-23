@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
 import {
-  SELECTED_COMPANY_COOKIE,
-  parseSelectedCompanyId,
-  resolveCompanySelectionForCurrentUser,
-} from "@voyzu/erp-core/company-switcher/server";
+  SELECTED_ORGANIZATION_COOKIE,
+  parseSelectedOrganizationId,
+  resolveOrganizationSelectionForCurrentUser,
+} from "@voyzu/erp-core/organization-switcher/server";
 
 export async function getSelectedCompany() {
   const cookieStore = await cookies();
-  const selectedCompanyId = parseSelectedCompanyId(cookieStore.get(SELECTED_COMPANY_COOKIE)?.value);
-  const { selectedCompany } = await resolveCompanySelectionForCurrentUser(selectedCompanyId);
-  return selectedCompany;
+  const selectedOrganizationId = parseSelectedOrganizationId(cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value);
+  const { selectedOrganization } = await resolveOrganizationSelectionForCurrentUser(selectedOrganizationId);
+  return selectedOrganization;
 }

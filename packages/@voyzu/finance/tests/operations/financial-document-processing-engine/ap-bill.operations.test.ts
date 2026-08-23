@@ -134,7 +134,7 @@ function validData(): ApBillDataValidationContext {
   return {
     company: { id: 1, code: "ACME", name: "Acme", country_code: "NZ", base_currency_code: "NZD", status: "ACTIVE" },
     documentProcessor: { code: "AP_BILL", status: "ACTIVE", supports_dimensions: true, cash_movement: false, supports_items: true },
-    counterparty: { id: 10, finance_company_id: 1, code: "SUPP_TEST", name: "Supplier Test", status: "ACTIVE", country_code: "NZ", tax_region_or_province: null, country_currency_code: "NZD" },
+    counterparty: { id: 10, finance_organization_id: 1, code: "SUPP_TEST", name: "Supplier Test", status: "ACTIVE", country_code: "NZ", tax_region_or_province: null, country_currency_code: "NZD" },
     duplicateSupplierBill: null,
     fiscalPeriod: {
       financial_year_id: 20,

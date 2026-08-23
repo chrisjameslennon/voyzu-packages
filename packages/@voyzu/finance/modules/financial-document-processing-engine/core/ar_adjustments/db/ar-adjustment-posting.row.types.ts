@@ -24,7 +24,7 @@ export interface DocumentProcessorRow {
 
 export interface CounterpartyRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   name: string;
   status: "ACTIVE" | "INACTIVE";
@@ -105,7 +105,7 @@ export interface OpenItemRow {
 
 export interface InsertArHeaderInput {
   code: string;
-  finance_company_id: number;
+  finance_organization_id: number;
   journal_header_id: number;
   ar_counterparty_id: number;
   document_type_code: ArAdjustmentDocumentType;
@@ -141,7 +141,7 @@ export interface InsertArLineInput {
 
 export interface InsertTaxHeaderInput {
   code: string;
-  finance_company_id: number;
+  finance_organization_id: number;
   journal_header_id: number;
   document_type_code: ArAdjustmentDocumentType;
   document_id: string;

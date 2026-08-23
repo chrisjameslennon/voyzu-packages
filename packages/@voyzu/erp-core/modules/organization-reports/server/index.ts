@@ -1,5 +1,5 @@
 export {
-  CompaniesReportPage,
+  OrganizationsReportPage,
   CountriesReportPage,
   CurrenciesReportPage,
 } from "./pages/OrganizationListReportPages";

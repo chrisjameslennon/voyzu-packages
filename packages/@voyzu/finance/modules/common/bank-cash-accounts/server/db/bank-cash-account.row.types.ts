@@ -2,7 +2,7 @@ import type { AccountType, ActorType, GlAccountPointerName, Status } from "@voyz
 import type { BankCashAccountType } from "@voyzu/finance/types/modules/bank-cash-accounts";
 export interface BankCashAccountRow {
   id: number;
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   ledger: "BANK_CASH";
   type: BankCashAccountType;
@@ -32,7 +32,7 @@ export interface BankCashAccountRow {
 }
 
 export interface InsertBankCashAccountRow {
-  finance_company_id: number;
+  finance_organization_id: number;
   code: string;
   ledger?: "BANK_CASH";
   type: BankCashAccountType;
