@@ -1,16 +1,42 @@
 import "server-only";
 
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+
+import {
+  OrganizationCreateRequestDto,
+  OrganizationPatchRequestDto,
+  OrganizationResponseDto,
+} from "@voyzu/erp-core/types/modules/organizations";
 import * as service from "./server/lib/organization.service";
 
 function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
   return (...args: TArgs): TResult => service(...args);
 }
 
-export const createOrganization = operation(service.createOrganization);
+export const createOrganization = platformOperation.define(
+  {
+    parameters: Type.Tuple([OrganizationCreateRequestDto]),
+    result: OrganizationResponseDto,
+  },
+  service.createOrganization,
+);
 export const getOrganization = operation(service.getOrganization);
 export const updateOrganization = operation(service.updateOrganization);
-export const patchOrganization = operation(service.patchOrganization);
-export const deleteOrganization = operation(service.deleteOrganization);
+export const patchOrganization = platformOperation.define(
+  {
+    parameters: Type.Tuple([Type.String(), OrganizationPatchRequestDto]),
+    result: OrganizationResponseDto,
+  },
+  service.patchOrganization,
+);
+export const deleteOrganization = platformOperation.define(
+  {
+    parameters: Type.Tuple([Type.String()]),
+    result: Type.Undefined(),
+  },
+  service.deleteOrganization,
+);
 export const listOrganizations = operation(service.listOrganizations);
 export const filterOrganizations = operation(service.filterOrganizations);
 export const searchOrganizations = operation(service.searchOrganizations);

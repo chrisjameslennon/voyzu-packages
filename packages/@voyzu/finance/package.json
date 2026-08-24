@@ -9,7 +9,6 @@
     "voyzu-package": true,
     "allowInstall": true,
     "dependencies": [
-      "@voyzu/localization",
       "@voyzu/erp-core"
     ],
     "pageRootPaths": [
