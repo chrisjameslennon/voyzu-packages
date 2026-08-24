@@ -1,10 +1,12 @@
 import "server-only";
 
-import { inspectRawRequest as inspectRawRequestService } from "./server/lib/raw-request-response.service";
+import * as service from "./server/lib/raw-request-response.service";
 
-export const inspectRawRequest = (
-  ...args: Parameters<typeof inspectRawRequestService>
-): ReturnType<typeof inspectRawRequestService> => inspectRawRequestService(...args);
+function operation<TArgs extends unknown[], TResult>(serviceMethod: (...args: TArgs) => TResult) {
+  return (...args: TArgs): TResult => serviceMethod(...args);
+}
+
+export const inspectRawRequest = operation(service.inspectRawRequest);
 
 export const operations = {
   inspectRawRequest,

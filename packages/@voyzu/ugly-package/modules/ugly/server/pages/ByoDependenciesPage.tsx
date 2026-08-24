@@ -2,7 +2,7 @@ import "server-only";
 
 import { getSingletonHighlighter } from "shiki";
 
-import { ByoDependenciesClient } from "./ByoDependenciesClient";
+import { ByoDependenciesClient } from "../../client";
 
 const packageJsonExample = `// package.json
 {

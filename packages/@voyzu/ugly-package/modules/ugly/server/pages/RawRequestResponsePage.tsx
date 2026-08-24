@@ -2,7 +2,7 @@ import "server-only";
 
 import { getSingletonHighlighter } from "shiki";
 
-import { RawRequestResponseClient } from "./RawRequestResponseClient";
+import { RawRequestResponseClient } from "../../client";
 
 const pageExample = `// module.ts
 pageRoutes: {

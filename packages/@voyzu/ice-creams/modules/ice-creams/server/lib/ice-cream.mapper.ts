@@ -3,7 +3,7 @@ import type {
   IceCreamPatchRequestDto,
   IceCreamResponseDto,
   IceCreamUpdateRequestDto,
-} from "../../../types";
+} from "@voyzu/ice-creams/types";
 import type {
   IceCreamRow,
   InsertIceCreamRow,

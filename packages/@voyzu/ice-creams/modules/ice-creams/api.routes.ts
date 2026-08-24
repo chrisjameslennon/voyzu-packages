@@ -18,7 +18,7 @@ import {
   IceCreamPatchRequestDto,
   IceCreamResponseDto,
   IceCreamUpdateRequestDto,
-} from "../types";
+} from "@voyzu/ice-creams/types";
 import {
   handleActivate,
   handleBatchActivate,
@@ -38,7 +38,7 @@ import {
   handlePatch,
   handleSearch,
   handleUpdate,
-} from "./server";
+} from "./server/api/ice-cream.http.handlers";
 
 const tag = ["Ice Creams"];
 

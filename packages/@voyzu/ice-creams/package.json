@@ -21,12 +21,12 @@
       "import": "./voyzu.package.ts"
     },
     "./navigation/top-nav": {
-      "types": "./navigation/top-nav.topnav.ts",
-      "import": "./navigation/top-nav.topnav.ts"
+      "types": "./navigation/top-nav.ts",
+      "import": "./navigation/top-nav.ts"
     },
     "./navigation/left-nav": {
-      "types": "./navigation/left-nav.leftnav.ts",
-      "import": "./navigation/left-nav.leftnav.ts"
+      "types": "./navigation/left-nav.ts",
+      "import": "./navigation/left-nav.ts"
     },
     "./modules/ice-creams": {
       "types": "./modules/ice-creams/module.ts",
@@ -49,8 +49,8 @@
       "import": "./modules/audit/module.ts"
     },
     "./types": {
-      "types": "./modules/types/index.ts",
-      "import": "./modules/types/index.ts"
+      "types": "./types/index.ts",
+      "import": "./types/index.ts"
     },
     "./modules/ice-creams/server": {
       "types": "./modules/ice-creams/server/index.ts",

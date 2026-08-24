@@ -4,7 +4,7 @@ import { Breadcrumbs, Button } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 
-import type { IceCreamReportRowDto } from "../../types";
+import type { IceCreamReportRowDto } from "@voyzu/ice-creams/types";
 import { allIceCreamsReportCss } from "./all-ice-creams-report.css";
 
 export function AllIceCreamsReport({

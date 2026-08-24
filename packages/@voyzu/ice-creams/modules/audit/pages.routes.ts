@@ -1,7 +1,7 @@
 import {
   IceCreamAuditEventDetailPage,
   IceCreamAuditEventsPage,
-} from "./server/pages/IceCreamAuditPages";
+} from "./server/index";
 
 export const pageRoutes = {
   list: {

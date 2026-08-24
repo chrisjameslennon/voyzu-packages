@@ -1,21 +1,22 @@
 import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
 
-export const RawRequestResponseDto = Type.Object({
-  request: Type.Object({
+export const RawRequestResponseDto = StrictObject({
+  request: StrictObject({
     method: Type.String(),
     url: Type.String(),
-    nextUrl: Type.Object({
+    nextUrl: StrictObject({
       origin: Type.String(),
       pathname: Type.String(),
       search: Type.String(),
     }),
     headers: Type.Record(Type.String(), Type.String()),
-    cookies: Type.Array(Type.Object({
+    cookies: Type.Array(StrictObject({
       name: Type.String(),
       value: Type.String(),
     })),
   }),
-  responseBody: Type.Object({
+  responseBody: StrictObject({
     message: Type.String(),
     receivedAt: Type.String(),
   }),

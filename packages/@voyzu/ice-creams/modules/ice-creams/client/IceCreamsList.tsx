@@ -29,7 +29,7 @@ import type {
   IceCreamCreateRequestDto,
   IceCreamFlavorResponseDto,
   IceCreamResponseDto,
-} from "../../types";
+} from "@voyzu/ice-creams/types";
 import styles from "./ice-creams.module.css";
 
 const CODE_PATTERN = /^[A-Z0-9][A-Z0-9_-]*$/;

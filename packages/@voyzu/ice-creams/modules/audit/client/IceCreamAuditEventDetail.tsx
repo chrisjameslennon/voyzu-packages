@@ -119,10 +119,10 @@ export function IceCreamAuditEventDetail({ event }: { event: AuditEventResponseD
                 <span className={styles.infoLabel}>User Code</span>
                 <span className={styles.infoValue}>{event.actorCode ?? "-"}</span>
               </div>
-              {event.companyId != null && (
+              {event.organizationId != null && (
                 <div className={styles.infoRow}>
-                  <span className={styles.infoLabel}>Company ID</span>
-                  <span className={styles.infoValue}>{event.companyId}</span>
+                  <span className={styles.infoLabel}>Organization ID</span>
+                  <span className={styles.infoValue}>{event.organizationId}</span>
                 </div>
               )}
               <div className={styles.infoRow}>

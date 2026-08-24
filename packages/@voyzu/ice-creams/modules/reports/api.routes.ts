@@ -4,10 +4,8 @@ import {
   UnauthorizedErrorResponseDto,
 } from "@voyzu/types";
 import Type from "typebox";
-import { IceCreamReportRowDto } from "../types";
-import {
-  handleAllIceCreamsReport,
-} from "./server";
+import { IceCreamReportRowDto } from "@voyzu/ice-creams/types";
+import { handleAllIceCreamsReport } from "./server/api/ice-cream-report.http.handlers";
 
 const commonResponses = {
   "401": {

@@ -1,5 +1,5 @@
-import { UglyPackagePage } from "./UglyPackagePage";
-import styles from "./ugly-package.module.css";
+import { UglyPackagePage } from "../../client/UglyPackagePage";
+import styles from "../../client/ugly-package.module.css";
 
 export function DeveloperFreedomPage() {
   return (

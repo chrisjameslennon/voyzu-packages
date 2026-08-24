@@ -1,0 +1,1 @@
+export { AllIceCreamsReport } from "./AllIceCreamsReport";

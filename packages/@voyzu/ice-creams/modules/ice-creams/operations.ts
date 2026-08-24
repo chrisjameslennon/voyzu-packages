@@ -1,29 +1,29 @@
 import "server-only";
 
-import * as iceCreamService from "./server/lib/ice-cream.service";
+import * as service from "./server/lib/ice-cream.service";
 
 function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
   return (...args: TArgs): TResult => service(...args);
 }
 
-export const listIceCreamFlavors = operation(iceCreamService.listIceCreamFlavors);
-export const createIceCream = operation(iceCreamService.createIceCream);
-export const getIceCream = operation(iceCreamService.getIceCream);
-export const listIceCreams = operation(iceCreamService.listIceCreams);
-export const filterIceCreams = operation(iceCreamService.filterIceCreams);
-export const searchIceCreams = operation(iceCreamService.searchIceCreams);
-export const updateIceCream = operation(iceCreamService.updateIceCream);
-export const patchIceCream = operation(iceCreamService.patchIceCream);
-export const batchCreateIceCreams = operation(iceCreamService.batchCreateIceCreams);
-export const batchGetIceCreams = operation(iceCreamService.batchGetIceCreams);
-export const batchUpdateIceCreams = operation(iceCreamService.batchUpdateIceCreams);
-export const batchPatchIceCreams = operation(iceCreamService.batchPatchIceCreams);
-export const deleteIceCream = operation(iceCreamService.deleteIceCream);
-export const batchDeleteIceCreams = operation(iceCreamService.batchDeleteIceCreams);
-export const activateIceCream = operation(iceCreamService.activateIceCream);
-export const deactivateIceCream = operation(iceCreamService.deactivateIceCream);
-export const activateIceCreams = operation(iceCreamService.activateIceCreams);
-export const deactivateIceCreams = operation(iceCreamService.deactivateIceCreams);
+export const listIceCreamFlavors = operation(service.listIceCreamFlavors);
+export const createIceCream = operation(service.createIceCream);
+export const getIceCream = operation(service.getIceCream);
+export const listIceCreams = operation(service.listIceCreams);
+export const filterIceCreams = operation(service.filterIceCreams);
+export const searchIceCreams = operation(service.searchIceCreams);
+export const updateIceCream = operation(service.updateIceCream);
+export const patchIceCream = operation(service.patchIceCream);
+export const batchCreateIceCreams = operation(service.batchCreateIceCreams);
+export const batchGetIceCreams = operation(service.batchGetIceCreams);
+export const batchUpdateIceCreams = operation(service.batchUpdateIceCreams);
+export const batchPatchIceCreams = operation(service.batchPatchIceCreams);
+export const deleteIceCream = operation(service.deleteIceCream);
+export const batchDeleteIceCreams = operation(service.batchDeleteIceCreams);
+export const activateIceCream = operation(service.activateIceCream);
+export const deactivateIceCream = operation(service.deactivateIceCream);
+export const activateIceCreams = operation(service.activateIceCreams);
+export const deactivateIceCreams = operation(service.deactivateIceCreams);
 
 export const operations = {
   listIceCreamFlavors,

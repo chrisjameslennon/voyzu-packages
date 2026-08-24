@@ -1,4 +1,4 @@
-import { AllIceCreamsReportPage } from "./server/pages/AllIceCreamsReportPage";
+import { AllIceCreamsReportPage } from "./server/index";
 
 const apiDocsUrl = "/api-reference/@voyzu-ice-creams/ice-cream-reports";
 

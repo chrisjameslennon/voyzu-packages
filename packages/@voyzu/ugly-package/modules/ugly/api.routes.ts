@@ -3,7 +3,7 @@ import {
   InternalServerErrorResponseDto,
   UnauthorizedErrorResponseDto,
 } from "@voyzu/types";
-import { RawRequestResponseDto } from "../types";
+import { RawRequestResponseDto } from "@voyzu/ugly-package/types";
 import { handleRawRequestResponse } from "./server/api/raw-request-response.http.handlers";
 
 export const apiDefinitions = {

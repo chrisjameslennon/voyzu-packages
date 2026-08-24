@@ -1,7 +1,9 @@
-import { ByoDependenciesPage } from "./pages/ByoDependenciesPage";
-import { DeveloperFreedomPage } from "./pages/DeveloperFreedomPage";
-import { RawRequestResponsePage } from "./pages/RawRequestResponsePage";
-import { UglyHomePage } from "./pages/UglyHomePage";
+import {
+  ByoDependenciesPage,
+  DeveloperFreedomPage,
+  RawRequestResponsePage,
+  UglyHomePage,
+} from "./server/index";
 
 export const pageRoutes = {
   home: {

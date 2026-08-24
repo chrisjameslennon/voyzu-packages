@@ -1,5 +1,4 @@
-import { IceCreamDetailPage } from "./server/pages/IceCreamDetailPage";
-import { IceCreamsListPage } from "./server/pages/IceCreamsListPage";
+import { IceCreamDetailPage, IceCreamsListPage } from "./server/index";
 
 export const pageRoutes = {
   list: {

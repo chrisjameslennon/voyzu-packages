@@ -1,6 +1,6 @@
 import "server-only";
 
-import { AllIceCreamsReport } from "../../client/AllIceCreamsReport";
+import { AllIceCreamsReport } from "../../client";
 import { getAllIceCreamsReport } from "../lib/ice-cream-report.service";
 
 export async function AllIceCreamsReportPage({

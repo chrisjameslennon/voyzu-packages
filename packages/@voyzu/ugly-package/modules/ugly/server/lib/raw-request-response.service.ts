@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import type { RawRequestResponseDto } from "../../../types";
+import type { RawRequestResponseDto } from "@voyzu/ugly-package/types";
 
 const sensitiveHeader = /^(authorization|cookie|proxy-authorization|x-api-key)$/i;
 

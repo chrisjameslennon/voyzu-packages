@@ -24,7 +24,7 @@ import type {
   IceCreamCreateRequestDto,
   IceCreamPatchRequestDto,
   IceCreamUpdateRequestDto,
-} from "../../../types";
+} from "@voyzu/ice-creams/types";
 import {
   activateIceCream,
   activateIceCreams,

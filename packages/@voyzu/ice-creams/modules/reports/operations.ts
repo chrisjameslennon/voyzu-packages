@@ -1,10 +1,12 @@
 import "server-only";
 
-import { getAllIceCreamsReport as getAllIceCreamsReportService } from "./server/lib/ice-cream-report.service";
+import * as service from "./server/lib/ice-cream-report.service";
 
-export const getAllIceCreamsReport = (
-  ...args: Parameters<typeof getAllIceCreamsReportService>
-): ReturnType<typeof getAllIceCreamsReportService> => getAllIceCreamsReportService(...args);
+function operation<TArgs extends unknown[], TResult>(serviceMethod: (...args: TArgs) => TResult) {
+  return (...args: TArgs): TResult => serviceMethod(...args);
+}
+
+export const getAllIceCreamsReport = operation(service.getAllIceCreamsReport);
 
 export const operations = {
   getAllIceCreamsReport,

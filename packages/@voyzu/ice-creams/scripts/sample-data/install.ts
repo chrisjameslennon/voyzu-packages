@@ -1,8 +1,8 @@
-import type { IceCreamCreateRequestDto } from "../../modules/types";
+import type { IceCreamCreateRequestDto } from "@voyzu/ice-creams/types";
 import {
   batchCreateIceCreams,
   batchGetIceCreams,
-} from "../../modules/ice-creams/server";
+} from "../../modules/ice-creams/server/lib/ice-cream.service";
 
 export const iceCreamSampleData: IceCreamCreateRequestDto[] = [
   { code: "CLASSIC_VANILLA", name: "Classic Vanilla", flavorCode: "VANILLA", supplier: "Southern Alps Creamery" },

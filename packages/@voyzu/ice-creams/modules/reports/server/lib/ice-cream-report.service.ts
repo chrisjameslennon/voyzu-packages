@@ -1,5 +1,5 @@
-import type { IceCreamReportRowDto } from "../../../types";
-import { listIceCreams } from "../../../ice-creams/server";
+import type { IceCreamReportRowDto } from "@voyzu/ice-creams/types";
+import { listIceCreams } from "../../../ice-creams/server/lib/ice-cream.service";
 
 export async function getAllIceCreamsReport(): Promise<IceCreamReportRowDto[]> {
   return (await listIceCreams()).map((iceCream) => ({

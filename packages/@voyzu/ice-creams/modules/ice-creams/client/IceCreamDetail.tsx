@@ -24,7 +24,7 @@ import type {
   IceCreamFlavorResponseDto,
   IceCreamPatchRequestDto,
   IceCreamResponseDto,
-} from "../../types";
+} from "@voyzu/ice-creams/types";
 import styles from "./ice-creams.module.css";
 
 export function IceCreamDetail({

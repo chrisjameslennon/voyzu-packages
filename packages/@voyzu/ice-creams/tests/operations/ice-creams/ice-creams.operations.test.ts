@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { after, before, test } from "node:test";
 
 import { getDb, getPool } from "@voyzu/capability/db";
-import type { IceCreamCreateRequestDto } from "../../../modules/types";
+import type { IceCreamCreateRequestDto } from "@voyzu/ice-creams/types";
 import {
   activateIceCream,
   activateIceCreams,
