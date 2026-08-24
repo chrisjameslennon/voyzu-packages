@@ -38,7 +38,7 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
     const response = await fetch(url, init);
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string } | null;
-      throw new Error(body?.message ?? "Unable to update Finance company");
+      throw new Error(body?.message ?? "Unable to update financial entity");
     }
     return response.json() as Promise<FinanceCompanyResponseDto>;
   };
@@ -57,10 +57,10 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
     setError("");
     try {
       apply(await request(`/api/finance/companies/${encodeURIComponent(current.code)}/activate`, { method: "POST" }));
-      setToast(`Enabled ${current.code} for Finance`);
+      setToast(`Created financial entity ${current.code}`);
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to enable company for Finance");
+      setError(cause instanceof Error ? cause.message : "Unable to create financial entity");
     } finally {
       setBusy(false);
     }
@@ -84,7 +84,7 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
       setToast(`Updated ${current.code}`);
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to update Finance company");
+      setError(cause instanceof Error ? cause.message : "Unable to update financial entity");
     } finally {
       setBusy(false);
     }
@@ -101,7 +101,7 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
         </div></div>
         <div className={layout.slotActions}><div className={detail.headerActions}>
           <DetailBackButton fallbackHref="/finance/companies" />
-          {!current.financeEnabled && <Button variant="primary" icon="check_circle" disabled={busy || current.status !== "ACTIVE"} onClick={() => void activate()}>Enable Finance</Button>}
+          {!current.financeEnabled && <Button variant="primary" icon="check_circle" disabled={busy || current.status !== "ACTIVE"} onClick={() => void activate()}>Create Financial Entity</Button>}
         </div></div>
       </header>
       {error && <div className={layout.slotAlert}><ValidationAlert errors={[error]} visible onDismiss={() => setError("")} /></div>}
@@ -114,7 +114,7 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
           {
             key: "details", label: "Details", content: <>
               <section className={detail.card}>
-                <div className={detail.cardHeader}><h2 className={`${typography.sectionHeading} ${detail.cardHeaderTitle}`}>Company Details</h2>
+                <div className={detail.cardHeader}><h2 className={`${typography.sectionHeading} ${detail.cardHeaderTitle}`}>Financial Entity Details</h2>
                   {current.financeEnabled && <div className={detail.cardHeaderActions}><Button variant="secondary" icon="save" disabled={readOnly} onClick={() => void save()}>Save</Button></div>}
                 </div>
                 <div className={detail.formGrid}>
@@ -138,16 +138,16 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
           {
             key: "settings", label: "Settings", content: <section className={detail.card}>
               <h2 className={typography.sectionHeading}>Finance Admin standard settings</h2>
-              {!current.financeEnabled ? <p>Enable this company for Finance before configuring its settings.</p>
+              {!current.financeEnabled ? <p>Create this financial entity before configuring its settings.</p>
                 : current.useFinanceTemplateSettings ? <>
-                  <p>This company inherits the Finance Admin standard settings. It can be given its own copy, but cannot later be re-coupled.</p>
-                  <div className={detail.cardActions}><Button variant="secondary-destructive" disabled={readOnly} onClick={() => setConfirmDecouple(true)}>Use company-specific settings</Button></div>
-                </> : <p>This company uses its own financial settings.</p>}
+                  <p>This financial entity inherits the Finance Admin standard settings. It can be given its own copy, but cannot later be re-coupled.</p>
+                  <div className={detail.cardActions}><Button variant="secondary-destructive" disabled={readOnly} onClick={() => setConfirmDecouple(true)}>Use entity-specific settings</Button></div>
+                </> : <p>This financial entity uses its own financial settings.</p>}
             </section>,
           },
         ]} />
       </main>
-      <ConfirmDialog isOpen={confirmDecouple} title="Use company-specific settings" message="This one-way change gives the company its own copy of the current Finance Admin settings. Future Finance Admin changes will not flow through." confirmLabel="Proceed" confirmVariant="danger" onClose={() => setConfirmDecouple(false)} onConfirm={() => { setConfirmDecouple(false); void save(false); }} />
+      <ConfirmDialog isOpen={confirmDecouple} title="Use entity-specific settings" message="This one-way change gives the financial entity its own copy of the current Finance Admin settings. Future Finance Admin changes will not flow through." confirmLabel="Proceed" confirmVariant="danger" onClose={() => setConfirmDecouple(false)} onConfirm={() => { setConfirmDecouple(false); void save(false); }} />
       <Toast isVisible={Boolean(toast)} onClose={() => setToast("")} message={toast} />
     </div>
   );

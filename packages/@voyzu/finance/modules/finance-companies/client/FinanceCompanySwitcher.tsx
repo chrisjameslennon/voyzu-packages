@@ -70,7 +70,7 @@ export function FinanceCompanySwitcher({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  const displayName = isTemplateMode ? "Finance Admin" : selectedCompany?.name ?? "Select Company";
+  const displayName = isTemplateMode ? "Finance Admin" : selectedCompany?.name ?? "Select Financial Entity";
 
   const selectCompany = async (company: OrganizationResponseDto) => {
     setIsSelectingCompanyId(company.id);
@@ -96,7 +96,7 @@ export function FinanceCompanySwitcher({
 
   return (
     <div ref={rootRef} className={`${localStyles.context} ${isCollapsed ? localStyles.contextCollapsed : ""}`}>
-      {!isCollapsed && <div className={localStyles.label}>Company</div>}
+      {!isCollapsed && <div className={localStyles.label}>Financial Entity</div>}
       <button
         className={`${localStyles.trigger} ${isCollapsed ? localStyles.triggerCollapsed : ""}`}
         type="button"
@@ -129,12 +129,12 @@ export function FinanceCompanySwitcher({
             <span className={`material-symbols-outlined ${localStyles.templateIcon}`}>account_balance</span>
             <span className={localStyles.optionContent}>
               <span className={localStyles.optionName}>Finance Admin</span>
-              <span className={localStyles.optionMeta}>Manage companies and the financial template</span>
+              <span className={localStyles.optionMeta}>Manage financial entities and the financial template</span>
             </span>
             <span className="material-symbols-outlined">chevron_right</span>
           </button>
           <div className={localStyles.panelDivider} />
-          <div className={localStyles.panelLabel}>Select Company</div>
+          <div className={localStyles.panelLabel}>Select Financial Entity</div>
           <div className={localStyles.grid}>
             {companies.map((company) => {
               const isActive = !isTemplateMode && selectedCompany?.id === company.id;

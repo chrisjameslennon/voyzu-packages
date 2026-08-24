@@ -3,7 +3,7 @@ import { FinanceCompaniesListPage, FinanceCompanyDetailPage } from "@voyzu/finan
 export const pageRoutes = {
   list: {
     id: "voyzu.financeCompanies.page.list",
-    pageTitle: "Companies",
+    pageTitle: "Financial Entities",
     path: "/finance/companies",
     Page: FinanceCompaniesListPage,
     breadcrumbBase: [{ label: "Finance Admin", href: "/finance" }],
@@ -11,12 +11,12 @@ export const pageRoutes = {
   },
   detail: {
     id: "voyzu.financeCompanies.page.detail",
-    pageTitle: "Finance Company",
+    pageTitle: "Financial Entity",
     path: "/finance/companies/[code]",
     Page: FinanceCompanyDetailPage,
     breadcrumbBase: [
       { label: "Finance Admin", href: "/finance" },
-      { label: "Companies", href: "/finance/companies" },
+      { label: "Financial Entities", href: "/finance/companies" },
     ],
     auth: { required: true, minRole: "STANDARD" },
   },

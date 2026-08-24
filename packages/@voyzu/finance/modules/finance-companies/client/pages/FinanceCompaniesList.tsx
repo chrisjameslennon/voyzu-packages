@@ -43,11 +43,11 @@ export function FinanceCompaniesList({ initialCompanies }: { initialCompanies: F
     setBusy(true);
     try {
       const response = await fetch("/api/finance/companies");
-      if (!response.ok) throw new Error("Unable to refresh Finance companies");
+      if (!response.ok) throw new Error("Unable to refresh financial entities");
       setCompanies(await response.json() as FinanceCompanyResponseDto[]);
       setSelectedIds(new Set());
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to refresh Finance companies");
+      setError(cause instanceof Error ? cause.message : "Unable to refresh financial entities");
     } finally {
       setBusy(false);
     }
@@ -61,14 +61,14 @@ export function FinanceCompaniesList({ initialCompanies }: { initialCompanies: F
       const response = await fetch(`/api/finance/companies/${encodeURIComponent(selected.code)}/activate`, { method: "POST" });
       if (!response.ok) {
         const body = await response.json().catch(() => null) as { message?: string } | null;
-        throw new Error(body?.message ?? "Unable to enable company for Finance");
+        throw new Error(body?.message ?? "Unable to create financial entity");
       }
       const updated = await response.json() as FinanceCompanyResponseDto;
       setCompanies((current) => current.map((item) => item.id === updated.id ? updated : item));
-      setToast(`Enabled ${updated.code} for Finance`);
+      setToast(`Created financial entity ${updated.code}`);
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to enable company for Finance");
+      setError(cause instanceof Error ? cause.message : "Unable to create financial entity");
     } finally {
       setBusy(false);
     }
@@ -95,22 +95,22 @@ export function FinanceCompaniesList({ initialCompanies }: { initialCompanies: F
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
         <div className={layout.slotTitle}>
           <div className={list.titleIcon}><span className={`material-symbols-outlined ${list.titleIconSymbol}`}>domain</span></div>
-          <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Companies</h1>
-          <div className={layout.slotTitleByline}><p className={typography.headingByline}>Enable organization companies for Finance and manage their financial settings.</p></div>
+          <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Financial Entities</h1>
+          <div className={layout.slotTitleByline}><p className={typography.headingByline}>A Financial entity has its own set of financial records; it can be a company, an organization, a division or any other financial entity. To create a new financial entity, first add a new Organization, then enable it for Finance.</p></div>
         </div>
       </header>
       <div className={layout.listToolbar}>
         <div className={layout.slotToolbarLeft}><FilterPanel tabs={FILTER_TABS} filters={filters} onApply={setFilters} onClear={() => setFilters({})} onRemoveFilter={(key) => setFilters((current) => ({ ...current, [key]: [] }))} showChips={false} /></div>
-        <div className={layout.slotToolbarSearch}><Input search value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search companies..." /></div>
+        <div className={layout.slotToolbarSearch}><Input search value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search financial entities..." /></div>
         <div className={layout.slotToolbarRight}><div className={list.toolbarActions}>
-          <Button variant="secondary" icon="check_circle" disabled={!selected || selected.financeEnabled || selected.status !== "ACTIVE" || busy} onClick={() => void activate()}>Enable Finance</Button>
+          <Button variant="secondary" icon="check_circle" disabled={!selected || selected.financeEnabled || selected.status !== "ACTIVE" || busy} onClick={() => void activate()}>Create Financial Entity</Button>
           <Button variant="plain" icon="sync" title="Refresh" disabled={busy} className={busy ? list.spinning : undefined} onClick={() => void refresh()} />
         </div></div>
       </div>
       {(hasFilters || search.trim()) && <div className={layout.chipsRow}><div className={layout.slotChips}><FilterChips tabs={FILTER_TABS} filters={filters} additionalChips={search.trim() ? [{ key: "search", label: "Search contains", value: search.trim(), onRemove: () => setSearch("") }] : []} onClear={() => { setFilters({}); setSearch(""); }} onRemoveFilter={(key) => setFilters((current) => ({ ...current, [key]: [] }))} /></div></div>}
       {error && <div className={layout.slotAlert}><ValidationAlert errors={[error]} visible onDismiss={() => setError("")} /></div>}
       <div className={layout.listBody}><div className={layout.slotBody}>
-        <DataTable columns={columns} rows={filtered} selectedIds={selectedIds} isAllSelected={false} isSomeSelected={selectedIds.size > 0} singleSelect onSelectAll={() => setSelectedIds(new Set())} onSelectOne={(id) => setSelectedIds((current) => current.has(id) ? new Set() : new Set([id]))} onRowClick={(row) => router.push(`/finance/companies/${encodeURIComponent(row.code)}`)} currentPage={1} totalPages={1} onPageChange={() => undefined} totalCount={companies.length} filteredCount={filtered.length} itemLabel="companies" hasData={companies.length > 0} emptyIcon="domain" emptyTitle="No companies found" emptyText="Create companies in Organization first" />
+        <DataTable columns={columns} rows={filtered} selectedIds={selectedIds} isAllSelected={false} isSomeSelected={selectedIds.size > 0} singleSelect onSelectAll={() => setSelectedIds(new Set())} onSelectOne={(id) => setSelectedIds((current) => current.has(id) ? new Set() : new Set([id]))} onRowClick={(row) => router.push(`/finance/companies/${encodeURIComponent(row.code)}`)} currentPage={1} totalPages={1} onPageChange={() => undefined} totalCount={companies.length} filteredCount={filtered.length} itemLabel="financial entities" hasData={companies.length > 0} emptyIcon="domain" emptyTitle="No financial entities found" emptyText="To create a new financial entity, first add a new Organization." />
       </div></div>
       <Toast isVisible={Boolean(toast)} onClose={() => setToast("")} message={toast} />
     </div>

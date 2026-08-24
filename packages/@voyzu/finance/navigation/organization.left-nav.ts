@@ -20,7 +20,7 @@ export const financeTemplateLeftNav = [
   {
     label: "Finance Admin",
     items: [
-      { label: "Companies", icon: "domain", routeId: financeCompaniesModule.pageRoutes.list.id },
+      { label: "Financial Entities", icon: "domain", routeId: financeCompaniesModule.pageRoutes.list.id },
       { label: "Country Tax Settings", icon: "public", routeId: countryTaxSettingsModule.pageRoutes.list.id },
     ],
   },
