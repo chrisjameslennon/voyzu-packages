@@ -9,11 +9,26 @@ after(async () => {
   await getPool().end();
 });
 
-test("a decoupled package can optionally patch an ERP Core organization", async () => {
+const createOrganization = "@voyzu/erp-core.createOrganization";
+const patchOrganization = "@voyzu/erp-core.patchOrganization";
+const deleteOrganization = "@voyzu/erp-core.deleteOrganization";
+const missingOperation = "@voyzu/erp-core.missingOperation";
+
+test("a decoupled package can inspect operation availability", async () => {
+  assert.equal(operation.has(patchOrganization), true);
+  assert.equal(operation.has(missingOperation), false);
+  assert.equal(await operation.callOptional(missingOperation), undefined);
+  await assert.rejects(
+    operation.call(missingOperation),
+    /Operation @voyzu\/erp-core\.missingOperation is not available/,
+  );
+});
+
+test("a decoupled package can call ERP Core organization operations", async () => {
   const code = `POC${randomUUID().replaceAll("-", "").slice(0, 8)}`.toUpperCase();
   const originalName = "Operations POC organization";
-  const created = await operation.callOptional(
-    "@voyzu/erp-core.createOrganization",
+  const created = await operation.call(
+    createOrganization,
     {
       code,
       name: originalName,
@@ -25,24 +40,33 @@ test("a decoupled package can optionally patch an ERP Core organization", async 
 
   const changedName = `Operations POC ${Date.now()}`;
   try {
-    const result = await operation.callOptional(
-      "@voyzu/erp-core.patchOrganization",
+    const optionalResult = await operation.callOptional(
+      patchOrganization,
       code,
       { name: changedName },
     );
 
-    assert.ok(result && typeof result === "object");
-    assert.equal(Reflect.get(result, "name"), changedName);
+    assert.ok(optionalResult && typeof optionalResult === "object");
+    assert.equal(Reflect.get(optionalResult, "name"), changedName);
+
+    const requiredResult = await operation.call(
+      patchOrganization,
+      code,
+      { name: originalName },
+    );
+
+    assert.ok(requiredResult && typeof requiredResult === "object");
+    assert.equal(Reflect.get(requiredResult, "name"), originalName);
 
     await assert.rejects(
-      operation.callOptional(
-        "@voyzu/erp-core.patchOrganization",
+      operation.call(
+        patchOrganization,
         code,
         { name: 42 },
       ),
       /Invalid operation arguments/,
     );
   } finally {
-    await operation.callOptional("@voyzu/erp-core.deleteOrganization", code);
+    await operation.call(deleteOrganization, code);
   }
 });
