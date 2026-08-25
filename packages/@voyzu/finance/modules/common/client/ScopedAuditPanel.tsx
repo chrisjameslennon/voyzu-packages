@@ -4,14 +4,10 @@ import { useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { AuditPanel, type AuditPanelProps } from "@voyzu/audit/client";
-import { detailLinkWithBackContext, type DetailBackSource } from "@voyzu/ui-surface/client";
+import { detailLinkWithBackContext } from "@voyzu/ui-surface/client";
 
 export interface ScopedAuditPanelProps extends Omit<AuditPanelProps, "onNavigate"> {
   mutationId?: string | null;
-}
-
-interface ScopedAuditPanelInternalProps extends ScopedAuditPanelProps {
-  backSource: Extract<DetailBackSource, "companyAudit" | "organizationAudit">;
 }
 
 function withMutationId(auditHref: string | undefined, mutationId: string | null | undefined) {
@@ -23,16 +19,15 @@ function withMutationId(auditHref: string | undefined, mutationId: string | null
 export function ScopedAuditPanel({
   auditHref,
   mutationId,
-  backSource,
   ...props
-}: ScopedAuditPanelInternalProps) {
+}: ScopedAuditPanelProps) {
   const router = useRouter();
   const pathname = usePathname();
 
   const resolveHref = useCallback((href: string, resolvedMutationId?: string | null) => {
     const target = withMutationId(href, resolvedMutationId);
-    return target ? detailLinkWithBackContext(target, backSource, pathname) : undefined;
-  }, [backSource, pathname]);
+    return target ? detailLinkWithBackContext(target, "audit", pathname) : undefined;
+  }, [pathname]);
 
   const targetHref = auditHref ? resolveHref(auditHref, mutationId) : undefined;
 

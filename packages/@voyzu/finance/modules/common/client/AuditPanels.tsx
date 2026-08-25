@@ -3,9 +3,9 @@
 import { ScopedAuditPanel, type ScopedAuditPanelProps } from "./ScopedAuditPanel";
 
 export function CompanyAuditPanel(props: ScopedAuditPanelProps) {
-  return <ScopedAuditPanel {...props} backSource="companyAudit" />;
+  return <ScopedAuditPanel {...props} />;
 }
 
 export function OrganizationAuditPanel(props: ScopedAuditPanelProps) {
-  return <ScopedAuditPanel {...props} backSource="organizationAudit" />;
+  return <ScopedAuditPanel {...props} />;
 }
