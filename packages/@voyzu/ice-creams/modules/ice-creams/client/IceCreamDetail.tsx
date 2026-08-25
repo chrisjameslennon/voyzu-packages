@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AuditPanel } from "@voyzu/audit/client";
 import {
   Badge,
@@ -15,7 +15,7 @@ import {
   required,
   useFormValidation,
 } from "@voyzu/ui-components";
-import { DetailBackButton } from "@voyzu/ui-surface/client";
+import { detailLinkWithBackContext, DetailBackButton } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
@@ -35,6 +35,7 @@ export function IceCreamDetail({
   flavors: IceCreamFlavorResponseDto[];
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [current, setCurrent] = useState(iceCream);
   const [name, setName] = useState(iceCream.name);
   const [flavorCode, setFlavorCode] = useState(iceCream.flavor.code);
@@ -140,7 +141,7 @@ export function IceCreamDetail({
             const filter = mutationId
               ? `mutationId=${encodeURIComponent(mutationId)}`
               : `entityType=ice_cream&entityId=${current.id}`;
-            return `/ice-creams/audit?${filter}&from=ice-cream&fromCode=${encodeURIComponent(current.code)}`;
+            return detailLinkWithBackContext(`/settings/audit?${filter}`, "audit", pathname);
           })()}
           onNavigate={(href) => router.push(href)}
         />

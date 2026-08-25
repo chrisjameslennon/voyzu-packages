@@ -44,10 +44,6 @@
       "types": "./modules/reports/operations.ts",
       "import": "./modules/reports/operations.ts"
     },
-    "./modules/audit": {
-      "types": "./modules/audit/module.ts",
-      "import": "./modules/audit/module.ts"
-    },
     "./types": {
       "types": "./types/index.ts",
       "import": "./types/index.ts"
