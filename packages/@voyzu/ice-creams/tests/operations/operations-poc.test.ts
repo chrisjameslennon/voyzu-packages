@@ -5,8 +5,6 @@ import { after, test } from "node:test";
 import { getPool } from "@voyzu/capability/db";
 import { operation } from "@voyzu/capability/operations";
 
-await import("../../../../../.run/voyzu/apps/web/.generated/operations/register");
-
 after(async () => {
   await getPool().end();
 });
