@@ -5,7 +5,6 @@ import {
   DataError,
   NotFoundError,
 } from "@voyzu/capability/errors";
-import { events as platformEvents } from "@voyzu/capability/events";
 import {
   createCreationAuditStamp,
   createUpdateAuditStamp,
@@ -26,7 +25,6 @@ import type {
   IceCreamUpdateRequestDto,
 } from "@voyzu/ice-creams/types";
 import { Activate, Deactivate, Delete } from "../../domain/operation-policy";
-import { events } from "../../events";
 import { IceCreamRepo } from "../db/ice-cream.repo";
 import type { IceCreamRow } from "../db/ice-cream.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./ice-cream.mapper";
@@ -88,7 +86,6 @@ export async function createIceCream(
         await createCreationAuditStamp(),
       ));
       const iceCream = await responseDto(row);
-      await platformEvents.dispatch(events.iceCreamCreated, iceCream, { transaction: db });
       return iceCream;
     });
   } catch (error) {
@@ -132,7 +129,6 @@ export async function updateIceCream(
         withUpdateAudit(toUpdateRow(input, flavor.id), await createUpdateAuditStamp()),
       );
       const iceCream = await responseDto(row);
-      await platformEvents.dispatch(events.iceCreamUpdated, iceCream, { transaction: db });
       return iceCream;
     });
   } catch (error) {
@@ -156,7 +152,6 @@ export async function patchIceCream(
         withUpdateAudit(toPatchRow(input, flavor?.id), await createUpdateAuditStamp()),
       );
       const iceCream = await responseDto(row);
-      await platformEvents.dispatch(events.iceCreamUpdated, iceCream, { transaction: db });
       return iceCream;
     });
   } catch (error) {
@@ -178,7 +173,6 @@ export async function batchCreateIceCreams(
         rows.push(await repo.insert(withCreationAudit(toInsertRow(input, flavor.id), audit)));
       }
       const iceCreams = await responseDtos(rows);
-      await platformEvents.dispatch(events.iceCreamsCreated, iceCreams, { transaction: client });
       return iceCreams;
     });
   } catch (error) {
@@ -208,7 +202,6 @@ export async function batchUpdateIceCreams(
       }
     }
     const iceCreams = await responseDtos(rows);
-    await platformEvents.dispatch(events.iceCreamsUpdated, iceCreams, { transaction: client });
     return iceCreams;
   });
 }
@@ -233,7 +226,6 @@ export async function batchPatchIceCreams(
       }
     }
     const iceCreams = await responseDtos(rows);
-    await platformEvents.dispatch(events.iceCreamsUpdated, iceCreams, { transaction: client });
     return iceCreams;
   });
 }
@@ -251,8 +243,6 @@ export async function deleteIceCream(code: string): Promise<void> {
     const repo = new IceCreamRepo(db);
     const [row] = await requireRows(repo, normalizeCodes([code]));
     throwIfBlocked(Delete(row));
-    const iceCream = await responseDto(row);
-    await platformEvents.dispatch(events.iceCreamDeleted, iceCream, { transaction: db });
     const audit = await createUpdateAuditStamp();
     await repo.stampDeletion([row.code], audit);
     await repo.delete([row.code]);
@@ -265,8 +255,6 @@ export async function batchDeleteIceCreams(codes: string[]): Promise<void> {
     const repo = new IceCreamRepo(client);
     const rows = await requireRows(repo, normalized);
     rows.forEach((row) => throwIfBlocked(Delete(row)));
-    const iceCreams = await responseDtos(rows);
-    await platformEvents.dispatch(events.iceCreamsDeleted, iceCreams, { transaction: client });
     const audit = await createUpdateAuditStamp();
     await repo.stampDeletion(normalized, audit);
     await repo.delete(normalized);
@@ -276,7 +264,6 @@ export async function batchDeleteIceCreams(codes: string[]): Promise<void> {
 export async function activateIceCream(code: string): Promise<IceCreamResponseDto> {
   return withTransaction(async (db) => {
     const [iceCream] = await transitionIceCreamStatus(db, [code], "ACTIVE");
-    await platformEvents.dispatch(events.iceCreamActivated, iceCream, { transaction: db });
     return iceCream;
   });
 }
@@ -284,7 +271,6 @@ export async function activateIceCream(code: string): Promise<IceCreamResponseDt
 export async function deactivateIceCream(code: string): Promise<IceCreamResponseDto> {
   return withTransaction(async (db) => {
     const [iceCream] = await transitionIceCreamStatus(db, [code], "INACTIVE");
-    await platformEvents.dispatch(events.iceCreamDeactivated, iceCream, { transaction: db });
     return iceCream;
   });
 }
@@ -292,7 +278,6 @@ export async function deactivateIceCream(code: string): Promise<IceCreamResponse
 export async function activateIceCreams(codes: string[]): Promise<IceCreamResponseDto[]> {
   return withTransaction(async (db) => {
     const iceCreams = await transitionIceCreamStatus(db, codes, "ACTIVE");
-    await platformEvents.dispatch(events.iceCreamsActivated, iceCreams, { transaction: db });
     return iceCreams;
   });
 }
@@ -300,7 +285,6 @@ export async function activateIceCreams(codes: string[]): Promise<IceCreamRespon
 export async function deactivateIceCreams(codes: string[]): Promise<IceCreamResponseDto[]> {
   return withTransaction(async (db) => {
     const iceCreams = await transitionIceCreamStatus(db, codes, "INACTIVE");
-    await platformEvents.dispatch(events.iceCreamsDeactivated, iceCreams, { transaction: db });
     return iceCreams;
   });
 }

@@ -1,4 +1,6 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
 import * as service from "./server/lib/finance-company.service";
 
 function operation<TArgs extends unknown[], TResult>(fn: (...args: TArgs) => TResult) {
@@ -11,6 +13,13 @@ export const activateFinanceCompany = operation(service.activateFinanceCompany);
 export const updateFinanceCompany = operation(service.updateFinanceCompany);
 export const listSelectableFinanceCompaniesForCurrentUser = operation(service.listSelectableFinanceCompaniesForCurrentUser);
 export const resolveFinanceCompanySelectionForCurrentUser = operation(service.resolveFinanceCompanySelectionForCurrentUser);
+export const deleteFinanceCompanyForErpOrganization = platformOperation.define(
+  {
+    parameters: Type.Tuple([Type.Number(), Type.Any()]),
+    result: Type.Undefined(),
+  },
+  service.deleteFinanceCompanyForErpOrganization,
+);
 
 export const operations = {
   listFinanceCompanies,
@@ -19,4 +28,5 @@ export const operations = {
   updateFinanceCompany,
   listSelectableFinanceCompaniesForCurrentUser,
   resolveFinanceCompanySelectionForCurrentUser,
+  deleteFinanceCompanyForErpOrganization,
 } as const;

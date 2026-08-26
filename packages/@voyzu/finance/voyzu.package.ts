@@ -4,7 +4,6 @@ import { financeInstall } from "./install/manifest";
 import { financeUninstall } from "./uninstall/manifest";
 import { purgeAndRecreate } from "./scripts/db/purge-and-recreate";
 import { install as installSampleData } from "./scripts/sample-data/init";
-import { listeners } from "./listeners";
 
 import { apSubledgerBillsModule } from "./modules/ap-subledger-bills/module";
 import { apSubledgerCounterpartiesModule } from "./modules/ap-subledger-counterparties/module";
@@ -166,7 +165,6 @@ export const financePackage = {
     purgeAndRecreate,
     sampleData: installSampleData,
   },
-  listeners,
 } as const satisfies VoyzuPackageDefinition;
 
 export default financePackage;

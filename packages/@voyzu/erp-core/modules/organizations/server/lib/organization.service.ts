@@ -1,6 +1,6 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
-import { events as platformEvents } from "@voyzu/capability/events";
+import { operation as platformOperation } from "@voyzu/capability/operations";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/erp-core/common/server";
 import type {
   OrganizationBatchPatchRequestDto,
@@ -12,7 +12,6 @@ import type {
 } from "@voyzu/erp-core/types/modules/organizations";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 
-import { events } from "../../events";
 import { OrganizationRepo } from "../db/organization.repo";
 import type { OrganizationRow } from "../db/organization.row.types";
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./organization.mapper";
@@ -74,7 +73,6 @@ export async function patchOrganization(code: string, input: OrganizationPatchRe
         withUpdateAudit(toPatchRow(input), await createUpdateAuditStamp()),
       );
       const organization = await enrichRow(row);
-      await platformEvents.dispatch(events.organizationUpdated, organization, { transaction: db });
       return organization;
     });
   } catch (error) {
@@ -89,7 +87,11 @@ export async function deleteOrganization(code: string): Promise<void> {
     const row = await repo.get(normalized);
     if (!row) throw new NotFoundError(`Organization ${normalized} not found`);
     const organization = await enrichRow(row);
-    await platformEvents.dispatch(events.organizationDeleted, organization, { transaction: db });
+    await platformOperation.callOptional(
+      "@voyzu/finance.deleteFinanceCompanyForErpOrganization",
+      organization.id,
+      db,
+    );
     await repo.delete(normalized);
   });
 }
@@ -167,7 +169,11 @@ export async function batchDeleteOrganizations(codes: string[]): Promise<void> {
     const missing = normalized.filter((code) => !found.has(code));
     if (missing.length) throw new NotFoundError(`Organization ${missing.join(", ")} not found`);
     for (const organization of await enrichRows(rows)) {
-      await platformEvents.dispatch(events.organizationDeleted, organization, { transaction: db });
+      await platformOperation.callOptional(
+        "@voyzu/finance.deleteFinanceCompanyForErpOrganization",
+        organization.id,
+        db,
+      );
     }
     await repo.batchDelete(normalized);
   });

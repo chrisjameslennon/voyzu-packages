@@ -21,7 +21,6 @@
     "./navigation/domains": "./navigation/domains.ts",
     "./organizations": "./modules/organizations/module.ts",
     "./organizations/operations": "./modules/organizations/operations.ts",
-    "./organizations/events": "./modules/organizations/events.ts",
     "./organizations/client": "./modules/organizations/client/index.ts",
     "./organizations/server": "./modules/organizations/server/index.ts",
     "./organizations/domain/operation-policy": "./modules/organizations/domain/operation-policy.ts",
