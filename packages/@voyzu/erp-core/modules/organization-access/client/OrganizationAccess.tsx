@@ -20,6 +20,7 @@ import {
   Toast,
   ValidationAlert,
 } from "@voyzu/ui-components";
+import styles from "./organization-access.module.css";
 
 type OrganizationAccessRow = OrganizationAccessUser & { id: number };
 
@@ -62,7 +63,6 @@ export function OrganizationAccess({ initial }: { initial: OrganizationAccessPag
   ];
 
   const openEditor = (user: OrganizationAccessUser) => {
-    if (user.userRole === "ADMIN") return;
     setEditing(user);
     setSelectedOrganizationIds(new Set(user.organizationIds));
     setError("");
@@ -146,32 +146,47 @@ export function OrganizationAccess({ initial }: { initial: OrganizationAccessPag
         <div className={modalStyles.backdrop}>
           <div className={modalStyles.modal} role="dialog" aria-modal="true" aria-label={`Organization access for ${editing.userCode}`}>
             <div className={modalStyles.header}>
-              <div>
-                <h2 className={typography.contentTitle}>Organization Access</h2>
-                <p className={typography.bodyText}>{editing.userCode} — {editing.displayName}</p>
+              <div className={styles.modalHeaderContent}>
+                <h2 className={`${typography.contentTitle} ${styles.modalTitle}`}>Organization Access</h2>
+                <div className={styles.userIdentity}>
+                  <Badge variant="soft" size="small" color="neutral">{editing.userCode}</Badge>
+                  <span className={typography.bodyText}>{editing.displayName}</span>
+                </div>
               </div>
               <Button variant="plain" icon="close" title="Close" onClick={() => setEditing(null)} />
             </div>
             <div className={modalStyles.body}>
               <ValidationAlert errors={error ? [error] : []} visible={Boolean(error)} onDismiss={() => setError("")} />
-              <div style={{ display: "grid", gap: "0.75rem", marginTop: "1rem" }}>
-                {initial.organizations.map((organization) => (
-                  <label key={organization.id} style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                    <Checkbox
-                      checked={selectedOrganizationIds.has(organization.id)}
-                      onChange={() => toggleOrganization(organization.id)}
-                    />
-                    <span className={typography.bodyText}>{organization.code} — {organization.name}</span>
-                    {organization.status !== "ACTIVE" ? <Badge variant="soft" size="x-small" color="neutral">INACTIVE</Badge> : null}
-                  </label>
-                ))}
-              </div>
+              {editing.userRole === "ADMIN" ? (
+                <p className={`${typography.bodyText} ${styles.adminMessage}`}>
+                  Admin users have access to all organizations
+                </p>
+              ) : (
+                <div className={styles.organizationList}>
+                  {initial.organizations.map((organization) => (
+                    <label key={organization.id} className={styles.organizationOption}>
+                      <Checkbox
+                        checked={selectedOrganizationIds.has(organization.id)}
+                        onChange={() => toggleOrganization(organization.id)}
+                      />
+                      <span className={typography.bodyText}>{organization.code} — {organization.name}</span>
+                      {organization.status !== "ACTIVE" ? <Badge variant="soft" size="x-small" color="neutral">INACTIVE</Badge> : null}
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
             <div className={modalStyles.footer}>
-              <Button variant="cancel" onClick={() => setEditing(null)}>Cancel</Button>
-              <Button variant="primary" disabled={saving} onClick={() => { void save(); }}>
-                {saving ? "Saving..." : "Save"}
-              </Button>
+              {editing.userRole === "ADMIN" ? (
+                <Button variant="cancel" onClick={() => setEditing(null)}>Close</Button>
+              ) : (
+                <>
+                  <Button variant="cancel" onClick={() => setEditing(null)}>Cancel</Button>
+                  <Button variant="primary" disabled={saving} onClick={() => { void save(); }}>
+                    {saving ? "Saving..." : "Save"}
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

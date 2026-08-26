@@ -1,12 +1,14 @@
 import "server-only";
 
-import * as service from "./server/lib/ice-cream-report.service";
+import { operation } from "@voyzu/capability/operations";
+import { IceCreamReportRowDto } from "@voyzu/ice-creams/types";
+import Type from "typebox";
 
-function operation<TArgs extends unknown[], TResult>(serviceMethod: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => serviceMethod(...args);
-}
-
-export const getAllIceCreamsReport = operation(service.getAllIceCreamsReport);
+export const getAllIceCreamsReport = operation.defineLazy(
+  { parameters: Type.Tuple([]), result: Type.Array(IceCreamReportRowDto) },
+  () => import("./server/lib/ice-cream-report.service")
+    .then((module) => module.getAllIceCreamsReport),
+);
 
 export const operations = {
   getAllIceCreamsReport,

@@ -1,4 +1,3 @@
-import { templateAuditModule } from "../modules/audit/module";
 import { templateModule } from "../modules/template/module";
 import { templateReportsModule } from "../modules/reports/module";
 
@@ -9,16 +8,6 @@ export const templatesLeftNav = [
         label: "Template",
         icon: "description",
         routeId: templateModule.pageRoutes.list.id,
-      },
-    ],
-  },
-  {
-    label: "Audit",
-    items: [
-      {
-        label: "Audit Log",
-        icon: "history",
-        routeId: templateAuditModule.pageRoutes.list.id,
       },
     ],
   },

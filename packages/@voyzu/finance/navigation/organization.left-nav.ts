@@ -48,17 +48,29 @@ export const financeTemplateLeftNav = [
           { label: "Inventory Control Accounts", routeId: organizationInventoryControlAccountsModule.pageRoutes.list.id },
         ],
       },
+      { label: "Dimensions", icon: "category", routeId: organizationDimensionsModule.pageRoutes.list.id },
+    ],
+  },
+  {
+    label: "Integration",
+    items: [
       {
-        label: "Integration",
-        icon: "webhook",
-        path: "#organization-settings-integration",
+        label: "Inventory",
+        icon: "package_2",
+        path: "#integration-inventory",
         children: [
-          { label: "Financial Document Types", routeId: organizationFinancialDocumentTypesModule.pageRoutes.list.id },
-          { label: "Financial Document Defaults", routeId: organizationFinancialDocumentDefaultsModule.pageRoutes.list.id },
           { label: "Item Posting Profiles", routeId: organizationInventoryItemPostingProfilesModule.pageRoutes.list.id },
         ],
       },
-      { label: "Dimensions", icon: "category", routeId: organizationDimensionsModule.pageRoutes.list.id },
+      {
+        label: "Advanced",
+        icon: "tune",
+        path: "#integration-advanced",
+        children: [
+          { label: "Financial Document Types", routeId: organizationFinancialDocumentTypesModule.pageRoutes.list.id },
+          { label: "Financial Document Defaults", routeId: organizationFinancialDocumentDefaultsModule.pageRoutes.list.id },
+        ],
+      },
     ],
   },
   {

@@ -28,7 +28,7 @@
       "types": "./types/index.ts",
       "import": "./types/index.ts"
     },
-    "./modules/ugly/operations": {
+    "./ugly/operations": {
       "types": "./modules/ugly/operations.ts",
       "import": "./modules/ugly/operations.ts"
     },
@@ -49,6 +49,7 @@
     "cat-names": "^4.0.0"
   },
   "peerDependencies": {
+    "@voyzu/capability": "^0.1.0",
     "@voyzu/types": "^0.1.0",
     "next": "^16",
     "react": "^19",

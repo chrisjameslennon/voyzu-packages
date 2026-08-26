@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AuditPanel } from "@voyzu/audit/client";
 import { Badge, Breadcrumbs, Button, ConfirmDialog, Input, Toast, ValidationAlert, maxLength, useFormValidation } from "@voyzu/ui-components";
-import { DetailBackButton } from "@voyzu/ui-surface/client";
+import { detailLinkWithBackContext, DetailBackButton } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
@@ -16,6 +16,7 @@ const TOAST_KEY = "voyzu.template.toast";
 
 export function TemplateDetail({ template }: { template: TemplateResponseDto }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [current, setCurrent] = useState(template);
   const [description, setDescription] = useState(template.description ?? "");
   const [error, setError] = useState("");
@@ -81,7 +82,7 @@ export function TemplateDetail({ template }: { template: TemplateResponseDto }) 
           const filter = mutationId
             ? `mutationId=${encodeURIComponent(mutationId)}`
             : `entityType=template&entityId=${current.id}`;
-          return `/template/audit?${filter}&from=template&fromCode=${encodeURIComponent(current.code)}`;
+          return detailLinkWithBackContext(`/settings/audit?${filter}`, "audit", pathname);
         })()} onNavigate={(href) => router.push(href)} />
       </aside>
       <main className={layout.mainSection}><section className={detailStyles.card}><div className={detailStyles.cardHeader}><h2 className={`${typography.sectionHeading} ${detailStyles.cardHeaderTitle}`}>Template Details</h2><div className={detailStyles.cardHeaderActions}><Button variant="secondary" icon="save" disabled={saving} onClick={() => { void save(); }}>Save</Button></div></div><div className={styles.detailFields}><div className={styles.field}><label className={typography.fieldLabel}>Code</label><Input value={current.code} disabled /></div><div className={styles.field}><label className={typography.fieldLabel}>Description</label><Input value={description} maxLength={200} onChange={(event) => setDescription(event.target.value)} /></div></div></section></main>

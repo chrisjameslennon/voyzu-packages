@@ -32,7 +32,7 @@
       "types": "./modules/template/module.ts",
       "import": "./modules/template/module.ts"
     },
-    "./modules/template/operations": {
+    "./template/operations": {
       "types": "./modules/template/operations.ts",
       "import": "./modules/template/operations.ts"
     },
@@ -40,13 +40,9 @@
       "types": "./modules/reports/module.ts",
       "import": "./modules/reports/module.ts"
     },
-    "./modules/reports/operations": {
+    "./reports/operations": {
       "types": "./modules/reports/operations.ts",
       "import": "./modules/reports/operations.ts"
-    },
-    "./modules/audit": {
-      "types": "./modules/audit/module.ts",
-      "import": "./modules/audit/module.ts"
     },
     "./types": {
       "types": "./modules/types/index.ts",

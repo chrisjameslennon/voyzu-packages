@@ -5,5 +5,5 @@ User-facing guidance and source published as contextual online help belong
 beneath this directory.
 
 Template is Voyzu's minimal reference package. It demonstrates package-owned
-CRUD, reports, audit views, APIs, database installation and uninstall artifacts
+CRUD, reports, platform audit integration, APIs, database installation and uninstall artifacts
 around one table.

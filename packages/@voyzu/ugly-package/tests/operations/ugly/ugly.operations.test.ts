@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 import { inspectRawRequest } from "../../../modules/ugly/operations";
 
-test("inspectRawRequest returns request metadata while redacting credentials", () => {
+test("inspectRawRequest returns request metadata while redacting credentials", async () => {
   const request = new NextRequest("https://example.test/ugly-package/raw-request-response?view=full", {
     method: "GET",
     headers: {
@@ -16,7 +16,7 @@ test("inspectRawRequest returns request metadata while redacting credentials", (
     },
   });
 
-  const result = inspectRawRequest(request);
+  const result = await inspectRawRequest(request);
 
   assert.equal(result.request.method, "GET");
   assert.equal(result.request.nextUrl.pathname, "/ugly-package/raw-request-response");

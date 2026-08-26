@@ -1,12 +1,14 @@
 import "server-only";
 
-import * as service from "./server/lib/raw-request-response.service";
+import { operation } from "@voyzu/capability/operations";
+import { RawRequestResponseDto } from "@voyzu/ugly-package/types";
+import Type from "typebox";
 
-function operation<TArgs extends unknown[], TResult>(serviceMethod: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => serviceMethod(...args);
-}
-
-export const inspectRawRequest = operation(service.inspectRawRequest);
+export const inspectRawRequest = operation.defineLazy(
+  { parameters: Type.Tuple([Type.Any()]), result: RawRequestResponseDto },
+  () => import("./server/lib/raw-request-response.service")
+    .then((module) => module.inspectRawRequest),
+);
 
 export const operations = {
   inspectRawRequest,
