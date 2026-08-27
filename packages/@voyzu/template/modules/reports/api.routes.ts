@@ -5,13 +5,14 @@ import {
 } from "@voyzu/types";
 import Type from "typebox";
 import { TemplateReportRowDto } from "../types";
-import { handleAllTemplatesReport } from "./server";
+
+const loadHandlers = () => import("./server/api/template-report.http.handlers");
 
 export const apiDefinitions = {
   all: {
     method: "GET",
     path: "/template/reports/all-template",
-    handler: (request: any) => handleAllTemplatesReport(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleAllTemplatesReport),
     summary: "All Templates Report",
     description: "Returns every template for reporting.",
     tags: ["Template Reports"],

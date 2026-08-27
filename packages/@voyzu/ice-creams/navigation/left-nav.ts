@@ -1,5 +1,5 @@
-import { iceCreamsModule } from "../modules/ice-creams/module";
-import { iceCreamReportsModule } from "../modules/reports/module";
+import { pageRoutes as iceCreamPageRoutes } from "../modules/ice-creams/pages.routes";
+import { pageRoutes as iceCreamReportPageRoutes } from "../modules/reports/pages.routes";
 
 export const iceCreamsLeftNav = [
   {
@@ -7,7 +7,7 @@ export const iceCreamsLeftNav = [
       {
         label: "Ice Creams",
         icon: "icecream",
-        routeId: iceCreamsModule.pageRoutes.list.id,
+        routeId: iceCreamPageRoutes.list.id,
       },
     ],
   },
@@ -17,7 +17,7 @@ export const iceCreamsLeftNav = [
       {
         label: "All Ice Creams",
         icon: "summarize",
-        routeId: iceCreamReportsModule.pageRoutes.all.id,
+        routeId: iceCreamReportPageRoutes.all.id,
       },
     ],
   },

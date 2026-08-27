@@ -5,7 +5,8 @@ import {
 } from "@voyzu/types";
 import Type from "typebox";
 import { IceCreamReportRowDto } from "@voyzu/ice-creams/types";
-import { handleAllIceCreamsReport } from "./server/api/ice-cream-report.http.handlers";
+
+const loadHandlers = () => import("./server/api/ice-cream-report.http.handlers");
 
 const commonResponses = {
   "401": {
@@ -26,7 +27,7 @@ export const apiDefinitions = {
   all: {
     method: "GET",
     path: "/ice-creams/reports/all-ice-creams",
-    handler: (request: any) => handleAllIceCreamsReport(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleAllIceCreamsReport),
     summary: "All Ice Creams Report",
     description: "Returns every ice cream for reporting.",
     tags: ["Ice Cream Reports"],

@@ -20,9 +20,9 @@
       "types": "./voyzu.package.ts",
       "import": "./voyzu.package.ts"
     },
-    "./navigation/top-nav": {
-      "types": "./navigation/top-nav.ts",
-      "import": "./navigation/top-nav.ts"
+    "./navigation": {
+      "types": "./navigation/index.ts",
+      "import": "./navigation/index.ts"
     },
     "./types": {
       "types": "./types/index.ts",
@@ -31,6 +31,14 @@
     "./ugly/operations": {
       "types": "./modules/ugly/operations.ts",
       "import": "./modules/ugly/operations.ts"
+    },
+    "./ugly/pages.routes": {
+      "types": "./modules/ugly/pages.routes.ts",
+      "import": "./modules/ugly/pages.routes.ts"
+    },
+    "./ugly/api.routes": {
+      "types": "./modules/ugly/api.routes.ts",
+      "import": "./modules/ugly/api.routes.ts"
     },
     "./modules/ugly": {
       "types": "./modules/ugly/module.ts",

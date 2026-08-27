@@ -20,13 +20,9 @@
       "types": "./voyzu.package.ts",
       "import": "./voyzu.package.ts"
     },
-    "./navigation/top-nav": {
-      "types": "./navigation/top-nav.topnav.ts",
-      "import": "./navigation/top-nav.topnav.ts"
-    },
-    "./navigation/left-nav": {
-      "types": "./navigation/left-nav.leftnav.ts",
-      "import": "./navigation/left-nav.leftnav.ts"
+    "./navigation": {
+      "types": "./navigation/index.ts",
+      "import": "./navigation/index.ts"
     },
     "./modules/template": {
       "types": "./modules/template/module.ts",
@@ -36,6 +32,14 @@
       "types": "./modules/template/operations.ts",
       "import": "./modules/template/operations.ts"
     },
+    "./template/pages.routes": {
+      "types": "./modules/template/pages.routes.ts",
+      "import": "./modules/template/pages.routes.ts"
+    },
+    "./template/api.routes": {
+      "types": "./modules/template/api.routes.ts",
+      "import": "./modules/template/api.routes.ts"
+    },
     "./modules/reports": {
       "types": "./modules/reports/module.ts",
       "import": "./modules/reports/module.ts"
@@ -43,6 +47,14 @@
     "./reports/operations": {
       "types": "./modules/reports/operations.ts",
       "import": "./modules/reports/operations.ts"
+    },
+    "./reports/pages.routes": {
+      "types": "./modules/reports/pages.routes.ts",
+      "import": "./modules/reports/pages.routes.ts"
+    },
+    "./reports/api.routes": {
+      "types": "./modules/reports/api.routes.ts",
+      "import": "./modules/reports/api.routes.ts"
     },
     "./types": {
       "types": "./modules/types/index.ts",

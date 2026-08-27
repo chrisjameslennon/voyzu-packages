@@ -11,13 +11,13 @@ import {
   EntityNotFoundErrorResponseDto,
 } from "@voyzu/types";
 
-import { handleList, handleReplace } from "./server/api/organization-access.http.handlers";
+const loadHandlers = () => import("./server/api/organization-access.http.handlers");
 
 export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/organization/organization-access",
-    handler: handleList,
+    loadHandler: () => loadHandlers().then((module) => module.handleList),
     summary: "List organization access",
     description: "Lists standard users, organizations and current organization assignments.",
     tags: ["Organization Access"],
@@ -30,7 +30,7 @@ export const apiDefinitions = {
   replace: {
     method: "PUT",
     path: "/organization/organization-access/[code]",
-    handler: handleReplace,
+    loadHandler: () => loadHandlers().then((module) => module.handleReplace),
     request: {
       path: {
         code: {

@@ -1,9 +1,9 @@
-import { iceCreamsModule } from "../modules/ice-creams/module";
+import { pageRoutes } from "../modules/ice-creams/pages.routes";
 
 export const iceCreamsTopNav = {
   label: "Ice Creams",
   icon: "icecream",
-  routeId: iceCreamsModule.pageRoutes.list.id,
+  routeId: pageRoutes.list.id,
 } as const;
 
 export default iceCreamsTopNav;

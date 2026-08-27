@@ -1,23 +1,55 @@
 import "server-only";
 
-import * as service0 from "./server/organization-selection.service";
+import { operation } from "@voyzu/capability/operations";
+import { UserResponseDto } from "@voyzu/auth/types";
+import { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
+import Type from "typebox";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
+const OrganizationList = Type.Array(OrganizationResponseDto);
+const UserOrNull = Type.Union([UserResponseDto, Type.Null()]);
+const OrganizationIds = Type.Array(Type.Integer({ minimum: 1 }));
+const NullableId = Type.Union([Type.Integer({ minimum: 1 }), Type.Null()]);
+const Selection = Type.Object({
+  organizations: OrganizationList,
+  selectedOrganization: Type.Union([OrganizationResponseDto, Type.Null()]),
+});
+const organizationFilterParameters = Type.Union([
+  Type.Tuple([OrganizationList, UserOrNull]),
+  Type.Tuple([OrganizationList, UserOrNull, OrganizationIds]),
+]);
+const selectionParameters = Type.Union([
+  Type.Tuple([OrganizationList, UserOrNull, NullableId]),
+  Type.Tuple([OrganizationList, UserOrNull, NullableId, OrganizationIds]),
+]);
+const loadService = () => import("./server/organization-selection.service");
 
-export const filterSelectableOrganizations = operation(service0.filterSelectableOrganizations);
-export const filterAccessibleOrganizations = operation(service0.filterAccessibleOrganizations);
-export const resolveOrganizationSelection = operation(service0.resolveOrganizationSelection);
-export const listSelectableOrganizationsForCurrentUser = operation(service0.listSelectableOrganizationsForCurrentUser);
-export const listAccessibleOrganizationsForCurrentUser = operation(service0.listAccessibleOrganizationsForCurrentUser);
-export const resolveOrganizationSelectionForCurrentUser = operation(service0.resolveOrganizationSelectionForCurrentUser);
+export const filterSelectableOrganizations = operation.defineLazy(
+  { parameters: organizationFilterParameters, result: OrganizationList },
+  () => loadService().then((module) => module.filterSelectableOrganizations),
+);
+export const filterAccessibleOrganizations = operation.defineLazy(
+  { parameters: organizationFilterParameters, result: OrganizationList },
+  () => loadService().then((module) => module.filterAccessibleOrganizations),
+);
+export const resolveOrganizationSelection = operation.defineLazy(
+  { parameters: selectionParameters, result: Selection },
+  () => loadService().then((module) => module.resolveOrganizationSelection),
+);
+export const listSelectableOrganizationsForCurrentUser = operation.defineLazy(
+  { parameters: Type.Tuple([]), result: OrganizationList },
+  () => loadService().then((module) => module.listSelectableOrganizationsForCurrentUser),
+);
+export const listAccessibleOrganizationsForCurrentUser = operation.defineLazy(
+  { parameters: Type.Tuple([]), result: OrganizationList },
+  () => loadService().then((module) => module.listAccessibleOrganizationsForCurrentUser),
+);
+export const resolveOrganizationSelectionForCurrentUser = operation.defineLazy(
+  { parameters: Type.Tuple([NullableId]), result: Selection },
+  () => loadService().then((module) => module.resolveOrganizationSelectionForCurrentUser),
+);
 
 export const operations = {
-  filterSelectableOrganizations,
-  filterAccessibleOrganizations,
-  resolveOrganizationSelection,
-  listSelectableOrganizationsForCurrentUser,
-  listAccessibleOrganizationsForCurrentUser,
+  filterSelectableOrganizations, filterAccessibleOrganizations, resolveOrganizationSelection,
+  listSelectableOrganizationsForCurrentUser, listAccessibleOrganizationsForCurrentUser,
   resolveOrganizationSelectionForCurrentUser,
 } as const;

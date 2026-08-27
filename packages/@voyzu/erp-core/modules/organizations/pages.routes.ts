@@ -1,24 +1,3 @@
-import {
-  handleBatchCreate,
-  handleBatchActivate,
-  handleBatchDeactivate,
-  handleBatchDelete,
-  handleBatchGet,
-  handleBatchPatch,
-  handleBatchUpdate,
-  handleActivate,
-  handleCreate,
-  handleDeactivate,
-  handleDelete,
-  handleFilter,
-  handleGet,
-  handleList,
-  handlePatch,
-  handleSearch,
-  handleUpdate,
-} from "./server/api/organization.http.handlers";
-import { OrganizationsListPage, OrganizationDetailPage } from "@voyzu/erp-core/organizations/server";
-
 export const pageRoutes = {
   list: {
     id: "voyzu.organizations.page.list",
@@ -26,7 +5,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/organization",
     apiDocsUrl: "organizations",
     path: "/organization/organizations",
-    Page: OrganizationsListPage,
+    loadPage: () => import("./server/pages/OrganizationsListPage").then((module) => module.OrganizationsListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -40,7 +19,7 @@ export const pageRoutes = {
     helpPath: "modules-help/organization-financial-settings/organization",
     apiDocsUrl: "organizations",
     path: "/organization/organizations/[code]",
-    Page: OrganizationDetailPage,
+    loadPage: () => import("./server/pages/OrganizationDetailPage").then((module) => module.OrganizationDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

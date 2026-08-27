@@ -19,26 +19,7 @@ import {
   IceCreamResponseDto,
   IceCreamUpdateRequestDto,
 } from "@voyzu/ice-creams/types";
-import {
-  handleActivate,
-  handleBatchActivate,
-  handleBatchCreate,
-  handleBatchDeactivate,
-  handleBatchDelete,
-  handleBatchGet,
-  handleBatchPatch,
-  handleBatchUpdate,
-  handleCreate,
-  handleDeactivate,
-  handleDelete,
-  handleFilter,
-  handleGet,
-  handleList,
-  handleListFlavors,
-  handlePatch,
-  handleSearch,
-  handleUpdate,
-} from "./server/api/ice-cream.http.handlers";
+const loadHandlers = () => import("./server/api/ice-cream.http.handlers");
 
 const tag = ["Ice Creams"];
 
@@ -68,7 +49,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/ice-creams",
-    handler: (request: any) => handleList(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleList),
     summary: "List",
     description: "Lists all ice creams.",
     tags: tag,
@@ -80,7 +61,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/ice-creams",
-    handler: (request: any) => handleCreate(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleCreate),
     request: { contentType: "application/json", body: IceCreamCreateRequestDto },
     summary: "Create",
     description: "Creates an active ice cream.",
@@ -97,7 +78,7 @@ export const apiDefinitions = {
   flavors: {
     method: "GET",
     path: "/ice-creams/flavors",
-    handler: (request: any) => handleListFlavors(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleListFlavors),
     summary: "List Flavours",
     description: "Lists reference flavours available to ice creams.",
     tags: tag,
@@ -109,7 +90,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/ice-creams/queries",
-    handler: (request: any) => handleFilter(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleFilter),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filters ice creams using the shared filter contract.",
@@ -123,7 +104,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/ice-creams/search-results",
-    handler: (request: any) => handleSearch(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleSearch),
     request: {
       query: {
         parameters: {
@@ -144,7 +125,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/ice-creams/selections",
-    handler: (request: any) => handleBatchGet(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchGet),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Gets ice creams by business code.",
@@ -158,7 +139,7 @@ export const apiDefinitions = {
   batchCreate: {
     method: "POST",
     path: "/ice-creams/batches",
-    handler: (request: any) => handleBatchCreate(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchCreate),
     request: { contentType: "application/json", body: Type.Array(IceCreamCreateRequestDto, { minItems: 1 }) },
     summary: "Batch Create",
     description: "Creates ice creams atomically with one audit mutation.",
@@ -175,7 +156,7 @@ export const apiDefinitions = {
   batchUpdate: {
     method: "PUT",
     path: "/ice-creams/batches",
-    handler: (request: any) => handleBatchUpdate(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchUpdate),
     request: { contentType: "application/json", body: Type.Array(IceCreamBatchUpdateRequestDto, { minItems: 1 }) },
     summary: "Batch Update",
     description: "Fully updates ice creams atomically.",
@@ -191,7 +172,7 @@ export const apiDefinitions = {
   batchPatch: {
     method: "PATCH",
     path: "/ice-creams/batches",
-    handler: (request: any) => handleBatchPatch(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchPatch),
     request: { contentType: "application/json", body: Type.Array(IceCreamBatchPatchRequestDto, { minItems: 1 }) },
     summary: "Batch Patch",
     description: "Partially updates ice creams atomically.",
@@ -207,7 +188,7 @@ export const apiDefinitions = {
   batchDelete: {
     method: "DELETE",
     path: "/ice-creams/batches",
-    handler: (request: any) => handleBatchDelete(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchDelete),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
     description: "Deletes ice creams atomically after stamping deletion audit metadata.",
@@ -223,7 +204,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "PUT",
     path: "/ice-creams/batches/activation",
-    handler: (request: any) => handleBatchActivate(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchActivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
     description: "Activates ice creams atomically.",
@@ -239,7 +220,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "DELETE",
     path: "/ice-creams/batches/activation",
-    handler: (request: any) => handleBatchDeactivate(request),
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchDeactivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
     description: "Deactivates ice creams atomically.",
@@ -255,7 +236,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/ice-creams/[code]",
-    handler: (request: any, context: any) => handleGet(request, context),
+    loadHandler: () => loadHandlers().then((module) => module.handleGet),
     request: { path: codePathParameter },
     summary: "Get",
     description: "Gets an ice cream by business code.",
@@ -269,7 +250,7 @@ export const apiDefinitions = {
   update: {
     method: "PUT",
     path: "/ice-creams/[code]",
-    handler: (request: any, context: any) => handleUpdate(request, context),
+    loadHandler: () => loadHandlers().then((module) => module.handleUpdate),
     request: { path: codePathParameter, contentType: "application/json", body: IceCreamUpdateRequestDto },
     summary: "Update",
     description: "Fully updates the writable fields of an ice cream.",
@@ -285,7 +266,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/ice-creams/[code]",
-    handler: (request: any, context: any) => handlePatch(request, context),
+    loadHandler: () => loadHandlers().then((module) => module.handlePatch),
     request: { path: codePathParameter, contentType: "application/json", body: IceCreamPatchRequestDto },
     summary: "Patch",
     description: "Partially updates the writable fields of an ice cream.",
@@ -301,7 +282,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/ice-creams/[code]",
-    handler: (request: any, context: any) => handleDelete(request, context),
+    loadHandler: () => loadHandlers().then((module) => module.handleDelete),
     request: { path: codePathParameter },
     summary: "Delete",
     description: "Deletes an ice cream after stamping deletion audit metadata.",
@@ -316,7 +297,7 @@ export const apiDefinitions = {
   activate: {
     method: "PUT",
     path: "/ice-creams/[code]/activation",
-    handler: (request: any, context: any) => handleActivate(request, context),
+    loadHandler: () => loadHandlers().then((module) => module.handleActivate),
     request: { path: codePathParameter },
     summary: "Activate",
     description: "Activates an ice cream.",
@@ -331,7 +312,7 @@ export const apiDefinitions = {
   deactivate: {
     method: "DELETE",
     path: "/ice-creams/[code]/activation",
-    handler: (request: any, context: any) => handleDeactivate(request, context),
+    loadHandler: () => loadHandlers().then((module) => module.handleDeactivate),
     request: { path: codePathParameter },
     summary: "Deactivate",
     description: "Deactivates an ice cream.",

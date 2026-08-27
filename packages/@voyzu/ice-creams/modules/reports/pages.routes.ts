@@ -1,12 +1,11 @@
-import { AllIceCreamsReportPage } from "./server/index";
-
 const apiDocsUrl = "/api-reference/@voyzu-ice-creams/ice-cream-reports";
+const loadPage = () => import("./server/pages/AllIceCreamsReportPage").then((module) => module.AllIceCreamsReportPage);
 
 export const pageRoutes = {
   all: {
     id: "voyzu.ice-creams.reports.page.all",
     path: "/ice-creams/reports/all",
-    Page: AllIceCreamsReportPage,
+    loadPage,
     pageTitle: "All Ice Creams",
     helpPath: "voyzu-platform-patterns/pdf-generation",
     breadcrumbBase: [
@@ -19,7 +18,7 @@ export const pageRoutes = {
   allPrintable: {
     id: "voyzu.ice-creams.reports.page.all.printable",
     path: "/ice-creams/reports/all/printable",
-    Page: AllIceCreamsReportPage,
+    loadPage,
     pageTitle: "All Ice Creams",
     helpPath: "voyzu-platform-patterns/pdf-generation",
     unframed: true,

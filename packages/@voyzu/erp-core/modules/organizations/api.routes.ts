@@ -1,24 +1,4 @@
 import Type from "typebox";
-import {
-  handleBatchCreate,
-  handleBatchActivate,
-  handleBatchDeactivate,
-  handleBatchDelete,
-  handleBatchGet,
-  handleBatchPatch,
-  handleBatchUpdate,
-  handleActivate,
-  handleCreate,
-  handleDeactivate,
-  handleDelete,
-  handleFilter,
-  handleGet,
-  handleList,
-  handlePatch,
-  handleSearch,
-  handleUpdate,
-} from "./server/api/organization.http.handlers";
-import { OrganizationsListPage, OrganizationDetailPage } from "@voyzu/erp-core/organizations/server";
 import { ConflictErrorResponseDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { OrganizationResponseDto } from "../../types/modules/organizations/organization.response.dto";
 import { OrganizationPatchRequestDto } from "../../types/modules/organizations/organization.patch.request.dto";
@@ -28,13 +8,13 @@ import { OrganizationBatchPatchRequestDto } from "../../types/modules/organizati
 import { OrganizationBatchUpdateRequestDto } from "../../types/modules/organizations/organization.batch-update.request.dto";
 import { OrganizationCreateRequestDto } from "../../types/modules/organizations/organization.create.request.dto";
 
-
+const loadHandlers = () => import("./server/api/organization.http.handlers");
 
 export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/organization/organizations",
-    handler: handleList,
+    loadHandler: () => loadHandlers().then((module) => module.handleList),
     summary: "List organizations",
     description: "Returns all organizations in the system.",
     tags: ["Organizations"],
@@ -46,7 +26,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/organization/organizations",
-    handler: handleCreate,
+    loadHandler: () => loadHandlers().then((module) => module.handleCreate),
     request: { contentType: "application/json", body: OrganizationCreateRequestDto },
     summary: "Create organization",
     description: "Creates a new organization record. Status defaults to ACTIVE and cannot be supplied in the request body.",
@@ -61,7 +41,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/organization/organizations/filter",
-    handler: handleFilter,
+    loadHandler: () => loadHandlers().then((module) => module.handleFilter),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter organizations",
     description: "Returns organizations matching the supplied filter criteria.",
@@ -74,7 +54,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/organization/organizations/search",
-    handler: handleSearch,
+    loadHandler: () => loadHandlers().then((module) => module.handleSearch),
     request: { query: { parameters: { q: { description: "Search text used to match organization records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search organizations",
     description: "Full-text search across organizations using the query string parameter.",
@@ -88,7 +68,7 @@ export const apiDefinitions = {
   batchCreate: {
     method: "POST",
     path: "/organization/organizations/batch/create",
-    handler: handleBatchCreate,
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchCreate),
     request: { contentType: "application/json", body: Type.Array(OrganizationCreateRequestDto) },
     summary: "Batch create organizations",
     description:
@@ -104,7 +84,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/organization/organizations/batch/get",
-    handler: handleBatchGet,
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchGet),
     request: { contentType: "application/json", body: OrganizationCodesRequestDto },
     summary: "Batch get organizations",
     description: "Retrieves multiple organizations by a list of business codes.",
@@ -118,7 +98,7 @@ export const apiDefinitions = {
   batchUpdate: {
     method: "PUT",
     path: "/organization/organizations/batch/update",
-    handler: handleBatchUpdate,
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchUpdate),
     request: { contentType: "application/json", body: Type.Array(OrganizationBatchUpdateRequestDto) },
     summary: "Batch update organizations",
     description:
@@ -135,7 +115,7 @@ export const apiDefinitions = {
   batchPatch: {
     method: "PATCH",
     path: "/organization/organizations/batch/patch",
-    handler: handleBatchPatch,
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchPatch),
     request: { contentType: "application/json", body: Type.Array(OrganizationBatchPatchRequestDto) },
     summary: "Batch patch organizations",
     description:
@@ -152,7 +132,7 @@ export const apiDefinitions = {
   batchDelete: {
     method: "POST",
     path: "/organization/organizations/batch/delete",
-    handler: handleBatchDelete,
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchDelete),
     request: { contentType: "application/json", body: OrganizationCodesRequestDto },
     summary: "Batch delete organizations",
     description: "Permanently deletes multiple organizations and all organization-owned financial records by their business codes.",
@@ -167,7 +147,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "POST",
     path: "/organization/organizations/batch/activate",
-    handler: handleBatchActivate,
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchActivate),
     request: { contentType: "application/json", body: OrganizationCodesRequestDto },
     summary: "Batch activate organizations",
     description: "Sets multiple organizations to ACTIVE.",
@@ -182,7 +162,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "POST",
     path: "/organization/organizations/batch/deactivate",
-    handler: handleBatchDeactivate,
+    loadHandler: () => loadHandlers().then((module) => module.handleBatchDeactivate),
     request: { contentType: "application/json", body: OrganizationCodesRequestDto },
     summary: "Batch deactivate organizations",
     description: "Sets multiple organizations to INACTIVE.",
@@ -197,7 +177,7 @@ export const apiDefinitions = {
   activate: {
     method: "POST",
     path: "/organization/organizations/[code]/activate",
-    handler: handleActivate,
+    loadHandler: () => loadHandlers().then((module) => module.handleActivate),
     request: {
       path: {
         code: {
@@ -218,7 +198,7 @@ export const apiDefinitions = {
   deactivate: {
     method: "POST",
     path: "/organization/organizations/[code]/deactivate",
-    handler: handleDeactivate,
+    loadHandler: () => loadHandlers().then((module) => module.handleDeactivate),
     request: {
       path: {
         code: {
@@ -239,7 +219,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/organization/organizations/[code]",
-    handler: handleGet,
+    loadHandler: () => loadHandlers().then((module) => module.handleGet),
     request: {
       path: {
         code: {
@@ -260,7 +240,7 @@ export const apiDefinitions = {
   update: {
     method: "PUT",
     path: "/organization/organizations/[code]",
-    handler: handleUpdate,
+    loadHandler: () => loadHandlers().then((module) => module.handleUpdate),
     request: {
       path: {
         code: {
@@ -283,7 +263,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/organization/organizations/[code]",
-    handler: handlePatch,
+    loadHandler: () => loadHandlers().then((module) => module.handlePatch),
     request: {
       path: {
         code: {
@@ -306,7 +286,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/organization/organizations/[code]",
-    handler: handleDelete,
+    loadHandler: () => loadHandlers().then((module) => module.handleDelete),
     request: {
       path: {
         code: {

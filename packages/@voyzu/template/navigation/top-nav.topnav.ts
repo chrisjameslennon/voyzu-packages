@@ -1,9 +1,9 @@
-import { templateModule } from "../modules/template/module";
+import { pageRoutes } from "../modules/template/pages.routes";
 
 export const templatesTopNav = {
   label: "Template",
   icon: "description",
-  routeId: templateModule.pageRoutes.list.id,
+  routeId: pageRoutes.list.id,
 } as const;
 
 export default templatesTopNav;

@@ -1,10 +1,8 @@
-import { IceCreamDetailPage, IceCreamsListPage } from "./server/index";
-
 export const pageRoutes = {
   list: {
     id: "voyzu.ice-creams.page.list",
     path: "/ice-creams",
-    Page: IceCreamsListPage,
+    loadPage: () => import("./server/pages/IceCreamsListPage").then((module) => module.IceCreamsListPage),
     pageTitle: "Ice Creams",
     helpPath: "voyzu-platform-guide/develop-a-new-package",
     breadcrumbBase: [],
@@ -13,7 +11,7 @@ export const pageRoutes = {
   detail: {
     id: "voyzu.ice-creams.page.detail",
     path: "/ice-creams/[code]",
-    Page: IceCreamDetailPage,
+    loadPage: () => import("./server/pages/IceCreamDetailPage").then((module) => module.IceCreamDetailPage),
     pageTitle: "Ice Cream",
     helpPath: "voyzu-platform-guide/develop-a-new-package",
     breadcrumbBase: [{ label: "Ice Creams", href: "/ice-creams" }],

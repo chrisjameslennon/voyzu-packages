@@ -1,5 +1,5 @@
-import { templateModule } from "../modules/template/module";
-import { templateReportsModule } from "../modules/reports/module";
+import { pageRoutes as templatePageRoutes } from "../modules/template/pages.routes";
+import { pageRoutes as templateReportPageRoutes } from "../modules/reports/pages.routes";
 
 export const templatesLeftNav = [
   {
@@ -7,7 +7,7 @@ export const templatesLeftNav = [
       {
         label: "Template",
         icon: "description",
-        routeId: templateModule.pageRoutes.list.id,
+        routeId: templatePageRoutes.list.id,
       },
     ],
   },
@@ -17,7 +17,7 @@ export const templatesLeftNav = [
       {
         label: "Template Report",
         icon: "summarize",
-        routeId: templateReportsModule.pageRoutes.all.id,
+        routeId: templateReportPageRoutes.all.id,
       },
     ],
   },

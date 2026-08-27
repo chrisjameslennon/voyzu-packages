@@ -1,18 +1,20 @@
-import type { VoyzuPackageModuleDefinition, VoyzuPackageNavigationDomain } from "@voyzu/types/framework";
+import type { VoyzuPackageNavigationDomain } from "@voyzu/types/framework";
 
-import { organizationModules } from "../voyzu.package";
+import { pageRoutes as organizationPageRoutes } from "../modules/organizations/pages.routes";
+import { pageRoutes as organizationAccessPageRoutes } from "../modules/organization-access/pages.routes";
+import { pageRoutes as organizationReportPageRoutes } from "../modules/organization-reports/pages.routes";
 import { organizationLeftNav } from "./organization.left-nav";
 
-function routeIds(modules: readonly VoyzuPackageModuleDefinition[]) {
-  return modules.flatMap((moduleDefinition) =>
-    (Object.values(moduleDefinition.pageRoutes) as { id: string }[]).map(({ id }) => id)
-  );
-}
+const routeIds = [
+  ...Object.values(organizationPageRoutes),
+  ...Object.values(organizationAccessPageRoutes),
+  ...Object.values(organizationReportPageRoutes),
+].map(({ id }) => id);
 
 const domains = [{
   label: "Organizations",
-  routeId: organizationModules[0].pageRoutes.list.id,
-  routeIds: routeIds(organizationModules),
+  routeId: organizationPageRoutes.list.id,
+  routeIds,
   leftNav: organizationLeftNav,
 }] as const satisfies readonly VoyzuPackageNavigationDomain[];
 

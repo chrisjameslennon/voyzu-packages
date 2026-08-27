@@ -4,13 +4,14 @@ import {
   UnauthorizedErrorResponseDto,
 } from "@voyzu/types";
 import { RawRequestResponseDto } from "@voyzu/ugly-package/types";
-import { handleRawRequestResponse } from "./server/api/raw-request-response.http.handlers";
+
+const loadHandlers = () => import("./server/api/raw-request-response.http.handlers");
 
 export const apiDefinitions = {
   rawRequestResponse: {
     method: "GET",
     path: "/ugly-package/raw-request-response",
-    handler: handleRawRequestResponse,
+    loadHandler: () => loadHandlers().then((module) => module.handleRawRequestResponse),
     summary: "Raw Request / Response",
     description: "Returns a demonstration snapshot of the raw Next.js request and response.",
     tags: ["Ugly Package"],
