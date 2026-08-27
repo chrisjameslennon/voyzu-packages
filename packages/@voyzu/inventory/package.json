@@ -1,0 +1,47 @@
+{
+  "name": "@voyzu/inventory",
+  "version": "0.1.0",
+  "description": "Physical inventory and warehouse operations for Voyzu.",
+  "repository": "https://github.com/chrisjameslennon/voyzu-packages.git",
+  "private": true,
+  "type": "module",
+  "voyzu": {
+    "voyzu-package": true,
+    "allowInstall": true,
+    "dependencies": [],
+    "pageRootPaths": ["/inventory"],
+    "apiRootPaths": [],
+    "settings": {
+      "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
+    }
+  },
+  "exports": {
+    "./voyzu-package": {
+      "types": "./voyzu.package.ts",
+      "import": "./voyzu.package.ts"
+    },
+    "./navigation": {
+      "types": "./navigation/index.ts",
+      "import": "./navigation/index.ts"
+    },
+    "./modules/items": {
+      "types": "./modules/items/module.ts",
+      "import": "./modules/items/module.ts"
+    },
+    "./items/pages.routes": {
+      "types": "./modules/items/pages.routes.ts",
+      "import": "./modules/items/pages.routes.ts"
+    }
+  },
+  "peerDependencies": {
+    "@voyzu/audit": "^0.1.0",
+    "@voyzu/capability": "^0.1.0",
+    "@voyzu/types": "^0.1.0",
+    "@voyzu/ui-components": "^0.1.0",
+    "@voyzu/ui-layout": "^0.1.0",
+    "@voyzu/ui-style": "^0.1.0",
+    "next": "^16",
+    "react": "^19",
+    "server-only": "^0.0.1"
+  }
+}
