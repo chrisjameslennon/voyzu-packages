@@ -39,7 +39,13 @@ export const reopenFinancialYear = platformOperation.defineLazy(
   () => import("./server/lib/financial-year.service").then((module) => module.reopenFinancialYear),
 );
 export const exportFinancialYearsWithPeriods = platformOperation.defineLazy(
-  { parameters: Type.Tuple([Type.Number(), Type.Array(Type.Number())]), result: Type.Any() },
+  {
+    parameters: Type.Tuple([Type.Number(), Type.Array(Type.Number())]),
+    result: Type.Object({
+      years: Type.Array(FinancialYearResponseDto),
+      periods: Type.Array(FinancialPeriodResponseDto),
+    }, { additionalProperties: false }),
+  },
   () => import("./server/lib/financial-year.service").then((module) => module.exportFinancialYearsWithPeriods),
 );
 export const listPeriods = platformOperation.defineLazy(

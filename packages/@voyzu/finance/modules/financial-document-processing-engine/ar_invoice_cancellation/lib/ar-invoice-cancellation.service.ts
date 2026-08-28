@@ -17,6 +17,7 @@ import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import arInvoiceCancellationPosting from "../journal-posting-components";
 import { validateRequest } from "./ar-invoice-cancellation.validator";
+import { ArInvoiceCancellationPostingRepo } from "../db/ar-invoice-cancellation-posting.repo";
 
 interface ProcessOptions {
   preview?: boolean;
@@ -138,11 +139,6 @@ function dateString(value: unknown): string {
   return String(value);
 }
 
-async function one<T>(db: DbExecutor, sql: string, params: unknown[], map: (row: Record<string, unknown>) => T): Promise<T | null> {
-  const { rows } = await db.query(sql, params);
-  return rows[0] ? map(rows[0] as Record<string, unknown>) : null;
-}
-
 function companyRow(row: Record<string, unknown>): CompanyRow {
   return { id: Number(row.id), code: String(row.code), name: String(row.name), base_currency_code: String(row.base_currency_code), status: String(row.status) };
 }
@@ -221,103 +217,35 @@ function mapDimensionValues(rows: DimensionValueRow[]): Map<string, DimensionVal
 }
 
 async function getCompany(db: DbExecutor, code: string): Promise<CompanyRow | null> {
-  return one(db, `SELECT fc.id, c.code, c.name, c.base_currency_code, c.status
-    FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
-    WHERE c.code = $1 AND fc.is_template = false`, [code], companyRow);
+  return new ArInvoiceCancellationPostingRepo(db).getCompany(code);
 }
 
 async function getCounterparty(db: DbExecutor, companyId: number, code: string): Promise<CounterpartyRow | null> {
-  return one(db, `SELECT id, finance_organization_id, code, name, status FROM ar_counterparty WHERE finance_organization_id = $1 AND code = $2`, [companyId, code], counterpartyRow);
+  return new ArInvoiceCancellationPostingRepo(db).getCounterparty(companyId, code);
 }
 
 async function getPeriod(db: DbExecutor, companyId: number, postingDate: string): Promise<PeriodRow | null> {
-  return one(db,
-    `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
-     FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-     WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fy.status = 'OPEN' AND fp.status = 'OPEN'
-     LIMIT 1`,
-    [companyId, postingDate],
-    periodRow,
-  );
+  return new ArInvoiceCancellationPostingRepo(db).getPeriod(companyId, postingDate);
 }
 
 async function getArControlAccount(db: DbExecutor, companyId: number): Promise<ControlAccountRow | null> {
-  return one(db,
-    `SELECT ca.code AS control_account_code, ca.name AS control_account_name, ca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-     FROM ar_control_account ca JOIN gl_account ga ON ga.finance_organization_id = ca.finance_organization_id AND ga.id = ca.gl_account_id
-     WHERE ca.finance_organization_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,
-    [companyId, AR_CONTROL],
-    controlAccountRow,
-  );
+  return new ArInvoiceCancellationPostingRepo(db).getArControlAccount(companyId, AR_CONTROL);
 }
 
 async function getTaxMovementAccount(db: DbExecutor, companyId: number): Promise<TaxMovementAccountRow | null> {
-  return one(db,
-    `SELECT tmt.code AS tax_movement_type_code, tmt.gl_account_id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-     FROM tax_control_account tmt JOIN gl_account ga ON ga.finance_organization_id = tmt.finance_organization_id AND ga.id = tmt.gl_account_id
-     WHERE tmt.finance_organization_id = $1 AND tmt.code = $2 AND tmt.status = 'ACTIVE' AND ga.status = 'ACTIVE'
-     LIMIT 1`,
-    [companyId, TAX_MOVEMENT],
-    taxMovementAccountRow,
-  );
+  return new ArInvoiceCancellationPostingRepo(db).getTaxMovementAccount(companyId, TAX_MOVEMENT);
 }
 
 async function getOpenInvoice(db: DbExecutor, companyId: number, counterpartyId: number, documentId: string): Promise<OpenInvoiceRow | null> {
-  return one(db,
-    `SELECT e.id AS ar_subledger_entry_id, e.code AS ar_subledger_entry_code, e.journal_header_id, h.document_id, h.code AS journal_code,
-            h.posting_date, COALESCE(invoice_lines.amount, 0)::float AS base_currency_amount,
-            GREATEST(COALESCE(invoice_lines.amount, 0) - COALESCE(applied_lines.amount, 0), 0)::float AS open_amount,
-            h.detailed_document_snapshot_json AS original_invoice
-     FROM ar_subledger_entry_header e
-     JOIN journal_header h ON h.id = e.journal_header_id
-     LEFT JOIN LATERAL (
-       SELECT SUM(l.base_currency_amount) AS amount
-       FROM ar_subledger_entry_line l
-       WHERE l.ar_subledger_entry_header_id = e.id
-         AND l.control_account_code = $4
-         AND l.dr_cr = 'DR'
-     ) invoice_lines ON true
-     LEFT JOIN LATERAL (
-       SELECT SUM(l.base_currency_amount) AS amount
-       FROM ar_subledger_entry_line l
-       WHERE l.target_entry_header_id = e.id
-         AND l.control_account_code = $4
-         AND l.dr_cr = 'CR'
-     ) applied_lines ON true
-     WHERE e.finance_organization_id = $1 AND e.ar_counterparty_id = $2
-       AND h.document_type_code = 'AR_INVOICE' AND h.status = 'POSTED' AND h.document_id = $3
-     LIMIT 1`,
-    [companyId, counterpartyId, documentId, AR_CONTROL],
-    openInvoiceRow,
-  );
+  return new ArInvoiceCancellationPostingRepo(db).getOpenInvoice(companyId, counterpartyId, documentId, AR_CONTROL);
 }
 
 async function listRevenuePostingCodes(db: DbExecutor, companyId: number, codes: string[]): Promise<PostingCodeAccountRow[]> {
-  if (codes.length === 0) return [];
-  const { rows } = await db.query(
-    `SELECT ga.code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-     FROM gl_account ga
-     WHERE ga.finance_organization_id = $1
-       AND ga.status = 'ACTIVE'
-       AND ga.account_type = 'REVENUE'
-       AND ga.code = ANY($2::text[])`,
-    [companyId, codes],
-  );
-  return rows.map((row: Record<string, unknown>) => postingCodeAccountRow(row));
+  return new ArInvoiceCancellationPostingRepo(db).listRevenuePostingCodes(companyId, codes);
 }
 
 async function listDimensionValues(db: DbExecutor, companyId: number, pairs: Array<{ dimensionCode: string; valueName: string }>): Promise<DimensionValueRow[]> {
-  if (pairs.length === 0) return [];
-  const { rows } = await db.query(
-    `SELECT d.id AS dimension_id, d.code AS dimension_code, d.name AS dimension_name,
-            dv.id AS dimension_value_id, dv.name AS dimension_value_name
-     FROM dimension d JOIN dimension_value dv ON dv.finance_organization_id = d.finance_organization_id AND dv.dimension_id = d.id
-     JOIN jsonb_to_recordset($1::jsonb) AS requested(dimension_code text, value_name text)
-       ON requested.dimension_code = d.code AND requested.value_name = dv.name
-     WHERE d.finance_organization_id = $2`,
-    [JSON.stringify(pairs.map((pair) => ({ dimension_code: pair.dimensionCode, value_name: pair.valueName }))), companyId],
-  );
-  return rows.map((row: Record<string, unknown>) => dimensionValueRow(row));
+  return new ArInvoiceCancellationPostingRepo(db).listDimensionValues(companyId, pairs);
 }
 
 function revenueCodes(invoice: ArInvoiceDetailedInvoiceDto): string[] {
@@ -579,55 +507,18 @@ function arDetail(context: Context, id: number | null, code: string | null, jour
 
 async function insertArEntry(db: DbExecutor, context: Context, journalHeaderId: number): Promise<{ id: number; code: string }> {
   const code = `AR-WD-${journalHeaderId}`;
-  const { rows } = await db.query(
-    `INSERT INTO ar_subledger_entry_header
-       (code, finance_organization_id, journal_header_id, ar_counterparty_id, document_type_code,
-        document_id, description, memo, document_date, posting_date, financial_year_id,
-        financial_period_id, base_currency_code, status,
-        creation_date, creation_actor_type)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'POSTED',now(),'SYSTEM')
-     RETURNING id`,
-    [
-      code,
-      context.company.id,
-      journalHeaderId,
-      context.counterparty.id,
-      DOCUMENT_TYPE,
-      context.detailed.document_id,
-      context.detailed.generated_description,
-      context.detailed.document_memo,
-      context.detailed.cancellation_date,
-      context.detailed.posting_date,
-      context.period.financial_year_id,
-      context.period.financial_period_id,
-      context.company.base_currency_code,
-    ],
-  );
-  return { id: Number(rows[0].id), code };
+  const id = await new ArInvoiceCancellationPostingRepo(db).insertArHeader([code, context.company.id, journalHeaderId, context.counterparty.id, DOCUMENT_TYPE, context.detailed.document_id, context.detailed.generated_description, context.detailed.document_memo, context.detailed.cancellation_date, context.detailed.posting_date, context.period.financial_year_id, context.period.financial_period_id, context.company.base_currency_code]);
+  return { id, code };
 }
 
 async function originalInvoiceLineIds(db: DbExecutor, sourceHeaderId: number): Promise<Map<number, number>> {
-  const { rows } = await db.query(
-    `SELECT line_number, id
-     FROM ar_subledger_entry_line
-     WHERE ar_subledger_entry_header_id = $1
-       AND line_type = 'INVOICE_LINE'`,
-    [sourceHeaderId],
-  );
-  return new Map(rows.map((row: Record<string, unknown>) => [Number(row.line_number), Number(row.id)]));
+  return new ArInvoiceCancellationPostingRepo(db).originalInvoiceLineIds(sourceHeaderId);
 }
 
 async function insertCancellationLines(db: DbExecutor, context: Context, cancellationHeaderId: number): Promise<void> {
   const reverseIds = await originalInvoiceLineIds(db, context.sourceInvoice.ar_subledger_entry_id);
   for (const line of context.detailed.original_invoice.lines) {
-    await db.query(
-      `INSERT INTO ar_subledger_entry_line
-         (ar_subledger_entry_header_id, line_number, line_type, description, control_account_code,
-          dr_cr, quantity, unit_amount, net_amount, tax_amount, gross_amount,
-          revenue_posting_code, tax_rule_code, target_entry_header_id, reverses_entry_line_id,
-          base_currency_amount, memo, creation_date, creation_actor_type)
-       VALUES ($1,$2,'INVOICE_CANCELLATION_LINE',$3,$4,'CR',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,now(),'SYSTEM')`,
-      [
+    await new ArInvoiceCancellationPostingRepo(db).insertCancellationLine([
         cancellationHeaderId,
         line.line_id,
         line.line_description,
@@ -643,49 +534,21 @@ async function insertCancellationLines(db: DbExecutor, context: Context, cancell
         reverseIds.get(line.line_id) ?? null,
         line.gross_line_total,
         context.detailed.document_memo,
-      ],
-    );
+      ]);
   }
 }
 
 async function insertTaxHeader(db: DbExecutor, context: Context, journalHeaderId: number): Promise<{ id: number; code: string }> {
   const code = `TAX-WD-${journalHeaderId}`;
-  const { rows } = await db.query(
-    `INSERT INTO tax_ledger_entry_header
-       (code, finance_organization_id, journal_header_id, document_type_code, document_id,
-        description, document_date, posting_date, financial_year_id,
-        financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
-     VALUES ($1,$2,$3,'AR_INVOICE_CANCELLATION',$4,$5,$6,$7,$8,$9,$10,'POSTED',now(),'SYSTEM')
-     RETURNING id`,
-    [
-      code,
-      context.company.id,
-      journalHeaderId,
-      context.detailed.document_id,
-      context.detailed.generated_description,
-      context.detailed.cancellation_date,
-      context.detailed.posting_date,
-      context.period.financial_year_id,
-      context.period.financial_period_id,
-      context.company.base_currency_code,
-    ],
-  );
-  return { id: Number(rows[0].id), code };
+  const id = await new ArInvoiceCancellationPostingRepo(db).insertTaxHeader([code, context.company.id, journalHeaderId, context.detailed.document_id, context.detailed.generated_description, context.detailed.cancellation_date, context.detailed.posting_date, context.period.financial_year_id, context.period.financial_period_id, context.company.base_currency_code]);
+  return { id, code };
 }
 
 async function insertTaxEntry(db: DbExecutor, context: Context, taxHeader: { id: number; code: string }, sequence: number, detail: ArInvoiceCancellationTaxLedgerDetailDto): Promise<{ id: number; code: string }> {
   const component = context.detailed.original_invoice.lines.flatMap((line) => line.tax_components)
     .find((candidate) => candidate.tax_rule === detail.tax_rule && candidate.tax_authority_code === detail.tax_authority_code && candidate.tax_amount === detail.base_currency_amount);
   if (!component?.tax_rule_id || !component.tax_authority_id) throw new BusinessRuleError("Original invoice tax detail is missing resolved database ids");
-  const { rows } = await db.query(
-    `INSERT INTO tax_ledger_entry_line
-       (tax_ledger_entry_header_id, line_number, tax_rule_id, tax_component_id,
-        tax_authority_id, tax_movement_type_code, scheme_code, invoice_label,
-        report_label, tax_rate, taxable_base_currency_amount, dr_cr,
-        base_currency_amount, creation_date, creation_actor_type)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'DR',$12,now(),'SYSTEM')
-     RETURNING id`,
-    [
+  const id = await new ArInvoiceCancellationPostingRepo(db).insertTaxLine([
       taxHeader.id,
       sequence,
       component.tax_rule_id,
@@ -698,9 +561,8 @@ async function insertTaxEntry(db: DbExecutor, context: Context, taxHeader: { id:
       detail.tax_rate,
       detail.taxable_amount,
       detail.base_currency_amount,
-    ],
-  );
-  return { id: Number(rows[0].id), code: `${taxHeader.code}-${sequence}` };
+    ]);
+  return { id, code: `${taxHeader.code}-${sequence}` };
 }
 
 function hasDocumentId(request: ArInvoiceCancellationRequestDto): request is ResolvedArInvoiceCancellationRequestDto {

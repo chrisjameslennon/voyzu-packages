@@ -3,6 +3,32 @@ import type { DbExecutor } from "@voyzu/capability/db";
 import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import type { ArSubledgerEntryRow } from "./ar-subledger-ledger-entries.row.types";
 
+export interface ArDocumentLineRow {
+  line_number: number;
+  line_type: string;
+  description: string;
+  quantity: number | null;
+  unit_amount: number | null;
+  net_amount: number | null;
+  tax_amount: number | null;
+  gross_amount: number;
+}
+
+export interface ArDocumentApplicationRow {
+  target_document_id: string;
+  target_document_type_label: string;
+  amount: number;
+}
+
+export interface ArDocumentAppliedTransactionRow {
+  code: string;
+  posting_date: string;
+  document_date: string;
+  document_type_label: string;
+  document_id: string;
+  amount: number;
+}
+
 /* payment_status is derived for AR invoice rows only:
    - UNPAID    → no CREDITs have been applied
    - PART_PAID → some applied, but less than the invoice total
@@ -142,6 +168,72 @@ const AR_ENTRY_COLUMNS = `
 
 export class ArSubledgerRepo {
   constructor(private readonly db: DbExecutor) { }
+
+  async listDocumentLines(entryId: number): Promise<ArDocumentLineRow[]> {
+    const { rows } = await this.db.query(
+      `SELECT
+         l.line_number::int AS line_number,
+         l.line_type,
+         l.description,
+         l.quantity::float AS quantity,
+         l.unit_amount::float AS unit_amount,
+         l.net_amount::float AS net_amount,
+         l.tax_amount::float AS tax_amount,
+         l.gross_amount::float AS gross_amount
+       FROM ar_subledger_entry_line l
+       WHERE l.ar_subledger_entry_header_id = $1
+         AND (
+           l.line_type IN (
+             'INVOICE_LINE', 'INVOICE_CANCELLATION_LINE', 'RECEIPT_ALLOCATION',
+             'RECEIPT_UNAPPLIED', 'CREDIT_NOTE_LINE', 'OPENING_BALANCE_ITEM',
+             'REFUND_APPLICATION', 'WRITE_OFF_APPLICATION'
+           )
+           OR (l.line_type = 'RECEIPT_APPLICATION' AND l.control_account_code = 'AR_TRADE_RECEIVABLES')
+         )
+       ORDER BY l.line_number ASC, l.id ASC`,
+      [entryId],
+    );
+    return rows as unknown as ArDocumentLineRow[];
+  }
+
+  async listDocumentApplications(entryId: number): Promise<ArDocumentApplicationRow[]> {
+    const { rows } = await this.db.query(
+      `SELECT
+         target_h.document_id AS target_document_id,
+         target_jh.document_type_label AS target_document_type_label,
+         SUM(l.base_currency_amount)::float AS amount
+       FROM ar_subledger_entry_line l
+       JOIN ar_subledger_entry_header target_h ON target_h.id = l.target_entry_header_id
+       JOIN journal_header target_jh ON target_jh.id = target_h.journal_header_id
+       WHERE l.ar_subledger_entry_header_id = $1
+         AND l.target_entry_header_id IS NOT NULL
+       GROUP BY target_h.id, target_h.document_id, target_jh.document_type_label
+       ORDER BY MIN(l.line_number) ASC, MIN(l.id) ASC`,
+      [entryId],
+    );
+    return rows as unknown as ArDocumentApplicationRow[];
+  }
+
+  async listAppliedTransactions(entryId: number): Promise<ArDocumentAppliedTransactionRow[]> {
+    const { rows } = await this.db.query(
+      `SELECT DISTINCT ON (source.id, l.id)
+         source.code,
+         source.posting_date::text AS posting_date,
+         source.document_date::text AS document_date,
+         source_jh.document_type_label,
+         source.document_id,
+         l.base_currency_amount::float AS amount
+       FROM ar_subledger_entry_line l
+       JOIN ar_subledger_entry_header source ON source.id = l.ar_subledger_entry_header_id
+       JOIN journal_header source_jh ON source_jh.id = source.journal_header_id
+       WHERE source.id <> $1
+         AND (l.target_entry_header_id = $1 OR l.source_entry_header_id = $1)
+       ORDER BY source.id, l.id, source.posting_date ASC, source.code ASC`,
+      [entryId],
+    );
+    return rows as unknown as ArDocumentAppliedTransactionRow[];
+  }
+
   async listEntries(companyId: number): Promise<ArSubledgerEntryRow[]> {
     const settingsCompanyId = await resolveEffectiveSettingsCompanyId(companyId, this.db);
     const { rows } = await this.db.query(

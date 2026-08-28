@@ -1,5 +1,5 @@
 import { getDb } from "@voyzu/capability/db";
-import { NotFoundError, InputValidationError } from "@voyzu/capability/errors";
+import { InputValidationError } from "@voyzu/capability/errors";
 import type { ProfitLossResponseDto } from "@voyzu/finance/types/modules/company-reports";
 import type {
   ProfitLossBreakdownDto,
@@ -10,22 +10,7 @@ import type {
 
 import { ProfitLossRepo } from "../db/profit-loss.repo";
 import type { ProfitLossDimensionSourceLine } from "../db/profit-loss.repo";
-
-async function fetchCompany(db: ReturnType<typeof getDb>, companyId: number): Promise<{ name: string; reportLine1: string | null; reportLine2: string | null; reportFooter: string | null; baseCurrencyCode: string }> {
-  const { rows } = await db.query(
-    `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id WHERE fc.id = $1`,
-    [companyId],
-  );
-  if (!rows[0]) throw new NotFoundError(`Company id ${companyId} not found`);
-  const r = rows[0] as Record<string, unknown>;
-  return {
-    name: String(r.name),
-    reportLine1: r.report_line_1 == null ? null : String(r.report_line_1),
-    reportLine2: r.report_line_2 == null ? null : String(r.report_line_2),
-    reportFooter: r.report_footer == null ? null : String(r.report_footer),
-    baseCurrencyCode: String(r.base_currency_code),
-  };
-}
+import { getCompanyReportContext } from "../../../common/server/lib/company-report.service";
 
 async function getProfitLossUnchecked(
   companyId: number,
@@ -36,7 +21,7 @@ async function getProfitLossUnchecked(
   const repo = new ProfitLossRepo(db);
 
   const [company, lines] = await Promise.all([
-    fetchCompany(db, companyId),
+    getCompanyReportContext(db, companyId),
     repo.getLines(companyId, fromDate, toDate),
   ]);
 
@@ -73,11 +58,11 @@ async function getProfitLossAnalysisUnchecked(
   const repo = new ProfitLossRepo(db);
 
   const [company, sourceLines] = await Promise.all([
-    fetchCompany(db, companyId),
+    getCompanyReportContext(db, companyId),
     repo.getDimensionSourceLines(companyId, fromDate, toDate),
   ]);
 
-  const { filters, breakdown: validBreakdown } = await validateDimensionSelections(db, companyId, dimensionFilters, breakdown);
+  const { filters, breakdown: validBreakdown } = await validateDimensionSelections(repo, companyId, dimensionFilters, breakdown);
   const filteredLines = applyDimensionFilters(sourceLines, filters);
   const { lines, columns } = aggregateDimensionLines(filteredLines, validBreakdown);
   const incomeLines = lines.filter((line) => line.section === "INCOME");
@@ -106,25 +91,18 @@ async function getProfitLossAnalysisUnchecked(
 }
 
 async function validateDimensionSelections(
-  db: ReturnType<typeof getDb>,
+  repo: ProfitLossRepo,
   companyId: number,
   filters: ProfitLossDimensionSelectionDto[],
   breakdown: ProfitLossBreakdownDto | null,
 ): Promise<{ filters: ProfitLossDimensionSelectionDto[]; breakdown: ProfitLossBreakdownDto | null }> {
-  const { rows } = await db.query(
-    `SELECT d.code AS dimension_code, d.name AS dimension_name, dv.name AS value_name
-     FROM dimension d
-     LEFT JOIN dimension_value dv ON dv.finance_organization_id = d.finance_organization_id AND dv.dimension_id = d.id AND dv.status = 'ACTIVE'
-     WHERE d.finance_organization_id = $1 AND d.status = 'ACTIVE'
-     ORDER BY d.name, dv.name`,
-    [companyId],
-  );
+  const rows = await repo.listActiveDimensionValues(companyId);
 
   const dimensionLookup = new Map<string, { name: string; values: Set<string> }>();
-  for (const row of rows as Array<Record<string, unknown>>) {
-    const code = String(row.dimension_code);
-    const existing = dimensionLookup.get(code) ?? { name: String(row.dimension_name), values: new Set<string>() };
-    if (row.value_name != null) existing.values.add(String(row.value_name));
+  for (const row of rows) {
+    const code = row.dimensionCode;
+    const existing = dimensionLookup.get(code) ?? { name: row.dimensionName, values: new Set<string>() };
+    if (row.valueName != null) existing.values.add(row.valueName);
     dimensionLookup.set(code, existing);
   }
 

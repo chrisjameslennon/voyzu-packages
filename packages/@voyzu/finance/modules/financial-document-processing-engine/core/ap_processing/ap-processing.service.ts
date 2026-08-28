@@ -19,6 +19,7 @@ import type {
 import type { BankCashJournalDetailsDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/bank-cash-details.dto";
 import { getDb, type DbExecutor, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
+import { ApProcessingRepo } from "./db/ap-processing.repo";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { InsertJournalLineRow, JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
@@ -154,11 +155,6 @@ async function reserveDocumentId(documentType: ApProcessingDocumentType, request
   return { request: { ...request, document_id: `${prefixes[documentType]}-${id}` }, reservedId: id };
 }
 
-async function one<T>(db: DbExecutor, sql: string, params: unknown[], map: (row: Record<string, unknown>) => T): Promise<T | null> {
-  const { rows } = await db.query(sql, params);
-  return rows[0] ? map(rows[0] as Record<string, unknown>) : null;
-}
-
 function company(row: Record<string, unknown>): Company {
   return { id: Number(row.id), code: String(row.code), name: String(row.name), country_code: String(row.country_code), base_currency_code: String(row.base_currency_code), status: String(row.status) };
 }
@@ -227,21 +223,17 @@ function openItem(row: Record<string, unknown>): OpenItem {
 
 async function base(db: DbExecutor, request: RequestDto, postingDateValue: string, documentType: ApProcessingDocumentType): Promise<{ company: Company; counterparty: Counterparty; period: Period; documentProcessor: DocumentProcessor }> {
   const companyCode = requiredString(request.company_code, "company_code");
-  const c = await one(db, `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status
-    FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
-    WHERE c.code = $1 AND fc.is_template = false`, [companyCode], company);
+  const repo = new ApProcessingRepo(db);
+  const c = await repo.one("company", [companyCode], company);
   if (!c) throw new BusinessRuleError(`Company ${companyCode} was not found`);
   if (c.status !== "ACTIVE") throw new BusinessRuleError(`Company ${c.code} is not ACTIVE`);
-  const processor = await one(db, `SELECT code, status, supports_dimensions, cash_movement, supports_items FROM financial_document_type WHERE code = $1`, [documentType], documentProcessor);
+  const processor = await repo.one("documentProcessor", [documentType], documentProcessor);
   if (!processor || processor.status !== "ACTIVE") throw new BusinessRuleError(`${documentType} document processor is not active`);
   const cpCode = requiredString(request.ap_counterparty_code, "ap_counterparty_code");
-  const cp = await one(db, `SELECT * FROM ap_counterparty WHERE finance_organization_id = $1 AND code = $2`, [c.id, cpCode], counterparty);
+  const cp = await repo.one("counterparty", [c.id, cpCode], counterparty);
   if (!cp) throw new BusinessRuleError(`AP counterparty ${cpCode} was not found`);
   if (cp.status !== "ACTIVE") throw new BusinessRuleError(`AP counterparty ${cp.code} is not ACTIVE`);
-  const p = await one(db, `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
-    FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-    WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fp.status = 'OPEN' AND fy.status = 'OPEN'
-    LIMIT 1`, [c.id, postingDateValue], period);
+  const p = await repo.one("period", [c.id, postingDateValue], period);
   if (!p) throw new BusinessRuleError(`No OPEN fiscal period contains posting date ${postingDateValue}`);
   return { company: c, counterparty: cp, period: p, documentProcessor: processor };
 }
@@ -274,15 +266,14 @@ function assertDocumentCapabilities(documentType: ApProcessingDocumentType, inpu
 }
 
 async function control(db: DbExecutor, companyId: number, code: typeof AP_TRADE | typeof AP_UNAPPLIED): Promise<Account> {
-  const acc = await one(db, `SELECT ca.code AS control_account_code, ca.name AS control_account_name, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-    FROM ap_control_account ca JOIN gl_account ga ON ga.finance_organization_id = ca.finance_organization_id AND ga.id = ca.gl_account_id
-    WHERE ca.finance_organization_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, code], account);
+  const acc = await new ApProcessingRepo(db).one("control", [companyId, code], account);
   if (!acc) throw new BusinessRuleError(`${code} control account is not configured`);
   return acc;
 }
 
 async function postingCode(db: DbExecutor, companyId: number, doc: ApProcessingDocumentType | "AP_BILL", defaultCode: string, requested?: string | null): Promise<Account> {
-  const defaultRow = await one(db, `SELECT target_type, allowed_account_types FROM financial_document_default WHERE finance_organization_id = $1 AND document_code = $2 AND code = $3 AND status = 'ACTIVE' LIMIT 1`, [companyId, doc, defaultCode], (row) => ({
+  const repo = new ApProcessingRepo(db);
+  const defaultRow = await repo.one("documentDefault", [companyId, doc, defaultCode], (row) => ({
     target_type: String(row.target_type),
     allowed_account_types: row.allowed_account_types as string[],
   }));
@@ -290,79 +281,26 @@ async function postingCode(db: DbExecutor, companyId: number, doc: ApProcessingD
 
   const row = requested
     ? defaultRow.target_type === "BANK_CASH_ACCOUNT"
-      ? await one(db, `SELECT $3::text AS code, bca.code AS bank_cash_control_account_code,
-             bca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-          FROM bank_cash_control_account bca
-          JOIN gl_account ga ON ga.finance_organization_id = bca.finance_organization_id AND ga.id = bca.gl_account_id
-          WHERE bca.finance_organization_id = $1
-            AND bca.code = $2
-            AND bca.status = 'ACTIVE'
-            AND ga.status = 'ACTIVE'
-            AND ga.account_type = ANY($4::text[])
-          LIMIT 1`, [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
-      : await one(db, `SELECT $3::text AS code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-          FROM gl_account ga
-          WHERE ga.finance_organization_id = $1
-            AND ga.code = $2
-            AND ga.status = 'ACTIVE'
-            AND ga.account_type = ANY($4::text[])
-          LIMIT 1`, [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
-    : await one(db, `SELECT pc.code, bca.code AS bank_cash_control_account_code,
-             COALESCE(pc.gl_account_id, bca.gl_account_id) AS gl_account_id,
-             ga.code AS gl_account_code, ga.name AS gl_account_name
-      FROM financial_document_default pc
-      LEFT JOIN bank_cash_control_account bca ON bca.finance_organization_id = pc.finance_organization_id AND bca.id = pc.bank_cash_control_account_id
-      JOIN gl_account ga ON ga.finance_organization_id = pc.finance_organization_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
-      WHERE pc.finance_organization_id = $1
-        AND pc.document_code = $2
-        AND pc.code = $3
-        AND pc.status = 'ACTIVE'
-        AND (bca.id IS NULL OR bca.status = 'ACTIVE')
-        AND ga.status = 'ACTIVE'
-      LIMIT 1`, [companyId, doc, defaultCode], account);
+      ? await repo.one("bankOverride", [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
+      : await repo.one("glOverride", [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
+    : await repo.one("defaultAccount", [companyId, doc, defaultCode], account);
   if (!row) throw new BusinessRuleError(`${requested ? "Override" : "Default"} account ${requested ?? defaultCode} was not resolved for ${doc}`);
   return row;
 }
 
 async function listTaxRules(db: DbExecutor, countryCode: string, codes: string[]): Promise<TaxRule[]> {
   if (codes.length === 0) return [];
-  const { rows } = await db.query(
-    `SELECT *
-     FROM tax_rule
-     WHERE country_code = $1
-       AND code = ANY($2::text[])`,
-    [countryCode, codes],
-  );
-  return rows.map((row: Record<string, unknown>) => taxRule(row));
+  return new ApProcessingRepo(db).many("taxRules", [countryCode, codes], taxRule);
 }
 
 async function listTaxComponents(db: DbExecutor, countryCode: string, taxRuleCodes: string[]): Promise<TaxComponent[]> {
   if (taxRuleCodes.length === 0) return [];
-  const { rows } = await db.query(
-    `SELECT
-       tc.*,
-       ta.id AS tax_authority_id,
-       ta.name AS tax_authority_name
-     FROM tax_component tc
-     JOIN tax_authority ta ON ta.code = tc.tax_authority_code
-     WHERE tc.tax_rule_country_code = $1
-       AND tc.tax_rule_code = ANY($2::text[])
-     ORDER BY tc.tax_rule_code ASC, tc.calculation_order ASC`,
-    [countryCode, taxRuleCodes],
-  );
-  return rows.map((row: Record<string, unknown>) => taxComponent(row));
+  return new ApProcessingRepo(db).many("taxComponents", [countryCode, taxRuleCodes], taxComponent);
 }
 
 async function listTaxAuthorities(db: DbExecutor, countryCode: string, codes: string[]): Promise<TaxAuthority[]> {
   if (codes.length === 0) return [];
-  const { rows } = await db.query(
-    `SELECT id, code, name, country_code, status
-     FROM tax_authority
-     WHERE country_code = $1
-       AND code = ANY($2::text[])`,
-    [countryCode, codes],
-  );
-  return rows.map((row: Record<string, unknown>) => taxAuthority(row));
+  return new ApProcessingRepo(db).many("taxAuthorities", [countryCode, codes], taxAuthority);
 }
 
 function mapByCode<T extends { code: string }>(rows: T[]): Map<string, T> {
@@ -380,35 +318,15 @@ function mapTaxComponentsByRule(rows: TaxComponent[]): Map<string, TaxComponent[
 }
 
 async function openBill(db: DbExecutor, companyId: number, counterpartyId: number, docId: string): Promise<OpenItem | null> {
-  return one(db, `SELECT e.id, e.code, h.document_type_code, h.document_id, h.code AS journal_code, h.detailed_document_snapshot_json AS original_bill,
-      GREATEST(COALESCE(bill.amount, 0) - COALESCE(applied.amount, 0), 0)::float AS open_amount
-    FROM ap_subledger_entry_header e
-    JOIN journal_header h ON h.id = e.journal_header_id
-    LEFT JOIN LATERAL (SELECT SUM(base_currency_amount) AS amount FROM ap_subledger_entry_line l WHERE l.ap_subledger_entry_header_id = e.id AND l.control_account_code = $4 AND l.dr_cr = 'CR') bill ON true
-    LEFT JOIN LATERAL (SELECT SUM(base_currency_amount) AS amount FROM ap_subledger_entry_line l WHERE l.target_entry_header_id = e.id AND l.control_account_code = $4 AND l.dr_cr = 'DR') applied ON true
-    WHERE e.finance_organization_id = $1 AND e.ap_counterparty_id = $2 AND h.document_type_code IN ('AP_BILL', 'AP_OPENING_BALANCE') AND h.document_id = $3
-    LIMIT 1`, [companyId, counterpartyId, docId, AP_TRADE], openItem);
+  return new ApProcessingRepo(db).one("openBill", [companyId, counterpartyId, docId, AP_TRADE], openItem);
 }
 
 async function openPayment(db: DbExecutor, companyId: number, counterpartyId: number, docId: string): Promise<OpenItem | null> {
-  return one(db, `SELECT e.id, e.code, h.document_type_code, h.document_id, h.code AS journal_code,
-      GREATEST(COALESCE(pay.amount, 0) - COALESCE(used.amount, 0), 0)::float AS open_amount
-    FROM ap_subledger_entry_header e
-    JOIN journal_header h ON h.id = e.journal_header_id
-    LEFT JOIN LATERAL (SELECT SUM(base_currency_amount) AS amount FROM ap_subledger_entry_line l WHERE l.ap_subledger_entry_header_id = e.id AND l.control_account_code = $4 AND l.dr_cr = 'DR') pay ON true
-    LEFT JOIN LATERAL (SELECT SUM(base_currency_amount) AS amount FROM ap_subledger_entry_line l WHERE l.source_entry_header_id = e.id AND l.control_account_code = $4 AND l.dr_cr = 'CR') used ON true
-    WHERE e.finance_organization_id = $1 AND e.ap_counterparty_id = $2 AND h.document_type_code IN ('AP_PAYMENT', 'AP_CREDIT_NOTE') AND h.document_id = $3
-    LIMIT 1`, [companyId, counterpartyId, docId, AP_UNAPPLIED], openItem);
+  return new ApProcessingRepo(db).one("openPayment", [companyId, counterpartyId, docId, AP_UNAPPLIED], openItem);
 }
 
 async function unappliedBalance(db: DbExecutor, companyId: number, counterpartyId: number): Promise<number> {
-  const { rows } = await db.query(`SELECT GREATEST(COALESCE(SUM(CASE
-    WHEN l.control_account_code = $3 AND l.dr_cr = 'DR' THEN l.base_currency_amount
-    WHEN l.control_account_code = $3 AND l.dr_cr = 'CR' THEN -l.base_currency_amount
-    ELSE 0 END), 0), 0)::float AS amount
-    FROM ap_subledger_entry_header e JOIN ap_subledger_entry_line l ON l.ap_subledger_entry_header_id = e.id
-    WHERE e.finance_organization_id = $1 AND e.ap_counterparty_id = $2`, [companyId, counterpartyId, AP_UNAPPLIED]);
-  return Number(rows[0]?.amount ?? 0);
+  return new ApProcessingRepo(db).unappliedBalance(companyId, counterpartyId, AP_UNAPPLIED);
 }
 
 function postingCodeSource(acc: Account): { sourceLedger: string | null; sourceControlAccount: string | null } {
@@ -775,9 +693,7 @@ async function buildSimpleAdjustment(db: DbExecutor, documentType: ApProcessingD
 }
 
 async function taxControl(db: DbExecutor, companyId: number): Promise<Account> {
-  const acc = await one(db, `SELECT ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-    FROM tax_control_account tmt JOIN gl_account ga ON ga.finance_organization_id = tmt.finance_organization_id AND ga.id = tmt.gl_account_id
-    WHERE tmt.finance_organization_id = $1 AND tmt.code = $2 AND tmt.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, TAX_ON_PURCHASES], account);
+  const acc = await new ApProcessingRepo(db).one("taxControl", [companyId, TAX_ON_PURCHASES], account);
   if (!acc) throw new BusinessRuleError(`${TAX_ON_PURCHASES} tax control account is not configured`);
   return acc;
 }
@@ -814,20 +730,14 @@ async function persist(client: DbExecutor, ctx: Context): Promise<ApProcessingPo
 
 async function insertApHeader(db: DbExecutor, ctx: Context, journalHeaderId: number): Promise<{ id: number; code: string }> {
   const code = `AP-${ctx.documentType.replace("AP_", "").replaceAll("_", "-")}-${journalHeaderId}`;
-  const { rows } = await db.query(`INSERT INTO ap_subledger_entry_header
-    (code, finance_organization_id, journal_header_id, ap_counterparty_id, document_type_code, document_id, supplier_invoice_number, description, memo, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
-    VALUES ($1,$2,$3,$4,$5,$6,NULL,$7,$8,$9,$10,$11,$12,$13,'POSTED',now(),'SYSTEM') RETURNING id`,
-    [code, ctx.company.id, journalHeaderId, ctx.counterparty.id, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, ctx.detailed.memo, documentDate(ctx), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
-  return { id: Number(rows[0].id), code };
+  const id = await new ApProcessingRepo(db).insertApHeader([code, ctx.company.id, journalHeaderId, ctx.counterparty.id, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, ctx.detailed.memo, documentDate(ctx), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
+  return { id, code };
 }
 
 async function insertApLine(db: DbExecutor, headerId: number, lineNumber: number, ctx: Context, detail: ApProcessingSubledgerDetailDto): Promise<{ id: number }> {
   const lineType = apLineType(ctx.documentType, detail);
-  const { rows } = await db.query(`INSERT INTO ap_subledger_entry_line
-    (ap_subledger_entry_header_id, line_number, line_type, description, control_account_code, dr_cr, gross_amount, source_entry_header_id, target_entry_header_id, base_currency_amount, memo, creation_date, creation_actor_type)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,now(),'SYSTEM') RETURNING id`,
-    [headerId, lineNumber, lineType, ctx.detailed.generated_description, detail.control_account_code, detail.entry_type === "DEBIT" ? "DR" : "CR", detail.base_currency_amount, detail.source_entry_header_id ?? null, detail.applied_to_ap_subledger_entry_id ?? null, detail.base_currency_amount, ctx.detailed.memo]);
-  return { id: Number(rows[0].id) };
+  const id = await new ApProcessingRepo(db).insertApLine([headerId, lineNumber, lineType, ctx.detailed.generated_description, detail.control_account_code, detail.entry_type === "DEBIT" ? "DR" : "CR", detail.base_currency_amount, detail.source_entry_header_id ?? null, detail.applied_to_ap_subledger_entry_id ?? null, detail.base_currency_amount, ctx.detailed.memo]);
+  return { id };
 }
 
 function apLineType(documentType: ApProcessingDocumentType, detail: ApProcessingSubledgerDetailDto): string {
@@ -842,18 +752,12 @@ function apLineType(documentType: ApProcessingDocumentType, detail: ApProcessing
 
 async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: number): Promise<ApProcessingTaxLedgerDetailDto[]> {
   const headerCode = `TAX-${ctx.documentType.replace("AP_", "").replaceAll("_", "-")}-${journalHeaderId}`;
-  const header = await db.query(`INSERT INTO tax_ledger_entry_header
-    (code, finance_organization_id, journal_header_id, document_type_code, document_id, description, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'POSTED',now(),'SYSTEM') RETURNING id`,
-    [headerCode, ctx.company.id, journalHeaderId, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, documentDate(ctx), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
+  const repo = new ApProcessingRepo(db);
+  const headerId = await repo.insertTaxHeader([headerCode, ctx.company.id, journalHeaderId, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, documentDate(ctx), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
 
   const rows: ApProcessingTaxLedgerDetailDto[] = [];
   for (const [index, detail] of ctx.taxDetails.entries()) {
-    const taxSetup = await one(db, `SELECT tr.id AS tax_rule_id, ta.id AS tax_authority_id, ta.code AS tax_authority_code, ta.name AS tax_authority_name
-      FROM tax_rule tr
-      JOIN tax_authority ta ON ta.country_code = tr.country_code AND ta.code = $3 AND ta.status = 'ACTIVE'
-      WHERE tr.country_code = $1 AND tr.code = $2 AND tr.status = 'ACTIVE'
-      LIMIT 1`, [ctx.company.country_code, detail.tax_rule, detail.tax_authority_code], (row) => ({
+    const taxSetup = await repo.one("taxSetup", [ctx.company.country_code, detail.tax_rule, detail.tax_authority_code], (row) => ({
       tax_rule_id: Number(row.tax_rule_id),
       tax_authority_id: Number(row.tax_authority_id),
       tax_authority_code: String(row.tax_authority_code),
@@ -861,11 +765,8 @@ async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: nu
     }));
     if (!taxSetup) throw new BusinessRuleError(`Tax setup was not resolved for ${detail.tax_rule}/${detail.tax_authority_code}`);
     const lineNumber = index + 1;
-    const inserted = await db.query(`INSERT INTO tax_ledger_entry_line
-      (tax_ledger_entry_header_id, line_number, tax_rule_id, tax_component_id, tax_authority_id, tax_movement_type_code, scheme_code, invoice_label, report_label, tax_rate, taxable_base_currency_amount, dr_cr, base_currency_amount, creation_date, creation_actor_type)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,now(),'SYSTEM') RETURNING id`,
-      [
-        Number(header.rows[0].id),
+    const id = await repo.insertTaxLine([
+        headerId,
         lineNumber,
         taxSetup.tax_rule_id,
         detail.tax_component_id,
@@ -879,7 +780,7 @@ async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: nu
         detail.entry_type === "CREDIT" ? "CR" : "DR",
         detail.base_currency_amount,
       ]);
-    rows.push({ ...detail, id: Number(inserted.rows[0].id), code: `${headerCode}-${lineNumber}`, tax_authority_code: taxSetup.tax_authority_code, tax_authority_name: taxSetup.tax_authority_name, status: "POSTED" });
+    rows.push({ ...detail, id, code: `${headerCode}-${lineNumber}`, tax_authority_code: taxSetup.tax_authority_code, tax_authority_name: taxSetup.tax_authority_name, status: "POSTED" });
   }
   return rows;
 }

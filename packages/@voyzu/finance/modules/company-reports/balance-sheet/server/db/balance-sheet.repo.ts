@@ -1,11 +1,26 @@
 import type { DbExecutor } from "@voyzu/capability/db";
 import type { BalanceSheetLineDto, BalanceSheetSection } from "@voyzu/finance/types/modules/company-reports/balance-sheet";
+import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
 
 import { TrialBalanceSnapshotRepo } from "../../../common/server/db/trial-balance-snapshot.repo";
 
 function todayIso(): string {
   const today = new Date();
   return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+}
+
+function localDateString(value: unknown): string {
+  if (value instanceof Date) {
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  return String(value);
+}
+
+function isoDateTimeString(value: unknown): string {
+  return value instanceof Date ? value.toISOString() : String(value);
 }
 
 export class BalanceSheetRepo {
@@ -62,6 +77,54 @@ export class BalanceSheetRepo {
       startDate: String(row.start_date),
       endDate: String(row.end_date),
     };
+  }
+
+  async listFinancialYearsWithPostings(
+    companyId: number,
+  ): Promise<FinancialYearResponseDto[]> {
+    const { rows } = await this.db.query(
+      `SELECT fy.*,
+              EXISTS (
+                SELECT 1
+                FROM journal_header jh
+                WHERE jh.finance_organization_id = fy.finance_organization_id
+                  AND jh.status = 'POSTED'
+                  AND jh.posting_date BETWEEN fy.start_date AND fy.end_date
+              ) AS has_postings
+       FROM fiscal_year fy
+       WHERE fy.finance_organization_id = $1
+       ORDER BY fy.start_date ASC`,
+      [companyId],
+    );
+
+    return rows
+      .map((row: Record<string, unknown>) => ({
+        id: Number(row.id),
+        code: String(row.code),
+        name: String(row.name),
+        companyId: Number(row.finance_organization_id),
+        startDate: localDateString(row.start_date),
+        endDate: localDateString(row.end_date),
+        status: String(row.status) as FinancialYearResponseDto["status"],
+        hasPostings: Boolean(row.has_postings),
+        audit: {
+          created: {
+            date: isoDateTimeString(row.creation_date),
+            actorType: String(
+              row.creation_actor_type,
+            ) as FinancialYearResponseDto["audit"]["created"]["actorType"],
+            userId: String(row.creation_user_id),
+          },
+          updated: {
+            date: isoDateTimeString(row.updated_date),
+            actorType: String(
+              row.updated_actor_type,
+            ) as FinancialYearResponseDto["audit"]["updated"]["actorType"],
+            userId: String(row.updated_user_id),
+          },
+        },
+      }))
+      .filter((year) => year.hasPostings);
   }
 
   async getProfit(

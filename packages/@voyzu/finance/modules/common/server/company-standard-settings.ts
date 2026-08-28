@@ -1,4 +1,5 @@
 import { getDb, type DbExecutor } from "@voyzu/capability/db";
+import { SettingsScopeRepo } from "./db/settings-scope.repo";
 
 export interface CompanySettingsUiState {
   usesFinanceTemplateSettings: boolean;
@@ -10,16 +11,9 @@ export async function getCompanySettingsUiState(
   companyId: number,
   db: DbExecutor = getDb(),
 ): Promise<CompanySettingsUiState> {
-  const { rows } = await db.query(
-    `SELECT COALESCE(c.status, 'ACTIVE') AS status, fc.use_finance_template_settings
-       FROM finance_organization fc
-       LEFT JOIN organization c ON c.id = fc.organization_id
-      WHERE fc.id = $1
-        AND (fc.is_template = true OR c.status != 'DELETED')`,
-    [companyId],
-  );
-  const usesFinanceTemplateSettings = rows[0]?.use_finance_template_settings === true;
-  const isArchived = rows[0]?.status === "INACTIVE";
+  const state = await new SettingsScopeRepo(db).getCompanySettingsState(companyId);
+  const usesFinanceTemplateSettings = state?.useFinanceTemplateSettings === true;
+  const isArchived = state?.status === "INACTIVE";
 
   return {
     usesFinanceTemplateSettings,

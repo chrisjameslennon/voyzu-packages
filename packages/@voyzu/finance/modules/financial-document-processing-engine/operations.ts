@@ -7,7 +7,7 @@ import { ApBillRequestDto } from "@voyzu/finance/types/modules/financial-documen
 import { ApBillPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-bill.response.dto";
 import { ApPaymentApplicationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-payment-application.request.dto";
 import { ApPaymentRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-payment.request.dto";
-import { ApProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-processing.response.dto";
+import { ApProcessingDocumentType, ApProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-processing.response.dto";
 import { ArAdjustmentPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
 import { ArCreditNoteRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
 import { ArInvoiceCancellationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto";
@@ -29,118 +29,127 @@ import { LedgerJournalReversalRequestDto } from "@voyzu/finance/types/modules/fi
 import { LedgerJournalReversalPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal-reversal.response.dto";
 import { LedgerJournalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal.request.dto";
 import { LedgerJournalPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal.response.dto";
-import { TaxProcessingRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/tax-processing.request.dto";
+import { TaxProcessingDocumentType, TaxProcessingRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/tax-processing.request.dto";
 import { TaxProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/tax-processing.response.dto";
 import { TaxAdjustmentRequestDto, TaxPaymentRequestDto, TaxRefundRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/tax-processing.request.dto";
 
+const PreviewOptionsDto = Type.Object({ preview: Type.Optional(Type.Boolean()) }, { additionalProperties: false });
+const ApProcessingRequestDto = Type.Union([
+  ApCreditNoteRequestDto, ApOpeningBalanceRequestDto, ApRefundRequestDto, ApWriteOffRequestDto,
+  ApPaymentRequestDto, ApPaymentApplicationRequestDto, ApBillCancellationRequestDto,
+]);
+const ArAdjustmentDocumentTypeDto = Type.Union([
+  Type.Literal("AR_CREDIT_NOTE"), Type.Literal("AR_OPENING_BALANCE"), Type.Literal("AR_REFUND"), Type.Literal("AR_WRITE_OFF"),
+]);
+const ArAdjustmentRequestDto = Type.Union([ArCreditNoteRequestDto, ArOpeningBalanceRequestDto, ArRefundRequestDto, ArWriteOffRequestDto]);
 
 
 export const processApBill = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ApBillRequestDto]), Type.Tuple([ApBillRequestDto, Type.Any()])]), result: ApBillPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApBillRequestDto]), Type.Tuple([ApBillRequestDto, PreviewOptionsDto])]), result: ApBillPostingResponseDto },
   () => import("./ap_bill/lib/ap-bill.service").then((module) => module.processApBill),
 );
 export const processApBillCancellation = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ApBillCancellationRequestDto]), Type.Tuple([ApBillCancellationRequestDto, Type.Any()])]), result: ApProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApBillCancellationRequestDto]), Type.Tuple([ApBillCancellationRequestDto, PreviewOptionsDto])]), result: ApProcessingPostingResponseDto },
   () => import("./ap_bill_cancellation/lib/ap-bill-cancellation.service").then((module) => module.processApBillCancellation),
 );
 export const processApCreditNote = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ApCreditNoteRequestDto]), Type.Tuple([ApCreditNoteRequestDto, Type.Any()])]), result: ApProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApCreditNoteRequestDto]), Type.Tuple([ApCreditNoteRequestDto, PreviewOptionsDto])]), result: ApProcessingPostingResponseDto },
   () => import("./ap_credit_note/lib/ap-credit-note.service").then((module) => module.processApCreditNote),
 );
 export const processApOpeningBalance = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ApOpeningBalanceRequestDto]), Type.Tuple([ApOpeningBalanceRequestDto, Type.Any()])]), result: ApProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApOpeningBalanceRequestDto]), Type.Tuple([ApOpeningBalanceRequestDto, PreviewOptionsDto])]), result: ApProcessingPostingResponseDto },
   () => import("./ap_opening_balance/lib/ap-opening-balance.service").then((module) => module.processApOpeningBalance),
 );
 export const processApPayment = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ApPaymentRequestDto]), Type.Tuple([ApPaymentRequestDto, Type.Any()])]), result: ApProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApPaymentRequestDto]), Type.Tuple([ApPaymentRequestDto, PreviewOptionsDto])]), result: ApProcessingPostingResponseDto },
   () => import("./ap_payment/lib/ap-payment.service").then((module) => module.processApPayment),
 );
 export const processApPaymentApplication = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ApPaymentApplicationRequestDto]), Type.Tuple([ApPaymentApplicationRequestDto, Type.Any()])]), result: ApProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApPaymentApplicationRequestDto]), Type.Tuple([ApPaymentApplicationRequestDto, PreviewOptionsDto])]), result: ApProcessingPostingResponseDto },
   () => import("./ap_payment_application/lib/ap-payment-application.service").then((module) => module.processApPaymentApplication),
 );
 export const processApRefund = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ApRefundRequestDto]), Type.Tuple([ApRefundRequestDto, Type.Any()])]), result: ApProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApRefundRequestDto]), Type.Tuple([ApRefundRequestDto, PreviewOptionsDto])]), result: ApProcessingPostingResponseDto },
   () => import("./ap_refund/lib/ap-refund.service").then((module) => module.processApRefund),
 );
 export const processApWriteOff = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ApWriteOffRequestDto]), Type.Tuple([ApWriteOffRequestDto, Type.Any()])]), result: ApProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApWriteOffRequestDto]), Type.Tuple([ApWriteOffRequestDto, PreviewOptionsDto])]), result: ApProcessingPostingResponseDto },
   () => import("./ap_write_off/lib/ap-write-off.service").then((module) => module.processApWriteOff),
 );
 export const processArCreditNote = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ArCreditNoteRequestDto]), Type.Tuple([ArCreditNoteRequestDto, Type.Any()])]), result: ArAdjustmentPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArCreditNoteRequestDto]), Type.Tuple([ArCreditNoteRequestDto, PreviewOptionsDto])]), result: ArAdjustmentPostingResponseDto },
   () => import("./ar_credit_note/lib/ar-credit-note.service").then((module) => module.processArCreditNote),
 );
 export const processArInvoice = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ArInvoiceRequestDto]), Type.Tuple([ArInvoiceRequestDto, Type.Any()])]), result: ArInvoicePostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArInvoiceRequestDto]), Type.Tuple([ArInvoiceRequestDto, PreviewOptionsDto])]), result: ArInvoicePostingResponseDto },
   () => import("./ar_invoice/lib/ar-invoice.service").then((module) => module.processArInvoice),
 );
 export const processArInvoiceCancellation = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ArInvoiceCancellationRequestDto]), Type.Tuple([ArInvoiceCancellationRequestDto, Type.Any()])]), result: ArInvoiceCancellationPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArInvoiceCancellationRequestDto]), Type.Tuple([ArInvoiceCancellationRequestDto, PreviewOptionsDto])]), result: ArInvoiceCancellationPostingResponseDto },
   () => import("./ar_invoice_cancellation/lib/ar-invoice-cancellation.service").then((module) => module.processArInvoiceCancellation),
 );
 export const processArOpeningBalance = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ArOpeningBalanceRequestDto]), Type.Tuple([ArOpeningBalanceRequestDto, Type.Any()])]), result: ArAdjustmentPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArOpeningBalanceRequestDto]), Type.Tuple([ArOpeningBalanceRequestDto, PreviewOptionsDto])]), result: ArAdjustmentPostingResponseDto },
   () => import("./ar_opening_balance/lib/ar-opening-balance.service").then((module) => module.processArOpeningBalance),
 );
 export const processArReceipt = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ArReceiptRequestDto]), Type.Tuple([ArReceiptRequestDto, Type.Any()])]), result: ArReceiptPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArReceiptRequestDto]), Type.Tuple([ArReceiptRequestDto, PreviewOptionsDto])]), result: ArReceiptPostingResponseDto },
   () => import("./ar_receipt/lib/ar-receipt.service").then((module) => module.processArReceipt),
 );
 export const processArReceiptApplication = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ArReceiptApplicationRequestDto]), Type.Tuple([ArReceiptApplicationRequestDto, Type.Any()])]), result: ArReceiptApplicationPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArReceiptApplicationRequestDto]), Type.Tuple([ArReceiptApplicationRequestDto, PreviewOptionsDto])]), result: ArReceiptApplicationPostingResponseDto },
   () => import("./ar_receipt_application/lib/ar-receipt-application.service").then((module) => module.processArReceiptApplication),
 );
 export const processArRefund = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ArRefundRequestDto]), Type.Tuple([ArRefundRequestDto, Type.Any()])]), result: ArAdjustmentPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArRefundRequestDto]), Type.Tuple([ArRefundRequestDto, PreviewOptionsDto])]), result: ArAdjustmentPostingResponseDto },
   () => import("./ar_refund/lib/ar-refund.service").then((module) => module.processArRefund),
 );
 export const processArWriteOff = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([ArWriteOffRequestDto]), Type.Tuple([ArWriteOffRequestDto, Type.Any()])]), result: ArAdjustmentPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArWriteOffRequestDto]), Type.Tuple([ArWriteOffRequestDto, PreviewOptionsDto])]), result: ArAdjustmentPostingResponseDto },
   () => import("./ar_write_off/lib/ar-write-off.service").then((module) => module.processArWriteOff),
 );
 export const processApDocument = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Any(), Type.Any()]), Type.Tuple([Type.Any(), Type.Any(), Type.Any()])]), result: ApProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ApProcessingDocumentType, ApProcessingRequestDto]), Type.Tuple([ApProcessingDocumentType, ApProcessingRequestDto, PreviewOptionsDto])]), result: ApProcessingPostingResponseDto },
   () => import("./core/ap_processing/ap-processing.service").then((module) => module.processApDocument),
 );
 export const processTaxDocument = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Any(), TaxProcessingRequestDto]), Type.Tuple([Type.Any(), TaxProcessingRequestDto, Type.Any()])]), result: TaxProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([TaxProcessingDocumentType, TaxProcessingRequestDto]), Type.Tuple([TaxProcessingDocumentType, TaxProcessingRequestDto, PreviewOptionsDto])]), result: TaxProcessingPostingResponseDto },
   () => import("./core/tax_processing/tax-processing.service").then((module) => module.processTaxDocument),
 );
 export const processInventoryReceipt = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([InventoryReceiptRequestDto]), Type.Tuple([InventoryReceiptRequestDto, Type.Any()])]), result: InventoryProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([InventoryReceiptRequestDto]), Type.Tuple([InventoryReceiptRequestDto, PreviewOptionsDto])]), result: InventoryProcessingPostingResponseDto },
   () => import("./inventory/lib/inventory-processing.service").then((module) => module.processInventoryReceipt),
 );
 export const processInventoryIssue = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([InventoryIssueRequestDto]), Type.Tuple([InventoryIssueRequestDto, Type.Any()])]), result: InventoryProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([InventoryIssueRequestDto]), Type.Tuple([InventoryIssueRequestDto, PreviewOptionsDto])]), result: InventoryProcessingPostingResponseDto },
   () => import("./inventory/lib/inventory-processing.service").then((module) => module.processInventoryIssue),
 );
 export const processInventoryAdjustment = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([InventoryAdjustmentRequestDto]), Type.Tuple([InventoryAdjustmentRequestDto, Type.Any()])]), result: InventoryProcessingPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([InventoryAdjustmentRequestDto]), Type.Tuple([InventoryAdjustmentRequestDto, PreviewOptionsDto])]), result: InventoryProcessingPostingResponseDto },
   () => import("./inventory/lib/inventory-processing.service").then((module) => module.processInventoryAdjustment),
 );
 export const processLedgerJournalReversal = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([LedgerJournalReversalRequestDto]), Type.Tuple([LedgerJournalReversalRequestDto, Type.Any()])]), result: LedgerJournalReversalPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([LedgerJournalReversalRequestDto]), Type.Tuple([LedgerJournalReversalRequestDto, PreviewOptionsDto])]), result: LedgerJournalReversalPostingResponseDto },
   () => import("./ledger_journal/lib/ledger-journal-reversal.service").then((module) => module.processLedgerJournalReversal),
 );
 export const processLedgerJournal = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([LedgerJournalRequestDto]), Type.Tuple([LedgerJournalRequestDto, Type.Any()])]), result: LedgerJournalPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([LedgerJournalRequestDto]), Type.Tuple([LedgerJournalRequestDto, PreviewOptionsDto])]), result: LedgerJournalPostingResponseDto },
   () => import("./ledger_journal/lib/ledger-journal.service").then((module) => module.processLedgerJournal),
 );
 export const processTaxAdjustment = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([TaxAdjustmentRequestDto]), Type.Tuple([TaxAdjustmentRequestDto, Type.Any()])]), result: Type.Any() },
+  { parameters: Type.Union([Type.Tuple([TaxAdjustmentRequestDto]), Type.Tuple([TaxAdjustmentRequestDto, PreviewOptionsDto])]), result: TaxProcessingPostingResponseDto },
   () => import("./tax_adjustment/lib/tax-adjustment.service").then((module) => module.processTaxAdjustment),
 );
 export const processTaxPayment = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([TaxPaymentRequestDto]), Type.Tuple([TaxPaymentRequestDto, Type.Any()])]), result: Type.Any() },
+  { parameters: Type.Union([Type.Tuple([TaxPaymentRequestDto]), Type.Tuple([TaxPaymentRequestDto, PreviewOptionsDto])]), result: TaxProcessingPostingResponseDto },
   () => import("./tax_payment/lib/tax-payment.service").then((module) => module.processTaxPayment),
 );
 export const processTaxRefund = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([TaxRefundRequestDto]), Type.Tuple([TaxRefundRequestDto, Type.Any()])]), result: Type.Any() },
+  { parameters: Type.Union([Type.Tuple([TaxRefundRequestDto]), Type.Tuple([TaxRefundRequestDto, PreviewOptionsDto])]), result: TaxProcessingPostingResponseDto },
   () => import("./tax_refund/lib/tax-refund.service").then((module) => module.processTaxRefund),
 );
 export const processArAdjustment = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Any(), Type.Any()]), Type.Tuple([Type.Any(), Type.Any(), Type.Any()])]), result: ArAdjustmentPostingResponseDto },
+  { parameters: Type.Union([Type.Tuple([ArAdjustmentDocumentTypeDto, ArAdjustmentRequestDto]), Type.Tuple([ArAdjustmentDocumentTypeDto, ArAdjustmentRequestDto, PreviewOptionsDto])]), result: ArAdjustmentPostingResponseDto },
   () => import("./core/ar_adjustments/lib/ar-adjustment.service").then((module) => module.processArAdjustment),
 );
 

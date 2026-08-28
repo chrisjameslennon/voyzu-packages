@@ -3,6 +3,7 @@ import { operation as platformOperation } from "@voyzu/capability/operations";
 import Type from "typebox";
 import { ControlAccountPatchRequestDto, ControlAccountResponseDto, ControlAccountSettingResponseDto } from "@voyzu/finance/types/modules/control-accounts";
 import { Filter, ListOptions } from "@voyzu/types/params";
+const ControlAccountLedgerDto = Type.Union([Type.Literal("ACCOUNTS_PAYABLE"), Type.Literal("ACCOUNTS_RECEIVABLE")]);
 
 
 
@@ -15,11 +16,11 @@ export const listControlAccountSettings = platformOperation.defineLazy(
   () => import("../common/control-accounts/server/lib/control-account.service").then((module) => module.listControlAccountSettings),
 );
 export const listControlAccountSettingsByLedger = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Any()]), Type.Tuple([Type.Any(), Type.Number()])]), result: Type.Array(ControlAccountSettingResponseDto) },
+  { parameters: Type.Union([Type.Tuple([ControlAccountLedgerDto]), Type.Tuple([ControlAccountLedgerDto, Type.Number()])]), result: Type.Array(ControlAccountSettingResponseDto) },
   () => import("../common/control-accounts/server/lib/control-account.service").then((module) => module.listControlAccountSettingsByLedger),
 );
 export const getControlAccountByLedger = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.String(), Type.Any()]), Type.Tuple([Type.String(), Type.Any(), Type.Number()])]), result: Type.Union([ControlAccountResponseDto, Type.Null()]) },
+  { parameters: Type.Union([Type.Tuple([Type.String(), ControlAccountLedgerDto]), Type.Tuple([Type.String(), ControlAccountLedgerDto, Type.Number()])]), result: Type.Union([ControlAccountResponseDto, Type.Null()]) },
   () => import("../common/control-accounts/server/lib/control-account.service").then((module) => module.getControlAccountByLedger),
 );
 export const listControlAccounts = platformOperation.defineLazy(

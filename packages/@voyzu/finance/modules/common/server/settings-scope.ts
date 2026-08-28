@@ -3,7 +3,12 @@ import type { NextRequest } from "next/server";
 
 import { getDb, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError } from "@voyzu/capability/errors";
-import { listSelectableOrganizationsForCurrentUser } from "@voyzu/erp-core/organization-switcher/server";
+import {
+  listSelectableOrganizationsForCurrentUser,
+  SELECTED_ORGANIZATION_COOKIE,
+} from "@voyzu/erp-core/organization-switcher/server";
+
+import { SettingsScopeRepo } from "./db/settings-scope.repo";
 
 export interface CompanySettingsScope {
   companyId: number;
@@ -15,15 +20,8 @@ export interface CompanyApiContext {
   companyCode: string;
 }
 
-const SELECTED_ORGANIZATION_COOKIE = "voyzuSelectedCompanyId";
-const LEGACY_SELECTED_ORGANIZATION_COOKIE = "selectedCompanyId";
-
 async function getTemplateCompanyId(db: DbExecutor): Promise<number> {
-  const { rows } = await db.query(
-    `SELECT id FROM finance_organization
-     WHERE is_template = true ORDER BY id LIMIT 1`,
-  );
-  const id = rows[0]?.id == null ? null : Number(rows[0].id);
+  const id = await new SettingsScopeRepo(db).getTemplateCompanyId();
   if (!id) throw new BusinessRuleError("Template company is not configured");
   return id;
 }
@@ -32,54 +30,32 @@ async function getCompanySettingsState(
   companyId: number,
   db: DbExecutor,
 ): Promise<{ id: number; isTemplate: boolean; status: string; useFinanceTemplateSettings: boolean }> {
-  const { rows } = await db.query(
-    `SELECT fc.id, fc.is_template, COALESCE(c.status, 'ACTIVE') AS status,
-            fc.use_finance_template_settings
-     FROM finance_organization fc
-     LEFT JOIN organization c ON c.id = fc.organization_id
-     WHERE fc.id = $1 AND (fc.is_template = true OR c.status != 'DELETED')`,
-    [companyId],
-  );
-  const row = rows[0];
+  const row = await new SettingsScopeRepo(db).getCompanySettingsState(companyId);
   if (!row) throw new BusinessRuleError(`Company id ${companyId} was not found`);
   return {
-    id: Number(row.id),
-    isTemplate: row.is_template === true,
-    status: String(row.status),
-    useFinanceTemplateSettings: row.use_finance_template_settings === true,
+    id: row.id,
+    isTemplate: row.isTemplate,
+    status: row.status,
+    useFinanceTemplateSettings: row.useFinanceTemplateSettings,
   };
 }
 
 async function getActiveCompanyId(companyId: number, db: DbExecutor): Promise<number> {
-  const { rows } = await db.query(
-    `SELECT fc.id FROM finance_organization fc
-     JOIN organization c ON c.id = fc.organization_id
-     WHERE c.id = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
-    [companyId],
-  );
-  if (!rows[0]) throw new BusinessRuleError(`Company id ${companyId} was not found`);
-  return Number(rows[0].id);
+  const id = await new SettingsScopeRepo(db).getActiveCompanyIdByOrganizationId(companyId);
+  if (!id) throw new BusinessRuleError(`Company id ${companyId} was not found`);
+  return id;
 }
 
 async function getActiveCompanyIdByCode(companyCode: string, db: DbExecutor): Promise<number> {
-  const { rows } = await db.query(
-    `SELECT fc.id FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id
-     WHERE c.code = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
-    [companyCode],
-  );
-  if (!rows[0]) throw new BusinessRuleError(`Company code ${companyCode} was not found`);
-  return Number(rows[0].id);
+  const id = await new SettingsScopeRepo(db).getActiveCompanyIdByCode(companyCode);
+  if (!id) throw new BusinessRuleError(`Company code ${companyCode} was not found`);
+  return id;
 }
 
 async function getActiveCompanyApiContext(companyId: number, db: DbExecutor): Promise<CompanyApiContext> {
-  const { rows } = await db.query(
-    `SELECT fc.id, c.code FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id
-     WHERE fc.id = $1 AND fc.is_template = false AND c.status != 'DELETED'`,
-    [companyId],
-  );
-  const row = rows[0];
+  const row = await new SettingsScopeRepo(db).getActiveCompanyApiContext(companyId);
   if (!row) throw new BusinessRuleError(`Company id ${companyId} was not found`);
-  return { companyId: Number(row.id), companyCode: String(row.code) };
+  return row;
 }
 
 export async function resolveTemplateSettingsScope(db: DbExecutor = getDb()): Promise<CompanySettingsScope> {
@@ -139,16 +115,12 @@ export async function resolveServerSettingsScope(
   if (mode === "template") return resolveTemplateSettingsScope(db);
 
   const cookieStore = await cookies();
-  const raw = cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value
-    ?? cookieStore.get(LEGACY_SELECTED_ORGANIZATION_COOKIE)?.value;
+  const raw = cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value;
   const companyId = raw ? Number.parseInt(raw, 10) : NaN;
   const accessibleCompanies = await listSelectableOrganizationsForCurrentUser();
-  const { rows } = await db.query(
-    `SELECT organization_id::int
-     FROM finance_organization
-     WHERE is_template = false AND organization_id IS NOT NULL`,
+  const financeCompanyIds = new Set(
+    await new SettingsScopeRepo(db).listFinanceOrganizationIds(),
   );
-  const financeCompanyIds = new Set(rows.map((row) => Number(row.organization_id)));
   const financeCompanies = accessibleCompanies.filter((company) => financeCompanyIds.has(company.id));
   const selectedCompany = financeCompanies.find((company) => company.id === companyId)
     ?? financeCompanies[0]

@@ -1,9 +1,11 @@
 import "server-only";
 import { operation as platformOperation } from "@voyzu/capability/operations";
 import Type from "typebox";
-import { FinancialDocumentDefaultCreateRequestDto, FinancialDocumentDefaultPatchRequestDto, FinancialDocumentDefaultResponseDto, FinancialDocumentDefaultUpdateRequestDto } from "@voyzu/finance/types/modules/financial-document-defaults";
+import { FinancialDocumentDefaultBatchPatchRequestDto, FinancialDocumentDefaultBatchUpdateRequestDto, FinancialDocumentDefaultCreateRequestDto, FinancialDocumentDefaultPatchRequestDto, FinancialDocumentDefaultResponseDto, FinancialDocumentDefaultUpdateRequestDto } from "@voyzu/finance/types/modules/financial-document-defaults";
 import { Filter, ListOptions } from "@voyzu/types/params";
 
+const FinancialDocumentDefaultKeyDto = Type.Object({ documentCode: Type.String(), code: Type.String() }, { additionalProperties: false });
+const FinancialDocumentDefaultKeyInputDto = Type.Union([Type.String(), FinancialDocumentDefaultKeyDto]);
 
 
 export const encodeFinancialDocumentDefaultKey = platformOperation.defineLazy(
@@ -11,7 +13,7 @@ export const encodeFinancialDocumentDefaultKey = platformOperation.defineLazy(
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.encodeFinancialDocumentDefaultKey),
 );
 export const decodeFinancialDocumentDefaultKey = platformOperation.defineLazy(
-  { parameters: Type.Tuple([Type.String()]), result: Type.Union([Type.Any(), Type.Null()]) },
+  { parameters: Type.Tuple([Type.String()]), result: Type.Union([FinancialDocumentDefaultKeyDto, Type.Null()]) },
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.decodeFinancialDocumentDefaultKey),
 );
 export const createFinancialDocumentDefault = platformOperation.defineLazy(
@@ -55,19 +57,19 @@ export const batchCreateFinancialDocumentDefaults = platformOperation.defineLazy
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.batchCreateFinancialDocumentDefaults),
 );
 export const batchGetFinancialDocumentDefaults = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Array(Type.Any())]), Type.Tuple([Type.Array(Type.Any()), Type.Number()])]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
+  { parameters: Type.Union([Type.Tuple([Type.Array(FinancialDocumentDefaultKeyDto)]), Type.Tuple([Type.Array(FinancialDocumentDefaultKeyDto), Type.Number()])]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.batchGetFinancialDocumentDefaults),
 );
 export const batchUpdateFinancialDocumentDefaults = platformOperation.defineLazy(
-  { parameters: Type.Tuple([Type.Array(Type.Any())]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
+  { parameters: Type.Tuple([Type.Array(FinancialDocumentDefaultBatchUpdateRequestDto)]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.batchUpdateFinancialDocumentDefaults),
 );
 export const batchPatchFinancialDocumentDefaults = platformOperation.defineLazy(
-  { parameters: Type.Tuple([Type.Array(Type.Any())]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
+  { parameters: Type.Tuple([Type.Array(FinancialDocumentDefaultBatchPatchRequestDto)]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.batchPatchFinancialDocumentDefaults),
 );
 export const batchDeleteFinancialDocumentDefaults = platformOperation.defineLazy(
-  { parameters: Type.Tuple([Type.Array(Type.Any())]), result: Type.Undefined() },
+  { parameters: Type.Tuple([Type.Array(FinancialDocumentDefaultKeyDto)]), result: Type.Undefined() },
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.batchDeleteFinancialDocumentDefaults),
 );
 export const activateFinancialDocumentDefault = platformOperation.defineLazy(
@@ -79,15 +81,15 @@ export const deactivateFinancialDocumentDefault = platformOperation.defineLazy(
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.deactivateFinancialDocumentDefault),
 );
 export const activateFinancialDocumentDefaults = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Array(Type.Any())]), Type.Tuple([Type.Array(Type.Any()), Type.Number()])]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
+  { parameters: Type.Union([Type.Tuple([Type.Array(FinancialDocumentDefaultKeyDto)]), Type.Tuple([Type.Array(FinancialDocumentDefaultKeyDto), Type.Number()])]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.activateFinancialDocumentDefaults),
 );
 export const deactivateFinancialDocumentDefaults = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Array(Type.Any())]), Type.Tuple([Type.Array(Type.Any()), Type.Number()])]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
+  { parameters: Type.Union([Type.Tuple([Type.Array(FinancialDocumentDefaultKeyDto)]), Type.Tuple([Type.Array(FinancialDocumentDefaultKeyDto), Type.Number()])]), result: Type.Array(FinancialDocumentDefaultResponseDto) },
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.deactivateFinancialDocumentDefaults),
 );
 export const normalizeFinancialDocumentDefaultKeys = platformOperation.defineLazy(
-  { parameters: Type.Tuple([Type.Any()]), result: Type.Array(Type.Any()) },
+  { parameters: Type.Tuple([Type.Array(FinancialDocumentDefaultKeyInputDto)]), result: Type.Array(FinancialDocumentDefaultKeyDto) },
   () => import("../common/financial-document-defaults/server/lib/financial-document-default.service").then((module) => module.normalizeFinancialDocumentDefaultKeys),
 );
 

@@ -910,10 +910,6 @@
       "types": "./modules/finance-template/api.routes.ts",
       "import": "./modules/finance-template/api.routes.ts"
     },
-    "./finance-template/operations": {
-      "types": "./modules/finance-template/operations.ts",
-      "import": "./modules/finance-template/operations.ts"
-    },
     "./financial-document-processing-engine/pages.routes": {
       "types": "./modules/financial-document-processing-engine/pages.routes.ts",
       "import": "./modules/financial-document-processing-engine/pages.routes.ts"

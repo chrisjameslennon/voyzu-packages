@@ -22,6 +22,28 @@ export class ProfitLossRepo {
     this.trialBalanceSnapshot = new TrialBalanceSnapshotRepo(db);
   }
 
+  async listActiveDimensionValues(companyId: number): Promise<
+    Array<{ dimensionCode: string; dimensionName: string; valueName: string | null }>
+  > {
+    const { rows } = await this.db.query(
+      `SELECT d.code AS dimension_code, d.name AS dimension_name,
+              dv.name AS value_name
+       FROM dimension d
+       LEFT JOIN dimension_value dv
+         ON dv.finance_organization_id = d.finance_organization_id
+        AND dv.dimension_id = d.id
+        AND dv.status = 'ACTIVE'
+       WHERE d.finance_organization_id = $1 AND d.status = 'ACTIVE'
+       ORDER BY d.name, dv.name`,
+      [companyId],
+    );
+    return rows.map((row: Record<string, unknown>) => ({
+      dimensionCode: String(row.dimension_code),
+      dimensionName: String(row.dimension_name),
+      valueName: row.value_name == null ? null : String(row.value_name),
+    }));
+  }
+
   async getLines(companyId: number, fromDate: string, toDate: string): Promise<ProfitLossLineDto[]> {
     const rows = await this.trialBalanceSnapshot.getPeriodLines(companyId, fromDate, toDate, ["REVENUE", "EXPENSE"]);
 

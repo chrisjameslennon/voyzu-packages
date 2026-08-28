@@ -1,5 +1,4 @@
-import { getDb, type DbExecutor } from "@voyzu/capability/db";
-import { NotFoundError } from "@voyzu/capability/errors";
+import { getDb } from "@voyzu/capability/db";
 import type { BalanceSheetLineDto, BalanceSheetResponseDto } from "@voyzu/finance/types/modules/company-reports/balance-sheet";
 import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
 
@@ -15,71 +14,16 @@ function localDateString(value: unknown): string {
   return String(value);
 }
 
-function isoDateTimeString(value: unknown): string {
-  if (value instanceof Date) return value.toISOString();
-  return String(value);
-}
-
 function previousDateString(date: string): string {
   const d = new Date(`${date}T00:00:00`);
   d.setDate(d.getDate() - 1);
   return localDateString(d);
 }
 
-async function fetchCompany(db: DbExecutor, companyId: number): Promise<{ name: string; reportLine1: string | null; reportLine2: string | null; reportFooter: string | null; baseCurrencyCode: string }> {
-  const { rows } = await db.query(
-    `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id WHERE fc.id = $1`,
-    [companyId],
-  );
-  if (!rows[0]) throw new NotFoundError(`Company id ${companyId} not found`);
-  const r = rows[0] as Record<string, unknown>;
-  return {
-    name: String(r.name),
-    reportLine1: r.report_line_1 == null ? null : String(r.report_line_1),
-    reportLine2: r.report_line_2 == null ? null : String(r.report_line_2),
-    reportFooter: r.report_footer == null ? null : String(r.report_footer),
-    baseCurrencyCode: String(r.base_currency_code),
-  };
-}
+import { getCompanyReportContext } from "../../../common/server/lib/company-report.service";
 
 async function listFinancialYearsWithPostingsUnchecked(companyId: number): Promise<FinancialYearResponseDto[]> {
-  const { rows } = await getDb().query(
-    `SELECT fy.*,
-       EXISTS (
-         SELECT 1
-         FROM journal_header jh
-         WHERE jh.finance_organization_id = fy.finance_organization_id
-           AND jh.status = 'POSTED'
-           AND jh.posting_date BETWEEN fy.start_date AND fy.end_date
-       ) AS has_postings
-     FROM fiscal_year fy
-     WHERE fy.finance_organization_id = $1
-     ORDER BY fy.start_date ASC`,
-    [companyId],
-  );
-
-  return rows.map((row: Record<string, unknown>) => ({
-    id: Number(row.id),
-    code: String(row.code),
-    name: String(row.name),
-    companyId: Number(row.finance_organization_id),
-    startDate: localDateString(row.start_date),
-    endDate: localDateString(row.end_date),
-    status: String(row.status) as FinancialYearResponseDto["status"],
-    hasPostings: Boolean(row.has_postings),
-    audit: {
-      created: {
-        date: isoDateTimeString(row.creation_date),
-        actorType: String(row.creation_actor_type) as FinancialYearResponseDto["audit"]["created"]["actorType"],
-        userId: String(row.creation_user_id),
-      },
-      updated: {
-        date: isoDateTimeString(row.updated_date),
-        actorType: String(row.updated_actor_type) as FinancialYearResponseDto["audit"]["updated"]["actorType"],
-        userId: String(row.updated_user_id),
-      },
-    },
-  })).filter((year) => year.hasPostings);
+  return new BalanceSheetRepo(getDb()).listFinancialYearsWithPostings(companyId);
 }
 
 async function getBalanceSheetUnchecked(
@@ -98,7 +42,7 @@ async function getBalanceSheetUnchecked(
     : repo.getProfit(companyId, { toDate: asAtDate });
 
   const [company, lines, previousYearsProfit, currentYearProfit] = await Promise.all([
-    fetchCompany(db, companyId),
+    getCompanyReportContext(db, companyId),
     repo.getLines(companyId, asAtDate),
     previousYearsProfitPromise,
     currentYearProfitPromise,

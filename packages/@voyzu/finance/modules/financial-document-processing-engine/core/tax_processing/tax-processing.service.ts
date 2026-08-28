@@ -16,6 +16,7 @@ import type {
 } from "@voyzu/finance/types/modules/financial-document-processing-engine/tax-processing.response.dto";
 import { getDb, type DbExecutor, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
+import { TaxProcessingRepo } from "./db/tax-processing.repo";
 
 import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
 import { resolveBankCashDetails, toJournalBankCashFields } from "../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
@@ -160,11 +161,6 @@ async function reserveDocumentId(documentType: TaxProcessingDocumentType, reques
   return { request: { ...request, document_id: `${PREFIXES[documentType]}-${id}` } as ResolvedRequest, reservedId: id };
 }
 
-async function one<T>(db: DbExecutor, sql: string, params: unknown[], map: (row: Record<string, unknown>) => T): Promise<T | null> {
-  const { rows } = await db.query(sql, params);
-  return rows[0] ? map(rows[0] as Record<string, unknown>) : null;
-}
-
 function company(row: Record<string, unknown>): Company {
   return { id: Number(row.id), code: String(row.code), name: String(row.name), country_code: String(row.country_code), base_currency_code: String(row.base_currency_code), status: String(row.status) };
 }
@@ -194,78 +190,43 @@ function account(row: Record<string, unknown>): Account {
 
 async function base(db: DbExecutor, request: TaxProcessingRequestDto, pd: string): Promise<{ company: Company; period: Period; taxAuthority: TaxAuthority }> {
   const companyCode = requiredString(request.company_code, "company_code");
-  const c = await one(db, `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status
-    FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
-    WHERE c.code = $1 AND fc.is_template = false`, [companyCode], company);
+  const c = await new TaxProcessingRepo(db).one("company", [companyCode], company);
   if (!c) throw new BusinessRuleError(`Company ${companyCode} was not found`);
   if (c.status !== "ACTIVE") throw new BusinessRuleError(`Company ${c.code} is not ACTIVE`);
 
   const authorityCode = requiredString(request.tax_authority_code, "tax_authority_code");
-  const authority = await one(db, `SELECT id, code, name FROM tax_authority WHERE code = $1 AND country_code = $2 AND status = 'ACTIVE'`, [authorityCode, c.country_code], taxAuthority);
+  const authority = await new TaxProcessingRepo(db).one("taxAuthority", [authorityCode, c.country_code], taxAuthority);
   if (!authority) throw new BusinessRuleError(`Tax authority ${authorityCode} was not found for ${c.country_code}`);
 
-  const p = await one(db, `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
-    FROM fiscal_period fp
-    JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-    WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fp.status = 'OPEN' AND fy.status = 'OPEN'
-    LIMIT 1`, [c.id, pd], period);
+  const p = await new TaxProcessingRepo(db).one("period", [c.id, pd], period);
   if (!p) throw new BusinessRuleError(`No OPEN fiscal period contains posting date ${pd}`);
   return { company: c, period: p, taxAuthority: authority };
 }
 
 async function taxControl(db: DbExecutor, companyId: number, code: TaxMovementCode): Promise<Account> {
-  const acc = await one(db, `SELECT tca.code AS tax_control_account_code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-    FROM tax_control_account tca
-    JOIN gl_account ga ON ga.finance_organization_id = tca.finance_organization_id AND ga.id = tca.gl_account_id
-    WHERE tca.finance_organization_id = $1 AND tca.code = $2 AND tca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`, [companyId, code], account);
+  const acc = await new TaxProcessingRepo(db).one("taxControl", [companyId, code], account);
   if (!acc) throw new BusinessRuleError(`${code} tax control account is not configured`);
   return acc;
 }
 
 async function glAccount(db: DbExecutor, companyId: number, code: string, path: string, allowedAccountTypes?: string[]): Promise<Account> {
-  const acc = await one(db, `SELECT id AS gl_account_id, code AS gl_account_code, name AS gl_account_name FROM gl_account WHERE finance_organization_id = $1 AND code = $2 AND status = 'ACTIVE' AND ($3::text[] IS NULL OR account_type = ANY($3::text[]))`, [companyId, code, allowedAccountTypes ?? null], account);
+  const acc = await new TaxProcessingRepo(db).one("glAccount", [companyId, code, allowedAccountTypes ?? null], account);
   if (!acc) throw new BusinessRuleError(`${path} ${code} was not found or is inactive`);
   return acc;
 }
 
 async function postingCode(db: DbExecutor, companyId: number, documentType: TaxProcessingDocumentType, defaultCode: string, requested?: string | null): Promise<Account> {
-  const defaultRow = await one(db, `SELECT target_type, allowed_account_types FROM financial_document_default WHERE finance_organization_id = $1 AND document_code = $2 AND code = $3 AND status = 'ACTIVE' LIMIT 1`, [companyId, documentType, defaultCode], (row) => ({
+  const repo = new TaxProcessingRepo(db);
+  const defaultRow = await repo.one("documentDefault", [companyId, documentType, defaultCode], (row) => ({
     target_type: String(row.target_type),
     allowed_account_types: row.allowed_account_types as string[],
   }));
   if (!defaultRow) throw new BusinessRuleError(`Financial document default ${defaultCode} was not resolved for ${documentType}`);
   const row = requested
     ? defaultRow.target_type === "BANK_CASH_ACCOUNT"
-      ? await one(db, `SELECT $3::text AS code, bca.code AS bank_cash_control_account_code,
-             bca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-          FROM bank_cash_control_account bca
-          JOIN gl_account ga ON ga.finance_organization_id = bca.finance_organization_id AND ga.id = bca.gl_account_id
-          WHERE bca.finance_organization_id = $1
-            AND bca.code = $2
-            AND bca.status = 'ACTIVE'
-            AND ga.status = 'ACTIVE'
-            AND ga.account_type = ANY($4::text[])
-          LIMIT 1`, [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
-      : await one(db, `SELECT $3::text AS code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-          FROM gl_account ga
-          WHERE ga.finance_organization_id = $1
-            AND ga.code = $2
-            AND ga.status = 'ACTIVE'
-            AND ga.account_type = ANY($4::text[])
-          LIMIT 1`, [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
-    : await one(db, `SELECT pc.code, bca.code AS bank_cash_control_account_code,
-             COALESCE(pc.gl_account_id, bca.gl_account_id) AS gl_account_id,
-             ga.code AS gl_account_code, ga.name AS gl_account_name
-      FROM financial_document_default pc
-      LEFT JOIN bank_cash_control_account bca ON bca.finance_organization_id = pc.finance_organization_id AND bca.id = pc.bank_cash_control_account_id
-      JOIN gl_account ga ON ga.finance_organization_id = pc.finance_organization_id AND ga.id = COALESCE(pc.gl_account_id, bca.gl_account_id)
-      WHERE pc.finance_organization_id = $1
-        AND pc.document_code = $2
-        AND pc.code = $3
-        AND pc.status = 'ACTIVE'
-        AND (bca.id IS NULL OR bca.status = 'ACTIVE')
-        AND ga.status = 'ACTIVE'
-      LIMIT 1`, [companyId, documentType, defaultCode], account);
+      ? await repo.one("bankOverride", [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
+      : await repo.one("glOverride", [companyId, requested, defaultCode, defaultRow.allowed_account_types], account)
+    : await repo.one("defaultAccount", [companyId, documentType, defaultCode], account);
   if (!row) throw new BusinessRuleError(`${requested ? "Override" : "Default"} account ${requested ?? defaultCode} was not resolved for ${documentType}`);
   return row;
 }
@@ -483,7 +444,7 @@ function response(ctx: Context, header: JournalHeaderRow | null = null, rows: Jo
 }
 
 async function taxRule(db: DbExecutor, countryCode: string): Promise<TaxRule> {
-  const rule = await one(db, `SELECT id FROM tax_rule WHERE country_code = $1 AND code = 'CALLER_SUPPLIED' AND status = 'ACTIVE' LIMIT 1`, [countryCode], (row) => ({ id: Number(row.id) }));
+  const rule = await new TaxProcessingRepo(db).one("taxRule", [countryCode], (row) => ({ id: Number(row.id) }));
   if (!rule) throw new BusinessRuleError(`CALLER_SUPPLIED tax setup was not resolved for ${countryCode}`);
   return rule;
 }
@@ -491,19 +452,14 @@ async function taxRule(db: DbExecutor, countryCode: string): Promise<TaxRule> {
 async function insertTaxLedger(db: DbExecutor, ctx: Context, journalHeaderId: number): Promise<TaxProcessingTaxLedgerDetailDto[]> {
   const rule = await taxRule(db, ctx.company.country_code);
   const headerCode = `TAX-${ctx.documentType.replace("TAX_", "").replaceAll("_", "-")}-${journalHeaderId}`;
-  const header = await db.query(`INSERT INTO tax_ledger_entry_header
-    (code, finance_organization_id, journal_header_id, document_type_code, document_id, description, document_date, posting_date, financial_year_id, financial_period_id, base_currency_code, status, creation_date, creation_actor_type)
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'POSTED',now(),'SYSTEM') RETURNING id`,
-    [headerCode, ctx.company.id, journalHeaderId, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, documentDate(ctx.documentType, ctx.request), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
+  const repo = new TaxProcessingRepo(db);
+  const headerId = await repo.insertHeader([headerCode, ctx.company.id, journalHeaderId, ctx.documentType, ctx.detailed.document_id, ctx.detailed.generated_description, documentDate(ctx.documentType, ctx.request), ctx.detailed.posting_date, ctx.period.financial_year_id, ctx.period.financial_period_id, ctx.company.base_currency_code]);
 
   const rows: TaxProcessingTaxLedgerDetailDto[] = [];
   for (const [index, detail] of ctx.taxDetails.entries()) {
     const lineNumber = index + 1;
-    const inserted = await db.query(`INSERT INTO tax_ledger_entry_line
-      (tax_ledger_entry_header_id, line_number, tax_rule_id, tax_component_id, tax_authority_id, tax_movement_type_code, scheme_code, invoice_label, report_label, tax_rate, taxable_base_currency_amount, dr_cr, base_currency_amount, creation_date, creation_actor_type)
-      VALUES ($1,$2,$3,NULL,$4,$5,NULL,$6,$6,$7,$8,$9,$10,now(),'SYSTEM') RETURNING id`,
-      [Number(header.rows[0].id), lineNumber, rule.id, ctx.taxAuthority.id, detail.tax_movement_type_code, detail.description, detail.tax_rate, detail.taxable_amount, detail.entry_type === "CREDIT" ? "CR" : "DR", detail.base_currency_amount]);
-    rows.push({ ...detail, id: Number(inserted.rows[0].id), code: `${headerCode}-${lineNumber}`, status: "POSTED" });
+    const id = await repo.insertLine([headerId, lineNumber, rule.id, ctx.taxAuthority.id, detail.tax_movement_type_code, detail.description, detail.tax_rate, detail.taxable_amount, detail.entry_type === "CREDIT" ? "CR" : "DR", detail.base_currency_amount]);
+    rows.push({ ...detail, id, code: `${headerCode}-${lineNumber}`, status: "POSTED" });
   }
   return rows;
 }
@@ -554,13 +510,7 @@ function hasItems(input: unknown): boolean {
 
 async function assertDocumentCapabilities(db: DbExecutor, documentType: TaxProcessingDocumentType, request: TaxProcessingRequestDto): Promise<void> {
   requiredString(request.company_code, "company_code");
-  const processor = await one(db,
-    `SELECT d.code, d.status, d.supports_dimensions, d.cash_movement, d.supports_items
-       FROM financial_document_type d
-      WHERE d.code = $1`,
-    [documentType],
-    documentProcessor,
-  );
+  const processor = await new TaxProcessingRepo(db).one("documentProcessor", [documentType], documentProcessor);
   if (!processor || processor.status !== "ACTIVE") throw new BusinessRuleError(`${documentType} document processor is not active`);
   if (isRecord(request) && hasValue(request.bank_cash_details) && !processor.cash_movement) {
     throw new BusinessRuleError(`${documentType} does not support bank_cash_details`);

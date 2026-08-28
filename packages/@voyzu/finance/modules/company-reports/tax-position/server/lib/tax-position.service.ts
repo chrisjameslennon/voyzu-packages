@@ -1,31 +1,15 @@
 import { getDb } from "@voyzu/capability/db";
-import { NotFoundError } from "@voyzu/capability/errors";
 import type { TaxPositionResponseDto } from "@voyzu/finance/types/modules/company-reports";
 
 import { TaxPositionRepo } from "../db/tax-position.repo";
-
-async function fetchCompany(db: ReturnType<typeof getDb>, companyId: number): Promise<{ name: string; reportLine1: string | null; reportLine2: string | null; reportFooter: string | null; baseCurrencyCode: string }> {
-  const { rows } = await db.query(
-    `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id WHERE fc.id = $1`,
-    [companyId],
-  );
-  if (!rows[0]) throw new NotFoundError(`Company id ${companyId} not found`);
-  const r = rows[0] as Record<string, unknown>;
-  return {
-    name: String(r.name),
-    reportLine1: r.report_line_1 == null ? null : String(r.report_line_1),
-    reportLine2: r.report_line_2 == null ? null : String(r.report_line_2),
-    reportFooter: r.report_footer == null ? null : String(r.report_footer),
-    baseCurrencyCode: String(r.base_currency_code),
-  };
-}
+import { getCompanyReportContext } from "../../../common/server/lib/company-report.service";
 
 async function getTaxPositionUnchecked(companyId: number, asAtDate: string): Promise<TaxPositionResponseDto> {
   const db = getDb();
   const repo = new TaxPositionRepo(db);
 
   const [company, lines] = await Promise.all([
-    fetchCompany(db, companyId),
+    getCompanyReportContext(db, companyId),
     repo.getLines(companyId, asAtDate),
   ]);
   const summary = repo.summarize(lines);

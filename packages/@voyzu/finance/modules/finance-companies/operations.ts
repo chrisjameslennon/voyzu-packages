@@ -4,6 +4,10 @@ import Type from "typebox";
 import { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 import { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
 
+const FinanceCompanySelectionResponseDto = Type.Object({
+  organizations: Type.Array(OrganizationResponseDto),
+  selectedOrganization: Type.Union([OrganizationResponseDto, Type.Null()]),
+}, { additionalProperties: false });
 
 export const listFinanceCompanies = platformOperation.defineLazy(
   { parameters: Type.Tuple([]), result: Type.Array(FinanceCompanyResponseDto) },
@@ -26,7 +30,7 @@ export const listSelectableFinanceCompaniesForCurrentUser = platformOperation.de
   () => import("./server/lib/finance-company.service").then((module) => module.listSelectableFinanceCompaniesForCurrentUser),
 );
 export const resolveFinanceCompanySelectionForCurrentUser = platformOperation.defineLazy(
-  { parameters: Type.Tuple([Type.Union([Type.Number(), Type.Null()])]), result: Type.Any() },
+  { parameters: Type.Tuple([Type.Union([Type.Number(), Type.Null()])]), result: FinanceCompanySelectionResponseDto },
   () => import("./server/lib/finance-company.service").then((module) => module.resolveFinanceCompanySelectionForCurrentUser),
 );
 export const deleteFinanceCompanyForErpOrganization = platformOperation.defineLazy(

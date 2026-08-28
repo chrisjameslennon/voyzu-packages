@@ -4,6 +4,8 @@ import Type from "typebox";
 import { FinancialDocumentTypeCreateRequestDto, FinancialDocumentTypePatchRequestDto, FinancialDocumentTypeResponseDto, FinancialDocumentTypeUpdateRequestDto } from "@voyzu/finance/types/modules/financial-document-types";
 import { Filter, ListOptions } from "@voyzu/types/params";
 
+const FinancialDocumentTypeBatchUpdateRequestDto = Type.Object({ ...FinancialDocumentTypeUpdateRequestDto.properties, code: Type.String() }, { additionalProperties: false });
+const FinancialDocumentTypeBatchPatchRequestDto = Type.Object({ ...FinancialDocumentTypePatchRequestDto.properties, code: Type.String() }, { additionalProperties: false });
 
 
 export const createFinancialDocumentType = platformOperation.defineLazy(
@@ -51,11 +53,11 @@ export const batchCreateFinancialDocumentTypes = platformOperation.defineLazy(
   () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.batchCreateFinancialDocumentTypes),
 );
 export const batchUpdateFinancialDocumentTypes = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Array(Type.Any())]), Type.Tuple([Type.Array(Type.Any()), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  { parameters: Type.Union([Type.Tuple([Type.Array(FinancialDocumentTypeBatchUpdateRequestDto)]), Type.Tuple([Type.Array(FinancialDocumentTypeBatchUpdateRequestDto), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
   () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.batchUpdateFinancialDocumentTypes),
 );
 export const batchPatchFinancialDocumentTypes = platformOperation.defineLazy(
-  { parameters: Type.Union([Type.Tuple([Type.Array(Type.Any())]), Type.Tuple([Type.Array(Type.Any()), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  { parameters: Type.Union([Type.Tuple([Type.Array(FinancialDocumentTypeBatchPatchRequestDto)]), Type.Tuple([Type.Array(FinancialDocumentTypeBatchPatchRequestDto), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
   () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.batchPatchFinancialDocumentTypes),
 );
 export const activateFinancialDocumentType = platformOperation.defineLazy(

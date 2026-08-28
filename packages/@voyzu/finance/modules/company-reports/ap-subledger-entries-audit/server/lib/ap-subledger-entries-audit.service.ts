@@ -1,40 +1,18 @@
 import { getDb } from "@voyzu/capability/db";
-import { NotFoundError } from "@voyzu/capability/errors";
 import type { ApSubledgerEntriesAuditResponseDto } from "@voyzu/finance/types/modules/company-reports";
 
 import { ApSubledgerEntriesAuditRepo } from "../db/ap-subledger-entries-audit.repo";
-
-async function fetchCompany(companyId: number): Promise<{
-  name: string;
-  reportLine1: string | null;
-  reportLine2: string | null;
-  reportFooter: string | null;
-  baseCurrencyCode: string;
-}> {
-  const { rows } = await getDb().query(
-    `SELECT c.name, fc.report_line_1, fc.report_line_2, fc.report_footer, c.base_currency_code
-     FROM organization c JOIN finance_organization fc ON fc.organization_id = c.id WHERE fc.id = $1`,
-    [companyId],
-  );
-  if (!rows[0]) throw new NotFoundError(`Company id ${companyId} not found`);
-  const row = rows[0] as Record<string, unknown>;
-  return {
-    name: String(row.name),
-    reportLine1: row.report_line_1 == null ? null : String(row.report_line_1),
-    reportLine2: row.report_line_2 == null ? null : String(row.report_line_2),
-    reportFooter: row.report_footer == null ? null : String(row.report_footer),
-    baseCurrencyCode: String(row.base_currency_code),
-  };
-}
+import { getCompanyReportContext } from "../../../common/server/lib/company-report.service";
 
 async function getApSubledgerEntriesAuditUnchecked(
   companyId: number,
   fromDate: string,
   toDate: string,
 ): Promise<ApSubledgerEntriesAuditResponseDto> {
-  const repo = new ApSubledgerEntriesAuditRepo(getDb());
+  const db = getDb();
+  const repo = new ApSubledgerEntriesAuditRepo(db);
   const [company, entries] = await Promise.all([
-    fetchCompany(companyId),
+    getCompanyReportContext(db, companyId),
     repo.getEntries(companyId, fromDate, toDate),
   ]);
 

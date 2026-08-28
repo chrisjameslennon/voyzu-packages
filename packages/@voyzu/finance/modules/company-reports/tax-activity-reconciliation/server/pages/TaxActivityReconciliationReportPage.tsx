@@ -14,6 +14,10 @@ import { listFinancialYears } from "@voyzu/finance/financial-years/server";
 
 import { TaxActivityReconciliationReport } from "../../client";
 import { TaxActivityReconciliationReportTemplate } from "../../templates/TaxActivityReconciliationReportTemplate";
+import {
+  getFinanceCompanyFilingSettings,
+  type FinanceCompanyFilingSettings,
+} from "../../../common/server/lib/company-report.service";
 import { getTaxActivityReconciliation } from "../lib/tax-activity-reconciliation.service";
 
 interface ReportPageProps {
@@ -29,8 +33,6 @@ interface FilingPeriod {
   startDate: string;
   endDate: string;
 }
-
-interface FinanceCompanyFilingSettings { id: number; taxFilingAnchorMonth: number; taxFilingIntervalMonths: number }
 
 function todayIso(): string {
   const today = new Date();
@@ -109,15 +111,7 @@ export async function TaxActivityReconciliationReportPage({ surface }: ReportPag
     );
   }
 
-  const financeRows = await getDb().query(
-    `SELECT tax_filing_anchor_month, tax_filing_interval_months FROM finance_organization WHERE finance_organization_id = $1`,
-    [company.id],
-  );
-  const financeCompany: FinanceCompanyFilingSettings | null = financeRows.rows[0] ? {
-    id: company.id,
-    taxFilingAnchorMonth: Number(financeRows.rows[0].tax_filing_anchor_month),
-    taxFilingIntervalMonths: Number(financeRows.rows[0].tax_filing_interval_months),
-  } : null;
+  const financeCompany = await getFinanceCompanyFilingSettings(getDb(), company.id);
   if (!financeCompany) return null;
 
   const today = todayIso();

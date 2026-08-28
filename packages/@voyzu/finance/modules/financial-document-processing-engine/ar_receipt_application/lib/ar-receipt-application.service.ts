@@ -15,6 +15,8 @@ import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import arReceiptApplicationPosting from "../journal-posting-components";
 import { validateRequest } from "./ar-receipt-application.validator";
+import { ArReceiptApplicationPostingRepo } from "../db/ar-receipt-application-posting.repo";
+import { ArReceiptPostingRepo } from "../../ar_receipt/db/ar-receipt-posting.repo";
 
 interface ProcessOptions { preview?: boolean; }
 interface CompanyRow { id: number; code: string; name: string; base_currency_code: string; status: string; }
@@ -50,11 +52,6 @@ function round2(value: number): number { return Math.round((value + Number.EPSIL
 function postingDateFor(input: ArReceiptApplicationRequestDto): string { return input.posting_date ?? input.application_date; }
 function amount(value: number | string): number { return typeof value === "number" ? value : Number(value); }
 
-async function one<T>(db: DbExecutor, sql: string, params: unknown[], map: (row: Record<string, unknown>) => T): Promise<T | null> {
-  const { rows } = await db.query(sql, params);
-  return rows[0] ? map(rows[0] as Record<string, unknown>) : null;
-}
-
 function companyRow(row: Record<string, unknown>): CompanyRow {
   return { id: Number(row.id), code: String(row.code), name: String(row.name), base_currency_code: String(row.base_currency_code), status: String(row.status) };
 }
@@ -78,87 +75,25 @@ function openItemRow(row: Record<string, unknown>): OpenItemRow {
 }
 
 async function getCompany(db: DbExecutor, code: string): Promise<CompanyRow | null> {
-  return one(db, `SELECT fc.id, c.code, c.name, c.base_currency_code, c.status
-    FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
-    WHERE c.code = $1 AND fc.is_template = false`, [code], companyRow);
+  return new ArReceiptPostingRepo(db).getCompany(code);
 }
 async function getCounterparty(db: DbExecutor, companyId: number, code: string): Promise<CounterpartyRow | null> {
-  return one(db, `SELECT id, finance_organization_id, code, name, status FROM ar_counterparty WHERE finance_organization_id = $1 AND code = $2`, [companyId, code], counterpartyRow);
+  return new ArReceiptPostingRepo(db).getCounterparty(companyId, code);
 }
 async function getPeriod(db: DbExecutor, companyId: number, postingDate: string): Promise<PeriodRow | null> {
-  return one(db,
-    `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code
-     FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id
-     WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fy.status = 'OPEN' AND fp.status = 'OPEN'
-     LIMIT 1`,
-    [companyId, postingDate],
-    periodRow,
-  );
+  return new ArReceiptPostingRepo(db).getPeriod(companyId, postingDate);
 }
 async function getControlAccount(db: DbExecutor, companyId: number, code: string): Promise<AccountRow | null> {
-  return one(db,
-    `SELECT ca.code AS control_account_code, ca.name AS control_account_name, ca.gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name
-     FROM ar_control_account ca JOIN gl_account ga ON ga.finance_organization_id = ca.finance_organization_id AND ga.id = ca.gl_account_id
-     WHERE ca.finance_organization_id = $1 AND ca.code = $2 AND ca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,
-    [companyId, code],
-    accountRow,
-  );
+  const row = await new ArReceiptPostingRepo(db).getControlAccount(companyId, code);
+  return row?.control_account_code && row.control_account_name ? row as AccountRow : null;
 }
 
 async function findOpenInvoice(db: DbExecutor, companyId: number, counterpartyId: number, documentId: string): Promise<OpenItemRow | null> {
-  return one(db,
-    `SELECT e.id AS ar_subledger_entry_id, e.code AS ar_subledger_entry_code, h.document_id, h.code AS journal_code,
-            GREATEST(COALESCE(invoice_lines.amount, 0) - COALESCE(applied_lines.amount, 0), 0)::float AS open_amount
-     FROM ar_subledger_entry_header e
-     JOIN journal_header h ON h.id = e.journal_header_id
-     LEFT JOIN LATERAL (
-       SELECT SUM(l.base_currency_amount) AS amount
-       FROM ar_subledger_entry_line l
-       WHERE l.ar_subledger_entry_header_id = e.id
-         AND l.control_account_code = $4
-         AND l.dr_cr = 'DR'
-     ) invoice_lines ON true
-     LEFT JOIN LATERAL (
-       SELECT SUM(l.base_currency_amount) AS amount
-       FROM ar_subledger_entry_line l
-       WHERE l.target_entry_header_id = e.id
-         AND l.control_account_code = $4
-         AND l.dr_cr = 'CR'
-     ) applied_lines ON true
-     WHERE e.finance_organization_id = $1 AND e.ar_counterparty_id = $2
-       AND h.document_type_code = 'AR_INVOICE' AND h.document_id = $3
-     LIMIT 1`,
-    [companyId, counterpartyId, documentId, AR_TRADE_RECEIVABLES],
-    openItemRow,
-  );
+  return new ArReceiptPostingRepo(db).findOpenInvoice(companyId, counterpartyId, documentId, AR_TRADE_RECEIVABLES);
 }
 
 async function findOpenReceipt(db: DbExecutor, companyId: number, counterpartyId: number, documentId: string): Promise<OpenItemRow | null> {
-  return one(db,
-    `SELECT e.id AS ar_subledger_entry_id, e.code AS ar_subledger_entry_code, h.document_id, h.code AS journal_code,
-            GREATEST(COALESCE(unapplied_lines.amount, 0) - COALESCE(application_lines.amount, 0), 0)::float AS open_amount
-     FROM ar_subledger_entry_header e
-     JOIN journal_header h ON h.id = e.journal_header_id
-     LEFT JOIN LATERAL (
-       SELECT SUM(l.base_currency_amount) AS amount
-       FROM ar_subledger_entry_line l
-       WHERE l.ar_subledger_entry_header_id = e.id
-         AND l.control_account_code = $4
-         AND l.dr_cr = 'CR'
-     ) unapplied_lines ON true
-     LEFT JOIN LATERAL (
-       SELECT SUM(l.base_currency_amount) AS amount
-       FROM ar_subledger_entry_line l
-       WHERE l.source_entry_header_id = e.id
-         AND l.control_account_code = $4
-         AND l.dr_cr = 'DR'
-     ) application_lines ON true
-     WHERE e.finance_organization_id = $1 AND e.ar_counterparty_id = $2
-       AND h.document_type_code = 'AR_RECEIPT' AND h.document_id = $3
-     LIMIT 1`,
-    [companyId, counterpartyId, documentId, AR_UNAPPLIED_CASH],
-    openItemRow,
-  );
+  return new ArReceiptPostingRepo(db).findOpenReceipt(companyId, counterpartyId, documentId, AR_UNAPPLIED_CASH);
 }
 
 async function resolveContext(db: DbExecutor, request: ResolvedArReceiptApplicationRequestDto, reservedJournalHeaderId: number | null): Promise<Context> {
@@ -342,55 +277,37 @@ async function insertArEntry(
   amountValue: number,
   description: string,
 ) {
-  const { rows } = await db.query(
-    `INSERT INTO ar_subledger_entry_line
-       (ar_subledger_entry_header_id, line_number, line_type, description, control_account_code,
-        dr_cr, gross_amount, source_entry_header_id, target_entry_header_id, base_currency_amount,
-        memo, creation_date, creation_actor_type)
-     VALUES ($1,$2,'RECEIPT_APPLICATION',$3,$4,$5,$6,$7,$8,$9,$10,now(),'SYSTEM')
-     RETURNING id`,
-    [
-      arHeaderId,
-      sequence,
-      description,
-      control,
-      entryType === "DEBIT" ? "DR" : "CR",
-      amountValue,
-      control === AR_UNAPPLIED_CASH ? appliedTo : null,
-      control === AR_TRADE_RECEIVABLES ? appliedTo : null,
-      amountValue,
-      context.detailed.document_memo,
-    ],
-  );
-  return { id: Number(rows[0].id), code: `${codePrefix}-${sequence}` };
+  const id = await new ArReceiptApplicationPostingRepo(db).insertEntryLine({
+    headerId: arHeaderId,
+    sequence,
+    description,
+    control,
+    drCr: entryType === "DEBIT" ? "DR" : "CR",
+    amount: amountValue,
+    sourceId: control === AR_UNAPPLIED_CASH ? appliedTo : null,
+    targetId: control === AR_TRADE_RECEIVABLES ? appliedTo : null,
+    memo: context.detailed.document_memo,
+  });
+  return { id, code: `${codePrefix}-${sequence}` };
 }
 
 async function insertArHeader(db: DbExecutor, context: Context, journalHeaderId: number): Promise<{ id: number; code: string }> {
   const code = `AR-APP-${journalHeaderId}`;
-  const { rows } = await db.query(
-    `INSERT INTO ar_subledger_entry_header
-       (code, finance_organization_id, journal_header_id, ar_counterparty_id, document_type_code,
-        document_id, description, memo, document_date, posting_date, financial_year_id,
-        financial_period_id, base_currency_code, status,
-        creation_date, creation_actor_type)
-     VALUES ($1,$2,$3,$4,'AR_RECEIPT_APPLICATION',$5,$6,$7,$8,$9,$10,$11,$12,'POSTED',now(),'SYSTEM')
-     RETURNING id`,
-    [
-      code,
-      context.company.id,
-      journalHeaderId,
-      context.counterparty.id,
-      context.detailed.document_id,
-      context.detailed.generated_description,
-      context.detailed.document_memo,
-      context.detailed.application_date,
-      context.detailed.posting_date,
-      context.period.financial_year_id,
-      context.period.financial_period_id,
-      context.company.base_currency_code,
-    ],
-  );
-  return { id: Number(rows[0].id), code };
+  const id = await new ArReceiptApplicationPostingRepo(db).insertHeader({
+    code,
+    companyId: context.company.id,
+    journalHeaderId,
+    counterpartyId: context.counterparty.id,
+    documentId: context.detailed.document_id,
+    description: context.detailed.generated_description,
+    memo: context.detailed.document_memo,
+    documentDate: context.detailed.application_date,
+    postingDate: context.detailed.posting_date,
+    financialYearId: context.period.financial_year_id,
+    financialPeriodId: context.period.financial_period_id,
+    baseCurrencyCode: context.company.base_currency_code,
+  });
+  return { id, code };
 }
 
 function hasDocumentId(request: ArReceiptApplicationRequestDto): request is ResolvedArReceiptApplicationRequestDto {
