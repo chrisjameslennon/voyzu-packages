@@ -19,7 +19,7 @@ export const patchInventoryControlAccountSetting = platformOperation.defineLazy(
 );
 
 export const operations = {
-  listInventoryControlAccountSettings,
-  getInventoryControlAccountSetting,
-  patchInventoryControlAccountSetting,
+  listInventoryControlAccountSettingsOrganizationInventoryControlAccounts: listInventoryControlAccountSettings,
+  getInventoryControlAccountSettingOrganizationInventoryControlAccounts: getInventoryControlAccountSetting,
+  patchInventoryControlAccountSettingOrganizationInventoryControlAccounts: patchInventoryControlAccountSetting,
 } as const;

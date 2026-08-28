@@ -40,12 +40,12 @@ export const patchControlAccount = platformOperation.defineLazy(
 );
 
 export const operations = {
-  getControlAccount,
-  listControlAccountSettings,
-  listControlAccountSettingsByLedger,
-  getControlAccountByLedger,
-  listControlAccounts,
-  filterControlAccounts,
-  searchControlAccounts,
-  patchControlAccount,
+  getControlAccountCompanyApControlAccounts: getControlAccount,
+  listControlAccountSettingsCompanyApControlAccounts: listControlAccountSettings,
+  listControlAccountSettingsByLedgerCompanyApControlAccounts: listControlAccountSettingsByLedger,
+  getControlAccountByLedgerCompanyApControlAccounts: getControlAccountByLedger,
+  listControlAccountsCompanyApControlAccounts: listControlAccounts,
+  filterControlAccountsCompanyApControlAccounts: filterControlAccounts,
+  searchControlAccountsCompanyApControlAccounts: searchControlAccounts,
+  patchControlAccountCompanyApControlAccounts: patchControlAccount,
 } as const;

@@ -19,7 +19,7 @@ export const patchTaxControlAccount = platformOperation.defineLazy(
 );
 
 export const operations = {
-  listTaxControlAccounts,
-  getTaxControlAccount,
-  patchTaxControlAccount,
+  listTaxControlAccountsCompanyTaxControlAccounts: listTaxControlAccounts,
+  getTaxControlAccountCompanyTaxControlAccounts: getTaxControlAccount,
+  patchTaxControlAccountCompanyTaxControlAccounts: patchTaxControlAccount,
 } as const;
