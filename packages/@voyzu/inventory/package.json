@@ -32,6 +32,14 @@
       "types": "./modules/items/module.ts",
       "import": "./modules/items/module.ts"
     },
+    "./core": {
+      "types": "./modules/core/module.ts",
+      "import": "./modules/core/module.ts"
+    },
+    "./core/types": {
+      "types": "./modules/core/types/index.ts",
+      "import": "./modules/core/types/index.ts"
+    },
     "./items/pages.routes": {
       "types": "./modules/items/pages.routes.ts",
       "import": "./modules/items/pages.routes.ts"

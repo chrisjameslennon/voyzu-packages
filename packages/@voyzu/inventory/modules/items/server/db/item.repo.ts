@@ -25,7 +25,7 @@ export class ItemRepo {
     const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 AND item.status != 'DELETED' ORDER BY item.sku`, [organizationId]);
     return rows.map((row: Record<string, unknown>) => ({ id: Number(row.id), sku: String(row.sku), name: String(row.name),
       category: row.category_name === null ? null : String(row.category_name), itemType: row.item_type as ItemListRow["itemType"],
-      unit: String(row.unit), quantityTracked: Boolean(row.quantity_tracked), cost: null, status: row.status as ItemListRow["status"] }));
+      unit: row.unit == null ? null : String(row.unit) as ItemListRow["unit"], quantityTracked: Boolean(row.quantity_tracked), cost: null, status: row.status as ItemListRow["status"] }));
   }
 
   async get(organizationId: number, sku: string): Promise<ItemRow | null> {
@@ -61,7 +61,7 @@ export class ItemRepo {
     const { rows } = await this.db.query(`SELECT component.id AS component_item_id, component.sku, component.name, link.quantity, component.unit, component.item_type
       FROM item_component link JOIN item component ON component.organization_id = link.organization_id AND component.id = link.component_item_id
       WHERE link.organization_id = $1 AND link.item_id = $2 ORDER BY component.sku`, [organizationId, itemId]);
-    return rows.map((row: Record<string, unknown>) => ({ component_item_id: Number(row.component_item_id), sku: String(row.sku), name: String(row.name), quantity: Number(row.quantity), unit: String(row.unit), item_type: row.item_type as ItemComponentRow["item_type"] }));
+    return rows.map((row: Record<string, unknown>) => ({ component_item_id: Number(row.component_item_id), sku: String(row.sku), name: String(row.name), quantity: Number(row.quantity), unit: row.unit == null ? null : String(row.unit) as ItemComponentRow["unit"], item_type: row.item_type as ItemComponentRow["item_type"] }));
   }
 
   async replaceComponents(organizationId: number, itemId: number, components: ItemComponentInputDto[], audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {

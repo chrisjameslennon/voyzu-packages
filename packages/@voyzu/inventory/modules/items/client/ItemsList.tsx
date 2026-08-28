@@ -9,18 +9,19 @@ import modalStyles from "@voyzu/ui-style/css-modules/modal.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type { ItemListRow } from "../types/item-list.types";
 import type { ItemCategoryOptionDto, ItemCreateRequestDto, ItemResponseDto, PostingProfileOption } from "../types/item.types";
-import { ITEM_UNIT_OPTIONS } from "../types/item-unit.options";
+import { UNIT_VALUES } from "../../core/types";
+import type { Unit } from "../../core/types";
 import styles from "./items.module.css";
 
 const SKU_PATTERN = /^[A-Z0-9][A-Z0-9_-]*$/;
-const UNIT_OPTIONS = ITEM_UNIT_OPTIONS.map((unit) => ({ value: unit, label: unit }));
+const UNIT_OPTIONS = UNIT_VALUES.map((unit) => ({ value: unit, label: unit }));
 const currency = new Intl.NumberFormat("en-NZ", { style: "currency", currency: "NZD" });
 const columns: DataTableColumn<ItemListRow>[] = [
   { key: "sku", label: "SKU", width: "12rem", render: (row) => <span className={listStyles.codeCell}>{row.sku}</span> },
   { key: "name", label: "Item Name", width: "18rem", render: (row) => <span className={listStyles.nameCell}>{row.name}</span> },
   { key: "category", label: "Category", width: "16rem", render: (row) => row.category ?? "—" },
   { key: "itemType", label: "Type", width: "10rem", render: (row) => row.itemType === "ASSEMBLY" ? "Assembly" : "Item" },
-  { key: "unit", label: "Unit", width: "7rem" },
+  { key: "unit", label: "Unit", width: "7rem", render: (row) => row.unit ?? "—" },
   { key: "quantityTracked", label: "Quantity Tracked", width: "11rem", align: "center", render: (row) => row.quantityTracked ? "Yes" : "No" },
   { key: "cost", label: "Cost", width: "9rem", align: "right", render: (row) => row.cost === null ? "—" : currency.format(row.cost) },
   { key: "status", label: "Status", width: "8rem", align: "center", render: (row) => <Badge variant="soft" size="x-small" color={row.status === "ACTIVE" ? "success" : "neutral"}>{row.status}</Badge> },
@@ -29,12 +30,12 @@ const columns: DataTableColumn<ItemListRow>[] = [
 export function ItemsList({ items, categories, postingProfiles, nextSku }: { items: ItemListRow[]; categories: ItemCategoryOptionDto[]; postingProfiles: PostingProfileOption[]; nextSku: string; }) {
   const router = useRouter(); const [rows, setRows] = useState(items); const [search, setSearch] = useState(""); const [filters, setFilters] = useState<FilterState>({});
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set()); const [showCreate, setShowCreate] = useState(false); const [showDelete, setShowDelete] = useState(false);
-  const [sku, setSku] = useState(""); const [name, setName] = useState(""); const [unit, setUnit] = useState("each"); const [quantityTracked, setQuantityTracked] = useState(true);
+  const [sku, setSku] = useState(""); const [name, setName] = useState(""); const [unit, setUnit] = useState<Unit | "">("each"); const [quantityTracked, setQuantityTracked] = useState(true);
   const [categoryId, setCategoryId] = useState(""); const [autoSku, setAutoSku] = useState(false);
   const [postingProfileId, setPostingProfileId] = useState(""); const [serverError, setServerError] = useState(""); const [saving, setSaving] = useState(false); const [toast, setToast] = useState("");
   const validation = useFormValidation(() => ({
     sku: { label: "SKU", value: sku, rules: [required(), pattern(SKU_PATTERN, "Use uppercase letters, numbers, underscores or hyphens")] },
-    name: { label: "name", value: name, rules: [required()] }, categoryId: { label: "category", value: categoryId, rules: [required()] }, unit: { label: "unit", value: unit, rules: [required()] },
+    name: { label: "name", value: name, rules: [required()] }, categoryId: { label: "category", value: categoryId, rules: [required()] }, unit: { label: "unit", value: unit, enabled: quantityTracked, rules: [required()] },
   }));
   useEffect(() => {
     const message = window.sessionStorage.getItem("inventory-items-toast");
@@ -44,15 +45,15 @@ export function ItemsList({ items, categories, postingProfiles, nextSku }: { ite
   }, []);
   const filterTabs = useMemo<FilterTab[]>(() => [
     { key: "category", label: "Category", type: "checkbox", options: [...new Set(rows.map((item) => item.category).filter((value): value is string => value !== null))].sort() },
-    { key: "itemType", label: "Type", type: "checkbox", options: ["Item", "Assembly"] }, { key: "unit", label: "Unit", type: "checkbox", options: [...new Set(rows.map((item) => item.unit))].sort() },
+    { key: "itemType", label: "Type", type: "checkbox", options: ["Item", "Assembly"] }, { key: "unit", label: "Unit", type: "checkbox", options: [...new Set(rows.map((item) => item.unit).filter((value): value is Unit => value !== null))].sort() },
     { key: "quantityTracked", label: "Quantity Tracked", type: "checkbox", options: ["Yes", "No"] }, { key: "status", label: "Status", type: "checkbox", options: ["ACTIVE", "INACTIVE"] },
   ], [rows]);
   const visibleRows = useMemo(() => { const query = search.trim().toLowerCase(); const category = filters.category as string[] | undefined; const type = filters.itemType as string[] | undefined; const units = filters.unit as string[] | undefined; const tracked = filters.quantityTracked as string[] | undefined; const status = filters.status as string[] | undefined;
-    return rows.filter((item) => { const displayType = item.itemType === "ASSEMBLY" ? "Assembly" : "Item"; const displayTracked = item.quantityTracked ? "Yes" : "No"; return (!query || [item.sku, item.name, item.category ?? "", displayType, item.unit].some((value) => value.toLowerCase().includes(query))) && (!category?.length || (item.category !== null && category.includes(item.category))) && (!type?.length || type.includes(displayType)) && (!units?.length || units.includes(item.unit)) && (!tracked?.length || tracked.includes(displayTracked)) && (!status?.length || status.includes(item.status)); }); }, [filters, rows, search]);
+    return rows.filter((item) => { const displayType = item.itemType === "ASSEMBLY" ? "Assembly" : "Item"; const displayTracked = item.quantityTracked ? "Yes" : "No"; return (!query || [item.sku, item.name, item.category ?? "", displayType, item.unit ?? ""].some((value) => value.toLowerCase().includes(query))) && (!category?.length || (item.category !== null && category.includes(item.category))) && (!type?.length || type.includes(displayType)) && (!units?.length || (item.unit !== null && units.includes(item.unit))) && (!tracked?.length || tracked.includes(displayTracked)) && (!status?.length || status.includes(item.status)); }); }, [filters, rows, search]);
   const selected = rows.filter(({ id }) => selectedIds.has(id)); const allSelected = visibleRows.length > 0 && visibleRows.every(({ id }) => selectedIds.has(id));
   const resetCreate = () => { setSku(""); setAutoSku(false); setName(""); setCategoryId(""); setUnit("each"); setQuantityTracked(true); setPostingProfileId(""); setServerError(""); validation.reset(); };
   const requestError = async (response: Response, fallback: string) => { const body = await response.json().catch(() => null) as { message?: string } | null; return body?.message ?? fallback; };
-  const create = async () => { setServerError(""); if (!validation.attempt()) return; setSaving(true); try { const payload: ItemCreateRequestDto = { ...(!autoSku && { sku: sku.trim().toUpperCase() }), name: name.trim(), categoryId: Number(categoryId), unit, quantityTracked, itemPostingCodeId: postingProfileId ? Number(postingProfileId) : null };
+  const create = async () => { setServerError(""); if (!validation.attempt()) return; setSaving(true); try { const payload: ItemCreateRequestDto = { ...(!autoSku && { sku: sku.trim().toUpperCase() }), name: name.trim(), categoryId: Number(categoryId), unit: quantityTracked && unit ? unit : null, quantityTracked, itemPostingCodeId: postingProfileId ? Number(postingProfileId) : null };
     const response = await fetch("/api/inventory/items", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); if (!response.ok) { setServerError(await requestError(response, "The item could not be created")); return; }
     const item = await response.json() as ItemResponseDto; setRows((current) => [...current, { id: item.id, sku: item.sku, name: item.name, category: item.category?.name ?? null, itemType: item.itemType, unit: item.unit, quantityTracked: item.quantityTracked, cost: null, status: item.status }].sort((a, b) => a.sku.localeCompare(b.sku)));
     resetCreate(); setShowCreate(false); setToast(`Item ${item.sku} created`); } finally { setSaving(false); } };
@@ -69,8 +70,8 @@ export function ItemsList({ items, categories, postingProfiles, nextSku }: { ite
       <div className={styles.field}><label className={typography.fieldLabel}>SKU</label><div className={styles.inlineField}><Input value={sku} invalid={validation.hasError("sku")} onChange={(event) => { setAutoSku(false); setSku(event.target.value.toUpperCase()); }} /><Button variant="secondary" type="button" onClick={() => { setSku(nextSku); setAutoSku(true); }}>Auto Generate</Button></div></div>
       <div className={styles.field}><label className={typography.fieldLabel}>Name</label><Input value={name} invalid={validation.hasError("name")} onChange={(event) => setName(event.target.value)} /></div>
       <div className={styles.field}><label className={typography.fieldLabel}>Category</label><SearchableSelect value={categoryId} onChange={setCategoryId} hasError={validation.hasError("categoryId")} options={categories.map((category) => ({ value: String(category.id), label: category.name, code: category.code }))} placeholder="Select a category" /></div>
-      <div className={styles.field}><label className={typography.fieldLabel}>Unit</label><SearchableSelect value={unit} onChange={setUnit} options={UNIT_OPTIONS} searchable={false} /></div>
-      <label className={styles.checkboxField}><Checkbox checked={quantityTracked} onChange={setQuantityTracked} /><span>Quantity Tracked</span></label>
+      <div className={styles.field}><label className={typography.fieldLabel}>Unit</label><SearchableSelect value={unit} onChange={(value) => setUnit(value as Unit)} options={UNIT_OPTIONS} searchable={false} disabled={!quantityTracked} placeholder={quantityTracked ? "Select a unit" : "Not applicable"} /></div>
+      <label className={styles.checkboxField}><Checkbox checked={quantityTracked} onChange={(checked) => { setQuantityTracked(checked); if (!checked) setUnit(""); }} /><span>Quantity Tracked</span></label>
       <div className={styles.field}><label className={typography.fieldLabel}>Financial Posting Profile</label><SearchableSelect value={postingProfileId} onChange={setPostingProfileId} clearable options={postingProfiles.filter(({ status }) => status === "ACTIVE").map((profile) => ({ value: String(profile.id), label: profile.name, code: profile.code }))} placeholder={postingProfiles.length ? "Select a posting profile" : "Finance profiles unavailable"} disabled={!postingProfiles.length} /></div>
     </div></div><div className={modalStyles.footer}><Button variant="secondary" onClick={() => { resetCreate(); setShowCreate(false); }}>Cancel</Button><Button variant="primary" disabled={saving} onClick={() => { void create(); }}>{saving ? "Creating..." : "Create Item"}</Button></div></div></div> : null}
     <div className={layout.listToolbar}><div className={layout.slotToolbarLeft}><FilterPanel tabs={filterTabs} filters={filters} onApply={setFilters} onClear={() => setFilters({})} onRemoveFilter={removeFilter} showChips={false} /></div><div className={layout.slotToolbarSearch}><Input search containerClassName={layout.slotSearchControl} placeholder="Search items..." value={search} onChange={(event) => setSearch(event.target.value)} /></div><div className={layout.slotToolbarRight}><div className={listStyles.toolbarActions}><Button variant="secondary" icon="check_circle" disabled={!selected.some(({ status }) => status === "INACTIVE")} onClick={() => { void batch("activate"); }}>Activate</Button><Button variant="secondary" icon="block" disabled={!selected.some(({ status }) => status === "ACTIVE")} onClick={() => { void batch("deactivate"); }}>Deactivate</Button><Button variant="secondary-destructive" icon="delete" disabled={!selected.length} title="Delete selected" onClick={() => setShowDelete(true)} /><Button variant="secondary" icon="category" disabled>Change Category</Button></div></div></div>

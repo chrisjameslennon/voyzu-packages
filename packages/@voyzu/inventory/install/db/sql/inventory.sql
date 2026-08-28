@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS item (
     name                     display_name NOT NULL,
     description              description_text NOT NULL DEFAULT '',
     item_category_id         BIGINT,
-    unit                     TEXT NOT NULL,
+    unit                     TEXT,
     item_type                TEXT NOT NULL DEFAULT 'SINGLE_ITEM',
     quantity_tracked         BOOLEAN NOT NULL DEFAULT TRUE,
     item_posting_code_id     BIGINT,
@@ -64,7 +64,8 @@ CREATE TABLE IF NOT EXISTS item (
     CONSTRAINT ck_item_name
       CHECK (btrim(name) <> ''),
     CONSTRAINT ck_item_unit
-      CHECK (btrim(unit) <> '' AND length(unit) <= 40),
+      CHECK ((quantity_tracked AND unit IS NOT NULL AND btrim(unit) <> '' AND length(unit) <= 40)
+          OR (NOT quantity_tracked AND unit IS NULL)),
     CONSTRAINT ck_item_type
       CHECK (item_type IN ('SINGLE_ITEM', 'ASSEMBLY'))
 );

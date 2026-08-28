@@ -48,9 +48,10 @@ export async function getItem(organizationId: number, sku: string): Promise<Item
 export async function createItem(organizationId: number, input: ItemCreateRequestDto): Promise<ItemResponseDto> {
   try {
     return await withTransaction(async (db) => {
+      if (input.quantityTracked && input.unit === null) throw new BusinessRuleError("Unit is required when quantity tracking is enabled");
       const repo = new ItemRepo(db); const sku = input.sku ? normalizeSku(input.sku) : await repo.nextSku(organizationId);
       const row = await repo.insert(organizationId, withCreationAudit({ sku, name: input.name.trim(), description: "", item_category_id: input.categoryId,
-        unit: input.unit.trim(), item_type: "SINGLE_ITEM", quantity_tracked: input.quantityTracked,
+        unit: input.quantityTracked ? input.unit : null, item_type: "SINGLE_ITEM", quantity_tracked: input.quantityTracked,
         item_posting_code_id: input.itemPostingCodeId, status: "ACTIVE" }, await createCreationAuditStamp()));
       return toResponse(repo, row);
     });
@@ -62,6 +63,9 @@ export async function patchItem(organizationId: number, sku: string, input: Item
     return await withTransaction(async (db) => {
       const repo = new ItemRepo(db); const current = await repo.get(organizationId, sku);
       if (!current) throw new NotFoundError(`Item ${sku} was not found`);
+      const targetQuantityTracked = input.quantityTracked ?? current.quantity_tracked;
+      const targetUnit = targetQuantityTracked ? (input.unit === undefined ? current.unit : input.unit) : null;
+      if (targetQuantityTracked && targetUnit === null) throw new BusinessRuleError("Unit is required when quantity tracking is enabled");
       const targetType = input.itemType ?? current.item_type; const components = input.components;
       if (targetType === "SINGLE_ITEM" && components?.length) throw new BusinessRuleError("A single item cannot have assembly components");
       if (components) {
@@ -84,7 +88,7 @@ export async function patchItem(organizationId: number, sku: string, input: Item
       }
       const audit = await createUpdateAuditStamp();
       const changed = await repo.patch(organizationId, sku, withUpdateAudit({ name: input.name?.trim(), description: input.description?.trim(), item_category_id: input.categoryId,
-        unit: input.unit?.trim(), item_type: input.itemType, quantity_tracked: input.quantityTracked, item_posting_code_id: input.itemPostingCodeId }, audit));
+        unit: targetUnit, item_type: input.itemType, quantity_tracked: input.quantityTracked, item_posting_code_id: input.itemPostingCodeId }, audit));
       if (components) await repo.replaceComponents(organizationId, current.id, targetType === "ASSEMBLY" ? components : [], audit);
       if (input.customFields) await repo.replaceCustomFieldValues(organizationId, current.id, input.customFields, customFieldDefinitions, audit);
       return toResponse(repo, (await repo.get(organizationId, changed.sku)) ?? changed);
