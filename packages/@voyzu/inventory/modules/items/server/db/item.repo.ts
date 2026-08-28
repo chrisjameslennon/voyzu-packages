@@ -1,74 +1,142 @@
+import { DataError } from "@voyzu/capability/errors";
 import type { DbExecutor } from "@voyzu/capability/db";
-
-import type { ItemListRow, ItemStatus, ItemType } from "../../types/item-list.types";
+import type { ItemListRow, ItemStatus } from "../../types/item-list.types";
 import type { FinanceItemDto, ItemPostingCodeUsageDto } from "../../types/finance-item.types";
+import type { ItemCategoryOptionDto, ItemComponentInputDto, ItemCustomFieldDto, ItemCustomFieldInputDto } from "../../types/item.types";
+import type { ItemComponentRow, ItemRow } from "./item.row.types";
+
+const SELECT_ITEM = `SELECT item.*, item_category.code AS category_code, item_category.name AS category_name,
+  EXISTS (SELECT 1 FROM inventory_transaction_line line WHERE line.organization_id = item.organization_id AND line.item_id = item.id) AS in_use
+  FROM item LEFT JOIN item_category ON item_category.organization_id = item.organization_id AND item_category.id = item.item_category_id`;
+
+function normalizeItem(row: Record<string, unknown>): ItemRow {
+  return { ...row, id: Number(row.id), organization_id: Number(row.organization_id),
+    item_category_id: row.item_category_id == null ? null : Number(row.item_category_id),
+    item_posting_code_id: row.item_posting_code_id == null ? null : Number(row.item_posting_code_id),
+    in_use: Boolean(row.in_use),
+    creation_date: row.creation_date instanceof Date ? row.creation_date.toISOString() : String(row.creation_date),
+    updated_date: row.updated_date instanceof Date ? row.updated_date.toISOString() : String(row.updated_date) } as ItemRow;
+}
 
 export class ItemRepo {
   constructor(private readonly db: DbExecutor) {}
 
   async list(organizationId: number): Promise<ItemListRow[]> {
-    const { rows } = await this.db.query(`
-      SELECT item.id,
-             item.sku,
-             item.name,
-             item_category.name AS category,
-             item.item_type,
-             item.unit,
-             item.quantity_tracked,
-             item.status
-        FROM item
-        LEFT JOIN item_category
-          ON item_category.organization_id = item.organization_id
-         AND item_category.id = item.item_category_id
-       WHERE item.organization_id = $1
-       ORDER BY item.sku
-    `, [organizationId]);
+    const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 AND item.status != 'DELETED' ORDER BY item.sku`, [organizationId]);
+    return rows.map((row: Record<string, unknown>) => ({ id: Number(row.id), sku: String(row.sku), name: String(row.name),
+      category: row.category_name === null ? null : String(row.category_name), itemType: row.item_type as ItemListRow["itemType"],
+      unit: String(row.unit), quantityTracked: Boolean(row.quantity_tracked), cost: null, status: row.status as ItemListRow["status"] }));
+  }
 
-    return rows.map((row: Record<string, unknown>) => ({
-      id: Number(row.id),
-      sku: String(row.sku),
-      name: String(row.name),
-      category: row.category === null ? null : String(row.category),
-      itemType: row.item_type as ItemType,
-      unit: String(row.unit),
-      quantityTracked: Boolean(row.quantity_tracked),
-      cost: null,
-      status: row.status as ItemStatus,
-    }));
+  async get(organizationId: number, sku: string): Promise<ItemRow | null> {
+    const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 AND item.sku = $2 AND item.status != 'DELETED'`, [organizationId, sku.trim().toUpperCase()]);
+    return rows[0] ? normalizeItem(rows[0]) : null;
+  }
+
+  async insert(organizationId: number, row: Record<string, unknown>): Promise<ItemRow> {
+    const entries = Object.entries(row); const values = [organizationId, ...entries.map(([, value]) => value)];
+    const columns = ["organization_id", ...entries.map(([key]) => key)];
+    await this.db.query(`INSERT INTO item (${columns.join(", ")}) VALUES (${values.map((_, index) => `$${index + 1}`).join(", ")})`, values);
+    const created = await this.get(organizationId, String(row.sku));
+    if (!created) throw new DataError("Created item could not be loaded");
+    return created;
+  }
+
+  async patch(organizationId: number, sku: string, row: Record<string, unknown>): Promise<ItemRow> {
+    const mutable = new Set(["name", "description", "item_category_id", "unit", "item_type", "quantity_tracked", "item_posting_code_id", "status", "updated_date", "updated_actor_type", "updated_user_id", "updated_mutation_id"]);
+    const entries = Object.entries(row).filter(([, value]) => value !== undefined); const values: unknown[] = [];
+    const sets = entries.map(([column, value]) => { if (!mutable.has(column)) throw new DataError(`Unsupported mutable item column ${column}`); values.push(value);
+      const cast = column === "updated_actor_type" ? "::actor_type" : column === "updated_date" ? "::timestamptz" : column === "updated_mutation_id" ? "::uuid" : "";
+      return `${column} = $${values.length}${cast}`; });
+    if (sets.length) { values.push(organizationId, sku.trim().toUpperCase()); const result = await this.db.query(`UPDATE item SET ${sets.join(", ")} WHERE organization_id = $${values.length - 1} AND sku = $${values.length} AND status != 'DELETED'`, values); if (result.rowCount === 0) throw new DataError(`Item ${sku} not found`); }
+    const changed = await this.get(organizationId, sku); if (!changed) throw new DataError(`Item ${sku} not found`); return changed;
+  }
+
+  async listCategories(organizationId: number): Promise<ItemCategoryOptionDto[]> {
+    const { rows } = await this.db.query("SELECT id::int, code, name FROM item_category WHERE organization_id = $1 AND status = 'ACTIVE' ORDER BY name", [organizationId]);
+    return rows.map((row: Record<string, unknown>) => ({ id: Number(row.id), code: String(row.code), name: String(row.name) }));
+  }
+
+  async listComponents(organizationId: number, itemId: number): Promise<ItemComponentRow[]> {
+    const { rows } = await this.db.query(`SELECT component.id AS component_item_id, component.sku, component.name, link.quantity, component.unit, component.item_type
+      FROM item_component link JOIN item component ON component.organization_id = link.organization_id AND component.id = link.component_item_id
+      WHERE link.organization_id = $1 AND link.item_id = $2 ORDER BY component.sku`, [organizationId, itemId]);
+    return rows.map((row: Record<string, unknown>) => ({ component_item_id: Number(row.component_item_id), sku: String(row.sku), name: String(row.name), quantity: Number(row.quantity), unit: String(row.unit), item_type: row.item_type as ItemComponentRow["item_type"] }));
+  }
+
+  async replaceComponents(organizationId: number, itemId: number, components: ItemComponentInputDto[], audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {
+    await this.db.query("DELETE FROM item_component WHERE organization_id = $1 AND item_id = $2", [organizationId, itemId]);
+    for (const component of components) await this.db.query(`INSERT INTO item_component (organization_id, item_id, component_item_id, quantity, creation_date, creation_actor_type, creation_user_id, creation_mutation_id, updated_date, updated_actor_type, updated_user_id, updated_mutation_id)
+      VALUES ($1, $2, $3, $4, $5::timestamptz, $6::actor_type, $7, $8::uuid, $5::timestamptz, $6::actor_type, $7, $8::uuid)`, [organizationId, itemId, component.itemId, component.quantity, audit.timestamp, audit.actorType, audit.userId, audit.mutationId]);
+  }
+
+  async listCustomFields(organizationId: number, itemId: number): Promise<ItemCustomFieldDto[]> {
+    const [{ rows: fieldRows }, { rows: optionRows }, { rows: valueRows }] = await Promise.all([
+      this.db.query("SELECT id::int, name, data_type, required, status, option_list_id::int FROM custom_field WHERE organization_id = $1 AND applies_to = 'ITEM' AND status != 'DELETED' ORDER BY name", [organizationId]),
+      this.db.query("SELECT value.id::int, value.option_list_id::int, value.value FROM option_list_value value JOIN option_list list ON list.organization_id = value.organization_id AND list.id = value.option_list_id WHERE value.organization_id = $1 AND value.status = 'ACTIVE' AND list.status = 'ACTIVE' ORDER BY value.sort_order, value.value", [organizationId]),
+      this.db.query("SELECT custom_field_id::int, text_value, number_value, date_value, boolean_value, option_list_value_id::int FROM custom_field_value WHERE organization_id = $1 AND record_id = $2 ORDER BY id", [organizationId, itemId]),
+    ]);
+    const optionsByList = new Map<number, Array<{ id: number; value: string }>>();
+    for (const row of optionRows as Record<string, unknown>[]) { const listId = Number(row.option_list_id); const values = optionsByList.get(listId) ?? []; values.push({ id: Number(row.id), value: String(row.value) }); optionsByList.set(listId, values); }
+    const valuesByField = new Map<number, Record<string, unknown>[]>();
+    for (const row of valueRows as Record<string, unknown>[]) { const fieldId = Number(row.custom_field_id); const values = valuesByField.get(fieldId) ?? []; values.push(row); valuesByField.set(fieldId, values); }
+    return (fieldRows as Record<string, unknown>[]).map((row) => {
+      const dataType = row.data_type as ItemCustomFieldDto["dataType"]; const values = valuesByField.get(Number(row.id)) ?? [];
+      let value: ItemCustomFieldDto["value"] = null;
+      if (dataType === "TEXT") value = values[0]?.text_value == null ? null : String(values[0].text_value);
+      else if (dataType === "NUMBER") value = values[0]?.number_value == null ? null : Number(values[0].number_value);
+      else if (dataType === "DATE") value = values[0]?.date_value == null ? null : values[0].date_value instanceof Date ? values[0].date_value.toISOString().slice(0, 10) : String(values[0].date_value).slice(0, 10);
+      else if (dataType === "BOOLEAN") value = values[0]?.boolean_value == null ? null : Boolean(values[0].boolean_value);
+      else if (dataType === "OPTION") value = values[0]?.option_list_value_id == null ? null : Number(values[0].option_list_value_id);
+      else value = values.map((entry) => Number(entry.option_list_value_id)).filter(Number.isFinite);
+      return { id: Number(row.id), name: String(row.name), dataType, required: Boolean(row.required), status: row.status as ItemCustomFieldDto["status"], options: row.option_list_id == null ? [] : optionsByList.get(Number(row.option_list_id)) ?? [], value };
+    });
+  }
+
+  async replaceCustomFieldValues(organizationId: number, itemId: number, fields: ItemCustomFieldInputDto[], definitions: ItemCustomFieldDto[], audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {
+    const definitionById = new Map(definitions.map((field) => [field.id, field]));
+    for (const field of fields) {
+      const definition = definitionById.get(field.customFieldId); if (!definition || definition.status !== "ACTIVE") continue;
+      await this.db.query("DELETE FROM custom_field_value WHERE organization_id = $1 AND custom_field_id = $2 AND record_id = $3", [organizationId, field.customFieldId, itemId]);
+      const values = definition.dataType === "MULTIPLE_OPTIONS" && Array.isArray(field.value) ? field.value : field.value === null || field.value === "" ? [] : [field.value];
+      for (const value of values) {
+        const columns: Record<string, unknown> = { text_value: null, number_value: null, date_value: null, boolean_value: null, option_list_value_id: null };
+        if (definition.dataType === "TEXT") columns.text_value = String(value);
+        else if (definition.dataType === "NUMBER") columns.number_value = Number(value);
+        else if (definition.dataType === "DATE") columns.date_value = String(value);
+        else if (definition.dataType === "BOOLEAN") columns.boolean_value = Boolean(value);
+        else columns.option_list_value_id = Number(value);
+        await this.db.query(`INSERT INTO custom_field_value (organization_id, custom_field_id, record_id, text_value, number_value, date_value, boolean_value, option_list_value_id, creation_date, creation_actor_type, creation_user_id, creation_mutation_id, updated_date, updated_actor_type, updated_user_id, updated_mutation_id)
+          VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9::timestamptz, $10::actor_type, $11, $12::uuid, $9::timestamptz, $10::actor_type, $11, $12::uuid)`, [organizationId, field.customFieldId, itemId, columns.text_value, columns.number_value, columns.date_value, columns.boolean_value, columns.option_list_value_id, audit.timestamp, audit.actorType, audit.userId, audit.mutationId]);
+      }
+    }
+  }
+
+  async getItemsByIds(organizationId: number, ids: number[]): Promise<ItemRow[]> {
+    if (!ids.length) return []; const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 AND item.id = ANY($2::bigint[]) AND item.status != 'DELETED'`, [organizationId, ids]); return rows.map(normalizeItem);
+  }
+
+  async nextSku(organizationId: number): Promise<string> {
+    const { rows } = await this.db.query("SELECT COALESCE(MAX(substring(sku FROM '^SKU-([0-9]+)$')::int), 0) + 1 AS next_number FROM item WHERE organization_id = $1", [organizationId]);
+    return `SKU-${String(Number(rows[0]?.next_number ?? 1)).padStart(6, "0")}`;
+  }
+
+  async transition(organizationId: number, skus: string[], status: ItemStatus, audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {
+    await this.db.query("UPDATE item SET status = $3, updated_date = $4::timestamptz, updated_actor_type = $5::actor_type, updated_user_id = $6, updated_mutation_id = $7::uuid WHERE organization_id = $1 AND sku = ANY($2::text[]) AND status != 'DELETED'", [organizationId, skus, status, audit.timestamp, audit.actorType, audit.userId, audit.mutationId]);
+  }
+
+  async delete(organizationId: number, skus: string[], audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {
+    await this.db.query("UPDATE item SET deletion_date = $3::timestamptz, deletion_actor_type = $4::actor_type, deletion_user_id = $5, deletion_mutation_id = $6::uuid WHERE organization_id = $1 AND sku = ANY($2::text[])", [organizationId, skus, audit.timestamp, audit.actorType, audit.userId, audit.mutationId]);
+    await this.db.query("DELETE FROM item WHERE organization_id = $1 AND sku = ANY($2::text[])", [organizationId, skus]);
   }
 
   async listForFinance(organizationId: number, skus: string[]): Promise<FinanceItemDto[]> {
-    if (skus.length === 0) return [];
-    const { rows } = await this.db.query(
-      `SELECT id::int, sku, name, description, quantity_tracked, item_posting_code_id::int, status
-         FROM item
-        WHERE organization_id = $1
-          AND sku = ANY($2::text[])`,
-      [organizationId, skus],
-    );
-    return rows.map((row: Record<string, unknown>) => ({
-      id: Number(row.id),
-      sku: String(row.sku),
-      name: String(row.name),
-      description: String(row.description),
-      quantityTracked: Boolean(row.quantity_tracked),
-      itemPostingCodeId: row.item_posting_code_id == null ? null : Number(row.item_posting_code_id),
-      status: row.status as FinanceItemDto["status"],
-    }));
+    if (!skus.length) return []; const { rows } = await this.db.query("SELECT id::int, sku, name, description, quantity_tracked, item_posting_code_id::int, status FROM item WHERE organization_id = $1 AND sku = ANY($2::text[])", [organizationId, skus]);
+    return rows.map((row: Record<string, unknown>) => ({ id: Number(row.id), sku: String(row.sku), name: String(row.name), description: String(row.description), quantityTracked: Boolean(row.quantity_tracked), itemPostingCodeId: row.item_posting_code_id == null ? null : Number(row.item_posting_code_id), status: row.status as FinanceItemDto["status"] }));
   }
 
   async listPostingCodeUsages(postingCodeIds: number[]): Promise<ItemPostingCodeUsageDto[]> {
-    if (postingCodeIds.length === 0) return [];
-    const { rows } = await this.db.query(
-      `SELECT item_posting_code_id::int, sku
-         FROM item
-        WHERE item_posting_code_id = ANY($1::bigint[])
-        ORDER BY sku`,
-      [postingCodeIds],
-    );
-    return rows.map((row: Record<string, unknown>) => ({
-      itemPostingCodeId: Number(row.item_posting_code_id),
-      sku: String(row.sku),
-    }));
+    if (!postingCodeIds.length) return []; const { rows } = await this.db.query("SELECT item_posting_code_id::int, sku FROM item WHERE item_posting_code_id = ANY($1::bigint[]) ORDER BY sku", [postingCodeIds]);
+    return rows.map((row: Record<string, unknown>) => ({ itemPostingCodeId: Number(row.item_posting_code_id), sku: String(row.sku) }));
   }
 }

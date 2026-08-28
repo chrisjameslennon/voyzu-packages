@@ -10,7 +10,7 @@
     "allowInstall": true,
     "dependencies": ["@voyzu/erp-core"],
     "pageRootPaths": ["/inventory"],
-    "apiRootPaths": [],
+    "apiRootPaths": ["/inventory/items"],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }
@@ -35,6 +35,10 @@
     "./items/pages.routes": {
       "types": "./modules/items/pages.routes.ts",
       "import": "./modules/items/pages.routes.ts"
+    },
+    "./items/api.routes": {
+      "types": "./modules/items/api.routes.ts",
+      "import": "./modules/items/api.routes.ts"
     },
     "./items/operations": {
       "types": "./modules/items/operations.ts",

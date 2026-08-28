@@ -7,4 +7,12 @@ export const pageRoutes = {
     breadcrumbBase: [{ label: "Inventory", href: "/inventory/items" }],
     auth: { required: true, minRole: "STANDARD" },
   },
+  detail: {
+    id: "voyzu.inventory.items.page.detail",
+    path: "/inventory/items/[sku]",
+    loadPage: () => import("./server/pages/ItemDetailPage").then((module) => module.ItemDetailPage),
+    pageTitle: "Item",
+    breadcrumbBase: [{ label: "Inventory", href: "/inventory/items" }, { label: "Items", href: "/inventory/items" }],
+    auth: { required: true, minRole: "STANDARD" },
+  },
 } as const;

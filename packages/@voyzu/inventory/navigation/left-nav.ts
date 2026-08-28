@@ -6,7 +6,7 @@ export const inventoryLeftNav = [
     items: [
       {
         label: "Items",
-        icon: "deployed_code",
+        icon: "box",
         routeId: pageRoutes.list.id,
       },
       {
@@ -28,6 +28,11 @@ export const inventoryLeftNav = [
         label: "Stock Activity",
         icon: "history",
         path: "/inventory/stock-activity",
+      },
+      {
+        label: "Warehouses",
+        icon: "warehouse",
+        path: "/inventory/warehouses",
       },
     ],
   },
@@ -56,17 +61,12 @@ export const inventoryLeftNav = [
     label: "Settings",
     items: [
       {
-        label: "Warehouses",
-        icon: "warehouse",
-        path: "/inventory/settings/warehouses",
-      },
-      {
         label: "Custom Fields",
         icon: "dynamic_form",
         path: "/inventory/settings/custom-fields",
       },
       {
-        label: "Option Lists",
+        label: "Custom Field Option Lists",
         icon: "list_alt",
         path: "/inventory/settings/option-lists",
       },
@@ -75,6 +75,20 @@ export const inventoryLeftNav = [
   {
     label: "Reports",
     items: [
+      {
+        label: "Items",
+        icon: "box",
+        children: [
+          {
+            label: "Items",
+            path: "/inventory/reports/items",
+          },
+          {
+            label: "Item Categories",
+            path: "/inventory/reports/item-categories",
+          },
+        ],
+      },
       {
         label: "Stock",
         icon: "summarize",
@@ -106,20 +120,6 @@ export const inventoryLeftNav = [
           {
             label: "Quantity Adjustments",
             path: "/inventory/reports/quantity-adjustments",
-          },
-        ],
-      },
-      {
-        label: "Items",
-        icon: "deployed_code",
-        children: [
-          {
-            label: "Items",
-            path: "/inventory/reports/items",
-          },
-          {
-            label: "Item Categories",
-            path: "/inventory/reports/item-categories",
           },
         ],
       },

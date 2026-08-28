@@ -1,1 +1,1 @@
-export { InventoryCompanySwitcher } from "./InventoryCompanySwitcher";
+export { InventoryOrganizationSwitcher } from "./InventoryOrganizationSwitcher";

@@ -1,199 +1,82 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import {
-  Badge,
-  Breadcrumbs,
-  Button,
-  DataTable,
-  FilterChips,
-  FilterPanel,
-  Input,
-  type DataTableColumn,
-  type FilterState,
-  type FilterTab,
-} from "@voyzu/ui-components";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Badge, Breadcrumbs, Button, Checkbox, ConfirmDialog, DataTable, FilterChips, FilterPanel, Input, SearchableSelect, Toast, ValidationAlert, pattern, required, useFormValidation, type DataTableColumn, type FilterState, type FilterTab } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
+import modalStyles from "@voyzu/ui-style/css-modules/modal.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
-
 import type { ItemListRow } from "../types/item-list.types";
+import type { ItemCategoryOptionDto, ItemCreateRequestDto, ItemResponseDto, PostingProfileOption } from "../types/item.types";
+import { ITEM_UNIT_OPTIONS } from "../types/item-unit.options";
+import styles from "./items.module.css";
 
-const currency = new Intl.NumberFormat("en-NZ", {
-  style: "currency",
-  currency: "NZD",
-});
-
+const SKU_PATTERN = /^[A-Z0-9][A-Z0-9_-]*$/;
+const UNIT_OPTIONS = ITEM_UNIT_OPTIONS.map((unit) => ({ value: unit, label: unit }));
+const currency = new Intl.NumberFormat("en-NZ", { style: "currency", currency: "NZD" });
 const columns: DataTableColumn<ItemListRow>[] = [
-  {
-    key: "sku",
-    label: "SKU",
-    width: "12rem",
-    render: (row) => <span className={listStyles.codeCell}>{row.sku}</span>,
-  },
-  {
-    key: "name",
-    label: "Item Name",
-    width: "18rem",
-    render: (row) => <span className={listStyles.nameCell}>{row.name}</span>,
-  },
+  { key: "sku", label: "SKU", width: "12rem", render: (row) => <span className={listStyles.codeCell}>{row.sku}</span> },
+  { key: "name", label: "Item Name", width: "18rem", render: (row) => <span className={listStyles.nameCell}>{row.name}</span> },
   { key: "category", label: "Category", width: "16rem", render: (row) => row.category ?? "—" },
   { key: "itemType", label: "Type", width: "10rem", render: (row) => row.itemType === "ASSEMBLY" ? "Assembly" : "Item" },
   { key: "unit", label: "Unit", width: "7rem" },
   { key: "quantityTracked", label: "Quantity Tracked", width: "11rem", align: "center", render: (row) => row.quantityTracked ? "Yes" : "No" },
   { key: "cost", label: "Cost", width: "9rem", align: "right", render: (row) => row.cost === null ? "—" : currency.format(row.cost) },
-  {
-    key: "status",
-    label: "Status",
-    width: "8rem",
-    align: "center",
-    render: (row) => (
-      <Badge variant="soft" size="x-small" color={row.status === "ACTIVE" ? "success" : "neutral"}>
-        {row.status}
-      </Badge>
-    ),
-  },
+  { key: "status", label: "Status", width: "8rem", align: "center", render: (row) => <Badge variant="soft" size="x-small" color={row.status === "ACTIVE" ? "success" : "neutral"}>{row.status}</Badge> },
 ];
 
-export function ItemsList({ items }: { items: ItemListRow[] }) {
-  const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState<FilterState>({});
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-
+export function ItemsList({ items, categories, postingProfiles, nextSku }: { items: ItemListRow[]; categories: ItemCategoryOptionDto[]; postingProfiles: PostingProfileOption[]; nextSku: string; }) {
+  const router = useRouter(); const [rows, setRows] = useState(items); const [search, setSearch] = useState(""); const [filters, setFilters] = useState<FilterState>({});
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set()); const [showCreate, setShowCreate] = useState(false); const [showDelete, setShowDelete] = useState(false);
+  const [sku, setSku] = useState(""); const [name, setName] = useState(""); const [unit, setUnit] = useState("each"); const [quantityTracked, setQuantityTracked] = useState(true);
+  const [categoryId, setCategoryId] = useState(""); const [autoSku, setAutoSku] = useState(false);
+  const [postingProfileId, setPostingProfileId] = useState(""); const [serverError, setServerError] = useState(""); const [saving, setSaving] = useState(false); const [toast, setToast] = useState("");
+  const validation = useFormValidation(() => ({
+    sku: { label: "SKU", value: sku, rules: [required(), pattern(SKU_PATTERN, "Use uppercase letters, numbers, underscores or hyphens")] },
+    name: { label: "name", value: name, rules: [required()] }, categoryId: { label: "category", value: categoryId, rules: [required()] }, unit: { label: "unit", value: unit, rules: [required()] },
+  }));
+  useEffect(() => {
+    const message = window.sessionStorage.getItem("inventory-items-toast");
+    if (!message) return;
+    window.sessionStorage.removeItem("inventory-items-toast");
+    setToast(message);
+  }, []);
   const filterTabs = useMemo<FilterTab[]>(() => [
-    { key: "category", label: "Category", type: "checkbox", options: [...new Set(items.map((item) => item.category).filter((value): value is string => value !== null))].sort() },
-    { key: "itemType", label: "Type", type: "checkbox", options: ["Item", "Assembly"] },
-    { key: "unit", label: "Unit", type: "checkbox", options: [...new Set(items.map((item) => item.unit))].sort() },
-    { key: "quantityTracked", label: "Quantity Tracked", type: "checkbox", options: ["Yes", "No"] },
-    { key: "status", label: "Status", type: "checkbox", options: ["ACTIVE", "INACTIVE"] },
-  ], [items]);
+    { key: "category", label: "Category", type: "checkbox", options: [...new Set(rows.map((item) => item.category).filter((value): value is string => value !== null))].sort() },
+    { key: "itemType", label: "Type", type: "checkbox", options: ["Item", "Assembly"] }, { key: "unit", label: "Unit", type: "checkbox", options: [...new Set(rows.map((item) => item.unit))].sort() },
+    { key: "quantityTracked", label: "Quantity Tracked", type: "checkbox", options: ["Yes", "No"] }, { key: "status", label: "Status", type: "checkbox", options: ["ACTIVE", "INACTIVE"] },
+  ], [rows]);
+  const visibleRows = useMemo(() => { const query = search.trim().toLowerCase(); const category = filters.category as string[] | undefined; const type = filters.itemType as string[] | undefined; const units = filters.unit as string[] | undefined; const tracked = filters.quantityTracked as string[] | undefined; const status = filters.status as string[] | undefined;
+    return rows.filter((item) => { const displayType = item.itemType === "ASSEMBLY" ? "Assembly" : "Item"; const displayTracked = item.quantityTracked ? "Yes" : "No"; return (!query || [item.sku, item.name, item.category ?? "", displayType, item.unit].some((value) => value.toLowerCase().includes(query))) && (!category?.length || (item.category !== null && category.includes(item.category))) && (!type?.length || type.includes(displayType)) && (!units?.length || units.includes(item.unit)) && (!tracked?.length || tracked.includes(displayTracked)) && (!status?.length || status.includes(item.status)); }); }, [filters, rows, search]);
+  const selected = rows.filter(({ id }) => selectedIds.has(id)); const allSelected = visibleRows.length > 0 && visibleRows.every(({ id }) => selectedIds.has(id));
+  const resetCreate = () => { setSku(""); setAutoSku(false); setName(""); setCategoryId(""); setUnit("each"); setQuantityTracked(true); setPostingProfileId(""); setServerError(""); validation.reset(); };
+  const requestError = async (response: Response, fallback: string) => { const body = await response.json().catch(() => null) as { message?: string } | null; return body?.message ?? fallback; };
+  const create = async () => { setServerError(""); if (!validation.attempt()) return; setSaving(true); try { const payload: ItemCreateRequestDto = { ...(!autoSku && { sku: sku.trim().toUpperCase() }), name: name.trim(), categoryId: Number(categoryId), unit, quantityTracked, itemPostingCodeId: postingProfileId ? Number(postingProfileId) : null };
+    const response = await fetch("/api/inventory/items", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); if (!response.ok) { setServerError(await requestError(response, "The item could not be created")); return; }
+    const item = await response.json() as ItemResponseDto; setRows((current) => [...current, { id: item.id, sku: item.sku, name: item.name, category: item.category?.name ?? null, itemType: item.itemType, unit: item.unit, quantityTracked: item.quantityTracked, cost: null, status: item.status }].sort((a, b) => a.sku.localeCompare(b.sku)));
+    resetCreate(); setShowCreate(false); setToast(`Item ${item.sku} created`); } finally { setSaving(false); } };
+  const batch = async (action: "activate" | "deactivate" | "delete") => { setServerError(""); const response = await fetch(`/api/inventory/items/batch/${action}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ skus: selected.map(({ sku: code }) => code) }) });
+    if (!response.ok) { setServerError(await requestError(response, `The selected items could not be ${action}d`)); return; }
+    if (action === "delete") { const ids = new Set(selected.map(({ id }) => id)); setRows((current) => current.filter(({ id }) => !ids.has(id))); setShowDelete(false); }
+    else { const changed = await response.json() as ItemResponseDto[]; const statusBySku = new Map(changed.map((item) => [item.sku, item.status])); setRows((current) => current.map((item) => ({ ...item, status: statusBySku.get(item.sku) ?? item.status }))); }
+    setSelectedIds(new Set()); setToast(`${selected.length} item${selected.length === 1 ? "" : "s"} ${action === "delete" ? "deleted" : `${action}d`}`); };
+  const removeFilter = (key: string) => setFilters((current) => { const next = { ...current }; delete next[key]; return next; });
 
-  const visibleRows = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    const categories = filters.category as string[] | undefined;
-    const itemTypes = filters.itemType as string[] | undefined;
-    const units = filters.unit as string[] | undefined;
-    const quantityTracked = filters.quantityTracked as string[] | undefined;
-    const statuses = filters.status as string[] | undefined;
-
-    return items.filter((item) => {
-      const displayType = item.itemType === "ASSEMBLY" ? "Assembly" : "Item";
-      const displayQuantityTracked = item.quantityTracked ? "Yes" : "No";
-      return (
-        (!query || [item.sku, item.name, item.category ?? "", displayType, item.unit].some((value) => value.toLowerCase().includes(query)))
-        && (!categories?.length || (item.category !== null && categories.includes(item.category)))
-        && (!itemTypes?.length || itemTypes.includes(displayType))
-        && (!units?.length || units.includes(item.unit))
-        && (!quantityTracked?.length || quantityTracked.includes(displayQuantityTracked))
-        && (!statuses?.length || statuses.includes(item.status))
-      );
-    });
-  }, [filters, items, search]);
-
-  const allSelected = visibleRows.length > 0 && visibleRows.every(({ id }) => selectedIds.has(id));
-  const hasFilters = search.trim().length > 0 || Object.keys(filters).length > 0;
-  const removeFilter = (key: string) => setFilters((current) => {
-    const next = { ...current };
-    delete next[key];
-    return next;
-  });
-
-  return (
-    <div className={`${layout.listView} vz-grid-12`}>
-      <header className={layout.listHeader}>
-        <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
-        <div className={layout.slotTitle}>
-          <div className={listStyles.titleIcon}>
-            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>deployed_code</span>
-          </div>
-          <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Items</h1>
-          <div className={layout.slotTitleByline}>
-            <p className={typography.headingByline}>Physical inventory items that can be stocked, purchased, consumed, sold, or used as components.</p>
-          </div>
-        </div>
-        <div className={layout.slotActions}>
-          <Button variant="primary" icon="add" className={layout.slotPrimaryAction}>Add Item</Button>
-        </div>
-      </header>
-
-      <div className={layout.listToolbar}>
-        <div className={layout.slotToolbarLeft}>
-          <FilterPanel
-            tabs={filterTabs}
-            filters={filters}
-            onApply={setFilters}
-            onClear={() => setFilters({})}
-            onRemoveFilter={removeFilter}
-            showChips={false}
-          />
-        </div>
-        <div className={layout.slotToolbarSearch}>
-          <Input
-            search
-            containerClassName={layout.slotSearchControl}
-            placeholder="Search items..."
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </div>
-        <div className={layout.slotToolbarRight}>
-          <div className={listStyles.toolbarActions}>
-            <Button variant="secondary" icon="check_circle" disabled>Activate</Button>
-            <Button variant="secondary" icon="block" disabled>Deactivate</Button>
-            <Button variant="secondary-destructive" icon="delete" disabled title="Delete selected" />
-            <Button variant="secondary" icon="category" disabled>Change Category</Button>
-          </div>
-        </div>
-      </div>
-
-      {hasFilters ? (
-        <div className={layout.chipsRow}>
-          <div className={layout.slotChips}>
-            <FilterChips
-              tabs={filterTabs}
-              filters={filters}
-              additionalChips={search.trim() ? [{ key: "search", label: "Search contains", value: search.trim(), onRemove: () => setSearch("") }] : []}
-              onClear={() => { setFilters({}); setSearch(""); }}
-              onRemoveFilter={removeFilter}
-            />
-          </div>
-        </div>
-      ) : null}
-
-      <div className={layout.listBody}>
-        <div className={layout.slotBody}>
-          <DataTable
-            columns={columns}
-            rows={visibleRows}
-            selectedIds={selectedIds}
-            isAllSelected={allSelected}
-            isSomeSelected={!allSelected && visibleRows.some(({ id }) => selectedIds.has(id))}
-            onSelectAll={() => setSelectedIds(allSelected ? new Set() : new Set(visibleRows.map(({ id }) => id)))}
-            onSelectOne={(id) => setSelectedIds((current) => {
-              const next = new Set(current);
-              next.has(id) ? next.delete(id) : next.add(id);
-              return next;
-            })}
-            currentPage={1}
-            totalPages={1}
-            onPageChange={() => undefined}
-            totalCount={items.length}
-            filteredCount={visibleRows.length}
-            itemLabel="items"
-            hasData={items.length > 0}
-            emptyIcon="deployed_code"
-            emptyTitle="No items"
-            emptyText="Add the first inventory item"
-            emptyFilterText="No items match the current filters"
-            mobileRender={(row) => (
-              <div>
-                <strong>{row.name}</strong>
-                <div>{row.sku} · {row.category ?? "Uncategorised"} · {row.status}</div>
-              </div>
-            )}
-          />
-        </div>
-      </div>
-    </div>
-  );
+  return <div className={`${layout.listView} vz-grid-12`}>
+    <header className={layout.listHeader}><div className={layout.slotBreadcrumb}><Breadcrumbs /></div><div className={layout.slotTitle}><div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>box</span></div><h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Items</h1><div className={layout.slotTitleByline}><p className={typography.headingByline}>Physical inventory items that can be stocked, purchased, consumed, sold, or used as components.</p></div></div><div className={layout.slotActions}><Button variant="primary" icon="add" className={layout.slotPrimaryAction} onClick={() => setShowCreate(true)}>Add Item</Button></div><div className={layout.slotAlert}><ValidationAlert errors={serverError ? [serverError] : []} visible={!!serverError} onDismiss={() => setServerError("")} /></div></header>
+    {showCreate ? <div className={modalStyles.backdrop}><div className={modalStyles.modal} onClick={(event) => event.stopPropagation()}><div className={modalStyles.header}><h3 className={typography.contentTitle}>Add Item</h3><Button variant="plain" icon="close" title="Close" onClick={() => { resetCreate(); setShowCreate(false); }} /></div><div className={modalStyles.body}><ValidationAlert errors={[...validation.errors, ...(serverError ? [serverError] : [])]} visible={validation.showErrors || !!serverError} onDismiss={() => { validation.dismiss(); setServerError(""); }} /><div className={styles.createFields}>
+      <div className={styles.field}><label className={typography.fieldLabel}>SKU</label><div className={styles.inlineField}><Input value={sku} invalid={validation.hasError("sku")} onChange={(event) => { setAutoSku(false); setSku(event.target.value.toUpperCase()); }} /><Button variant="secondary" type="button" onClick={() => { setSku(nextSku); setAutoSku(true); }}>Auto Generate</Button></div></div>
+      <div className={styles.field}><label className={typography.fieldLabel}>Name</label><Input value={name} invalid={validation.hasError("name")} onChange={(event) => setName(event.target.value)} /></div>
+      <div className={styles.field}><label className={typography.fieldLabel}>Category</label><SearchableSelect value={categoryId} onChange={setCategoryId} hasError={validation.hasError("categoryId")} options={categories.map((category) => ({ value: String(category.id), label: category.name, code: category.code }))} placeholder="Select a category" /></div>
+      <div className={styles.field}><label className={typography.fieldLabel}>Unit</label><SearchableSelect value={unit} onChange={setUnit} options={UNIT_OPTIONS} searchable={false} /></div>
+      <label className={styles.checkboxField}><Checkbox checked={quantityTracked} onChange={setQuantityTracked} /><span>Quantity Tracked</span></label>
+      <div className={styles.field}><label className={typography.fieldLabel}>Financial Posting Profile</label><SearchableSelect value={postingProfileId} onChange={setPostingProfileId} clearable options={postingProfiles.filter(({ status }) => status === "ACTIVE").map((profile) => ({ value: String(profile.id), label: profile.name, code: profile.code }))} placeholder={postingProfiles.length ? "Select a posting profile" : "Finance profiles unavailable"} disabled={!postingProfiles.length} /></div>
+    </div></div><div className={modalStyles.footer}><Button variant="secondary" onClick={() => { resetCreate(); setShowCreate(false); }}>Cancel</Button><Button variant="primary" disabled={saving} onClick={() => { void create(); }}>{saving ? "Creating..." : "Create Item"}</Button></div></div></div> : null}
+    <div className={layout.listToolbar}><div className={layout.slotToolbarLeft}><FilterPanel tabs={filterTabs} filters={filters} onApply={setFilters} onClear={() => setFilters({})} onRemoveFilter={removeFilter} showChips={false} /></div><div className={layout.slotToolbarSearch}><Input search containerClassName={layout.slotSearchControl} placeholder="Search items..." value={search} onChange={(event) => setSearch(event.target.value)} /></div><div className={layout.slotToolbarRight}><div className={listStyles.toolbarActions}><Button variant="secondary" icon="check_circle" disabled={!selected.some(({ status }) => status === "INACTIVE")} onClick={() => { void batch("activate"); }}>Activate</Button><Button variant="secondary" icon="block" disabled={!selected.some(({ status }) => status === "ACTIVE")} onClick={() => { void batch("deactivate"); }}>Deactivate</Button><Button variant="secondary-destructive" icon="delete" disabled={!selected.length} title="Delete selected" onClick={() => setShowDelete(true)} /><Button variant="secondary" icon="category" disabled>Change Category</Button></div></div></div>
+    {search.trim() || Object.keys(filters).length ? <div className={layout.chipsRow}><div className={layout.slotChips}><FilterChips tabs={filterTabs} filters={filters} additionalChips={search.trim() ? [{ key: "search", label: "Search contains", value: search.trim(), onRemove: () => setSearch("") }] : []} onClear={() => { setFilters({}); setSearch(""); }} onRemoveFilter={removeFilter} /></div></div> : null}
+    <div className={layout.listBody}><div className={layout.slotBody}><DataTable columns={columns} rows={visibleRows} selectedIds={selectedIds} isAllSelected={allSelected} isSomeSelected={!allSelected && visibleRows.some(({ id }) => selectedIds.has(id))} onSelectAll={() => setSelectedIds(allSelected ? new Set() : new Set(visibleRows.map(({ id }) => id)))} onSelectOne={(id) => setSelectedIds((current) => { const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next; })} onRowClick={(row) => router.push(`/inventory/items/${encodeURIComponent(row.sku)}`)} currentPage={1} totalPages={1} onPageChange={() => undefined} totalCount={rows.length} filteredCount={visibleRows.length} itemLabel="items" hasData={rows.length > 0} emptyIcon="box" emptyTitle="No items" emptyText="Add the first inventory item" emptyFilterText="No items match the current filters" mobileRender={(row) => <div><strong>{row.name}</strong><div>{row.sku} · {row.category ?? "Uncategorised"} · {row.status}</div></div>} /></div></div>
+    <ConfirmDialog isOpen={showDelete} title="Delete Items" message={`Permanently delete ${selected.length} selected item${selected.length === 1 ? "" : "s"}? In-use items cannot be deleted.`} confirmLabel="Delete" confirmVariant="danger" onClose={() => setShowDelete(false)} onConfirm={() => { void batch("delete"); }} />
+    <Toast isVisible={!!toast} onClose={() => setToast("")} message={toast} />
+  </div>;
 }
