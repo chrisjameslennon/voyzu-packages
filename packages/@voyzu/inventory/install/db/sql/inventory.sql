@@ -3,7 +3,8 @@
 
 CREATE TABLE IF NOT EXISTS item_category (
     id                       BIGSERIAL PRIMARY KEY,
-    code                     business_code UNIQUE,
+    organization_id          BIGINT NOT NULL,
+    code                     business_code,
     name                     display_name NOT NULL,
     description              description_text NOT NULL DEFAULT '',
     status                   active_status NOT NULL DEFAULT 'ACTIVE',
@@ -19,12 +20,18 @@ CREATE TABLE IF NOT EXISTS item_category (
     deletion_date            audit_timestamp,
     deletion_actor_type      actor_type,
     deletion_user_id         TEXT,
-    deletion_mutation_id     UUID
+    deletion_mutation_id     UUID,
+
+    CONSTRAINT fk_item_category_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT uq_item_category_organization_code UNIQUE (organization_id, code),
+    CONSTRAINT uq_item_category_organization_id UNIQUE (organization_id, id)
 );
 
 CREATE TABLE IF NOT EXISTS item (
     id                       BIGSERIAL PRIMARY KEY,
-    sku                      business_code UNIQUE,
+    organization_id          BIGINT NOT NULL,
+    sku                      business_code,
     name                     display_name NOT NULL,
     description              description_text NOT NULL DEFAULT '',
     item_category_id         BIGINT,
@@ -47,8 +54,13 @@ CREATE TABLE IF NOT EXISTS item (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_item_category
-      FOREIGN KEY (item_category_id) REFERENCES item_category(id),
+    CONSTRAINT fk_item_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_item_category_scope
+      FOREIGN KEY (organization_id, item_category_id)
+      REFERENCES item_category(organization_id, id),
+    CONSTRAINT uq_item_organization_sku UNIQUE (organization_id, sku),
+    CONSTRAINT uq_item_organization_id UNIQUE (organization_id, id),
     CONSTRAINT ck_item_name
       CHECK (btrim(name) <> ''),
     CONSTRAINT ck_item_unit
@@ -59,6 +71,7 @@ CREATE TABLE IF NOT EXISTS item (
 
 CREATE TABLE IF NOT EXISTS item_component (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     item_id                  BIGINT NOT NULL,
     component_item_id        BIGINT NOT NULL,
     quantity                 NUMERIC(18, 4) NOT NULL,
@@ -76,18 +89,21 @@ CREATE TABLE IF NOT EXISTS item_component (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_item_component_item
-      FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE,
-    CONSTRAINT fk_item_component_component
-      FOREIGN KEY (component_item_id) REFERENCES item(id),
-    CONSTRAINT uq_item_component UNIQUE (item_id, component_item_id),
+    CONSTRAINT fk_item_component_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_item_component_item_scope
+      FOREIGN KEY (organization_id, item_id) REFERENCES item(organization_id, id) ON DELETE CASCADE,
+    CONSTRAINT fk_item_component_component_scope
+      FOREIGN KEY (organization_id, component_item_id) REFERENCES item(organization_id, id),
+    CONSTRAINT uq_item_component UNIQUE (organization_id, item_id, component_item_id),
     CONSTRAINT ck_item_component_distinct CHECK (item_id <> component_item_id),
     CONSTRAINT ck_item_component_quantity CHECK (quantity > 0)
 );
 
 CREATE TABLE IF NOT EXISTS warehouse (
     id                       BIGSERIAL PRIMARY KEY,
-    code                     business_code UNIQUE,
+    organization_id          BIGINT NOT NULL,
+    code                     business_code,
     name                     display_name NOT NULL,
     address_line_1           TEXT NOT NULL DEFAULT '',
     address_line_2           TEXT NOT NULL DEFAULT '',
@@ -110,6 +126,10 @@ CREATE TABLE IF NOT EXISTS warehouse (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
+    CONSTRAINT fk_warehouse_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT uq_warehouse_organization_code UNIQUE (organization_id, code),
+    CONSTRAINT uq_warehouse_organization_id UNIQUE (organization_id, id),
     CONSTRAINT ck_warehouse_name CHECK (btrim(name) <> ''),
     CONSTRAINT ck_warehouse_country_code
       CHECK (country_code IS NULL OR country_code ~ '^[A-Z]{2}$')
@@ -117,6 +137,7 @@ CREATE TABLE IF NOT EXISTS warehouse (
 
 CREATE TABLE IF NOT EXISTS inventory_transaction (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     transaction_type         TEXT NOT NULL,
     transaction_date         TIMESTAMPTZ NOT NULL,
     source_business_object   TEXT,
@@ -137,12 +158,16 @@ CREATE TABLE IF NOT EXISTS inventory_transaction (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
+    CONSTRAINT fk_inventory_transaction_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT uq_inventory_transaction_organization_id UNIQUE (organization_id, id),
     CONSTRAINT ck_inventory_transaction_type
       CHECK (transaction_type IN ('RECEIPT', 'ISSUE', 'TRANSFER', 'ADJUSTMENT'))
 );
 
 CREATE TABLE IF NOT EXISTS inventory_transaction_line (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     inventory_transaction_id BIGINT NOT NULL,
     item_id                  BIGINT NOT NULL,
     warehouse_id             BIGINT NOT NULL,
@@ -162,18 +187,22 @@ CREATE TABLE IF NOT EXISTS inventory_transaction_line (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_inventory_transaction_line_header
-      FOREIGN KEY (inventory_transaction_id) REFERENCES inventory_transaction(id) ON DELETE CASCADE,
-    CONSTRAINT fk_inventory_transaction_line_item
-      FOREIGN KEY (item_id) REFERENCES item(id),
-    CONSTRAINT fk_inventory_transaction_line_warehouse
-      FOREIGN KEY (warehouse_id) REFERENCES warehouse(id),
+    CONSTRAINT fk_inventory_transaction_line_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_inventory_transaction_line_header_scope
+      FOREIGN KEY (organization_id, inventory_transaction_id)
+      REFERENCES inventory_transaction(organization_id, id) ON DELETE CASCADE,
+    CONSTRAINT fk_inventory_transaction_line_item_scope
+      FOREIGN KEY (organization_id, item_id) REFERENCES item(organization_id, id),
+    CONSTRAINT fk_inventory_transaction_line_warehouse_scope
+      FOREIGN KEY (organization_id, warehouse_id) REFERENCES warehouse(organization_id, id),
     CONSTRAINT ck_inventory_transaction_line_quantity CHECK (quantity_change <> 0),
     CONSTRAINT ck_inventory_transaction_line_cost CHECK (unit_cost IS NULL OR unit_cost >= 0)
 );
 
 CREATE TABLE IF NOT EXISTS inventory_reservation (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     item_id                  BIGINT NOT NULL,
     warehouse_id             BIGINT NOT NULL,
     quantity                 NUMERIC(18, 4) NOT NULL,
@@ -198,10 +227,12 @@ CREATE TABLE IF NOT EXISTS inventory_reservation (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_inventory_reservation_item
-      FOREIGN KEY (item_id) REFERENCES item(id),
-    CONSTRAINT fk_inventory_reservation_warehouse
-      FOREIGN KEY (warehouse_id) REFERENCES warehouse(id),
+    CONSTRAINT fk_inventory_reservation_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_inventory_reservation_item_scope
+      FOREIGN KEY (organization_id, item_id) REFERENCES item(organization_id, id),
+    CONSTRAINT fk_inventory_reservation_warehouse_scope
+      FOREIGN KEY (organization_id, warehouse_id) REFERENCES warehouse(organization_id, id),
     CONSTRAINT ck_inventory_reservation_quantity CHECK (quantity > 0),
     CONSTRAINT ck_inventory_reservation_status
       CHECK (status IN ('ACTIVE', 'RELEASED')),
@@ -211,7 +242,8 @@ CREATE TABLE IF NOT EXISTS inventory_reservation (
 
 CREATE TABLE IF NOT EXISTS stock_count (
     id                       BIGSERIAL PRIMARY KEY,
-    count_no                 business_code UNIQUE,
+    organization_id          BIGINT NOT NULL,
+    count_no                 business_code,
     warehouse_id             BIGINT NOT NULL,
     count_date               DATE NOT NULL,
     status                   TEXT NOT NULL DEFAULT 'DRAFT',
@@ -231,8 +263,12 @@ CREATE TABLE IF NOT EXISTS stock_count (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_stock_count_warehouse
-      FOREIGN KEY (warehouse_id) REFERENCES warehouse(id),
+    CONSTRAINT fk_stock_count_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_stock_count_warehouse_scope
+      FOREIGN KEY (organization_id, warehouse_id) REFERENCES warehouse(organization_id, id),
+    CONSTRAINT uq_stock_count_organization_count_no UNIQUE (organization_id, count_no),
+    CONSTRAINT uq_stock_count_organization_id UNIQUE (organization_id, id),
     CONSTRAINT ck_stock_count_status
       CHECK (status IN ('DRAFT', 'IN_PROGRESS', 'COMPLETED')),
     CONSTRAINT ck_stock_count_completion
@@ -241,6 +277,7 @@ CREATE TABLE IF NOT EXISTS stock_count (
 
 CREATE TABLE IF NOT EXISTS stock_count_line (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     stock_count_id           BIGINT NOT NULL,
     item_id                  BIGINT NOT NULL,
     expected_quantity        NUMERIC(18, 4) NOT NULL,
@@ -259,17 +296,21 @@ CREATE TABLE IF NOT EXISTS stock_count_line (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_stock_count_line_header
-      FOREIGN KEY (stock_count_id) REFERENCES stock_count(id) ON DELETE CASCADE,
-    CONSTRAINT fk_stock_count_line_item
-      FOREIGN KEY (item_id) REFERENCES item(id),
-    CONSTRAINT uq_stock_count_line UNIQUE (stock_count_id, item_id),
+    CONSTRAINT fk_stock_count_line_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_stock_count_line_header_scope
+      FOREIGN KEY (organization_id, stock_count_id)
+      REFERENCES stock_count(organization_id, id) ON DELETE CASCADE,
+    CONSTRAINT fk_stock_count_line_item_scope
+      FOREIGN KEY (organization_id, item_id) REFERENCES item(organization_id, id),
+    CONSTRAINT uq_stock_count_line UNIQUE (organization_id, stock_count_id, item_id),
     CONSTRAINT ck_stock_count_line_expected CHECK (expected_quantity >= 0),
     CONSTRAINT ck_stock_count_line_counted CHECK (counted_quantity IS NULL OR counted_quantity >= 0)
 );
 
 CREATE TABLE IF NOT EXISTS option_list (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     name                     display_name NOT NULL,
     is_shared                BOOLEAN NOT NULL DEFAULT TRUE,
     status                   active_status NOT NULL DEFAULT 'ACTIVE',
@@ -287,11 +328,15 @@ CREATE TABLE IF NOT EXISTS option_list (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
+    CONSTRAINT fk_option_list_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT uq_option_list_organization_id UNIQUE (organization_id, id),
     CONSTRAINT ck_option_list_name CHECK (btrim(name) <> '')
 );
 
 CREATE TABLE IF NOT EXISTS option_list_value (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     option_list_id           BIGINT NOT NULL,
     value                    TEXT NOT NULL,
     sort_order               INTEGER NOT NULL DEFAULT 0,
@@ -310,14 +355,19 @@ CREATE TABLE IF NOT EXISTS option_list_value (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_option_list_value_list
-      FOREIGN KEY (option_list_id) REFERENCES option_list(id) ON DELETE CASCADE,
-    CONSTRAINT uq_option_list_value UNIQUE (option_list_id, value),
+    CONSTRAINT fk_option_list_value_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_option_list_value_list_scope
+      FOREIGN KEY (organization_id, option_list_id)
+      REFERENCES option_list(organization_id, id) ON DELETE CASCADE,
+    CONSTRAINT uq_option_list_value UNIQUE (organization_id, option_list_id, value),
+    CONSTRAINT uq_option_list_value_organization_id UNIQUE (organization_id, id),
     CONSTRAINT ck_option_list_value_value CHECK (btrim(value) <> '')
 );
 
 CREATE TABLE IF NOT EXISTS custom_field (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     name                     display_name NOT NULL,
     data_type                TEXT NOT NULL,
     applies_to               TEXT NOT NULL,
@@ -338,8 +388,11 @@ CREATE TABLE IF NOT EXISTS custom_field (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_custom_field_option_list
-      FOREIGN KEY (option_list_id) REFERENCES option_list(id),
+    CONSTRAINT fk_custom_field_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_custom_field_option_list_scope
+      FOREIGN KEY (organization_id, option_list_id) REFERENCES option_list(organization_id, id),
+    CONSTRAINT uq_custom_field_organization_id UNIQUE (organization_id, id),
     CONSTRAINT ck_custom_field_data_type
       CHECK (data_type IN ('TEXT', 'NUMBER', 'DATE', 'BOOLEAN', 'OPTION', 'MULTIPLE_OPTIONS')),
     CONSTRAINT ck_custom_field_applies_to
@@ -351,6 +404,7 @@ CREATE TABLE IF NOT EXISTS custom_field (
 
 CREATE TABLE IF NOT EXISTS custom_field_value (
     id                       BIGSERIAL PRIMARY KEY,
+    organization_id          BIGINT NOT NULL,
     custom_field_id          BIGINT NOT NULL,
     record_id                BIGINT NOT NULL,
     text_value               TEXT,
@@ -372,25 +426,17 @@ CREATE TABLE IF NOT EXISTS custom_field_value (
     deletion_user_id         TEXT,
     deletion_mutation_id     UUID,
 
-    CONSTRAINT fk_custom_field_value_field
-      FOREIGN KEY (custom_field_id) REFERENCES custom_field(id) ON DELETE CASCADE,
-    CONSTRAINT fk_custom_field_value_option
-      FOREIGN KEY (option_list_value_id) REFERENCES option_list_value(id),
+    CONSTRAINT fk_custom_field_value_organization
+      FOREIGN KEY (organization_id) REFERENCES organization(id) ON DELETE CASCADE,
+    CONSTRAINT fk_custom_field_value_field_scope
+      FOREIGN KEY (organization_id, custom_field_id)
+      REFERENCES custom_field(organization_id, id) ON DELETE CASCADE,
+    CONSTRAINT fk_custom_field_value_option_scope
+      FOREIGN KEY (organization_id, option_list_value_id)
+      REFERENCES option_list_value(organization_id, id),
     CONSTRAINT ck_custom_field_value_one_value
       CHECK (num_nonnulls(text_value, number_value, date_value, boolean_value, option_list_value_id) = 1)
 );
-
-CREATE INDEX IF NOT EXISTS ix_item_category_id ON item(item_category_id);
-CREATE INDEX IF NOT EXISTS ix_item_status ON item(status);
-CREATE INDEX IF NOT EXISTS ix_item_component_component_item_id ON item_component(component_item_id);
-CREATE INDEX IF NOT EXISTS ix_inventory_transaction_date ON inventory_transaction(transaction_date);
-CREATE INDEX IF NOT EXISTS ix_inventory_transaction_source ON inventory_transaction(source_business_object, source_id);
-CREATE INDEX IF NOT EXISTS ix_inventory_transaction_line_position ON inventory_transaction_line(item_id, warehouse_id);
-CREATE INDEX IF NOT EXISTS ix_inventory_reservation_position ON inventory_reservation(item_id, warehouse_id, status);
-CREATE INDEX IF NOT EXISTS ix_stock_count_warehouse_date ON stock_count(warehouse_id, count_date);
-CREATE INDEX IF NOT EXISTS ix_option_list_value_sort ON option_list_value(option_list_id, sort_order);
-CREATE INDEX IF NOT EXISTS ix_custom_field_applies_to ON custom_field(applies_to, status);
-CREATE INDEX IF NOT EXISTS ix_custom_field_value_record ON custom_field_value(custom_field_id, record_id);
 
 DROP TRIGGER IF EXISTS item_category_audit_trigger ON item_category;
 CREATE TRIGGER item_category_audit_trigger BEFORE INSERT OR UPDATE OR DELETE ON item_category

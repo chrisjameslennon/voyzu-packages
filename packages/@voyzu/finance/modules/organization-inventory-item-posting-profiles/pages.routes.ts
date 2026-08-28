@@ -1,5 +1,3 @@
-import { handleActivate as handleItemPostingProfilesActivate, handleBatchActivate as handleItemPostingProfilesBatchActivate, handleBatchCreate as handleItemPostingProfilesBatchCreate, handleBatchDeactivate as handleItemPostingProfilesBatchDeactivate, handleBatchDelete as handleItemPostingProfilesBatchDelete, handleBatchGet as handleItemPostingProfilesBatchGet, handleBatchPatch as handleItemPostingProfilesBatchPatch, handleBatchUpdate as handleItemPostingProfilesBatchUpdate, handleCreate as handleItemPostingProfilesCreate, handleDeactivate as handleItemPostingProfilesDeactivate, handleDelete as handleItemPostingProfilesDelete, handleFilter as handleItemPostingProfilesFilter, handleGet as handleItemPostingProfilesGet, handleList as handleItemPostingProfilesList, handlePatch as handleItemPostingProfilesPatch, handleSearch as handleItemPostingProfilesSearch, handleUpdate as handleItemPostingProfilesUpdate } from "@voyzu/finance/common/inventory-item-posting-profiles/server";
-import { OrganizationInventoryItemPostingProfilesListPage, OrganizationInventoryItemPostingProfileDetailPage } from "@voyzu/finance/organization-inventory-item-posting-profiles/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Item Posting Profiles",
     helpPath: "modules-help/organization-financial-settings/item-posting-profiles",
     path: "/finance/template/inventory/item-posting-profiles",
-    Page: OrganizationInventoryItemPostingProfilesListPage,
+    loadPage: () => import("./server/pages/OrganizationInventoryItemPostingProfilesListPage").then((module) => module.OrganizationInventoryItemPostingProfilesListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -26,7 +24,7 @@ export const pageRoutes = {
     pageTitle: "Item Posting Profile",
     helpPath: "modules-help/organization-financial-settings/item-posting-profiles",
     path: "/finance/template/inventory/item-posting-profiles/[code]",
-    Page: OrganizationInventoryItemPostingProfileDetailPage,
+    loadPage: () => import("./server/pages/OrganizationInventoryItemPostingProfileDetailPage").then((module) => module.OrganizationInventoryItemPostingProfileDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

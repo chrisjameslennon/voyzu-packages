@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleActivate as handleActivateFinancialDocumentDefault, handleBatchActivate as handleBatchActivateFinancialDocumentDefaults, handleBatchCreate as handleBatchCreateFinancialDocumentDefaults, handleBatchDeactivate as handleBatchDeactivateFinancialDocumentDefaults, handleBatchDelete as handleBatchDeleteFinancialDocumentDefaults, handleBatchGet as handleBatchGetFinancialDocumentDefaults, handleBatchPatch as handleBatchPatchFinancialDocumentDefaults, handleBatchUpdate as handleBatchUpdateFinancialDocumentDefaults, handleCreate as handleCreateFinancialDocumentDefault, handleDeactivate as handleDeactivateFinancialDocumentDefault, handleDelete as handleDeleteFinancialDocumentDefault, handleFilter as handleFilterFinancialDocumentDefaults, handleGet as handleGetFinancialDocumentDefault, handleList as handleListFinancialDocumentDefaults, handlePatch as handlePatchFinancialDocumentDefault, handleSearch as handleSearchFinancialDocumentDefaults, handleUpdate as handleUpdateFinancialDocumentDefault } from "@voyzu/finance/common/financial-document-defaults/server";
-import { CompanyFinancialDocumentDefaultsListPage, CompanyFinancialDocumentDefaultDetailPage } from "@voyzu/finance/company-financial-document-defaults/server";
 import { BusinessRuleErrorResponseDto, ConflictErrorResponseDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { FinancialDocumentDefaultResponseDto } from "../../types/modules/financial-document-defaults/financial-document-default.response.dto";
 import { FinancialDocumentDefaultPatchRequestDto } from "../../types/modules/financial-document-defaults/financial-document-default.patch.request.dto";
@@ -16,7 +14,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/financial-document-defaults",
-    handler: (request: any) => handleListFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleList),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List Company Financial Document Defaults.",
@@ -26,7 +24,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/filter",
-    handler: (request: any) => handleFilterFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleFilter),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Company Financial Document Defaults.",
@@ -42,7 +40,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/finance/[companyCode]/financial-document-defaults/search",
-    handler: (request: any) => handleSearchFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleSearch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, query: { parameters: { q: { description: "Search text used to match company financial document default records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Company Financial Document Defaults.",
@@ -59,7 +57,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults",
-    handler: (request: any) => handleCreateFinancialDocumentDefault(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleCreate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultCreateRequestDto },
     summary: "Create",
     description: "Create Company Financial Document Defaults.",
@@ -78,7 +76,7 @@ export const apiDefinitions = {
   batchCreate: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/batch",
-    handler: (request: any) => handleBatchCreateFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchCreate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(FinancialDocumentDefaultCreateRequestDto) },
     summary: "Batch Create",
     description: "Batch Create Company Financial Document Defaults.",
@@ -97,7 +95,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/batch/get",
-    handler: (request: any) => handleBatchGetFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Get",
     description: "Batch Get Company Financial Document Defaults.",
@@ -114,7 +112,7 @@ export const apiDefinitions = {
   batchUpdate: {
     method: "PUT",
     path: "/finance/[companyCode]/financial-document-defaults/batch",
-    handler: (request: any) => handleBatchUpdateFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchUpdate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(FinancialDocumentDefaultBatchUpdateRequestDto) },
     summary: "Batch Update",
     description: "Batch Update Company Financial Document Defaults.",
@@ -134,7 +132,7 @@ export const apiDefinitions = {
   batchPatch: {
     method: "PATCH",
     path: "/finance/[companyCode]/financial-document-defaults/batch",
-    handler: (request: any) => handleBatchPatchFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchPatch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(FinancialDocumentDefaultBatchPatchRequestDto) },
     summary: "Batch Patch",
     description: "Batch Patch Company Financial Document Defaults.",
@@ -154,7 +152,7 @@ export const apiDefinitions = {
   batchDelete: {
     method: "DELETE",
     path: "/finance/[companyCode]/financial-document-defaults/batch",
-    handler: (request: any) => handleBatchDeleteFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchDelete),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Delete",
     description: "Batch Delete Company Financial Document Defaults.",
@@ -169,7 +167,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/batch/activate",
-    handler: (request: any) => handleBatchActivateFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchActivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Activate",
     description: "Batch Activate Company Financial Document Defaults.",
@@ -184,7 +182,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/batch/deactivate",
-    handler: (request: any) => handleBatchDeactivateFinancialDocumentDefaults(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchDeactivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Deactivate",
     description: "Batch Deactivate Company Financial Document Defaults.",
@@ -199,7 +197,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/financial-document-defaults/[code]",
-    handler: (request: any, context: any) => handleGetFinancialDocumentDefault(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Company Financial Document Defaults.",
@@ -209,7 +207,7 @@ export const apiDefinitions = {
   update: {
     method: "PUT",
     path: "/finance/[companyCode]/financial-document-defaults/[code]",
-    handler: (request: any, context: any) => handleUpdateFinancialDocumentDefault(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleUpdate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultUpdateRequestDto },
     summary: "Update",
     description: "Update Company Financial Document Defaults.",
@@ -229,7 +227,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/[companyCode]/financial-document-defaults/[code]",
-    handler: (request: any, context: any) => handlePatchFinancialDocumentDefault(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handlePatch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultPatchRequestDto },
     summary: "Patch",
     description: "Patch Company Financial Document Defaults.",
@@ -249,7 +247,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/finance/[companyCode]/financial-document-defaults/[code]",
-    handler: (request: any, context: any) => handleDeleteFinancialDocumentDefault(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleDelete),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
     description: "Delete Company Financial Document Defaults.",
@@ -259,7 +257,7 @@ export const apiDefinitions = {
   activate: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/[code]/activate",
-    handler: (request: any, context: any) => handleActivateFinancialDocumentDefault(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleActivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
     description: "Activate Company Financial Document Defaults.",
@@ -274,7 +272,7 @@ export const apiDefinitions = {
   deactivate: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/[code]/deactivate",
-    handler: (request: any, context: any) => handleDeactivateFinancialDocumentDefault(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleDeactivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
     description: "Deactivate Company Financial Document Defaults.",

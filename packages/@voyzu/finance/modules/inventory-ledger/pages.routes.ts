@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleGetInventoryEntry, handleListInventoryEntries } from "@voyzu/finance/inventory-ledger/server";
-import { InventoryLedgerEntriesListPage, InventoryLedgerEntryDetailPage } from "@voyzu/finance/inventory-ledger/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Inventory Ledger Entries",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries",
     path: "/finance/inventory/ledger",
-    Page: InventoryLedgerEntriesListPage,
+    loadPage: () => import("./server/pages/InventoryLedgerEntriesListPage").then((module) => module.InventoryLedgerEntriesListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Inventory" },
@@ -20,7 +18,7 @@ export const pageRoutes = {
     pageTitle: "Inventory Ledger Entry",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries",
     path: "/finance/inventory/ledger/[code]",
-    Page: InventoryLedgerEntryDetailPage,
+    loadPage: () => import("./server/pages/InventoryLedgerEntryDetailPage").then((module) => module.InventoryLedgerEntryDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Inventory" },

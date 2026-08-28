@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleListInventoryControlAccounts, handlePatchInventoryControlAccount } from "@voyzu/finance/common/inventory-control-accounts/server";
-import { CompanyInventoryControlAccountsPage, CompanyInventoryControlAccountDetailPage } from "@voyzu/finance/company-inventory-control-accounts/server";
 import { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { InventoryControlAccountSettingResponseDto } from "../../types/modules/inventory-control-accounts/inventory-control-account-setting.response.dto";
 import { InventoryControlAccountPatchRequestDto } from "../../types/modules/inventory-control-accounts/inventory-control-account.patch.request.dto";
@@ -11,7 +9,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/inventory-control-accounts",
-    handler: (request: any) => handleListInventoryControlAccounts(request),
+    loadHandler: () => import("../common/inventory-control-accounts/server/api/inventory-control-account.http.handlers").then((module) => module.handleListInventoryControlAccounts),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List Company Inventory Control Accounts.",
@@ -27,7 +25,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/[companyCode]/inventory-control-accounts/[code]",
-    handler: (request: any, context: any) => handlePatchInventoryControlAccount(request, context),
+    loadHandler: () => import("../common/inventory-control-accounts/server/api/inventory-control-account.http.handlers").then((module) => module.handlePatchInventoryControlAccount),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryControlAccountPatchRequestDto },
     summary: "Patch",
     description: "Patch Company Inventory Control Accounts.",

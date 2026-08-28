@@ -1,37 +1,111 @@
-import type {
-  VoyzuPackageModuleDefinition,
-  VoyzuPackageNavigationDomain,
-} from "@voyzu/types/framework";
+import type { VoyzuPackageNavigationDomain } from "@voyzu/types/framework";
 
-import {
-  financeModules,
-  financeTemplateModules,
-} from "../voyzu.package";
+import { pageRoutes as financeTemplateRouteManifest } from "@voyzu/finance/finance-template/pages.routes";
+import { pageRoutes as financeCompaniesRouteManifest } from "@voyzu/finance/finance-companies/pages.routes";
+import { pageRoutes as countryTaxSettingsRouteManifest } from "@voyzu/finance/country-tax-settings/pages.routes";
+import { pageRoutes as organizationBankCashAccountsRouteManifest } from "@voyzu/finance/organization-bank-cash-accounts/pages.routes";
+import { pageRoutes as organizationApControlAccountsRouteManifest } from "@voyzu/finance/organization-ap-control-accounts/pages.routes";
+import { pageRoutes as organizationArControlAccountsRouteManifest } from "@voyzu/finance/organization-ar-control-accounts/pages.routes";
+import { pageRoutes as organizationGlAccountsRouteManifest } from "@voyzu/finance/organization-gl-accounts/pages.routes";
+import { pageRoutes as organizationGlAccountCategoriesRouteManifest } from "@voyzu/finance/organization-gl-account-categories/pages.routes";
+import { pageRoutes as organizationFinancialDocumentTypesRouteManifest } from "@voyzu/finance/organization-financial-document-types/pages.routes";
+import { pageRoutes as organizationFinancialDocumentDefaultsRouteManifest } from "@voyzu/finance/organization-financial-document-defaults/pages.routes";
+import { pageRoutes as organizationDimensionsRouteManifest } from "@voyzu/finance/organization-dimensions/pages.routes";
+import { pageRoutes as organizationTaxControlAccountsRouteManifest } from "@voyzu/finance/organization-tax-control-accounts/pages.routes";
+import { pageRoutes as organizationInventoryControlAccountsRouteManifest } from "@voyzu/finance/organization-inventory-control-accounts/pages.routes";
+import { pageRoutes as organizationInventoryItemPostingProfilesRouteManifest } from "@voyzu/finance/organization-inventory-item-posting-profiles/pages.routes";
+import { pageRoutes as organizationReportsRouteManifest } from "@voyzu/finance/organization-reports/pages.routes";
+import { pageRoutes as journalsRouteManifest } from "@voyzu/finance/journals/pages.routes";
+import { pageRoutes as companyReportsRouteManifest } from "@voyzu/finance/company-reports/pages.routes";
+import { pageRoutes as companyInventoryItemPostingProfilesRouteManifest } from "@voyzu/finance/company-inventory-item-posting-profiles/pages.routes";
+import { pageRoutes as inventoryLedgerRouteManifest } from "@voyzu/finance/inventory-ledger/pages.routes";
+import { pageRoutes as taxLedgerRouteManifest } from "@voyzu/finance/tax-ledger/pages.routes";
+import { pageRoutes as apSubledgerLedgerEntriesRouteManifest } from "@voyzu/finance/ap-subledger-ledger-entries/pages.routes";
+import { pageRoutes as apSubledgerLedgerEntryEnquiryRouteManifest } from "@voyzu/finance/ap-subledger-ledger-entry-enquiry/pages.routes";
+import { pageRoutes as apSubledgerCounterpartiesRouteManifest } from "@voyzu/finance/ap-subledger-counterparties/pages.routes";
+import { pageRoutes as apSubledgerStatementsRouteManifest } from "@voyzu/finance/ap-subledger-statements/pages.routes";
+import { pageRoutes as apSubledgerBillsRouteManifest } from "@voyzu/finance/ap-subledger-bills/pages.routes";
+import { pageRoutes as arSubledgerLedgerEntriesRouteManifest } from "@voyzu/finance/ar-subledger-ledger-entries/pages.routes";
+import { pageRoutes as arSubledgerLedgerEntryEnquiryRouteManifest } from "@voyzu/finance/ar-subledger-ledger-entry-enquiry/pages.routes";
+import { pageRoutes as arSubledgerCounterpartiesRouteManifest } from "@voyzu/finance/ar-subledger-counterparties/pages.routes";
+import { pageRoutes as arSubledgerStatementsRouteManifest } from "@voyzu/finance/ar-subledger-statements/pages.routes";
+import { pageRoutes as arSubledgerInvoicesRouteManifest } from "@voyzu/finance/ar-subledger-invoices/pages.routes";
+import { pageRoutes as companyInventoryControlAccountsRouteManifest } from "@voyzu/finance/company-inventory-control-accounts/pages.routes";
+import { pageRoutes as companyGlAccountsRouteManifest } from "@voyzu/finance/company-gl-accounts/pages.routes";
+import { pageRoutes as companyGlAccountCategoriesRouteManifest } from "@voyzu/finance/company-gl-account-categories/pages.routes";
+import { pageRoutes as companyApControlAccountsRouteManifest } from "@voyzu/finance/company-ap-control-accounts/pages.routes";
+import { pageRoutes as companyArControlAccountsRouteManifest } from "@voyzu/finance/company-ar-control-accounts/pages.routes";
+import { pageRoutes as companyBankCashAccountsRouteManifest } from "@voyzu/finance/company-bank-cash-accounts/pages.routes";
+import { pageRoutes as companyDimensionsRouteManifest } from "@voyzu/finance/company-dimensions/pages.routes";
+import { pageRoutes as companyFinancialDocumentDefaultsRouteManifest } from "@voyzu/finance/company-financial-document-defaults/pages.routes";
+import { pageRoutes as companyFinancialDocumentTypesRouteManifest } from "@voyzu/finance/company-financial-document-types/pages.routes";
+import { pageRoutes as companyTaxControlAccountsRouteManifest } from "@voyzu/finance/company-tax-control-accounts/pages.routes";
+import { pageRoutes as financialYearsRouteManifest } from "@voyzu/finance/financial-years/pages.routes";
 import { financeLeftNav } from "./finance.left-nav";
 import { financeTemplateLeftNav } from "./organization.left-nav";
 
-function routeIds(modules: readonly VoyzuPackageModuleDefinition[]) {
-  return modules.flatMap((moduleDefinition) =>
-    (Object.values(moduleDefinition.pageRoutes) as { id: string }[]).map(({ id }) => id)
-  );
+const financeTemplatePageRoutes = [
+  financeTemplateRouteManifest,
+  financeCompaniesRouteManifest,
+  countryTaxSettingsRouteManifest,
+  organizationBankCashAccountsRouteManifest,
+  organizationApControlAccountsRouteManifest,
+  organizationArControlAccountsRouteManifest,
+  organizationGlAccountsRouteManifest,
+  organizationGlAccountCategoriesRouteManifest,
+  organizationFinancialDocumentTypesRouteManifest,
+  organizationFinancialDocumentDefaultsRouteManifest,
+  organizationDimensionsRouteManifest,
+  organizationTaxControlAccountsRouteManifest,
+  organizationInventoryControlAccountsRouteManifest,
+  organizationInventoryItemPostingProfilesRouteManifest,
+  organizationReportsRouteManifest,
+] as const;
+const financePageRoutes = [
+  journalsRouteManifest,
+  companyReportsRouteManifest,
+  companyInventoryItemPostingProfilesRouteManifest,
+  inventoryLedgerRouteManifest,
+  taxLedgerRouteManifest,
+  apSubledgerLedgerEntriesRouteManifest,
+  apSubledgerLedgerEntryEnquiryRouteManifest,
+  apSubledgerCounterpartiesRouteManifest,
+  apSubledgerStatementsRouteManifest,
+  apSubledgerBillsRouteManifest,
+  arSubledgerLedgerEntriesRouteManifest,
+  arSubledgerLedgerEntryEnquiryRouteManifest,
+  arSubledgerCounterpartiesRouteManifest,
+  arSubledgerStatementsRouteManifest,
+  arSubledgerInvoicesRouteManifest,
+  companyInventoryControlAccountsRouteManifest,
+  companyGlAccountsRouteManifest,
+  companyGlAccountCategoriesRouteManifest,
+  companyApControlAccountsRouteManifest,
+  companyArControlAccountsRouteManifest,
+  companyBankCashAccountsRouteManifest,
+  companyDimensionsRouteManifest,
+  companyFinancialDocumentDefaultsRouteManifest,
+  companyFinancialDocumentTypesRouteManifest,
+  companyTaxControlAccountsRouteManifest,
+  financialYearsRouteManifest,
+] as const;
+
+function routeIds(modules: readonly Readonly<Record<string, { id: string }>>[]) {
+  return modules.flatMap((pageRoutes) => Object.values(pageRoutes).map(({ id }) => id));
 }
-
-const financeTemplateRouteIds = routeIds(financeTemplateModules);
-
-const financeRouteIds = routeIds(financeModules);
 
 const domains = [
   {
     label: "Finance Admin",
-    routeId: financeTemplateModules[0].pageRoutes.landing.id,
-    routeIds: financeTemplateRouteIds,
+    routeId: financeTemplatePageRoutes[0].landing.id,
+    routeIds: routeIds(financeTemplatePageRoutes),
     leftNav: financeTemplateLeftNav,
     topNavigationVisible: false,
   },
   {
     label: "Finance",
-    routeId: financeModules[0].pageRoutes.list.id,
-    routeIds: financeRouteIds,
+    routeId: financePageRoutes[0].list.id,
+    routeIds: routeIds(financePageRoutes),
     leftNav: financeLeftNav,
   },
 ] as const satisfies readonly VoyzuPackageNavigationDomain[];

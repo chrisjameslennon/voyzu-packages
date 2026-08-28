@@ -1,32 +1,30 @@
 import type { VoyzuPackageNavigationGroup } from "@voyzu/types/framework";
-import { journalsModule } from "@voyzu/finance/journals";
-import { companyReportsModule } from "@voyzu/finance/company-reports";
-import { companyInventoryItemsModule } from "@voyzu/finance/company-inventory-items";
-import { companyInventoryCategoriesModule } from "@voyzu/finance/company-inventory-categories";
-import { arSubledgerLedgerEntriesModule } from "@voyzu/finance/ar-subledger-ledger-entries";
-import { arSubledgerLedgerEntryEnquiryModule } from "@voyzu/finance/ar-subledger-ledger-entry-enquiry";
-import { arSubledgerCounterpartiesModule } from "@voyzu/finance/ar-subledger-counterparties";
-import { arSubledgerStatementsModule } from "@voyzu/finance/ar-subledger-statements";
-import { arSubledgerInvoicesModule } from "@voyzu/finance/ar-subledger-invoices";
-import { apSubledgerLedgerEntriesModule } from "@voyzu/finance/ap-subledger-ledger-entries";
-import { apSubledgerLedgerEntryEnquiryModule } from "@voyzu/finance/ap-subledger-ledger-entry-enquiry";
-import { apSubledgerCounterpartiesModule } from "@voyzu/finance/ap-subledger-counterparties";
-import { apSubledgerStatementsModule } from "@voyzu/finance/ap-subledger-statements";
-import { apSubledgerBillsModule } from "@voyzu/finance/ap-subledger-bills";
-import { taxLedgerModule } from "@voyzu/finance/tax-ledger";
-import { inventoryLedgerModule } from "@voyzu/finance/inventory-ledger";
-import { financialYearsModule } from "@voyzu/finance/financial-years";
-import { companyGlAccountsModule } from "@voyzu/finance/company-gl-accounts";
-import { companyGlAccountCategoriesModule } from "@voyzu/finance/company-gl-account-categories";
-import { companyApControlAccountsModule } from "@voyzu/finance/company-ap-control-accounts";
-import { companyArControlAccountsModule } from "@voyzu/finance/company-ar-control-accounts";
-import { companyBankCashAccountsModule } from "@voyzu/finance/company-bank-cash-accounts";
-import { companyTaxControlAccountsModule } from "@voyzu/finance/company-tax-control-accounts";
-import { companyInventoryControlAccountsModule } from "@voyzu/finance/company-inventory-control-accounts";
-import { companyFinancialDocumentTypesModule } from "@voyzu/finance/company-financial-document-types";
-import { companyFinancialDocumentDefaultsModule } from "@voyzu/finance/company-financial-document-defaults";
-import { companyInventoryItemPostingProfilesModule } from "@voyzu/finance/company-inventory-item-posting-profiles";
-import { companyDimensionsModule } from "@voyzu/finance/company-dimensions";
+import { pageRoutes as journalsPageRoutes } from "@voyzu/finance/journals/pages.routes";
+import { pageRoutes as companyReportsPageRoutes } from "@voyzu/finance/company-reports/pages.routes";
+import { pageRoutes as arSubledgerLedgerEntriesPageRoutes } from "@voyzu/finance/ar-subledger-ledger-entries/pages.routes";
+import { pageRoutes as arSubledgerLedgerEntryEnquiryPageRoutes } from "@voyzu/finance/ar-subledger-ledger-entry-enquiry/pages.routes";
+import { pageRoutes as arSubledgerCounterpartiesPageRoutes } from "@voyzu/finance/ar-subledger-counterparties/pages.routes";
+import { pageRoutes as arSubledgerStatementsPageRoutes } from "@voyzu/finance/ar-subledger-statements/pages.routes";
+import { pageRoutes as arSubledgerInvoicesPageRoutes } from "@voyzu/finance/ar-subledger-invoices/pages.routes";
+import { pageRoutes as apSubledgerLedgerEntriesPageRoutes } from "@voyzu/finance/ap-subledger-ledger-entries/pages.routes";
+import { pageRoutes as apSubledgerLedgerEntryEnquiryPageRoutes } from "@voyzu/finance/ap-subledger-ledger-entry-enquiry/pages.routes";
+import { pageRoutes as apSubledgerCounterpartiesPageRoutes } from "@voyzu/finance/ap-subledger-counterparties/pages.routes";
+import { pageRoutes as apSubledgerStatementsPageRoutes } from "@voyzu/finance/ap-subledger-statements/pages.routes";
+import { pageRoutes as apSubledgerBillsPageRoutes } from "@voyzu/finance/ap-subledger-bills/pages.routes";
+import { pageRoutes as taxLedgerPageRoutes } from "@voyzu/finance/tax-ledger/pages.routes";
+import { pageRoutes as inventoryLedgerPageRoutes } from "@voyzu/finance/inventory-ledger/pages.routes";
+import { pageRoutes as financialYearsPageRoutes } from "@voyzu/finance/financial-years/pages.routes";
+import { pageRoutes as companyGlAccountsPageRoutes } from "@voyzu/finance/company-gl-accounts/pages.routes";
+import { pageRoutes as companyGlAccountCategoriesPageRoutes } from "@voyzu/finance/company-gl-account-categories/pages.routes";
+import { pageRoutes as companyApControlAccountsPageRoutes } from "@voyzu/finance/company-ap-control-accounts/pages.routes";
+import { pageRoutes as companyArControlAccountsPageRoutes } from "@voyzu/finance/company-ar-control-accounts/pages.routes";
+import { pageRoutes as companyBankCashAccountsPageRoutes } from "@voyzu/finance/company-bank-cash-accounts/pages.routes";
+import { pageRoutes as companyTaxControlAccountsPageRoutes } from "@voyzu/finance/company-tax-control-accounts/pages.routes";
+import { pageRoutes as companyInventoryControlAccountsPageRoutes } from "@voyzu/finance/company-inventory-control-accounts/pages.routes";
+import { pageRoutes as companyFinancialDocumentTypesPageRoutes } from "@voyzu/finance/company-financial-document-types/pages.routes";
+import { pageRoutes as companyFinancialDocumentDefaultsPageRoutes } from "@voyzu/finance/company-financial-document-defaults/pages.routes";
+import { pageRoutes as companyInventoryItemPostingProfilesPageRoutes } from "@voyzu/finance/company-inventory-item-posting-profiles/pages.routes";
+import { pageRoutes as companyDimensionsPageRoutes } from "@voyzu/finance/company-dimensions/pages.routes";
 
 export const financeLeftNav = [
   {
@@ -38,21 +36,12 @@ export const financeLeftNav = [
         children: [
           {
             label: "Journal Entries",
-            routeId: journalsModule.pageRoutes.list.id,
+            routeId: journalsPageRoutes.list.id,
           },
           {
             label: "Account Activity",
-            routeId: companyReportsModule.pageRoutes.accountActivity.id,
+            routeId: companyReportsPageRoutes.accountActivity.id,
           },
-        ],
-      },
-      {
-        label: "Inventory",
-        icon: "package_2",
-        path: "#finance-inventory",
-        children: [
-          { label: "Items", routeId: companyInventoryItemsModule.pageRoutes.list.id },
-          { label: "Categories", routeId: companyInventoryCategoriesModule.pageRoutes.list.id },
         ],
       },
       {
@@ -64,36 +53,36 @@ export const financeLeftNav = [
             label: "Accounts Receivable",
             path: "/finance/subledgers/ar/ledger-entries",
             children: [
-              { label: "Ledger Entries", routeId: arSubledgerLedgerEntriesModule.pageRoutes.list.id },
-              { label: "Ledger Entry Enquiry", routeId: arSubledgerLedgerEntryEnquiryModule.pageRoutes.list.id },
-              { label: "Counterparties", routeId: arSubledgerCounterpartiesModule.pageRoutes.list.id },
-              { label: "Statements", routeId: arSubledgerStatementsModule.pageRoutes.list.id },
-              { label: "Invoices", routeId: arSubledgerInvoicesModule.pageRoutes.list.id },
+              { label: "Ledger Entries", routeId: arSubledgerLedgerEntriesPageRoutes.list.id },
+              { label: "Ledger Entry Enquiry", routeId: arSubledgerLedgerEntryEnquiryPageRoutes.list.id },
+              { label: "Counterparties", routeId: arSubledgerCounterpartiesPageRoutes.list.id },
+              { label: "Statements", routeId: arSubledgerStatementsPageRoutes.list.id },
+              { label: "Invoices", routeId: arSubledgerInvoicesPageRoutes.list.id },
             ],
           },
           {
             label: "Accounts Payable",
             path: "/finance/subledgers/ap/ledger-entries",
             children: [
-              { label: "Ledger Entries", routeId: apSubledgerLedgerEntriesModule.pageRoutes.list.id },
-              { label: "Ledger Entry Enquiry", routeId: apSubledgerLedgerEntryEnquiryModule.pageRoutes.list.id },
-              { label: "Counterparties", routeId: apSubledgerCounterpartiesModule.pageRoutes.list.id },
-              { label: "Statements", routeId: apSubledgerStatementsModule.pageRoutes.list.id },
-              { label: "Bills", routeId: apSubledgerBillsModule.pageRoutes.list.id },
+              { label: "Ledger Entries", routeId: apSubledgerLedgerEntriesPageRoutes.list.id },
+              { label: "Ledger Entry Enquiry", routeId: apSubledgerLedgerEntryEnquiryPageRoutes.list.id },
+              { label: "Counterparties", routeId: apSubledgerCounterpartiesPageRoutes.list.id },
+              { label: "Statements", routeId: apSubledgerStatementsPageRoutes.list.id },
+              { label: "Bills", routeId: apSubledgerBillsPageRoutes.list.id },
             ],
           },
           {
             label: "Tax Ledger",
             path: "/finance/subledgers/tax/ledger-entries",
             children: [
-              { label: "Ledger Entries", routeId: taxLedgerModule.pageRoutes.list.id },
+              { label: "Ledger Entries", routeId: taxLedgerPageRoutes.list.id },
             ],
           },
           {
             label: "Inventory Ledger",
             path: "/finance/inventory/ledger",
             children: [
-              { label: "Ledger Entries", routeId: inventoryLedgerModule.pageRoutes.list.id },
+              { label: "Ledger Entries", routeId: inventoryLedgerPageRoutes.list.id },
             ],
           },
         ],
@@ -101,7 +90,7 @@ export const financeLeftNav = [
       {
         label: "Financial Periods",
         icon: "calendar_month",
-        routeId: financialYearsModule.pageRoutes.list.id,
+        routeId: financialYearsPageRoutes.list.id,
       },
       {
         label: "Settings",
@@ -112,31 +101,31 @@ export const financeLeftNav = [
             label: "General Ledger",
             path: "#finance-settings-general-ledger",
             children: [
-              { label: "General Ledger Accounts", routeId: companyGlAccountsModule.pageRoutes.list.id },
-              { label: "Reporting Categories", routeId: companyGlAccountCategoriesModule.pageRoutes.list.id },
+              { label: "General Ledger Accounts", routeId: companyGlAccountsPageRoutes.list.id },
+              { label: "Reporting Categories", routeId: companyGlAccountCategoriesPageRoutes.list.id },
             ],
           },
           {
             label: "Control Accounts",
             path: "#finance-settings-control-accounts",
             children: [
-              { label: "Accounts Payable Control Accounts", routeId: companyApControlAccountsModule.pageRoutes.list.id },
-              { label: "Accounts Receivable Control Accounts", routeId: companyArControlAccountsModule.pageRoutes.list.id },
-              { label: "Bank / Cash Accounts", routeId: companyBankCashAccountsModule.pageRoutes.list.id },
-              { label: "Tax Control Accounts", routeId: companyTaxControlAccountsModule.pageRoutes.list.id },
-              { label: "Inventory Control Accounts", routeId: companyInventoryControlAccountsModule.pageRoutes.list.id },
+              { label: "Accounts Payable Control Accounts", routeId: companyApControlAccountsPageRoutes.list.id },
+              { label: "Accounts Receivable Control Accounts", routeId: companyArControlAccountsPageRoutes.list.id },
+              { label: "Bank / Cash Accounts", routeId: companyBankCashAccountsPageRoutes.list.id },
+              { label: "Tax Control Accounts", routeId: companyTaxControlAccountsPageRoutes.list.id },
+              { label: "Inventory Control Accounts", routeId: companyInventoryControlAccountsPageRoutes.list.id },
             ],
           },
           {
             label: "Integration",
             path: "#finance-settings-integration",
             children: [
-              { label: "Financial Document Types", routeId: companyFinancialDocumentTypesModule.pageRoutes.list.id },
-              { label: "Financial Document Defaults", routeId: companyFinancialDocumentDefaultsModule.pageRoutes.list.id },
-              { label: "Item Posting Profiles", routeId: companyInventoryItemPostingProfilesModule.pageRoutes.list.id },
+              { label: "Financial Document Types", routeId: companyFinancialDocumentTypesPageRoutes.list.id },
+              { label: "Financial Document Defaults", routeId: companyFinancialDocumentDefaultsPageRoutes.list.id },
+              { label: "Item Posting Profiles", routeId: companyInventoryItemPostingProfilesPageRoutes.list.id },
             ],
           },
-          { label: "Dimensions", routeId: companyDimensionsModule.pageRoutes.list.id },
+          { label: "Dimensions", routeId: companyDimensionsPageRoutes.list.id },
         ],
       },
     ],
@@ -151,9 +140,9 @@ export const financeLeftNav = [
         children: [
           {
             label: "Balance Sheet",
-            routeId: companyReportsModule.pageRoutes.balanceSheet.id,
+            routeId: companyReportsPageRoutes.balanceSheet.id,
           },
-          { label: "Tax Position", routeId: companyReportsModule.pageRoutes.taxPosition.id },
+          { label: "Tax Position", routeId: companyReportsPageRoutes.taxPosition.id },
         ],
       },
       {
@@ -161,10 +150,10 @@ export const financeLeftNav = [
         icon: "trending_up",
         path: "#finance-reports-movement",
         children: [
-          { label: "Profit & Loss", routeId: companyReportsModule.pageRoutes.profitLoss.id },
-          { label: "Profit & Loss Analysis", routeId: companyReportsModule.pageRoutes.profitLossAnalysis.id },
-          { label: "Bank / Cash Movement", routeId: companyReportsModule.pageRoutes.bankCashMovement.id },
-          { label: "Tax Return", routeId: companyReportsModule.pageRoutes.taxActivity.id },
+          { label: "Profit & Loss", routeId: companyReportsPageRoutes.profitLoss.id },
+          { label: "Profit & Loss Analysis", routeId: companyReportsPageRoutes.profitLossAnalysis.id },
+          { label: "Bank / Cash Movement", routeId: companyReportsPageRoutes.bankCashMovement.id },
+          { label: "Tax Return", routeId: companyReportsPageRoutes.taxActivity.id },
         ],
       },
       {
@@ -172,8 +161,8 @@ export const financeLeftNav = [
         icon: "rule",
         path: "#finance-reports-reconciliation",
         children: [
-          { label: "Trial Balance", routeId: companyReportsModule.pageRoutes.trialBalance.id },
-          { label: "Tax Reconciliation", routeId: companyReportsModule.pageRoutes.taxActivityReconciliation.id },
+          { label: "Trial Balance", routeId: companyReportsPageRoutes.trialBalance.id },
+          { label: "Tax Reconciliation", routeId: companyReportsPageRoutes.taxActivityReconciliation.id },
         ],
       },
       {
@@ -181,12 +170,12 @@ export const financeLeftNav = [
         icon: "manage_search",
         path: "#finance-reports-audit",
         children: [
-          { label: "Financial Integrity", routeId: companyReportsModule.pageRoutes.financialIntegrity.id },
-          { label: "Journal Entries", routeId: companyReportsModule.pageRoutes.journalEntries.id },
-          { label: "AR Subledger Entries", routeId: companyReportsModule.pageRoutes.arSubledgerEntriesAudit.id },
-          { label: "AP Subledger Entries", routeId: companyReportsModule.pageRoutes.apSubledgerEntriesAudit.id },
-          { label: "Inventory Ledger Entries", routeId: companyReportsModule.pageRoutes.inventoryLedgerEntriesAudit.id },
-          { label: "Tax Ledger Entries", routeId: companyReportsModule.pageRoutes.taxLedgerEntriesAudit.id },
+          { label: "Financial Integrity", routeId: companyReportsPageRoutes.financialIntegrity.id },
+          { label: "Journal Entries", routeId: companyReportsPageRoutes.journalEntries.id },
+          { label: "AR Subledger Entries", routeId: companyReportsPageRoutes.arSubledgerEntriesAudit.id },
+          { label: "AP Subledger Entries", routeId: companyReportsPageRoutes.apSubledgerEntriesAudit.id },
+          { label: "Inventory Ledger Entries", routeId: companyReportsPageRoutes.inventoryLedgerEntriesAudit.id },
+          { label: "Tax Ledger Entries", routeId: companyReportsPageRoutes.taxLedgerEntriesAudit.id },
         ],
       },
     ],

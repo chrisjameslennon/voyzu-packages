@@ -15,6 +15,7 @@ import type {
 import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
 
 import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
+import { getOperationalInventoryItems } from "../../../common/server/operational-inventory";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { processInventoryReceipt } from "../../inventory/lib/inventory-processing.service";
@@ -269,6 +270,9 @@ async function resolveContext(repo: ApBillPostingRepo, request: ResolvedApBillRe
   const settingsCompanyId = company ? await resolveEffectiveSettingsCompanyId(company.id) : null;
   const documentProcessor = company ? await repo.getDocumentProcessor() : null;
   const countryCode = company?.country_code ?? "";
+  const operationalItems = company
+    ? await getOperationalInventoryItems(company.organization_id, requestedItemCodes(request))
+    : [];
 
   let counterparty: CounterpartyPostingContextRow | null = null;
   let counterpartyWasCreated = false;
@@ -310,7 +314,7 @@ async function resolveContext(repo: ApBillPostingRepo, request: ResolvedApBillRe
     settingsCompanyId ? repo.getTaxMovementControlAccount(settingsCompanyId, TAX_ON_PURCHASES_MOVEMENT_CODE) : Promise.resolve(null),
     settingsCompanyId ? repo.getPurchasePostingCode(settingsCompanyId, AP_BILL_ENGINE_CODE, PURCHASE_POSTING_CODE) : Promise.resolve(null),
     settingsCompanyId ? repo.listPurchasePostingCodes(settingsCompanyId, AP_BILL_ENGINE_CODE, requestedPurchasePostingCodes(request)) : Promise.resolve([]),
-    company ? repo.listItemPostingProfiles(company.id, requestedItemCodes(request)) : Promise.resolve([]),
+    company ? repo.listItemPostingProfiles(company.id, operationalItems) : Promise.resolve([]),
     countryCode ? repo.listTaxRules(countryCode, requestedTaxRuleCodes(request)) : Promise.resolve([]),
     countryCode ? repo.listTaxAuthorities(countryCode, requestedTaxAuthorityCodes(request)) : Promise.resolve([]),
     settingsCompanyId ? repo.listDimensionValues(settingsCompanyId, requestedDimensionPairs(request)) : Promise.resolve([]),

@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleGet as handleGetControlAccount, handleListAp as handleListApControlAccounts, handlePatch as handlePatchControlAccount } from "@voyzu/finance/common/control-accounts/server";
-import { CompanyApControlAccountsListPage, CompanyApControlAccountDetailPage } from "@voyzu/finance/company-ap-control-accounts/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Accounts Payable Control Accounts",
     helpPath: "modules-help/company-ledger/ap-control-accounts",
     path: "/finance/settings/control-accounts/ap",
-    Page: CompanyApControlAccountsListPage,
+    loadPage: () => import("./server/pages/CompanyApControlAccountsListPage").then((module) => module.CompanyApControlAccountsListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "Accounts Payable Control Accounts",
     helpPath: "modules-help/company-ledger/ap-control-accounts",
     path: "/finance/settings/control-accounts/ap/[code]",
-    Page: CompanyApControlAccountDetailPage,
+    loadPage: () => import("./server/pages/CompanyApControlAccountDetailPage").then((module) => module.CompanyApControlAccountDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },

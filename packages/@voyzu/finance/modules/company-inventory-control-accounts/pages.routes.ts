@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleListInventoryControlAccounts, handlePatchInventoryControlAccount } from "@voyzu/finance/common/inventory-control-accounts/server";
-import { CompanyInventoryControlAccountsPage, CompanyInventoryControlAccountDetailPage } from "@voyzu/finance/company-inventory-control-accounts/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Inventory Control Accounts",
     helpPath: "modules-help/company-ledger/inventory-control-accounts",
     path: "/finance/settings/control-accounts/inventory",
-    Page: CompanyInventoryControlAccountsPage,
+    loadPage: () => import("./server/pages/CompanyInventoryControlAccountsPage").then((module) => module.CompanyInventoryControlAccountsPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "Inventory Control Accounts",
     helpPath: "modules-help/company-ledger/inventory-control-accounts",
     path: "/finance/settings/control-accounts/inventory/[code]",
-    Page: CompanyInventoryControlAccountDetailPage,
+    loadPage: () => import("./server/pages/CompanyInventoryControlAccountDetailPage").then((module) => module.CompanyInventoryControlAccountDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },

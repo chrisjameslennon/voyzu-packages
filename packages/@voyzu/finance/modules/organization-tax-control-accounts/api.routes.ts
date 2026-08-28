@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleListTaxControlAccounts, handlePatchTaxControlAccount } from "@voyzu/finance/common/tax-control-accounts/server";
-import { OrganizationTaxControlAccountsPage, OrganizationTaxControlAccountDetailPage } from "@voyzu/finance/organization-tax-control-accounts/server";
 import { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { TaxControlAccountResponseDto } from "../../types/modules/tax-control-accounts/tax-control-account.response.dto";
 import { TaxControlAccountPatchRequestDto } from "../../types/modules/tax-control-accounts/tax-control-account.patch.request.dto";
@@ -11,7 +9,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/tax-control-accounts",
-    handler: (request: any) => handleListTaxControlAccounts(request),
+    loadHandler: () => import("../common/tax-control-accounts/server/api/tax-control-account.http.handlers").then((module) => module.handleListTaxControlAccounts),
     summary: "List",
     description: "List Organization Tax Control Accounts.",
     tags: ["Organization Tax Control Accounts"],
@@ -26,7 +24,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/tax-control-accounts/[code]",
-    handler: (request: any, context: any) => handlePatchTaxControlAccount(request, context),
+    loadHandler: () => import("../common/tax-control-accounts/server/api/tax-control-account.http.handlers").then((module) => module.handlePatchTaxControlAccount),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: TaxControlAccountPatchRequestDto },
     summary: "Patch",
     description: "Patch Organization Tax Control Accounts.",

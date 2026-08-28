@@ -1,5 +1,3 @@
-import { handleActivate as handleBankCashAccountsActivate, handleBatchActivate as handleBankCashAccountsBatchActivate, handleBatchCreate as handleBankCashAccountsBatchCreate, handleBatchDeactivate as handleBankCashAccountsBatchDeactivate, handleBatchDelete as handleBankCashAccountsBatchDelete, handleBatchGet as handleBankCashAccountsBatchGet, handleBatchPatch as handleBankCashAccountsBatchPatch, handleBatchUpdate as handleBankCashAccountsBatchUpdate, handleCreate as handleBankCashAccountsCreate, handleDeactivate as handleBankCashAccountsDeactivate, handleDelete as handleBankCashAccountsDelete, handleFilter as handleBankCashAccountsFilter, handleGet as handleBankCashAccountsGet, handleList as handleBankCashAccountsList, handlePatch as handleBankCashAccountsPatch, handleSearch as handleBankCashAccountsSearch, handleUpdate as handleBankCashAccountsUpdate } from "@voyzu/finance/common/bank-cash-accounts/server";
-import { OrganizationBankCashAccountsListPage, OrganizationBankCashAccountDetailPage } from "@voyzu/finance/organization-bank-cash-accounts/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Bank / Cash Accounts",
     helpPath: "modules-help/organization-financial-settings/bank-cash-accounts",
     path: "/finance/bank-cash-accounts",
-    Page: OrganizationBankCashAccountsListPage,
+    loadPage: () => import("./server/pages/OrganizationBankCashAccountsListPage").then((module) => module.OrganizationBankCashAccountsListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -26,7 +24,7 @@ export const pageRoutes = {
     pageTitle: "Bank / Cash Account",
     helpPath: "modules-help/organization-financial-settings/bank-cash-accounts",
     path: "/finance/bank-cash-accounts/[code]",
-    Page: OrganizationBankCashAccountDetailPage,
+    loadPage: () => import("./server/pages/OrganizationBankCashAccountDetailPage").then((module) => module.OrganizationBankCashAccountDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

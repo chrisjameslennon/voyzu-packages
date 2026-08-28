@@ -61,8 +61,8 @@ export class InventoryLedgerEntriesAuditRepo {
          e.source_document_type_code,
          e.document_id,
          l.item_id,
-         item.code AS item_code,
-         item.name AS item_name,
+         l.item_code AS item_code,
+         l.item_name AS item_name,
          l.inventory_control_account_code,
          e.posting_date,
          e.document_date,
@@ -82,7 +82,6 @@ export class InventoryLedgerEntriesAuditRepo {
          h.detailed_document_snapshot_json
        FROM inventory_ledger_entry_header e
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = e.id
-       JOIN inventory_item item ON item.id = l.item_id
        JOIN journal_header h ON h.id = e.journal_header_id
        WHERE e.finance_organization_id = $1
          AND e.posting_date BETWEEN $2 AND $3
@@ -96,6 +95,5 @@ export class InventoryLedgerEntriesAuditRepo {
     }));
   }
 }
-
 
 

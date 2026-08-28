@@ -16,7 +16,7 @@ after(async () => {
   try {
     await new InventoryProcessingRepo(getDb()).deleteArtifactsByDocumentIds([...createdDocumentIds]);
     if (createdItemCodes.length) {
-      await pool.query(`DELETE FROM inventory_item WHERE code = ANY($1::text[])`, [[...createdItemCodes]]);
+      await pool.query(`DELETE FROM item WHERE sku = ANY($1::text[])`, [[...createdItemCodes]]);
     }
   } finally {
     await pool.end();
@@ -33,23 +33,26 @@ function suffix(): string {
 async function createItem(code: string, overrides: { isSold?: boolean; isPurchased?: boolean; isConsumed?: boolean; categoryCode?: string } = {}): Promise<void> {
   const pool = getPool();
   await pool.query(
-    `INSERT INTO inventory_item (
-       finance_organization_id, code, name, description, item_type, category_id, unit_code,
-       status, creation_date, creation_actor_type
+    `INSERT INTO item (
+       organization_id, sku, name, description, item_type, unit, quantity_tracked,
+       item_posting_code_id, status, creation_date, creation_actor_type
      )
-     SELECT co.id,
+     SELECT organization.id,
             $1,
             $2,
             $3,
-            'INVENTORY',
-            (SELECT c.id FROM inventory_category c WHERE c.finance_organization_id = co.id AND c.code = $4 ORDER BY c.id LIMIT 1),
+            'SINGLE_ITEM',
             'ea',
+            true,
+            profile.id,
             'ACTIVE',
             now(),
             'SYSTEM'
-     FROM organization co
-     WHERE co.code = 'ACME'
-     ORDER BY co.id
+     FROM organization
+     JOIN finance_organization finance ON finance.organization_id = organization.id
+     JOIN item_posting_profile profile ON profile.finance_organization_id = finance.id AND profile.code = $4
+     WHERE organization.code = 'ACME'
+     ORDER BY organization.id
      LIMIT 1`,
     [
       code,
@@ -224,4 +227,3 @@ describe("Inventory document processing engines", () => {
     );
   });
 });
-

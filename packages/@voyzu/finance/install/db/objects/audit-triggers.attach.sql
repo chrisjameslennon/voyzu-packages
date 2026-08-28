@@ -64,21 +64,9 @@ CREATE TRIGGER inventory_control_account_audit_trigger
   FOR EACH ROW
   EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
 
-DROP TRIGGER IF EXISTS inventory_category_audit_trigger ON inventory_category;
-CREATE TRIGGER inventory_category_audit_trigger
-  BEFORE INSERT OR UPDATE OR DELETE ON inventory_category
-  FOR EACH ROW
-  EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
-
 DROP TRIGGER IF EXISTS item_posting_profile_audit_trigger ON item_posting_profile;
 CREATE TRIGGER item_posting_profile_audit_trigger
   BEFORE INSERT OR UPDATE OR DELETE ON item_posting_profile
-  FOR EACH ROW
-  EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
-
-DROP TRIGGER IF EXISTS inventory_item_audit_trigger ON inventory_item;
-CREATE TRIGGER inventory_item_audit_trigger
-  BEFORE INSERT OR UPDATE OR DELETE ON inventory_item
   FOR EACH ROW
   EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
 

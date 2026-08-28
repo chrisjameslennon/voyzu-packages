@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleListArCounterpartySummaries } from "@voyzu/finance/ar-subledger-statements/server";
-import { ArStatementsListPage, ArStatementDetailPage } from "@voyzu/finance/ar-subledger-statements/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "AR Statements",
     helpPath: "modules-help/company-ledger/ar-statements",
     path: "/finance/subledgers/ar/statements",
-    Page: ArStatementsListPage,
+    loadPage: () => import("./server/pages/ArStatementsListPage").then((module) => module.ArStatementsListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "AR Statement",
     helpPath: "modules-help/company-ledger/ar-statements",
     path: "/finance/subledgers/ar/statements/[code]",
-    Page: ArStatementDetailPage,
+    loadPage: () => import("./server/pages/ArStatementDetailPage").then((module) => module.ArStatementDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -33,7 +31,7 @@ export const pageRoutes = {
     id: "voyzu.ar-subledger-statements.page.detail.printable",
     pageTitle: "AR Statement",
     path: "/finance/subledgers/ar/statements/[code]/printable",
-    Page: ArStatementDetailPage,
+    loadPage: () => import("./server/pages/ArStatementDetailPage").then((module) => module.ArStatementDetailPage),
     unframed: true,
     auth: companyFinancePageAuth
   }

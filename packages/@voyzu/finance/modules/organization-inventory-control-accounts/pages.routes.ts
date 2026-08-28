@@ -1,5 +1,3 @@
-import { handleListInventoryControlAccounts, handlePatchInventoryControlAccount } from "@voyzu/finance/common/inventory-control-accounts/server";
-import { OrganizationInventoryControlAccountsPage, OrganizationInventoryControlAccountDetailPage } from "@voyzu/finance/organization-inventory-control-accounts/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Inventory Control Accounts",
     helpPath: "modules-help/organization-financial-settings/inventory-control-accounts",
     path: "/finance/control-accounts/inventory",
-    Page: OrganizationInventoryControlAccountsPage,
+    loadPage: () => import("./server/pages/OrganizationInventoryControlAccountsPage").then((module) => module.OrganizationInventoryControlAccountsPage),
     breadcrumbBase: [
       { label: "Organization" },
       { label: "Standard Settings" },
@@ -20,7 +18,7 @@ export const pageRoutes = {
     pageTitle: "Inventory Control Accounts",
     helpPath: "modules-help/organization-financial-settings/inventory-control-accounts",
     path: "/finance/control-accounts/inventory/[code]",
-    Page: OrganizationInventoryControlAccountDetailPage,
+    loadPage: () => import("./server/pages/OrganizationInventoryControlAccountDetailPage").then((module) => module.OrganizationInventoryControlAccountDetailPage),
     breadcrumbBase: [
       { label: "Organization" },
       { label: "Standard Settings" },

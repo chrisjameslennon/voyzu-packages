@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS inventory_ledger_entry_line (
     line_number                         INTEGER NOT NULL,
     movement_type_code                  business_code NOT NULL,
     item_id                             BIGINT NOT NULL,
+    item_code                           business_code NOT NULL,
+    item_name                           display_name NOT NULL,
     description                         TEXT NOT NULL,
     inventory_control_account_code      business_code NOT NULL DEFAULT 'INVENTORY_CONTROL',
     qty_delta                           NUMERIC(18,6) NOT NULL DEFAULT 0,
@@ -33,9 +35,6 @@ CREATE TABLE IF NOT EXISTS inventory_ledger_entry_line (
     CONSTRAINT fk_inventory_ledger_line_header
         FOREIGN KEY (inventory_ledger_entry_header_id)
         REFERENCES inventory_ledger_entry_header(id) ON DELETE CASCADE,
-    CONSTRAINT fk_inventory_ledger_line_item
-        FOREIGN KEY (item_id)
-        REFERENCES inventory_item(id) ON DELETE CASCADE,
     CONSTRAINT inventory_ledger_line_movement_type_allowed CHECK (movement_type_code IN (
         'INVENTORY_RECEIPT',
         'INVENTORY_ISSUE',

@@ -1,5 +1,3 @@
-import { handleListTaxControlAccounts, handlePatchTaxControlAccount } from "@voyzu/finance/common/tax-control-accounts/server";
-import { OrganizationTaxControlAccountsPage, OrganizationTaxControlAccountDetailPage } from "@voyzu/finance/organization-tax-control-accounts/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Tax Control Accounts",
     helpPath: "modules-help/organization-financial-settings/tax-accounts",
     path: "/finance/control-accounts/tax",
-    Page: OrganizationTaxControlAccountsPage,
+    loadPage: () => import("./server/pages/OrganizationTaxControlAccountsPage").then((module) => module.OrganizationTaxControlAccountsPage),
     breadcrumbBase: [
       { label: "Organization" },
       { label: "Standard Settings" },
@@ -20,7 +18,7 @@ export const pageRoutes = {
     pageTitle: "Tax Control Accounts",
     helpPath: "modules-help/organization-financial-settings/tax-accounts",
     path: "/finance/control-accounts/tax/[code]",
-    Page: OrganizationTaxControlAccountDetailPage,
+    loadPage: () => import("./server/pages/OrganizationTaxControlAccountDetailPage").then((module) => module.OrganizationTaxControlAccountDetailPage),
     breadcrumbBase: [
       { label: "Organization" },
       { label: "Standard Settings" },

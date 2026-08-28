@@ -1,5 +1,3 @@
-import { handleActivate as handleGlAccountCategoriesActivate, handleBatchActivate as handleGlAccountCategoriesBatchActivate, handleBatchCreate as handleGlAccountCategoriesBatchCreate, handleBatchDeactivate as handleGlAccountCategoriesBatchDeactivate, handleBatchDelete as handleGlAccountCategoriesBatchDelete, handleBatchGet as handleGlAccountCategoriesBatchGet, handleBatchPatch as handleGlAccountCategoriesBatchPatch, handleBatchUpdate as handleGlAccountCategoriesBatchUpdate, handleCreate as handleGlAccountCategoriesCreate, handleDeactivate as handleGlAccountCategoriesDeactivate, handleDelete as handleGlAccountCategoriesDelete, handleFilter as handleGlAccountCategoriesFilter, handleGet as handleGlAccountCategoriesGet, handleList as handleGlAccountCategoriesList, handlePatch as handleGlAccountCategoriesPatch, handleSearch as handleGlAccountCategoriesSearch, handleUpdate as handleGlAccountCategoriesUpdate } from "@voyzu/finance/common/gl-account-categories/server";
-import { OrganizationGlAccountCategoriesListPage, OrganizationGlAccountCategoryDetailPage } from "@voyzu/finance/organization-gl-account-categories/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Reporting Categories",
     helpPath: "modules-help/organization-financial-settings/reporting-categories",
     path: "/finance/chart-of-accounts/reporting-categories",
-    Page: OrganizationGlAccountCategoriesListPage,
+    loadPage: () => import("./server/pages/OrganizationGlAccountCategoriesListPage").then((module) => module.OrganizationGlAccountCategoriesListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -26,7 +24,7 @@ export const pageRoutes = {
     pageTitle: "Reporting Category",
     helpPath: "modules-help/organization-financial-settings/reporting-categories",
     path: "/finance/chart-of-accounts/reporting-categories/[code]",
-    Page: OrganizationGlAccountCategoryDetailPage,
+    loadPage: () => import("./server/pages/OrganizationGlAccountCategoryDetailPage").then((module) => module.OrganizationGlAccountCategoryDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

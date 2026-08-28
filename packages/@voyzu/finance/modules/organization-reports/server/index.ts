@@ -6,8 +6,6 @@ export {
   DimensionsReportPage,
   FinancialDocumentTypesReportPage,
   GlAccountsReportPage,
-  InventoryCategoriesReportPage,
-  InventoryItemsReportPage,
   InventoryItemPostingCodesReportPage,
   FinancialDocumentDefaultsReportPage,
   ReportingCategoriesReportPage,

@@ -1,28 +1,79 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { FinancialDocumentTypeCreateRequestDto, FinancialDocumentTypePatchRequestDto, FinancialDocumentTypeResponseDto, FinancialDocumentTypeUpdateRequestDto } from "@voyzu/finance/types/modules/financial-document-types";
+import { Filter, ListOptions } from "@voyzu/types/params";
 
-import * as service0 from "../common/financial-document-types/server/lib/financial-document-type.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const createFinancialDocumentType = operation(service0.createFinancialDocumentType);
-export const getFinancialDocumentType = operation(service0.getFinancialDocumentType);
-export const updateFinancialDocumentType = operation(service0.updateFinancialDocumentType);
-export const patchFinancialDocumentType = operation(service0.patchFinancialDocumentType);
-export const deleteFinancialDocumentType = operation(service0.deleteFinancialDocumentType);
-export const listFinancialDocumentTypes = operation(service0.listFinancialDocumentTypes);
-export const filterFinancialDocumentTypes = operation(service0.filterFinancialDocumentTypes);
-export const searchFinancialDocumentTypes = operation(service0.searchFinancialDocumentTypes);
-export const batchGetFinancialDocumentTypes = operation(service0.batchGetFinancialDocumentTypes);
-export const batchDeleteFinancialDocumentTypes = operation(service0.batchDeleteFinancialDocumentTypes);
-export const batchCreateFinancialDocumentTypes = operation(service0.batchCreateFinancialDocumentTypes);
-export const batchUpdateFinancialDocumentTypes = operation(service0.batchUpdateFinancialDocumentTypes);
-export const batchPatchFinancialDocumentTypes = operation(service0.batchPatchFinancialDocumentTypes);
-export const activateFinancialDocumentType = operation(service0.activateFinancialDocumentType);
-export const deactivateFinancialDocumentType = operation(service0.deactivateFinancialDocumentType);
-export const activateFinancialDocumentTypes = operation(service0.activateFinancialDocumentTypes);
-export const deactivateFinancialDocumentTypes = operation(service0.deactivateFinancialDocumentTypes);
+export const createFinancialDocumentType = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([FinancialDocumentTypeCreateRequestDto]), Type.Tuple([FinancialDocumentTypeCreateRequestDto, Type.Number()])]), result: FinancialDocumentTypeResponseDto },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.createFinancialDocumentType),
+);
+export const getFinancialDocumentType = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Union([FinancialDocumentTypeResponseDto, Type.Null()]) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.getFinancialDocumentType),
+);
+export const updateFinancialDocumentType = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), FinancialDocumentTypeUpdateRequestDto]), Type.Tuple([Type.String(), FinancialDocumentTypeUpdateRequestDto, Type.Number()])]), result: FinancialDocumentTypeResponseDto },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.updateFinancialDocumentType),
+);
+export const patchFinancialDocumentType = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), FinancialDocumentTypePatchRequestDto]), Type.Tuple([Type.String(), FinancialDocumentTypePatchRequestDto, Type.Number()])]), result: FinancialDocumentTypeResponseDto },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.patchFinancialDocumentType),
+);
+export const deleteFinancialDocumentType = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.deleteFinancialDocumentType),
+);
+export const listFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([]), Type.Tuple([Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.listFinancialDocumentTypes),
+);
+export const filterFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Filter)]), Type.Tuple([Type.Array(Filter), ListOptions]), Type.Tuple([Type.Array(Filter), ListOptions, Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.filterFinancialDocumentTypes),
+);
+export const searchFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), ListOptions]), Type.Tuple([Type.String(), ListOptions, Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.searchFinancialDocumentTypes),
+);
+export const batchGetFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.batchGetFinancialDocumentTypes),
+);
+export const batchDeleteFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.batchDeleteFinancialDocumentTypes),
+);
+export const batchCreateFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(FinancialDocumentTypeCreateRequestDto)]), Type.Tuple([Type.Array(FinancialDocumentTypeCreateRequestDto), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.batchCreateFinancialDocumentTypes),
+);
+export const batchUpdateFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.Any())]), Type.Tuple([Type.Array(Type.Any()), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.batchUpdateFinancialDocumentTypes),
+);
+export const batchPatchFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.Any())]), Type.Tuple([Type.Array(Type.Any()), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.batchPatchFinancialDocumentTypes),
+);
+export const activateFinancialDocumentType = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: FinancialDocumentTypeResponseDto },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.activateFinancialDocumentType),
+);
+export const deactivateFinancialDocumentType = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: FinancialDocumentTypeResponseDto },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.deactivateFinancialDocumentType),
+);
+export const activateFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.activateFinancialDocumentTypes),
+);
+export const deactivateFinancialDocumentTypes = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(FinancialDocumentTypeResponseDto) },
+  () => import("../common/financial-document-types/server/lib/financial-document-type.service").then((module) => module.deactivateFinancialDocumentTypes),
+);
 
 export const operations = {
   createFinancialDocumentType,

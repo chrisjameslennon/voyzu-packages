@@ -1,5 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { ApBillsListPage, ApBillDetailPage } from "@voyzu/finance/ap-subledger-bills/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "AP Bills",
     helpPath: "modules-help/company-ledger/ap-bills",
     path: "/finance/subledgers/ap/bills",
-    Page: ApBillsListPage,
+    loadPage: () => import("./server/pages/ApBillsListPage").then((module) => module.ApBillsListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -20,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "AP Bill",
     helpPath: "modules-help/company-ledger/ap-bills",
     path: "/finance/subledgers/ap/bills/[documentId]",
-    Page: ApBillDetailPage,
+    loadPage: () => import("./server/pages/ApBillDetailPage").then((module) => module.ApBillDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -32,7 +31,7 @@ export const pageRoutes = {
     id: "voyzu.ap-subledger-bills.page.detail.printable",
     pageTitle: "AP Bill",
     path: "/finance/subledgers/ap/bills/[documentId]/printable",
-    Page: ApBillDetailPage,
+    loadPage: () => import("./server/pages/ApBillDetailPage").then((module) => module.ApBillDetailPage),
     unframed: true,
     auth: companyFinancePageAuth
   }

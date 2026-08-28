@@ -1,5 +1,3 @@
-import { handleActivate as handleGlAccountsActivate, handleBatchCreate as handleGlAccountsBatchCreate, handleBatchActivate as handleGlAccountsBatchActivate, handleBatchDeactivate as handleGlAccountsBatchDeactivate, handleBatchDelete as handleGlAccountsBatchDelete, handleBatchGet as handleGlAccountsBatchGet, handleBatchPatch as handleGlAccountsBatchPatch, handleBatchUpdate as handleGlAccountsBatchUpdate, handleCreate as handleGlAccountsCreate, handleDeactivate as handleGlAccountsDeactivate, handleDelete as handleGlAccountsDelete, handleFilter as handleGlAccountsFilter, handleGet as handleGlAccountsGet, handleList as handleGlAccountsList, handlePatch as handleGlAccountsPatch, handleSearch as handleGlAccountsSearch, handleUpdate as handleGlAccountsUpdate } from "@voyzu/finance/common/gl-accounts/server";
-import { OrganizationGlAccountsListPage, OrganizationGlAccountDetailPage } from "./server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "General Ledger Accounts",
     helpPath: "modules-help/organization-financial-settings/general-ledger-accounts",
     path: "/finance/general-ledger-accounts",
-    Page: OrganizationGlAccountsListPage,
+    loadPage: () => import("./server/pages/OrganizationGlAccountsListPage").then((module) => module.OrganizationGlAccountsListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -26,7 +24,7 @@ export const pageRoutes = {
     pageTitle: "General Ledger Account",
     helpPath: "modules-help/organization-financial-settings/general-ledger-accounts",
     path: "/finance/general-ledger-accounts/[code]",
-    Page: OrganizationGlAccountDetailPage,
+    loadPage: () => import("./server/pages/OrganizationGlAccountDetailPage").then((module) => module.OrganizationGlAccountDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

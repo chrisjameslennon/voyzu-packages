@@ -29,8 +29,8 @@ const INVENTORY_ENTRY_COLUMNS = `
   h.memo                            AS memo,
   l.description                     AS line_description,
   l.memo                            AS line_memo,
-  item.code                         AS item_code,
-  item.name                         AS item_name,
+  l.item_code                       AS item_code,
+  l.item_name                       AS item_name,
   l.qty_delta::float                AS qty_delta,
   l.unit_value_supplied::float      AS unit_value_supplied,
   l.book_value_delta::float         AS book_value_delta,
@@ -59,7 +59,6 @@ export class InventoryLedgerRepo {
        FROM inventory_ledger_entry_header h
        JOIN journal_header jh ON jh.id = h.journal_header_id
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = h.id
-       JOIN inventory_item item ON item.id = l.item_id
        JOIN inventory_control_account control ON control.finance_organization_id = h.finance_organization_id AND control.code = l.inventory_control_account_code
        JOIN gl_account gl ON gl.finance_organization_id = h.finance_organization_id AND gl.id = control.gl_account_id
        LEFT JOIN LATERAL (
@@ -96,7 +95,6 @@ export class InventoryLedgerRepo {
        FROM inventory_ledger_entry_header h
        JOIN journal_header jh ON jh.id = h.journal_header_id
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = h.id
-       JOIN inventory_item item ON item.id = l.item_id
        JOIN inventory_control_account control ON control.finance_organization_id = h.finance_organization_id AND control.code = l.inventory_control_account_code
        JOIN gl_account gl ON gl.finance_organization_id = h.finance_organization_id AND gl.id = control.gl_account_id
        LEFT JOIN LATERAL (
@@ -128,4 +126,3 @@ export class InventoryLedgerRepo {
     return rows as unknown as InventoryLedgerEntryRow[];
   }
 }
-

@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleActivate as handleActivateGlAccount, handleBatchCreate as handleBatchCreateGlAccounts, handleBatchActivate as handleBatchActivateGlAccounts, handleBatchDeactivate as handleBatchDeactivateGlAccounts, handleBatchDelete as handleBatchDeleteGlAccounts, handleBatchGet as handleBatchGetGlAccounts, handleBatchPatch as handleBatchPatchGlAccounts, handleBatchUpdate as handleBatchUpdateGlAccounts, handleCreate as handleCreateGlAccount, handleDeactivate as handleDeactivateGlAccount, handleDelete as handleDeleteGlAccount, handleFilter as handleFilterGlAccounts, handleGet as handleGetGlAccount, handleList as handleListGlAccounts, handlePatch as handlePatchGlAccount, handleSearch as handleSearchGlAccounts, handleUpdate as handleUpdateGlAccount } from "@voyzu/finance/common/gl-accounts/server";
-import { CompanyGlAccountsListPage, CompanyGlAccountDetailPage } from "./server";
 import { BusinessRuleErrorResponseDto, CodesRequestDto, ConflictErrorResponseDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { GlAccountResponseDto } from "../../types/modules/gl-accounts/gl-account.response.dto";
 import { GlAccountPatchRequestDto } from "../../types/modules/gl-accounts/gl-account.patch.request.dto";
@@ -15,7 +13,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/gl-accounts",
-    handler: (request: any) => handleListGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleList),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List Company GL Accounts.",
@@ -25,7 +23,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/filter",
-    handler: (request: any) => handleFilterGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleFilter),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Company GL Accounts.",
@@ -41,7 +39,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/finance/[companyCode]/gl-accounts/search",
-    handler: (request: any) => handleSearchGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleSearch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, query: { parameters: { q: { description: "Search text used to match company GL account records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Company GL Accounts.",
@@ -58,7 +56,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts",
-    handler: (request: any) => handleCreateGlAccount(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleCreate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: GlAccountCreateRequestDto },
     summary: "Create",
     description: "Create Company GL Accounts.",
@@ -77,7 +75,7 @@ export const apiDefinitions = {
   batchCreate: {
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/batch",
-    handler: (request: any) => handleBatchCreateGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleBatchCreate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(GlAccountCreateRequestDto) },
     summary: "Batch Create",
     description: "Batch Create Company GL Accounts.",
@@ -96,7 +94,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/batch/get",
-    handler: (request: any) => handleBatchGetGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleBatchGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Batch Get Company GL Accounts.",
@@ -113,7 +111,7 @@ export const apiDefinitions = {
   batchUpdate: {
     method: "PUT",
     path: "/finance/[companyCode]/gl-accounts/batch",
-    handler: (request: any) => handleBatchUpdateGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleBatchUpdate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(GlAccountBatchUpdateRequestDto) },
     summary: "Batch Update",
     description: "Batch Update Company GL Accounts.",
@@ -133,7 +131,7 @@ export const apiDefinitions = {
   batchPatch: {
     method: "PATCH",
     path: "/finance/[companyCode]/gl-accounts/batch",
-    handler: (request: any) => handleBatchPatchGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleBatchPatch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(GlAccountBatchPatchRequestDto) },
     summary: "Batch Patch",
     description: "Batch Patch Company GL Accounts.",
@@ -153,7 +151,7 @@ export const apiDefinitions = {
   batchDelete: {
     method: "DELETE",
     path: "/finance/[companyCode]/gl-accounts/batch",
-    handler: (request: any) => handleBatchDeleteGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleBatchDelete),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
     description: "Batch Delete Company GL Accounts.",
@@ -167,7 +165,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/batch-activate",
-    handler: (request: any) => handleBatchActivateGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleBatchActivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
     description: "Batch Activate Company GL Accounts.",
@@ -185,7 +183,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/batch-deactivate",
-    handler: (request: any) => handleBatchDeactivateGlAccounts(request),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleBatchDeactivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
     description: "Batch Deactivate Company GL Accounts.",
@@ -204,7 +202,7 @@ export const apiDefinitions = {
   activate: {
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/[code]/activate",
-    handler: (request: any, context: any) => handleActivateGlAccount(request, context),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleActivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
     description: "Activate Company GL Accounts.",
@@ -219,7 +217,7 @@ export const apiDefinitions = {
   deactivate: {
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/[code]/deactivate",
-    handler: (request: any, context: any) => handleDeactivateGlAccount(request, context),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleDeactivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
     description: "Deactivate Company GL Accounts.",
@@ -235,7 +233,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/gl-accounts/[code]",
-    handler: (request: any, context: any) => handleGetGlAccount(request, context),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Company GL Accounts.",
@@ -245,7 +243,7 @@ export const apiDefinitions = {
   update: {
     method: "PUT",
     path: "/finance/[companyCode]/gl-accounts/[code]",
-    handler: (request: any, context: any) => handleUpdateGlAccount(request, context),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleUpdate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: GlAccountUpdateRequestDto },
     summary: "Update",
     description: "Update Company GL Accounts.",
@@ -265,7 +263,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/[companyCode]/gl-accounts/[code]",
-    handler: (request: any, context: any) => handlePatchGlAccount(request, context),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handlePatch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: GlAccountPatchRequestDto },
     summary: "Patch",
     description: "Patch Company GL Accounts.",
@@ -285,7 +283,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/finance/[companyCode]/gl-accounts/[code]",
-    handler: (request: any, context: any) => handleDeleteGlAccount(request, context),
+    loadHandler: () => import("../common/gl-accounts/server/api/gl-account.http.handlers").then((module) => module.handleDelete),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
     description: "Delete Company GL Accounts.",

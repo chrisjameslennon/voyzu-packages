@@ -5,6 +5,7 @@ import type { ItemPostingProfileBatchPatchRequestDto, ItemPostingProfileBatchUpd
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { getItemPostingCodeUsages } from "../../../server/operational-inventory";
 
 import { ItemPostingProfileRepo } from "../db/item-posting-profile.repo";
 import type { ItemPostingProfileRow } from "../db/item-posting-profile.row.types";
@@ -15,7 +16,11 @@ function repo() {
 }
 
 async function enrichRow(row: ItemPostingProfileRow): Promise<ItemPostingProfileResponseDto> {
-  const dto = await withAuditActors(toDto(row), row);
+  const usages = await getItemPostingCodeUsages([row.id]);
+  const dto = await withAuditActors(toDto({
+    ...row,
+    linked_by: usages.map((usage) => ({ type: "Inventory Items", code: usage.sku })),
+  }), row);
   return dto;
 }
 
@@ -154,7 +159,7 @@ export async function deleteItemPostingProfile(code: string, companyId?: number)
     const itemPostingProfileRepo = repo();
     const existing = await itemPostingProfileRepo.get(resolvedCompanyId, code);
     if (!existing) throw new DataError(`Item posting profile ${code} not found`);
-    throwIfBlocked(Delete({ code: existing.profile_code, linkedBy: toDto(existing).linkedBy }));
+    throwIfBlocked(Delete({ code: existing.profile_code, linkedBy: (await enrichRow(existing)).linkedBy }));
     await itemPostingProfileRepo.delete(resolvedCompanyId, code);
   } catch (err) {
     notFoundFromData(err);
@@ -221,10 +226,9 @@ async function transitionItemPostingProfileStatus(codes: string[], status: "ACTI
   for (const code of normalizeCodes(codes)) {
     const existing = await itemPostingProfileRepo.get(resolvedCompanyId, code);
     if (!existing) throw new NotFoundError(`Item posting profile ${code} not found`);
-    if (status === "INACTIVE") throwIfBlocked(Deactivate({ code: existing.profile_code, linkedBy: toDto(existing).linkedBy }));
+    if (status === "INACTIVE") throwIfBlocked(Deactivate({ code: existing.profile_code, linkedBy: (await enrichRow(existing)).linkedBy }));
     result.push(await enrichRow(await itemPostingProfileRepo.patch(resolvedCompanyId, code, withUpdateAudit({ status }, audit))));
   }
 
   return result;
 }
-

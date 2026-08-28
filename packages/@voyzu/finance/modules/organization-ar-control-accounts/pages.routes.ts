@@ -1,5 +1,3 @@
-import { handleGet as handleControlAccountsGet, handleListAr as handleArControlAccountsList, handlePatch as handleControlAccountsPatch } from "@voyzu/finance/common/control-accounts/server";
-import { OrganizationArControlAccountsListPage, OrganizationArControlAccountDetailPage } from "@voyzu/finance/organization-ar-control-accounts/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Accounts Receivable Control Accounts",
     helpPath: "modules-help/organization-financial-settings/ar-control-accounts",
     path: "/finance/control-accounts/ar",
-    Page: OrganizationArControlAccountsListPage,
+    loadPage: () => import("./server/pages/OrganizationArControlAccountsListPage").then((module) => module.OrganizationArControlAccountsListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -26,7 +24,7 @@ export const pageRoutes = {
     pageTitle: "Accounts Receivable Control Accounts",
     helpPath: "modules-help/organization-financial-settings/ar-control-accounts",
     path: "/finance/control-accounts/ar/[code]",
-    Page: OrganizationArControlAccountDetailPage,
+    loadPage: () => import("./server/pages/OrganizationArControlAccountDetailPage").then((module) => module.OrganizationArControlAccountDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

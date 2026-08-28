@@ -1,5 +1,6 @@
 import type { DbExecutor } from "@voyzu/capability/db";
 import type { AccountType } from "@voyzu/finance/types/modules/core";
+import type { OperationalInventoryItem } from "../../../common/server/operational-inventory";
 
 import type {
   CompanyPostingContextRow,
@@ -45,6 +46,7 @@ function dateString(value: unknown): string {
 function companyRow(row: Record<string, unknown>): CompanyPostingContextRow {
   return {
     id: Number(row.id),
+    organization_id: Number(row.organization_id),
     code: String(row.code),
     name: String(row.name),
     country_code: String(row.country_code),
@@ -197,7 +199,7 @@ export class ArInvoicePostingRepo {
 
   async getCompanyByCode(code: string): Promise<CompanyPostingContextRow | null> {
     const { rows } = await this.db.query(
-      `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status
+      `SELECT fc.id, c.id AS organization_id, c.code, c.name, c.country_code, c.base_currency_code, c.status
        FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
        WHERE c.code = $1 AND fc.is_template = false`,
       [code],
@@ -299,25 +301,28 @@ export class ArInvoicePostingRepo {
     return rows.map((row: Record<string, unknown>) => postingCodeAccountRow(row));
   }
 
-  async listItemPostingProfiles(companyId: number, itemCodes: string[]): Promise<ArInvoiceItemPostingProfileRow[]> {
-    if (itemCodes.length === 0) return [];
+  async listItemPostingProfiles(companyId: number, items: OperationalInventoryItem[]): Promise<ArInvoiceItemPostingProfileRow[]> {
+    const profileIds = items.flatMap((item) => item.itemPostingCodeId == null ? [] : [item.itemPostingCodeId]);
+    if (profileIds.length === 0) return [];
     const { rows } = await this.db.query(
-      `SELECT ii.code AS item_code, ii.item_type, ii.status AS item_status,
+      `SELECT ipp.id::int AS posting_profile_id,
               ipp.code AS profile_code, ipp.status AS profile_status, ipp.is_sold,
               ga.id::int AS revenue_gl_account_id, ga.code AS revenue_gl_account_code,
               ga.name AS revenue_gl_account_name, ga.account_type AS revenue_gl_account_type,
               ga.status AS revenue_gl_account_status
-       FROM inventory_item ii
-       JOIN inventory_category ic ON ic.finance_organization_id = ii.finance_organization_id AND ic.id = ii.category_id
-       JOIN item_posting_profile ipp ON ipp.finance_organization_id = ic.finance_organization_id AND ipp.id = ic.posting_profile_id
+       FROM item_posting_profile ipp
        LEFT JOIN gl_account ga ON ga.finance_organization_id = ipp.finance_organization_id AND ga.id = ipp.revenue_gl_account_id
-       WHERE ii.finance_organization_id = $1 AND ii.code = ANY($2::text[])`,
-      [companyId, itemCodes],
+       WHERE ipp.finance_organization_id = $1 AND ipp.id = ANY($2::bigint[])`,
+      [companyId, profileIds],
     );
-    return rows.map((row: Record<string, unknown>) => ({
-      item_code: String(row.item_code),
-      item_type: row.item_type as ArInvoiceItemPostingProfileRow["item_type"],
-      item_status: row.item_status as ArInvoiceItemPostingProfileRow["item_status"],
+    const profiles = new Map(rows.map((row: Record<string, unknown>) => [Number(row.posting_profile_id), row]));
+    return items.flatMap((item) => {
+      const row = item.itemPostingCodeId == null ? undefined : profiles.get(item.itemPostingCodeId);
+      if (!row) return [];
+      return [{
+      item_code: item.sku,
+      item_type: item.quantityTracked ? "INVENTORY" : "NON_INVENTORY",
+      item_status: item.status,
       profile_code: String(row.profile_code),
       profile_status: row.profile_status as ArInvoiceItemPostingProfileRow["profile_status"],
       is_sold: Boolean(row.is_sold),
@@ -326,7 +331,8 @@ export class ArInvoicePostingRepo {
       revenue_gl_account_name: row.revenue_gl_account_name == null ? null : String(row.revenue_gl_account_name),
       revenue_gl_account_type: row.revenue_gl_account_type == null ? null : row.revenue_gl_account_type as ArInvoiceItemPostingProfileRow["revenue_gl_account_type"],
       revenue_gl_account_status: row.revenue_gl_account_status == null ? null : row.revenue_gl_account_status as ArInvoiceItemPostingProfileRow["revenue_gl_account_status"],
-    }));
+      } satisfies ArInvoiceItemPostingProfileRow];
+    });
   }
 
   async getRevenuePostingCode(companyId: number, documentCode: string, code: string): Promise<PostingCodeAccountRow | null> {

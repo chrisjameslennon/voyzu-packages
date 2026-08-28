@@ -1,5 +1,4 @@
 import Type from "typebox";
-import { handleGetTaxAuthority, handleListTaxAuthorities } from "@voyzu/finance/tax/server";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { TaxAuthorityResponseDto } from "../../types/modules/tax/tax.response.dto";
 
@@ -9,7 +8,7 @@ export const apiDefinitions = {
   authoritiesList: {
     method: "GET",
     path: "/finance/tax/authorities",
-    handler: (request: any) => handleListTaxAuthorities(request),
+    loadHandler: () => import("./server/api/tax.http.handlers").then((module) => module.handleListTaxAuthorities),
     summary: "Authorities List",
     description: "Authorities List Tax.",
     tags: ["Tax"],
@@ -25,7 +24,7 @@ export const apiDefinitions = {
   authoritiesGet: {
     method: "GET",
     path: "/finance/tax/authorities/[code]",
-    handler: (request: any, context: any) => handleGetTaxAuthority(request, context),
+    loadHandler: () => import("./server/api/tax.http.handlers").then((module) => module.handleGetTaxAuthority),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Authorities Get",
     description: "Authorities Get Tax.",

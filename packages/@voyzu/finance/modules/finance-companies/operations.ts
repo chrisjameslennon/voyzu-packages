@@ -1,24 +1,40 @@
 import "server-only";
 import { operation as platformOperation } from "@voyzu/capability/operations";
 import Type from "typebox";
-import * as service from "./server/lib/finance-company.service";
+import { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
+import { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
 
-function operation<TArgs extends unknown[], TResult>(fn: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => fn(...args);
-}
 
-export const listFinanceCompanies = operation(service.listFinanceCompanies);
-export const getFinanceCompany = operation(service.getFinanceCompany);
-export const activateFinanceCompany = operation(service.activateFinanceCompany);
-export const updateFinanceCompany = operation(service.updateFinanceCompany);
-export const listSelectableFinanceCompaniesForCurrentUser = operation(service.listSelectableFinanceCompaniesForCurrentUser);
-export const resolveFinanceCompanySelectionForCurrentUser = operation(service.resolveFinanceCompanySelectionForCurrentUser);
-export const deleteFinanceCompanyForErpOrganization = platformOperation.define(
+export const listFinanceCompanies = platformOperation.defineLazy(
+  { parameters: Type.Tuple([]), result: Type.Array(FinanceCompanyResponseDto) },
+  () => import("./server/lib/finance-company.service").then((module) => module.listFinanceCompanies),
+);
+export const getFinanceCompany = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.String()]), result: Type.Union([FinanceCompanyResponseDto, Type.Null()]) },
+  () => import("./server/lib/finance-company.service").then((module) => module.getFinanceCompany),
+);
+export const activateFinanceCompany = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.String()]), result: FinanceCompanyResponseDto },
+  () => import("./server/lib/finance-company.service").then((module) => module.activateFinanceCompany),
+);
+export const updateFinanceCompany = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.String(), FinanceCompanyUpdateRequestDto]), result: FinanceCompanyResponseDto },
+  () => import("./server/lib/finance-company.service").then((module) => module.updateFinanceCompany),
+);
+export const listSelectableFinanceCompaniesForCurrentUser = platformOperation.defineLazy(
+  { parameters: Type.Tuple([]), result: Type.Array(OrganizationResponseDto) },
+  () => import("./server/lib/finance-company.service").then((module) => module.listSelectableFinanceCompaniesForCurrentUser),
+);
+export const resolveFinanceCompanySelectionForCurrentUser = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Union([Type.Number(), Type.Null()])]), result: Type.Any() },
+  () => import("./server/lib/finance-company.service").then((module) => module.resolveFinanceCompanySelectionForCurrentUser),
+);
+export const deleteFinanceCompanyForErpOrganization = platformOperation.defineLazy(
   {
     parameters: Type.Tuple([Type.Number(), Type.Any()]),
     result: Type.Undefined(),
   },
-  service.deleteFinanceCompanyForErpOrganization,
+  () => import("./server/lib/finance-company.service").then((module) => module.deleteFinanceCompanyForErpOrganization),
 );
 
 export const operations = {

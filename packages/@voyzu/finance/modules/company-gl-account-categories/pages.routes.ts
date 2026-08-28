@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleActivate as handleActivateGlAccountCategory, handleBatchActivate as handleBatchActivateGlAccountCategories, handleBatchCreate as handleBatchCreateGlAccountCategories, handleBatchDeactivate as handleBatchDeactivateGlAccountCategories, handleBatchDelete as handleBatchDeleteGlAccountCategories, handleBatchGet as handleBatchGetGlAccountCategories, handleBatchPatch as handleBatchPatchGlAccountCategories, handleBatchUpdate as handleBatchUpdateGlAccountCategories, handleCreate as handleCreateGlAccountCategory, handleDeactivate as handleDeactivateGlAccountCategory, handleDelete as handleDeleteGlAccountCategory, handleFilter as handleFilterGlAccountCategories, handleGet as handleGetGlAccountCategory, handleList as handleListGlAccountCategories, handlePatch as handlePatchGlAccountCategory, handleSearch as handleSearchGlAccountCategories, handleUpdate as handleUpdateGlAccountCategory } from "@voyzu/finance/common/gl-account-categories/server";
-import { CompanyGlAccountCategoriesListPage, CompanyGlAccountCategoryDetailPage } from "@voyzu/finance/company-gl-account-categories/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Reporting Categories",
     helpPath: "modules-help/company-ledger/reporting-categories",
     path: "/finance/settings/reporting-categories",
-    Page: CompanyGlAccountCategoriesListPage,
+    loadPage: () => import("./server/pages/CompanyGlAccountCategoriesListPage").then((module) => module.CompanyGlAccountCategoriesListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "Reporting Category",
     helpPath: "modules-help/company-ledger/reporting-categories",
     path: "/finance/settings/reporting-categories/[code]",
-    Page: CompanyGlAccountCategoryDetailPage,
+    loadPage: () => import("./server/pages/CompanyGlAccountCategoryDetailPage").then((module) => module.CompanyGlAccountCategoryDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },

@@ -1,11 +1,10 @@
-import { FinanceCompaniesListPage, FinanceCompanyDetailPage } from "@voyzu/finance/finance-companies/server";
 
 export const pageRoutes = {
   list: {
     id: "voyzu.financeCompanies.page.list",
     pageTitle: "Financial Entities",
     path: "/finance/companies",
-    Page: FinanceCompaniesListPage,
+    loadPage: () => import("./server/pages/FinanceCompaniesListPage").then((module) => module.FinanceCompaniesListPage),
     breadcrumbBase: [{ label: "Finance Admin", href: "/finance" }],
     auth: { required: true, minRole: "STANDARD" },
   },
@@ -13,7 +12,7 @@ export const pageRoutes = {
     id: "voyzu.financeCompanies.page.detail",
     pageTitle: "Financial Entity",
     path: "/finance/companies/[code]",
-    Page: FinanceCompanyDetailPage,
+    loadPage: () => import("./server/pages/FinanceCompanyDetailPage").then((module) => module.FinanceCompanyDetailPage),
     breadcrumbBase: [
       { label: "Finance Admin", href: "/finance" },
       { label: "Financial Entities", href: "/finance/companies" },

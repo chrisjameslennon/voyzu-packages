@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleActivate as handleActivateItemPostingProfile, handleBatchActivate as handleBatchActivateItemPostingProfiles, handleBatchCreate as handleBatchCreateItemPostingProfiles, handleBatchDeactivate as handleBatchDeactivateItemPostingProfiles, handleBatchDelete as handleBatchDeleteItemPostingProfiles, handleBatchGet as handleBatchGetItemPostingProfiles, handleBatchPatch as handleBatchPatchItemPostingProfiles, handleBatchUpdate as handleBatchUpdateItemPostingProfiles, handleCreate as handleCreateItemPostingProfile, handleDeactivate as handleDeactivateItemPostingProfile, handleDelete as handleDeleteItemPostingProfile, handleFilter as handleFilterItemPostingProfiles, handleGet as handleGetItemPostingProfile, handleList as handleListItemPostingProfiles, handlePatch as handlePatchItemPostingProfile, handleSearch as handleSearchItemPostingProfiles, handleUpdate as handleUpdateItemPostingProfile } from "@voyzu/finance/common/inventory-item-posting-profiles/server";
-import { CompanyInventoryItemPostingProfilesListPage, CompanyInventoryItemPostingProfileDetailPage } from "@voyzu/finance/company-inventory-item-posting-profiles/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Item Posting Profiles",
     helpPath: "modules-help/company-ledger/inventory-item-posting-profiles",
     path: "/finance/inventory/item-posting-profiles",
-    Page: CompanyInventoryItemPostingProfilesListPage,
+    loadPage: () => import("./server/pages/CompanyInventoryItemPostingProfilesListPage").then((module) => module.CompanyInventoryItemPostingProfilesListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "Item Posting Profile",
     helpPath: "modules-help/company-ledger/inventory-item-posting-profiles",
     path: "/finance/inventory/item-posting-profiles/[code]",
-    Page: CompanyInventoryItemPostingProfileDetailPage,
+    loadPage: () => import("./server/pages/CompanyInventoryItemPostingProfileDetailPage").then((module) => module.CompanyInventoryItemPostingProfileDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },

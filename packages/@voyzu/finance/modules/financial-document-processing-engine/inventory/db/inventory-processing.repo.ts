@@ -1,4 +1,5 @@
 import type { DbExecutor } from "@voyzu/capability/db";
+import type { OperationalInventoryItem } from "../../../common/server/operational-inventory";
 
 import type {
   CompanyPostingContextRow,
@@ -28,6 +29,7 @@ function dateString(value: unknown): string {
 function companyRow(row: Record<string, unknown>): CompanyPostingContextRow {
   return {
     id: Number(row.id),
+    organization_id: Number(row.organization_id),
     code: String(row.code),
     name: String(row.name),
     base_currency_code: String(row.base_currency_code),
@@ -124,7 +126,7 @@ export class InventoryProcessingRepo {
 
   async getCompanyByCode(code: string): Promise<CompanyPostingContextRow | null> {
     const { rows } = await this.db.query(
-      `SELECT fc.id, c.code, c.name, c.base_currency_code, c.status
+      `SELECT fc.id, c.id AS organization_id, c.code, c.name, c.base_currency_code, c.status
        FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
        WHERE c.code = $1 AND fc.is_template = false`,
       [code],
@@ -173,11 +175,12 @@ export class InventoryProcessingRepo {
     return rows[0] ? inventoryControlAccountRow(rows[0] as Record<string, unknown>) : null;
   }
 
-  async listInventoryItems(companyId: number, codes: string[]): Promise<InventoryItemPostingRow[]> {
-    if (codes.length === 0) return [];
+  async listInventoryItems(companyId: number, items: OperationalInventoryItem[]): Promise<InventoryItemPostingRow[]> {
+    const profileIds = items.flatMap((item) => item.itemPostingCodeId == null ? [] : [item.itemPostingCodeId]);
+    if (profileIds.length === 0) return [];
     const { rows } = await this.db.query(
-      `SELECT ii.id, ii.code, ii.name, ii.description, ii.item_type,
-              ipp.is_sold, ipp.is_purchased, ipp.is_consumed, ii.status,
+      `SELECT ipp.id::int AS posting_profile_id,
+              ipp.is_sold, ipp.is_purchased, ipp.is_consumed,
               ipp.code AS posting_profile_code,
               ipp.name AS posting_profile_name,
               ipp.status AS posting_profile_status,
@@ -201,18 +204,29 @@ export class InventoryProcessingRepo {
               adjustment_loss.name AS adjustment_loss_gl_account_name,
               adjustment_loss.account_type AS adjustment_loss_gl_account_type,
               adjustment_loss.status AS adjustment_loss_gl_account_status
-       FROM inventory_item ii
-       JOIN inventory_category ic ON ic.finance_organization_id = ii.finance_organization_id AND ic.id = ii.category_id
-       JOIN item_posting_profile ipp ON ipp.finance_organization_id = ic.finance_organization_id AND ipp.id = ic.posting_profile_id
+       FROM item_posting_profile ipp
        LEFT JOIN gl_account cogs ON cogs.finance_organization_id = ipp.finance_organization_id AND cogs.id = ipp.cogs_gl_account_id
        LEFT JOIN gl_account consumption ON consumption.finance_organization_id = ipp.finance_organization_id AND consumption.id = ipp.consumption_gl_account_id
        LEFT JOIN gl_account adjustment_gain ON adjustment_gain.finance_organization_id = ipp.finance_organization_id AND adjustment_gain.id = ipp.adjustment_gain_gl_account_id
        LEFT JOIN gl_account adjustment_loss ON adjustment_loss.finance_organization_id = ipp.finance_organization_id AND adjustment_loss.id = ipp.adjustment_loss_gl_account_id
-       WHERE ii.finance_organization_id = $1
-         AND ii.code = ANY($2::text[])`,
-      [companyId, codes],
+       WHERE ipp.finance_organization_id = $1
+         AND ipp.id = ANY($2::bigint[])`,
+      [companyId, profileIds],
     );
-    return rows.map((row: Record<string, unknown>) => inventoryItemRow(row));
+    const profiles = new Map(rows.map((row: Record<string, unknown>) => [Number(row.posting_profile_id), row]));
+    return items.flatMap((item) => {
+      const profile = item.itemPostingCodeId == null ? undefined : profiles.get(item.itemPostingCodeId);
+      if (!profile) return [];
+      return [inventoryItemRow({
+        ...profile,
+        id: item.id,
+        code: item.sku,
+        name: item.name,
+        description: item.description,
+        item_type: item.quantityTracked ? "INVENTORY" : "NON_INVENTORY",
+        status: item.status,
+      })];
+    });
   }
 
   async listCurrentBalances(itemIds: number[]): Promise<InventoryBalanceRow[]> {
@@ -271,15 +285,15 @@ export class InventoryProcessingRepo {
   async insertInventoryLedgerLine(row: InsertInventoryLedgerLineRow): Promise<InventoryLedgerLineRow> {
     const { rows } = await this.db.query(
       `INSERT INTO inventory_ledger_entry_line
-         (inventory_ledger_entry_header_id, line_number, movement_type_code, item_id,
+         (inventory_ledger_entry_header_id, line_number, movement_type_code, item_id, item_code, item_name,
           description, inventory_control_account_code, qty_delta, unit_value_supplied,
           book_value_delta, qty_balance, avg_unit_value, book_value_balance,
           memo, creation_date, creation_actor_type)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,now(),'SYSTEM')
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,now(),'SYSTEM')
        RETURNING id`,
       [
         row.inventory_ledger_entry_header_id, row.line_number, row.movement_type_code,
-        row.item_id, row.description, row.inventory_control_account_code, row.qty_delta,
+        row.item_id, row.item_code, row.item_name, row.description, row.inventory_control_account_code, row.qty_delta,
         row.unit_value_supplied, row.book_value_delta, row.qty_balance, row.avg_unit_value,
         row.book_value_balance, row.memo,
       ],
@@ -287,17 +301,8 @@ export class InventoryProcessingRepo {
     return { ...row, id: Number(rows[0].id) };
   }
 
-  async updateItemDerivedBalance(itemId: number, balance: { qty_balance: number; avg_unit_value: number; book_value_balance: number }): Promise<void> {
-    await this.db.query(
-      `UPDATE inventory_item
-       SET quantity_on_hand_derived = $2,
-           book_value_derived = $3,
-           avg_unit_book_value_derived = $4,
-           updated_date = now(),
-           updated_actor_type = 'SYSTEM'
-       WHERE id = $1`,
-      [itemId, balance.qty_balance, balance.book_value_balance, balance.avg_unit_value],
-    );
+  async updateItemDerivedBalance(_itemId: number, _balance: { qty_balance: number; avg_unit_value: number; book_value_balance: number }): Promise<void> {
+    // Operational inventory owns its own derived quantities. Finance retains the valued ledger.
   }
 
   async countJournalsByDocumentId(documentId: string): Promise<number> {

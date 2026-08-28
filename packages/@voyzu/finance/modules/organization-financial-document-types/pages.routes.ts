@@ -1,5 +1,3 @@
-import { handleBatchGet as handleFinancialDocumentTypeBatchGet, handleFilter as handleFinancialDocumentTypeFilter, handleGet as handleFinancialDocumentTypeGet, handleList as handleFinancialDocumentTypeList, handleSearch as handleFinancialDocumentTypeSearch } from "@voyzu/finance/common/financial-document-types/server";
-import { OrganizationFinancialDocumentTypesListPage, OrganizationFinancialDocumentTypeDetailPage } from "@voyzu/finance/organization-financial-document-types/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Financial Document Types",
     helpPath: "modules-help/organization-financial-settings/financial-document-types",
     path: "/finance/financial-document-types",
-    Page: OrganizationFinancialDocumentTypesListPage,
+    loadPage: () => import("./server/pages/OrganizationFinancialDocumentTypesListPage").then((module) => module.OrganizationFinancialDocumentTypesListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -27,7 +25,7 @@ export const pageRoutes = {
     helpPathResolver: ({ params }: { params: Readonly<Record<string, string>> }) =>
       `help-core/financial-documents/${params.code.toLowerCase()}`,
     path: "/finance/financial-document-types/[code]",
-    Page: OrganizationFinancialDocumentTypeDetailPage,
+    loadPage: () => import("./server/pages/OrganizationFinancialDocumentTypeDetailPage").then((module) => module.OrganizationFinancialDocumentTypeDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

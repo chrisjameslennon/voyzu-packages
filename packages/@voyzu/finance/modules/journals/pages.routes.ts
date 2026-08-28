@@ -1,5 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { JournalsListPage, JournalDetailPage } from "@voyzu/finance/journals/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Journal Entries",
     helpPath: "modules-help/company-ledger/journals",
     path: "/finance/journals",
-    Page: JournalsListPage,
+    loadPage: () => import("./server/pages/JournalsListPage").then((module) => module.JournalsListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Company General Ledger" },
@@ -19,7 +18,7 @@ export const pageRoutes = {
     pageTitle: "Journal Entry",
     helpPath: "modules-help/company-ledger/journals",
     path: "/finance/journals/[code]",
-    Page: JournalDetailPage,
+    loadPage: () => import("./server/pages/JournalDetailPage").then((module) => module.JournalDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Company General Ledger" },

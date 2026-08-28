@@ -1,13 +1,19 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
+import { ApCounterpartyStatementResponseDto, ApCounterpartySummaryResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
 
-import * as service0 from "./server/lib/ap-subledger-statement.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const listApCounterpartySummaries = operation(service0.listApCounterpartySummaries);
-export const getApCounterpartyStatement = operation(service0.getApCounterpartyStatement);
+export const listApCounterpartySummaries = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number()]), result: Type.Array(ApCounterpartySummaryResponseDto) },
+  () => import("./server/lib/ap-subledger-statement.service").then((module) => module.listApCounterpartySummaries),
+);
+export const getApCounterpartyStatement = platformOperation.defineLazy(
+  { parameters: Type.Tuple([OrganizationResponseDto, Type.String()]), result: Type.Union([ApCounterpartyStatementResponseDto, Type.Null()]) },
+  () => import("./server/lib/ap-subledger-statement.service").then((module) => module.getApCounterpartyStatement),
+);
 
 export const operations = {
   listApCounterpartySummaries,

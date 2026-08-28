@@ -269,8 +269,8 @@ export class FinancialIntegrityRepo {
          COALESCE(json_agg(json_build_object(
            'lineNumber', l.line_number,
            'movement', l.movement_type_code,
-           'itemCode', item.code,
-           'itemName', item.name,
+           'itemCode', l.item_code,
+           'itemName', l.item_name,
            'qtyDelta', l.qty_delta::float,
            'unitValueSupplied', l.unit_value_supplied::float,
            'bookValueDelta', l.book_value_delta::float,
@@ -281,7 +281,6 @@ export class FinancialIntegrityRepo {
        FROM inventory_ledger_entry_header h
        JOIN journal_header jh ON jh.id = h.journal_header_id
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = h.id
-       JOIN inventory_item item ON item.finance_organization_id = h.finance_organization_id AND item.id = l.item_id
        WHERE h.finance_organization_id = $1
          AND h.posting_date >= $2
          AND h.posting_date <= $3

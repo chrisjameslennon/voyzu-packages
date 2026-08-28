@@ -11,9 +11,7 @@ import { listDimensions } from "@voyzu/finance/common/dimensions/server";
 import { listFinancialDocumentTypes } from "@voyzu/finance/common/financial-document-types/server";
 import { listGlAccountCategories } from "@voyzu/finance/common/gl-account-categories/server";
 import { listGlAccounts } from "@voyzu/finance/common/gl-accounts/server";
-import { listInventoryCategories } from "@voyzu/finance/common/inventory-categories/server";
 import { listInventoryControlAccountSettings } from "@voyzu/finance/common/inventory-control-accounts/server";
-import { listInventoryItems } from "@voyzu/finance/common/inventory-items/server";
 import { listItemPostingProfiles } from "@voyzu/finance/common/inventory-item-posting-profiles/server";
 import { listFinancialDocumentDefaults } from "@voyzu/finance/common/financial-document-defaults/server";
 import { listTaxControlAccounts } from "@voyzu/finance/common/tax-control-accounts/server";
@@ -336,56 +334,6 @@ export async function GlAccountsReportPage(props?: ReportPageProps) {
     nowrapWidthColumn("category.name", "Category Name", "22%"),
     widthColumn("status", "Status", "10%"),
   ], props, undefined, "landscape", undefined, undefined, inactiveRowsOption("Show inactive General Ledger Accounts"));
-}
-
-export async function InventoryCategoriesReportPage(props?: ReportPageProps) {
-  const [categories, postingProfiles] = await Promise.all([
-    listInventoryCategories(),
-    listItemPostingProfiles(),
-  ]);
-  const postingProfileNames = new Map(
-    postingProfiles.map((profile) => [profile.profile_code, profile.profile_name]),
-  );
-  const rows = categories.map((category) => ({
-    ...category,
-    postingProfileName: postingProfileNames.get(category.posting_profile_code) ?? "",
-  }));
-  return report("Inventory Categories", "/finance/reports/lists/inventory-categories/printable", rowsOf(rows), [
-    column("code", "Code"),
-    column("name", "Name"),
-    column("description", "Description"),
-    column("posting_profile_code", "Posting Profile Code"),
-    column("postingProfileName", "Posting Profile Name"),
-    column("status", "Status"),
-  ], props, undefined, "landscape", undefined, undefined, inactiveRowsOption("Show inactive Inventory Categories"));
-}
-
-export async function InventoryItemsReportPage(props?: ReportPageProps) {
-  const [items, categories] = await Promise.all([
-    listInventoryItems(),
-    listInventoryCategories(),
-  ]);
-  const categoryNames = new Map(categories.map((category) => [category.code, category.name]));
-  const rows = items.map((item) => ({
-    ...item,
-    categoryName: categoryNames.get(item.category_code) ?? "",
-  }));
-
-  return report("Inventory Items", "/finance/reports/lists/inventory-items/printable", rowsOf(rows), [
-    nowrapWidthColumn("item_code", "Item Code", "18%"),
-    nowrapWidthColumn("item_name", "Item Name", "32%"),
-    widthColumn("item_type", "Item Type", "15%"),
-    widthColumn("category_code", "Category Code", "15%"),
-    nowrapWidthColumn("categoryName", "Category Name", "12%"),
-    widthColumn("status", "Status", "8%"),
-  ], props, undefined, "landscape", undefined, {
-    className: "orgListInventoryItemDetailsRow",
-    content: (row) => (
-      <div className="orgListInventoryItemDetails">
-        <div><span>Unit:</span> {text(row.unit_code) || "-"}</div>
-      </div>
-    ),
-  }, inactiveRowsOption("Show inactive Inventory Items"));
 }
 
 export async function FinancialDocumentDefaultsReportPage(props?: ReportPageProps) {

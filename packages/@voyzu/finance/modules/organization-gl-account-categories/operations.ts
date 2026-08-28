@@ -1,28 +1,79 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { GlAccountCategoryBatchPatchRequestDto, GlAccountCategoryBatchUpdateRequestDto, GlAccountCategoryCreateRequestDto, GlAccountCategoryPatchRequestDto, GlAccountCategoryResponseDto, GlAccountCategoryUpdateRequestDto } from "@voyzu/finance/types/modules/gl-account-categories";
+import { Filter, ListOptions } from "@voyzu/types/params";
 
-import * as service0 from "../common/gl-account-categories/server/lib/gl-account-category.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const createGlAccountCategory = operation(service0.createGlAccountCategory);
-export const getGlAccountCategory = operation(service0.getGlAccountCategory);
-export const updateGlAccountCategory = operation(service0.updateGlAccountCategory);
-export const patchGlAccountCategory = operation(service0.patchGlAccountCategory);
-export const deleteGlAccountCategory = operation(service0.deleteGlAccountCategory);
-export const listGlAccountCategories = operation(service0.listGlAccountCategories);
-export const filterGlAccountCategories = operation(service0.filterGlAccountCategories);
-export const searchGlAccountCategories = operation(service0.searchGlAccountCategories);
-export const batchCreateGlAccountCategories = operation(service0.batchCreateGlAccountCategories);
-export const batchGetGlAccountCategories = operation(service0.batchGetGlAccountCategories);
-export const batchUpdateGlAccountCategories = operation(service0.batchUpdateGlAccountCategories);
-export const batchPatchGlAccountCategories = operation(service0.batchPatchGlAccountCategories);
-export const batchDeleteGlAccountCategories = operation(service0.batchDeleteGlAccountCategories);
-export const activateGlAccountCategories = operation(service0.activateGlAccountCategories);
-export const activateGlAccountCategory = operation(service0.activateGlAccountCategory);
-export const deactivateGlAccountCategories = operation(service0.deactivateGlAccountCategories);
-export const deactivateGlAccountCategory = operation(service0.deactivateGlAccountCategory);
+export const createGlAccountCategory = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([GlAccountCategoryCreateRequestDto]), Type.Tuple([GlAccountCategoryCreateRequestDto, Type.Number()])]), result: GlAccountCategoryResponseDto },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.createGlAccountCategory),
+);
+export const getGlAccountCategory = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Union([GlAccountCategoryResponseDto, Type.Null()]) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.getGlAccountCategory),
+);
+export const updateGlAccountCategory = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), GlAccountCategoryUpdateRequestDto]), Type.Tuple([Type.String(), GlAccountCategoryUpdateRequestDto, Type.Number()])]), result: GlAccountCategoryResponseDto },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.updateGlAccountCategory),
+);
+export const patchGlAccountCategory = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), GlAccountCategoryPatchRequestDto]), Type.Tuple([Type.String(), GlAccountCategoryPatchRequestDto, Type.Number()])]), result: GlAccountCategoryResponseDto },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.patchGlAccountCategory),
+);
+export const deleteGlAccountCategory = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.deleteGlAccountCategory),
+);
+export const listGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([]), Type.Tuple([Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.listGlAccountCategories),
+);
+export const filterGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Filter)]), Type.Tuple([Type.Array(Filter), ListOptions]), Type.Tuple([Type.Array(Filter), ListOptions, Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.filterGlAccountCategories),
+);
+export const searchGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), ListOptions]), Type.Tuple([Type.String(), ListOptions, Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.searchGlAccountCategories),
+);
+export const batchCreateGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(GlAccountCategoryCreateRequestDto)]), Type.Tuple([Type.Array(GlAccountCategoryCreateRequestDto), Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.batchCreateGlAccountCategories),
+);
+export const batchGetGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.batchGetGlAccountCategories),
+);
+export const batchUpdateGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(GlAccountCategoryBatchUpdateRequestDto)]), Type.Tuple([Type.Array(GlAccountCategoryBatchUpdateRequestDto), Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.batchUpdateGlAccountCategories),
+);
+export const batchPatchGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(GlAccountCategoryBatchPatchRequestDto)]), Type.Tuple([Type.Array(GlAccountCategoryBatchPatchRequestDto), Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.batchPatchGlAccountCategories),
+);
+export const batchDeleteGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.batchDeleteGlAccountCategories),
+);
+export const activateGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.activateGlAccountCategories),
+);
+export const activateGlAccountCategory = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: GlAccountCategoryResponseDto },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.activateGlAccountCategory),
+);
+export const deactivateGlAccountCategories = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(GlAccountCategoryResponseDto) },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.deactivateGlAccountCategories),
+);
+export const deactivateGlAccountCategory = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: GlAccountCategoryResponseDto },
+  () => import("../common/gl-account-categories/server/lib/gl-account-category.service").then((module) => module.deactivateGlAccountCategory),
+);
 
 export const operations = {
   createGlAccountCategory,

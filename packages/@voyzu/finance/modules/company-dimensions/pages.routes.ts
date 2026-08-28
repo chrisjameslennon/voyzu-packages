@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleActivate as handleActivateDimension, handleBatchActivate as handleBatchActivateDimensions, handleBatchCreate as handleBatchCreateDimensions, handleBatchDeactivate as handleBatchDeactivateDimensions, handleBatchDelete as handleBatchDeleteDimensions, handleBatchGet as handleBatchGetDimensions, handleBatchPatch as handleBatchPatchDimensions, handleBatchUpdate as handleBatchUpdateDimensions, handleCreate as handleCreateDimension, handleCreateValue as handleCreateDimensionValue, handleDeactivate as handleDeactivateDimension, handleDelete as handleDeleteDimension, handleDeleteValue as handleDeleteDimensionValue, handleFilter as handleFilterDimensions, handleGet as handleGetDimension, handleList as handleListDimensions, handleListValues as handleListDimensionValues, handlePatch as handlePatchDimension, handlePatchValue as handlePatchDimensionValue, handleSearch as handleSearchDimensions, handleUpdate as handleUpdateDimension } from "@voyzu/finance/common/dimensions/server";
-import { CompanyDimensionsListPage, CompanyDimensionDetailPage } from "@voyzu/finance/company-dimensions/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Dimensions",
     helpPath: "modules-help/company-ledger/dimensions",
     path: "/finance/settings/dimensions",
-    Page: CompanyDimensionsListPage,
+    loadPage: () => import("./server/pages/CompanyDimensionsListPage").then((module) => module.CompanyDimensionsListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },
@@ -20,7 +18,7 @@ export const pageRoutes = {
     pageTitle: "Dimension",
     helpPath: "modules-help/company-ledger/dimensions",
     path: "/finance/settings/dimensions/[code]",
-    Page: CompanyDimensionDetailPage,
+    loadPage: () => import("./server/pages/CompanyDimensionDetailPage").then((module) => module.CompanyDimensionDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },

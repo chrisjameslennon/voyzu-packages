@@ -1,28 +1,79 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { ItemPostingProfileBatchPatchRequestDto, ItemPostingProfileBatchUpdateRequestDto, ItemPostingProfileCreateRequestDto, ItemPostingProfilePatchRequestDto, ItemPostingProfileResponseDto, ItemPostingProfileUpdateRequestDto } from "@voyzu/finance/types/modules/inventory-item-posting-profiles";
+import { Filter, ListOptions } from "@voyzu/types/params";
 
-import * as service0 from "../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const listItemPostingProfiles = operation(service0.listItemPostingProfiles);
-export const filterItemPostingProfiles = operation(service0.filterItemPostingProfiles);
-export const searchItemPostingProfiles = operation(service0.searchItemPostingProfiles);
-export const getItemPostingProfile = operation(service0.getItemPostingProfile);
-export const createItemPostingProfile = operation(service0.createItemPostingProfile);
-export const updateItemPostingProfile = operation(service0.updateItemPostingProfile);
-export const patchItemPostingProfile = operation(service0.patchItemPostingProfile);
-export const deleteItemPostingProfile = operation(service0.deleteItemPostingProfile);
-export const batchGetItemPostingProfiles = operation(service0.batchGetItemPostingProfiles);
-export const batchCreateItemPostingProfiles = operation(service0.batchCreateItemPostingProfiles);
-export const batchUpdateItemPostingProfiles = operation(service0.batchUpdateItemPostingProfiles);
-export const batchPatchItemPostingProfiles = operation(service0.batchPatchItemPostingProfiles);
-export const batchDeleteItemPostingProfiles = operation(service0.batchDeleteItemPostingProfiles);
-export const activateItemPostingProfile = operation(service0.activateItemPostingProfile);
-export const deactivateItemPostingProfile = operation(service0.deactivateItemPostingProfile);
-export const activateItemPostingProfiles = operation(service0.activateItemPostingProfiles);
-export const deactivateItemPostingProfiles = operation(service0.deactivateItemPostingProfiles);
+export const listItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([]), Type.Tuple([Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.listItemPostingProfiles),
+);
+export const filterItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Filter)]), Type.Tuple([Type.Array(Filter), ListOptions]), Type.Tuple([Type.Array(Filter), ListOptions, Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.filterItemPostingProfiles),
+);
+export const searchItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), ListOptions]), Type.Tuple([Type.String(), ListOptions, Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.searchItemPostingProfiles),
+);
+export const getItemPostingProfile = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Union([ItemPostingProfileResponseDto, Type.Null()]) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.getItemPostingProfile),
+);
+export const createItemPostingProfile = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([ItemPostingProfileCreateRequestDto]), Type.Tuple([ItemPostingProfileCreateRequestDto, Type.Number()])]), result: ItemPostingProfileResponseDto },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.createItemPostingProfile),
+);
+export const updateItemPostingProfile = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), ItemPostingProfileUpdateRequestDto]), Type.Tuple([Type.String(), ItemPostingProfileUpdateRequestDto, Type.Number()])]), result: ItemPostingProfileResponseDto },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.updateItemPostingProfile),
+);
+export const patchItemPostingProfile = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), ItemPostingProfilePatchRequestDto]), Type.Tuple([Type.String(), ItemPostingProfilePatchRequestDto, Type.Number()])]), result: ItemPostingProfileResponseDto },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.patchItemPostingProfile),
+);
+export const deleteItemPostingProfile = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.deleteItemPostingProfile),
+);
+export const batchGetItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.batchGetItemPostingProfiles),
+);
+export const batchCreateItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(ItemPostingProfileCreateRequestDto)]), Type.Tuple([Type.Array(ItemPostingProfileCreateRequestDto), Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.batchCreateItemPostingProfiles),
+);
+export const batchUpdateItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(ItemPostingProfileBatchUpdateRequestDto)]), Type.Tuple([Type.Array(ItemPostingProfileBatchUpdateRequestDto), Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.batchUpdateItemPostingProfiles),
+);
+export const batchPatchItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(ItemPostingProfileBatchPatchRequestDto)]), Type.Tuple([Type.Array(ItemPostingProfileBatchPatchRequestDto), Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.batchPatchItemPostingProfiles),
+);
+export const batchDeleteItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.batchDeleteItemPostingProfiles),
+);
+export const activateItemPostingProfile = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: ItemPostingProfileResponseDto },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.activateItemPostingProfile),
+);
+export const deactivateItemPostingProfile = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: ItemPostingProfileResponseDto },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.deactivateItemPostingProfile),
+);
+export const activateItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.activateItemPostingProfiles),
+);
+export const deactivateItemPostingProfiles = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(ItemPostingProfileResponseDto) },
+  () => import("../common/inventory-item-posting-profiles/server/lib/item-posting-profile.service").then((module) => module.deactivateItemPostingProfiles),
+);
 
 export const operations = {
   listItemPostingProfiles,

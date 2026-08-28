@@ -102,14 +102,6 @@ async function main() {
       [companyIds],
     );
 
-    const { rowCount: inventoryItems } = await client.query(
-      `DELETE FROM inventory_item WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: inventoryCategories } = await client.query(
-      `DELETE FROM inventory_category WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
     const { rowCount: itemPostingProfiles } = await client.query(
       `DELETE FROM item_posting_profile WHERE finance_organization_id = ANY($1)`,
       [companyIds],
@@ -175,7 +167,7 @@ async function main() {
     console.log(`  ${counterparties} AR counterparties`);
     console.log(`  ${apCounterparties} AP counterparties`);
     console.log(`  ${counterpartiesGeneric} counterparties`);
-    console.log(`  ${inventoryItems} inventory items, ${itemPostingProfiles} item posting profiles, ${inventoryCategories} inventory categories`);
+    console.log(`  ${itemPostingProfiles} item posting profiles`);
     console.log(`  ${financialDocumentDefaults} financial document defaults`);
     console.log(`  ${dimensionValues} dimension values, ${dimensions} dimensions`);
     console.log(`  ${bankCashAccounts} bank/cash accounts, ${inventoryControlAccounts} inventory control accounts, ${taxControlAccounts} tax accounts`);

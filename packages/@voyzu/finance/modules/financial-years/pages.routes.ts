@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleClose as handleCloseFinancialYear, handleCloseFinancialPeriod, handleCreate as handleCreateFinancialYear, handleDelete as handleDeleteFinancialYear, handleExportZip as handleExportFinancialYearsZip, handleGet as handleGetFinancialYear, handleList as handleListCompanyFinancialYears, handleListFinancialPeriods, handleOpen as handleOpenFinancialYear, handlePatch as handlePatchFinancialYear, handleReopen as handleReopenFinancialYear, handleReopenFinancialPeriod } from "@voyzu/finance/financial-years/server";
-import { FinancialYearsListPage, FinancialYearDetailPage } from "@voyzu/finance/financial-years/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Financial Periods",
     helpPath: "modules-help/company-ledger/financial-periods",
     path: "/finance/financial-periods",
-    Page: FinancialYearsListPage,
+    loadPage: () => import("./server/pages/FinancialYearsListPage").then((module) => module.FinancialYearsListPage),
     breadcrumbBase: [
       { label: "Finance" },
     ],
@@ -19,7 +17,7 @@ export const pageRoutes = {
     pageTitle: "Financial Year",
     helpPath: "modules-help/company-ledger/financial-periods",
     path: "/finance/financial-periods/[code]",
-    Page: FinancialYearDetailPage,
+    loadPage: () => import("./server/pages/FinancialYearDetailPage").then((module) => module.FinancialYearDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Financial Periods", href: "/finance/financial-periods" },

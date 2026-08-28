@@ -1,5 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { ArLedgerEntryEnquiryListPage, ArLedgerEntryEnquiryDetailPage } from "@voyzu/finance/ar-subledger-ledger-entry-enquiry/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "AR Ledger Entry Enquiry",
     helpPath: "modules-help/company-ledger/ar-ledger-entry-enquiry",
     path: "/finance/subledgers/ar/ledger-entry-enquiry",
-    Page: ArLedgerEntryEnquiryListPage,
+    loadPage: () => import("./server/pages/ArLedgerEntryEnquiryListPage").then((module) => module.ArLedgerEntryEnquiryListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -20,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "AR Ledger Entry Enquiry",
     helpPath: "modules-help/company-ledger/ar-ledger-entry-enquiry",
     path: "/finance/subledgers/ar/ledger-entry-enquiry/[code]",
-    Page: ArLedgerEntryEnquiryDetailPage,
+    loadPage: () => import("./server/pages/ArLedgerEntryEnquiryDetailPage").then((module) => module.ArLedgerEntryEnquiryDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },

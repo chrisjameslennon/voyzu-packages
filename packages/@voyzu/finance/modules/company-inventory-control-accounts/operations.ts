@@ -1,14 +1,22 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { InventoryControlAccountPatchRequestDto, InventoryControlAccountSettingResponseDto } from "@voyzu/finance/types/modules/inventory-control-accounts";
 
-import * as service0 from "../common/inventory-control-accounts/server/lib/inventory-control-account.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const listInventoryControlAccountSettings = operation(service0.listInventoryControlAccountSettings);
-export const getInventoryControlAccountSetting = operation(service0.getInventoryControlAccountSetting);
-export const patchInventoryControlAccountSetting = operation(service0.patchInventoryControlAccountSetting);
+export const listInventoryControlAccountSettings = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([]), Type.Tuple([Type.Number()])]), result: Type.Array(InventoryControlAccountSettingResponseDto) },
+  () => import("../common/inventory-control-accounts/server/lib/inventory-control-account.service").then((module) => module.listInventoryControlAccountSettings),
+);
+export const getInventoryControlAccountSetting = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Union([InventoryControlAccountSettingResponseDto, Type.Null()]) },
+  () => import("../common/inventory-control-accounts/server/lib/inventory-control-account.service").then((module) => module.getInventoryControlAccountSetting),
+);
+export const patchInventoryControlAccountSetting = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), InventoryControlAccountPatchRequestDto]), Type.Tuple([Type.String(), InventoryControlAccountPatchRequestDto, Type.Number()])]), result: InventoryControlAccountSettingResponseDto },
+  () => import("../common/inventory-control-accounts/server/lib/inventory-control-account.service").then((module) => module.patchInventoryControlAccountSetting),
+);
 
 export const operations = {
   listInventoryControlAccountSettings,

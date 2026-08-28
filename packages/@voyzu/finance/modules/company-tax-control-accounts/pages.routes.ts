@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleListTaxControlAccounts, handlePatchTaxControlAccount } from "@voyzu/finance/common/tax-control-accounts/server";
-import { CompanyTaxControlAccountsPage, CompanyTaxControlAccountDetailPage } from "@voyzu/finance/company-tax-control-accounts/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Tax Control Accounts",
     helpPath: "modules-help/company-ledger/tax-accounts",
     path: "/finance/settings/control-accounts/tax",
-    Page: CompanyTaxControlAccountsPage,
+    loadPage: () => import("./server/pages/CompanyTaxControlAccountsPage").then((module) => module.CompanyTaxControlAccountsPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "Tax Control Accounts",
     helpPath: "modules-help/company-ledger/tax-accounts",
     path: "/finance/settings/control-accounts/tax/[code]",
-    Page: CompanyTaxControlAccountDetailPage,
+    loadPage: () => import("./server/pages/CompanyTaxControlAccountDetailPage").then((module) => module.CompanyTaxControlAccountDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },

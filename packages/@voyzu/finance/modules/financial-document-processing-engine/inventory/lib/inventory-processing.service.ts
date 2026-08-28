@@ -15,6 +15,7 @@ import type {
 import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
 
 import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
+import { getOperationalInventoryItems } from "../../../common/server/operational-inventory";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import {
@@ -382,11 +383,14 @@ async function resolveContext(repo: InventoryProcessingRepo, request: ResolvedIn
   const company = await repo.getCompanyByCode(request.company_code);
   if (company && company.status !== "ACTIVE") throw new BusinessRuleError(`Company ${company.code} is not ACTIVE`);
   const settingsCompanyId = company ? await resolveEffectiveSettingsCompanyId(company.id) : null;
+  const operationalItems = company
+    ? await getOperationalInventoryItems(company.organization_id, requestedItemCodes(request))
+    : [];
   const [documentProcessor, fiscalPeriod, controlAccount, items, dimensionValues] = await Promise.all([
     company ? repo.getDocumentProcessor(request.document_type) : Promise.resolve(null),
     company ? repo.getOpenFiscalPeriod(company.id, postingDateFor(request)) : Promise.resolve(null),
     settingsCompanyId ? repo.getInventoryControlAccount(settingsCompanyId) : Promise.resolve(null),
-    company ? repo.listInventoryItems(company.id, requestedItemCodes(request)) : Promise.resolve([]),
+    company ? repo.listInventoryItems(company.id, operationalItems) : Promise.resolve([]),
     settingsCompanyId ? repo.listDimensionValues(settingsCompanyId, requestedDimensionPairs(request)) : Promise.resolve([]),
   ]);
   const balances = mapBalances(await repo.listCurrentBalances(items.map((item) => item.id)));
@@ -574,6 +578,8 @@ async function persistInventoryDocument(context: ResolvedContext, db: DbExecutor
       line_number: index + 1,
       movement_type_code: line.movement,
       item_id: item.id,
+      item_code: item.code,
+      item_name: item.name,
       description: line.description,
       inventory_control_account_code: inventoryControlCodeForDocument(context.request.document_type),
       qty_delta: line.quantity_delta,

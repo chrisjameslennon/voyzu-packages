@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleGetApEntry, handleListApEntries } from "@voyzu/finance/ap-subledger-ledger-entries/server";
-import { ApLedgerEntriesListPage, ApLedgerEntryDetailPage } from "@voyzu/finance/ap-subledger-ledger-entries/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "AP Ledger Entries",
     helpPath: "modules-help/company-ledger/ap-ledger-entries",
     path: "/finance/subledgers/ap/ledger-entries",
-    Page: ApLedgerEntriesListPage,
+    loadPage: () => import("./server/pages/ApLedgerEntriesListPage").then((module) => module.ApLedgerEntriesListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "AP Ledger Entry",
     helpPath: "modules-help/company-ledger/ap-ledger-entries",
     path: "/finance/subledgers/ap/ledger-entries/[code]",
-    Page: ApLedgerEntryDetailPage,
+    loadPage: () => import("./server/pages/ApLedgerEntryDetailPage").then((module) => module.ApLedgerEntryDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -33,7 +31,7 @@ export const pageRoutes = {
     id: "voyzu.ap-subledger-ledger-entries.page.detail.documentPrintable",
     pageTitle: "AP Ledger Entry",
     path: "/finance/subledgers/ap/ledger-entries/[code]/document-printable",
-    Page: ApLedgerEntryDetailPage,
+    loadPage: () => import("./server/pages/ApLedgerEntryDetailPage").then((module) => module.ApLedgerEntryDetailPage),
     unframed: true,
     auth: companyFinancePageAuth
   }

@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleBatchGet as handleFinancialDocumentTypeBatchGet, handleFilter as handleFinancialDocumentTypeFilter, handleGet as handleFinancialDocumentTypeGet, handleList as handleFinancialDocumentTypeList, handleSearch as handleFinancialDocumentTypeSearch } from "@voyzu/finance/common/financial-document-types/server";
-import { CompanyFinancialDocumentTypesListPage, CompanyFinancialDocumentTypeDetailPage } from "@voyzu/finance/company-financial-document-types/server";
 import { CodesRequestDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { FinancialDocumentTypeResponseDto } from "../../types/modules/financial-document-types/financial-document-type.response.dto";
 
@@ -10,7 +8,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/financial-document-types",
-    handler: (request: any) => handleFinancialDocumentTypeList(request),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleList),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List Company Financial Document Types.",
@@ -23,7 +21,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-types/filter",
-    handler: (request: any) => handleFinancialDocumentTypeFilter(request),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleFilter),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Company Financial Document Types.",
@@ -36,7 +34,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/finance/[companyCode]/financial-document-types/search",
-    handler: (request: any) => handleFinancialDocumentTypeSearch(request),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleSearch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, query: { parameters: { q: { description: "Search text used to match company financial document type records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Company Financial Document Types.",
@@ -50,7 +48,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/finance/[companyCode]/financial-document-types/batch/get",
-    handler: (request: any) => handleFinancialDocumentTypeBatchGet(request),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleBatchGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Batch Get Company Financial Document Types.",
@@ -64,7 +62,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/financial-document-types/[code]",
-    handler: (request: any, context: any) => handleFinancialDocumentTypeGet(request, context),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Company Financial Document Types.",

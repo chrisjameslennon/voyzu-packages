@@ -6,8 +6,6 @@ const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 
 const scripts = [
   "sample-companies.ts",
-  "sample-inventory-items.ts",
-  "post-inventory-documents.ts",
   "post-ar-invoices.ts",
   "post-ar-invoice-cancellation.ts",
   "post-ar-receipt.ts",

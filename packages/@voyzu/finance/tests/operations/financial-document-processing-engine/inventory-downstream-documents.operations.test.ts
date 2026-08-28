@@ -18,8 +18,7 @@ after(async () => {
         `SELECT DISTINCT h.journal_header_id, h.document_id
          FROM inventory_ledger_entry_header h
          JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = h.id
-         JOIN inventory_item item ON item.id = l.item_id
-         WHERE item.code = ANY($1::text[])`,
+         WHERE l.item_code = ANY($1::text[])`,
         [[...createdItemCodes]],
       )
       : { rows: [] };
@@ -51,7 +50,7 @@ after(async () => {
     if (createdDocumentIds.length) {
     }
     if (createdItemCodes.length) {
-      await pool.query(`DELETE FROM inventory_item WHERE code = ANY($1::text[])`, [[...createdItemCodes]]);
+      await pool.query(`DELETE FROM item WHERE sku = ANY($1::text[])`, [[...createdItemCodes]]);
     }
     if (createdArCounterpartyCodes.length) {
       await pool.query(`DELETE FROM ar_counterparty WHERE code = ANY($1::text[])`, [[...createdArCounterpartyCodes]]);
@@ -73,23 +72,26 @@ function suffix(): string {
 
 async function createItem(code: string): Promise<void> {
   await getPool().query(
-    `INSERT INTO inventory_item (
-       finance_organization_id, code, name, description, item_type, category_id, unit_code,
-       status, creation_date, creation_actor_type
+    `INSERT INTO item (
+       organization_id, sku, name, description, item_type, unit, quantity_tracked,
+       item_posting_code_id, status, creation_date, creation_actor_type
      )
-     SELECT co.id,
+     SELECT organization.id,
             $1,
             $2,
             $3,
-            'INVENTORY',
-            (SELECT c.id FROM inventory_category c WHERE c.finance_organization_id = co.id AND c.code = 'RESALE_GOODS' ORDER BY c.id LIMIT 1),
+            'SINGLE_ITEM',
             'ea',
+            true,
+            profile.id,
             'ACTIVE',
             now(),
             'SYSTEM'
-     FROM organization co
-     WHERE co.code = 'ACME'
-     ORDER BY co.id
+     FROM organization
+     JOIN finance_organization finance ON finance.organization_id = organization.id
+     JOIN item_posting_profile profile ON profile.finance_organization_id = finance.id AND profile.code = 'RESALE_GOODS'
+     WHERE organization.code = 'ACME'
+     ORDER BY organization.id
      LIMIT 1`,
     [code, `Downstream ${code}`, "Downstream inventory integration test item"],
   );
@@ -150,9 +152,8 @@ describe("Downstream inventory documents", () => {
       `SELECT h.document_id, h.source_document_type_code, l.movement_type_code, l.qty_delta::text, l.book_value_delta::text
        FROM inventory_ledger_entry_header h
        JOIN inventory_ledger_entry_line l ON l.inventory_ledger_entry_header_id = h.id
-       JOIN inventory_item item ON item.id = l.item_id
        WHERE h.source_document_type_code = 'AR_INVOICE'
-         AND item.code = $1`,
+         AND l.item_code = $1`,
       [itemCode],
     );
     assert.equal(ledger.rows.length, 1);

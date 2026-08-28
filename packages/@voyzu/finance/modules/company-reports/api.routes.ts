@@ -1,31 +1,4 @@
 import Type from "typebox";
-import { handleGetTaxLedgerEntriesAudit } from "@voyzu/finance/company-reports/tax-ledger-entries-audit/server";
-import { handleGetInventoryLedgerEntriesAudit } from "@voyzu/finance/company-reports/inventory-ledger-entries-audit/server";
-import { handleGetApSubledgerEntriesAudit } from "@voyzu/finance/company-reports/ap-subledger-entries-audit/server";
-import { handleGetArSubledgerEntriesAudit } from "@voyzu/finance/company-reports/ar-subledger-entries-audit/server";
-import { handleGetTaxActivityReconciliation } from "@voyzu/finance/company-reports/tax-activity-reconciliation/server";
-import { handleGetTaxActivity } from "@voyzu/finance/company-reports/tax-activity/server";
-import { handleGetProfitLoss, handleGetProfitLossAnalysis } from "@voyzu/finance/company-reports/profit-loss/server";
-import { handleGetFinancialIntegrity } from "@voyzu/finance/company-reports/financial-integrity/server";
-import { handleGetJournalEntries } from "@voyzu/finance/company-reports/journal-entries/server";
-import { handleGetBankCashMovement } from "@voyzu/finance/company-reports/bank-cash-movement/server";
-import { handleGetTaxPosition } from "@voyzu/finance/company-reports/tax-position/server";
-import { handleGetTrialBalance } from "@voyzu/finance/company-reports/trial-balance/server";
-import { handleGetBalanceSheet, handleListFinancialYears, handleGetBalanceSheetPdf } from "@voyzu/finance/company-reports/balance-sheet/server";
-import { BalanceSheetReportPage } from "@voyzu/finance/company-reports/balance-sheet/server";
-import { TrialBalanceReportPage } from "@voyzu/finance/company-reports/trial-balance/server";
-import { TaxPositionReportPage } from "@voyzu/finance/company-reports/tax-position/server";
-import { BankCashMovementReportPage } from "@voyzu/finance/company-reports/bank-cash-movement/server";
-import { JournalEntriesReportPage } from "@voyzu/finance/company-reports/journal-entries/server";
-import { AccountActivityReportPage } from "@voyzu/finance/company-reports/account-activity/server";
-import { FinancialIntegrityReportPage } from "@voyzu/finance/company-reports/financial-integrity/server";
-import { ProfitLossReportPage, ProfitLossAnalysisReportPage } from "@voyzu/finance/company-reports/profit-loss/server";
-import { TaxActivityReportPage } from "@voyzu/finance/company-reports/tax-activity/server";
-import { TaxActivityReconciliationReportPage } from "@voyzu/finance/company-reports/tax-activity-reconciliation/server";
-import { ArSubledgerEntriesAuditReportPage } from "@voyzu/finance/company-reports/ar-subledger-entries-audit/server";
-import { ApSubledgerEntriesAuditReportPage } from "@voyzu/finance/company-reports/ap-subledger-entries-audit/server";
-import { InventoryLedgerEntriesAuditReportPage } from "@voyzu/finance/company-reports/inventory-ledger-entries-audit/server";
-import { TaxLedgerEntriesAuditReportPage } from "@voyzu/finance/company-reports/tax-ledger-entries-audit/server";
 import { InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { TaxLedgerEntriesAuditResponseDto } from "../../types/modules/company-reports/tax-ledger-entries-audit.response.dto";
 import { InventoryLedgerEntriesAuditResponseDto } from "../../types/modules/company-reports/inventory-ledger-entries-audit.response.dto";
@@ -49,7 +22,7 @@ export const apiDefinitions = {
   balanceSheet: {
     method: "GET",
     path: "/finance/[companyCode]/reports/balance-sheet",
-    handler: (request: any) => handleGetBalanceSheet(request),
+    loadHandler: () => import("./balance-sheet/server/api/balance-sheet.http.handlers").then((module) => module.handleGetBalanceSheet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Balance Sheet",
     description: "Balance Sheet Company Reports.",
@@ -59,7 +32,7 @@ export const apiDefinitions = {
   balanceSheetPdf: {
     method: "GET",
     path: "/finance/[companyCode]/reports/balance-sheet/pdf",
-    handler: (request: any) => handleGetBalanceSheetPdf(request),
+    loadHandler: () => import("./balance-sheet/server/api/balance-sheet-pdf.http.handlers").then((module) => module.handleGetBalanceSheetPdf),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Get balance sheet PDF",
     description: "Generates a balance sheet PDF for the selected company and reporting options.",
@@ -69,7 +42,7 @@ export const apiDefinitions = {
   financialYears: {
     method: "GET",
     path: "/finance/[companyCode]/reports/financial-years",
-    handler: (request: any) => handleListFinancialYears(request),
+    loadHandler: () => import("./balance-sheet/server/api/balance-sheet.http.handlers").then((module) => module.handleListFinancialYears),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Financial Years",
     description: "Financial Years Company Reports.",
@@ -79,7 +52,7 @@ export const apiDefinitions = {
   trialBalance: {
     method: "GET",
     path: "/finance/[companyCode]/reports/trial-balance",
-    handler: (request: any) => handleGetTrialBalance(request),
+    loadHandler: () => import("./trial-balance/server/api/trial-balance.http.handlers").then((module) => module.handleGetTrialBalance),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Trial Balance",
     description: "Trial Balance Company Reports.",
@@ -89,7 +62,7 @@ export const apiDefinitions = {
   taxPosition: {
     method: "GET",
     path: "/finance/[companyCode]/reports/tax-position",
-    handler: (request: any) => handleGetTaxPosition(request),
+    loadHandler: () => import("./tax-position/server/api/tax-position.http.handlers").then((module) => module.handleGetTaxPosition),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Tax Position",
     description: "Tax Position Company Reports.",
@@ -99,7 +72,7 @@ export const apiDefinitions = {
   bankCashMovement: {
     method: "GET",
     path: "/finance/[companyCode]/reports/bank-cash-movement",
-    handler: (request: any) => handleGetBankCashMovement(request),
+    loadHandler: () => import("./bank-cash-movement/server/api/bank-cash-movement.http.handlers").then((module) => module.handleGetBankCashMovement),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Bank Cash Movement",
     description: "Bank Cash Movement Company Reports.",
@@ -109,7 +82,7 @@ export const apiDefinitions = {
   journalEntries: {
     method: "GET",
     path: "/finance/[companyCode]/reports/journal-entries",
-    handler: (request: any) => handleGetJournalEntries(request),
+    loadHandler: () => import("./journal-entries/server/api/journal-entries.http.handlers").then((module) => module.handleGetJournalEntries),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Journal Entries",
     description: "Journal Entries Company Reports.",
@@ -119,7 +92,7 @@ export const apiDefinitions = {
   financialIntegrity: {
     method: "GET",
     path: "/finance/[companyCode]/reports/financial-integrity",
-    handler: (request: any) => handleGetFinancialIntegrity(request),
+    loadHandler: () => import("./financial-integrity/server/api/financial-integrity.http.handlers").then((module) => module.handleGetFinancialIntegrity),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Financial Integrity",
     description: "Financial Integrity Company Reports.",
@@ -129,7 +102,7 @@ export const apiDefinitions = {
   profitLoss: {
     method: "GET",
     path: "/finance/[companyCode]/reports/profit-loss",
-    handler: (request: any) => handleGetProfitLoss(request),
+    loadHandler: () => import("./profit-loss/server/api/profit-loss.http.handlers").then((module) => module.handleGetProfitLoss),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Profit Loss",
     description: "Profit Loss Company Reports.",
@@ -139,7 +112,7 @@ export const apiDefinitions = {
   profitLossAnalysis: {
     method: "GET",
     path: "/finance/[companyCode]/reports/profit-loss-analysis",
-    handler: (request: any) => handleGetProfitLossAnalysis(request),
+    loadHandler: () => import("./profit-loss/server/api/profit-loss-analysis.http.handlers").then((module) => module.handleGetProfitLossAnalysis),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Profit Loss Analysis",
     description: "Profit Loss Analysis Company Reports.",
@@ -149,7 +122,7 @@ export const apiDefinitions = {
   taxActivity: {
     method: "GET",
     path: "/finance/[companyCode]/reports/tax-activity",
-    handler: (request: any) => handleGetTaxActivity(request),
+    loadHandler: () => import("./tax-activity/server/api/tax-activity.http.handlers").then((module) => module.handleGetTaxActivity),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Tax Activity",
     description: "Tax Activity Company Reports.",
@@ -159,7 +132,7 @@ export const apiDefinitions = {
   taxActivityReconciliation: {
     method: "GET",
     path: "/finance/[companyCode]/reports/tax-activity-reconciliation",
-    handler: (request: any) => handleGetTaxActivityReconciliation(request),
+    loadHandler: () => import("./tax-activity-reconciliation/server/api/tax-activity-reconciliation.http.handlers").then((module) => module.handleGetTaxActivityReconciliation),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Tax Activity Reconciliation",
     description: "Tax Activity Reconciliation Company Reports.",
@@ -169,7 +142,7 @@ export const apiDefinitions = {
   arSubledgerEntriesAudit: {
     method: "GET",
     path: "/finance/[companyCode]/reports/ar-subledger-entries-audit",
-    handler: (request: any) => handleGetArSubledgerEntriesAudit(request),
+    loadHandler: () => import("./ar-subledger-entries-audit/server/api/ar-subledger-entries-audit.http.handlers").then((module) => module.handleGetArSubledgerEntriesAudit),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "AR Subledger Entries Audit",
     description: "AR Subledger Entries Audit Company Reports.",
@@ -179,7 +152,7 @@ export const apiDefinitions = {
   apSubledgerEntriesAudit: {
     method: "GET",
     path: "/finance/[companyCode]/reports/ap-subledger-entries-audit",
-    handler: (request: any) => handleGetApSubledgerEntriesAudit(request),
+    loadHandler: () => import("./ap-subledger-entries-audit/server/api/ap-subledger-entries-audit.http.handlers").then((module) => module.handleGetApSubledgerEntriesAudit),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "AP Subledger Entries Audit",
     description: "AP Subledger Entries Audit Company Reports.",
@@ -189,7 +162,7 @@ export const apiDefinitions = {
   inventoryLedgerEntriesAudit: {
     method: "GET",
     path: "/finance/[companyCode]/reports/inventory-ledger-entries-audit",
-    handler: (request: any) => handleGetInventoryLedgerEntriesAudit(request),
+    loadHandler: () => import("./inventory-ledger-entries-audit/server/api/inventory-ledger-entries-audit.http.handlers").then((module) => module.handleGetInventoryLedgerEntriesAudit),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Inventory Ledger Entries Audit",
     description: "Inventory Ledger Entries Audit Company Reports.",
@@ -199,7 +172,7 @@ export const apiDefinitions = {
   taxLedgerEntriesAudit: {
     method: "GET",
     path: "/finance/[companyCode]/reports/tax-ledger-entries-audit",
-    handler: (request: any) => handleGetTaxLedgerEntriesAudit(request),
+    loadHandler: () => import("./tax-ledger-entries-audit/server/api/tax-ledger-entries-audit.http.handlers").then((module) => module.handleGetTaxLedgerEntriesAudit),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Tax Ledger Entries Audit",
     description: "Tax Ledger Entries Audit Company Reports.",

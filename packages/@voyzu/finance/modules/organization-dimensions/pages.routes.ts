@@ -1,5 +1,3 @@
-import { handleActivate as handleDimensionsActivate, handleBatchActivate as handleDimensionsBatchActivate, handleBatchCreate as handleDimensionsBatchCreate, handleBatchDeactivate as handleDimensionsBatchDeactivate, handleBatchDelete as handleDimensionsBatchDelete, handleBatchGet as handleDimensionsBatchGet, handleBatchPatch as handleDimensionsBatchPatch, handleBatchUpdate as handleDimensionsBatchUpdate, handleCreate as handleDimensionsCreate, handleCreateValue as handleDimensionsCreateValue, handleDeactivate as handleDimensionsDeactivate, handleDelete as handleDimensionsDelete, handleDeleteValue as handleDimensionsDeleteValue, handleFilter as handleDimensionsFilter, handleGet as handleDimensionsGet, handleList as handleDimensionsList, handleListValues as handleDimensionsListValues, handlePatch as handleDimensionsPatch, handlePatchValue as handleDimensionsPatchValue, handleSearch as handleDimensionsSearch, handleUpdate as handleDimensionsUpdate } from "@voyzu/finance/common/dimensions/server";
-import { OrganizationDimensionsListPage, OrganizationDimensionDetailPage } from "@voyzu/finance/organization-dimensions/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Dimensions",
     helpPath: "modules-help/organization-financial-settings/dimensions",
     path: "/finance/dimensions",
-    Page: OrganizationDimensionsListPage,
+    loadPage: () => import("./server/pages/OrganizationDimensionsListPage").then((module) => module.OrganizationDimensionsListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -23,7 +21,7 @@ export const pageRoutes = {
     pageTitle: "Dimension",
     helpPath: "modules-help/organization-financial-settings/dimensions",
     path: "/finance/dimensions/[code]",
-    Page: OrganizationDimensionDetailPage,
+    loadPage: () => import("./server/pages/OrganizationDimensionDetailPage").then((module) => module.OrganizationDimensionDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

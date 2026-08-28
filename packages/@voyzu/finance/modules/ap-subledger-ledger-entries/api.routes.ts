@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleGetApEntry, handleListApEntries } from "@voyzu/finance/ap-subledger-ledger-entries/server";
-import { ApLedgerEntriesListPage, ApLedgerEntryDetailPage } from "@voyzu/finance/ap-subledger-ledger-entries/server";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { ApSubledgerEntryResponseDto } from "../../types/modules/ap-subledger/ap-subledger-entry.response.dto";
 
@@ -10,7 +8,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/ap-subledger/entries",
-    handler: (request: any) => handleListApEntries(request),
+    loadHandler: () => import("./server/api/ap-subledger-ledger-entries.http.handlers").then((module) => module.handleListApEntries),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List AP Subledger Ledger Entries.",
@@ -27,7 +25,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/ap-subledger/entries/[code]",
-    handler: (request: any, context: any) => handleGetApEntry(request, context),
+    loadHandler: () => import("./server/api/ap-subledger-ledger-entries.http.handlers").then((module) => module.handleGetApEntry),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get AP Subledger Ledger Entries.",

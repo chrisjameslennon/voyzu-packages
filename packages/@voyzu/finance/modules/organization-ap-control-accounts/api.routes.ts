@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleGet as handleControlAccountsGet, handleListAp as handleApControlAccountsList, handlePatch as handleControlAccountsPatch } from "@voyzu/finance/common/control-accounts/server";
-import { OrganizationApControlAccountsListPage, OrganizationApControlAccountDetailPage } from "@voyzu/finance/organization-ap-control-accounts/server";
 import { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { ControlAccountResponseDto } from "../../types/modules/control-accounts/control-account.response.dto";
 import { ControlAccountPatchRequestDto } from "../../types/modules/control-accounts/control-account.patch.request.dto";
@@ -12,7 +10,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/ap-control-accounts",
-    handler: (request: any) => handleApControlAccountsList(request),
+    loadHandler: () => import("../common/control-accounts/server/api/control-account.http.handlers").then((module) => module.handleListAp),
     summary: "List",
     description: "List Organization AP Control Accounts.",
     tags: ["Organization AP Control Accounts"],
@@ -27,7 +25,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/ap-control-accounts/[code]",
-    handler: (request: any, context: any) => handleControlAccountsGet(request, context),
+    loadHandler: () => import("../common/control-accounts/server/api/control-account.http.handlers").then((module) => module.handleGet),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Organization AP Control Accounts.",
@@ -44,7 +42,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/ap-control-accounts/[code]",
-    handler: (request: any, context: any) => handleControlAccountsPatch(request, context),
+    loadHandler: () => import("../common/control-accounts/server/api/control-account.http.handlers").then((module) => module.handlePatch),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: ControlAccountPatchRequestDto },
     summary: "Patch",
     description: "Patch Organization AP Control Accounts.",

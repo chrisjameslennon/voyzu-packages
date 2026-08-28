@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleGetTaxEntry, handleListTaxEntries } from "@voyzu/finance/tax-ledger/server";
-import { TaxLedgerEntriesListPage, TaxLedgerEntryDetailPage } from "@voyzu/finance/tax-ledger/server";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { TaxSubledgerEntryResponseDto } from "../../types/modules/tax-ledger/index";
 
@@ -10,7 +8,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/tax-ledger/entries",
-    handler: (request: any) => handleListTaxEntries(request),
+    loadHandler: () => import("./server/api/tax-ledger.http.handlers").then((module) => module.handleListTaxEntries),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List Tax Ledger.",
@@ -27,7 +25,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/tax-ledger/entries/[code]",
-    handler: (request: any, context: any) => handleGetTaxEntry(request, context),
+    loadHandler: () => import("./server/api/tax-ledger.http.handlers").then((module) => module.handleGetTaxEntry),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Tax Ledger.",

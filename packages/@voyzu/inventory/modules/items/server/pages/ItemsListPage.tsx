@@ -1,8 +1,10 @@
 import "server-only";
 
 import { ItemsList } from "../../client";
+import { getSelectedOrganization } from "../../../common/server/organization-context";
 import { listItems } from "../lib/item.service";
 
 export async function ItemsListPage() {
-  return <ItemsList items={await listItems()} />;
+  const organization = await getSelectedOrganization();
+  return <ItemsList items={organization ? await listItems(organization.id) : []} />;
 }

@@ -1,5 +1,3 @@
-import { handleActivate as handleFinancialDocumentDefaultsActivate, handleBatchActivate as handleFinancialDocumentDefaultsBatchActivate, handleBatchCreate as handleFinancialDocumentDefaultsBatchCreate, handleBatchDeactivate as handleFinancialDocumentDefaultsBatchDeactivate, handleBatchDelete as handleFinancialDocumentDefaultsBatchDelete, handleBatchGet as handleFinancialDocumentDefaultsBatchGet, handleBatchPatch as handleFinancialDocumentDefaultsBatchPatch, handleBatchUpdate as handleFinancialDocumentDefaultsBatchUpdate, handleCreate as handleFinancialDocumentDefaultsCreate, handleDeactivate as handleFinancialDocumentDefaultsDeactivate, handleDelete as handleFinancialDocumentDefaultsDelete, handleFilter as handleFinancialDocumentDefaultsFilter, handleGet as handleFinancialDocumentDefaultsGet, handleList as handleFinancialDocumentDefaultsList, handlePatch as handleFinancialDocumentDefaultsPatch, handleSearch as handleFinancialDocumentDefaultsSearch, handleUpdate as handleFinancialDocumentDefaultsUpdate } from "@voyzu/finance/common/financial-document-defaults/server";
-import { OrganizationFinancialDocumentDefaultsListPage, OrganizationFinancialDocumentDefaultDetailPage } from "@voyzu/finance/organization-financial-document-defaults/server";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +5,7 @@ export const pageRoutes = {
     pageTitle: "Financial Document Defaults",
     helpPath: "modules-help/organization-financial-settings/financial-document-defaults",
     path: "/finance/financial-document-defaults",
-    Page: OrganizationFinancialDocumentDefaultsListPage,
+    loadPage: () => import("./server/pages/OrganizationFinancialDocumentDefaultsListPage").then((module) => module.OrganizationFinancialDocumentDefaultsListPage),
     breadcrumbBase: [
       {
         label: "Organization",
@@ -26,7 +24,7 @@ export const pageRoutes = {
     pageTitle: "Financial Document Default",
     helpPath: "modules-help/organization-financial-settings/financial-document-defaults",
     path: "/finance/financial-document-defaults/[code]",
-    Page: OrganizationFinancialDocumentDefaultDetailPage,
+    loadPage: () => import("./server/pages/OrganizationFinancialDocumentDefaultDetailPage").then((module) => module.OrganizationFinancialDocumentDefaultDetailPage),
     breadcrumbBase: [
       {
         label: "Organization",

@@ -1,6 +1,7 @@
 import type { AccountType } from "@voyzu/finance/types/modules/core";
 export interface CompanyPostingContextRow {
   id: number;
+  organization_id: number;
   code: string;
   name: string;
   country_code: string;

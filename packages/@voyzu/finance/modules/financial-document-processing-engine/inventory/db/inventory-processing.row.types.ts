@@ -1,6 +1,7 @@
 import type { AccountType } from "@voyzu/finance/types/modules/core";
 export interface CompanyPostingContextRow {
   id: number;
+  organization_id: number;
   code: string;
   name: string;
   base_currency_code: string;
@@ -101,6 +102,8 @@ export interface InsertInventoryLedgerLineRow {
   line_number: number;
   movement_type_code: string;
   item_id: number;
+  item_code: string;
+  item_name: string;
   description: string;
   inventory_control_account_code: "INVENTORY_CONTROL";
   qty_delta: number;

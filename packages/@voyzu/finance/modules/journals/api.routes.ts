@@ -1,4 +1,3 @@
-import { JournalsListPage, JournalDetailPage } from "@voyzu/finance/journals/server";
 
 
 

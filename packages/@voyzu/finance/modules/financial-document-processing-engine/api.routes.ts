@@ -1,4 +1,3 @@
-import { handleProcessApBill, handleProcessApBillCancellation, handleProcessApCreditNote, handleProcessApOpeningBalance, handleProcessApPayment, handleProcessApPaymentApplication, handleProcessApRefund, handleProcessApWriteOff, handleProcessArCreditNote, handleProcessArInvoice, handleProcessArInvoiceCancellation, handleProcessArOpeningBalance, handleProcessArReceipt, handleProcessArReceiptApplication, handleProcessArRefund, handleProcessArWriteOff, handleProcessInventoryAdjustment, handleProcessInventoryIssue, handleProcessInventoryReceipt, handleProcessLedgerJournal, handleProcessLedgerJournalReversal, handleProcessTaxAdjustment, handleProcessTaxPayment, handleProcessTaxRefund } from "@voyzu/finance/financial-document-processing-engine/server";
 import { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { TaxProcessingPostingResponseDto } from "../../types/modules/financial-document-processing-engine/tax-processing.response.dto";
 import { TaxAdjustmentRequestDto, TaxPaymentRequestDto, TaxRefundRequestDto } from "../../types/modules/financial-document-processing-engine/tax-processing.request.dto";
@@ -37,7 +36,7 @@ export const apiDefinitions = {
   apBill: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_BILL",
-    handler: (request: any) => handleProcessApBill(request),
+    loadHandler: () => import("./ap_bill/api/ap-bill.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ApBillRequestDto },
     summary: "AP Bill",
     description: "AP Bill Financial Document Processing Engine.",
@@ -52,7 +51,7 @@ export const apiDefinitions = {
   apBillCancellation: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_BILL_CANCELLATION",
-    handler: (request: any) => handleProcessApBillCancellation(request),
+    loadHandler: () => import("./ap_bill_cancellation/api/ap-bill-cancellation.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ApBillCancellationRequestDto },
     summary: "AP Bill Cancellation",
     description: "AP Bill Cancellation Financial Document Processing Engine.",
@@ -67,7 +66,7 @@ export const apiDefinitions = {
   apCreditNote: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_CREDIT_NOTE",
-    handler: (request: any) => handleProcessApCreditNote(request),
+    loadHandler: () => import("./ap_credit_note/api/ap-credit-note.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ApCreditNoteRequestDto },
     summary: "AP Credit Note",
     description: "AP Credit Note Financial Document Processing Engine.",
@@ -82,7 +81,7 @@ export const apiDefinitions = {
   apOpeningBalance: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_OPENING_BALANCE",
-    handler: (request: any) => handleProcessApOpeningBalance(request),
+    loadHandler: () => import("./ap_opening_balance/api/ap-opening-balance.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ApOpeningBalanceRequestDto },
     summary: "AP Opening Balance",
     description: "AP Opening Balance Financial Document Processing Engine.",
@@ -97,7 +96,7 @@ export const apiDefinitions = {
   apPayment: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_PAYMENT",
-    handler: (request: any) => handleProcessApPayment(request),
+    loadHandler: () => import("./ap_payment/api/ap-payment.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ApPaymentRequestDto },
     summary: "AP Payment",
     description: "AP Payment Financial Document Processing Engine.",
@@ -112,7 +111,7 @@ export const apiDefinitions = {
   apPaymentApplication: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_PAYMENT_APPLICATION",
-    handler: (request: any) => handleProcessApPaymentApplication(request),
+    loadHandler: () => import("./ap_payment_application/api/ap-payment-application.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ApPaymentApplicationRequestDto },
     summary: "AP Payment Application",
     description: "AP Payment Application Financial Document Processing Engine.",
@@ -127,7 +126,7 @@ export const apiDefinitions = {
   apRefund: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_REFUND",
-    handler: (request: any) => handleProcessApRefund(request),
+    loadHandler: () => import("./ap_refund/api/ap-refund.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ApRefundRequestDto },
     summary: "AP Refund",
     description: "AP Refund Financial Document Processing Engine.",
@@ -142,7 +141,7 @@ export const apiDefinitions = {
   apWriteOff: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_WRITE_OFF",
-    handler: (request: any) => handleProcessApWriteOff(request),
+    loadHandler: () => import("./ap_write_off/api/ap-write-off.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ApWriteOffRequestDto },
     summary: "AP Write Off",
     description: "AP Write Off Financial Document Processing Engine.",
@@ -157,7 +156,7 @@ export const apiDefinitions = {
   arCreditNote: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_CREDIT_NOTE",
-    handler: (request: any) => handleProcessArCreditNote(request),
+    loadHandler: () => import("./ar_credit_note/api/ar-credit-note.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ArCreditNoteRequestDto },
     summary: "AR Credit Note",
     description: "AR Credit Note Financial Document Processing Engine.",
@@ -172,7 +171,7 @@ export const apiDefinitions = {
   arInvoice: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_INVOICE",
-    handler: (request: any) => handleProcessArInvoice(request),
+    loadHandler: () => import("./ar_invoice/api/ar-invoice.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ArInvoiceRequestDto },
     summary: "AR Invoice",
     description: "AR Invoice Financial Document Processing Engine.",
@@ -187,7 +186,7 @@ export const apiDefinitions = {
   arInvoiceCancellation: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_INVOICE_CANCELLATION",
-    handler: (request: any) => handleProcessArInvoiceCancellation(request),
+    loadHandler: () => import("./ar_invoice_cancellation/api/ar-invoice-cancellation.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ArInvoiceCancellationRequestDto },
     summary: "AR Invoice Cancellation",
     description: "AR Invoice Cancellation Financial Document Processing Engine.",
@@ -202,7 +201,7 @@ export const apiDefinitions = {
   arOpeningBalance: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_OPENING_BALANCE",
-    handler: (request: any) => handleProcessArOpeningBalance(request),
+    loadHandler: () => import("./ar_opening_balance/api/ar-opening-balance.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ArOpeningBalanceRequestDto },
     summary: "AR Opening Balance",
     description: "AR Opening Balance Financial Document Processing Engine.",
@@ -217,7 +216,7 @@ export const apiDefinitions = {
   arReceipt: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_RECEIPT",
-    handler: (request: any) => handleProcessArReceipt(request),
+    loadHandler: () => import("./ar_receipt/api/ar-receipt.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ArReceiptRequestDto },
     summary: "AR Receipt",
     description: "AR Receipt Financial Document Processing Engine.",
@@ -232,7 +231,7 @@ export const apiDefinitions = {
   arReceiptApplication: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_RECEIPT_APPLICATION",
-    handler: (request: any) => handleProcessArReceiptApplication(request),
+    loadHandler: () => import("./ar_receipt_application/api/ar-receipt-application.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ArReceiptApplicationRequestDto },
     summary: "AR Receipt Application",
     description: "AR Receipt Application Financial Document Processing Engine.",
@@ -247,7 +246,7 @@ export const apiDefinitions = {
   arRefund: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_REFUND",
-    handler: (request: any) => handleProcessArRefund(request),
+    loadHandler: () => import("./ar_refund/api/ar-refund.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ArRefundRequestDto },
     summary: "AR Refund",
     description: "AR Refund Financial Document Processing Engine.",
@@ -262,7 +261,7 @@ export const apiDefinitions = {
   arWriteOff: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_WRITE_OFF",
-    handler: (request: any) => handleProcessArWriteOff(request),
+    loadHandler: () => import("./ar_write_off/api/ar-write-off.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: ArWriteOffRequestDto },
     summary: "AR Write Off",
     description: "AR Write Off Financial Document Processing Engine.",
@@ -277,7 +276,7 @@ export const apiDefinitions = {
   inventoryAdjustment: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/INVENTORY_ADJUSTMENT",
-    handler: (request: any) => handleProcessInventoryAdjustment(request),
+    loadHandler: () => import("./inventory/api/inventory-adjustment.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryAdjustmentRequestDto },
     summary: "Inventory Adjustment",
     description: "Inventory Adjustment Financial Document Processing Engine.",
@@ -292,7 +291,7 @@ export const apiDefinitions = {
   inventoryIssue: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/INVENTORY_ISSUE",
-    handler: (request: any) => handleProcessInventoryIssue(request),
+    loadHandler: () => import("./inventory/api/inventory-issue.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryIssueRequestDto },
     summary: "Inventory Issue",
     description: "Inventory Issue Financial Document Processing Engine.",
@@ -307,7 +306,7 @@ export const apiDefinitions = {
   inventoryReceipt: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/INVENTORY_RECEIPT",
-    handler: (request: any) => handleProcessInventoryReceipt(request),
+    loadHandler: () => import("./inventory/api/inventory-receipt.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryReceiptRequestDto },
     summary: "Inventory Receipt",
     description: "Inventory Receipt Financial Document Processing Engine.",
@@ -322,7 +321,7 @@ export const apiDefinitions = {
   ledgerJournal: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/LEDGER_JOURNAL",
-    handler: (request: any) => handleProcessLedgerJournal(request),
+    loadHandler: () => import("./ledger_journal/api/ledger-journal.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: LedgerJournalRequestDto },
     summary: "Ledger Journal",
     description: "Ledger Journal Financial Document Processing Engine.",
@@ -337,7 +336,7 @@ export const apiDefinitions = {
   ledgerJournalReversal: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/LEDGER_JOURNAL_REVERSAL",
-    handler: (request: any) => handleProcessLedgerJournalReversal(request),
+    loadHandler: () => import("./ledger_journal/api/ledger-journal-reversal.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: LedgerJournalReversalRequestDto },
     summary: "Ledger Journal Reversal",
     description: "Ledger Journal Reversal Financial Document Processing Engine.",
@@ -352,7 +351,7 @@ export const apiDefinitions = {
   taxAdjustment: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/TAX_ADJUSTMENT",
-    handler: (request: any) => handleProcessTaxAdjustment(request),
+    loadHandler: () => import("./tax_adjustment/api/tax-adjustment.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: TaxAdjustmentRequestDto },
     summary: "Tax Adjustment",
     description: "Tax Adjustment Financial Document Processing Engine.",
@@ -367,7 +366,7 @@ export const apiDefinitions = {
   taxPayment: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/TAX_PAYMENT",
-    handler: (request: any) => handleProcessTaxPayment(request),
+    loadHandler: () => import("./tax_payment/api/tax-payment.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: TaxPaymentRequestDto },
     summary: "Tax Payment",
     description: "Tax Payment Financial Document Processing Engine.",
@@ -382,7 +381,7 @@ export const apiDefinitions = {
   taxRefund: {
     method: "POST",
     path: "/finance/[companyCode]/process-document/TAX_REFUND",
-    handler: (request: any) => handleProcessTaxRefund(request),
+    loadHandler: () => import("./tax_refund/api/tax-refund.http.handlers").then((module) => module.handleProcess),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: TaxRefundRequestDto },
     summary: "Tax Refund",
     description: "Tax Refund Financial Document Processing Engine.",

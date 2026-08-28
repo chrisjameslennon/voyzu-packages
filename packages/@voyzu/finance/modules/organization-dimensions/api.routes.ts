@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleActivate as handleDimensionsActivate, handleBatchActivate as handleDimensionsBatchActivate, handleBatchCreate as handleDimensionsBatchCreate, handleBatchDeactivate as handleDimensionsBatchDeactivate, handleBatchDelete as handleDimensionsBatchDelete, handleBatchGet as handleDimensionsBatchGet, handleBatchPatch as handleDimensionsBatchPatch, handleBatchUpdate as handleDimensionsBatchUpdate, handleCreate as handleDimensionsCreate, handleCreateValue as handleDimensionsCreateValue, handleDeactivate as handleDimensionsDeactivate, handleDelete as handleDimensionsDelete, handleDeleteValue as handleDimensionsDeleteValue, handleFilter as handleDimensionsFilter, handleGet as handleDimensionsGet, handleList as handleDimensionsList, handleListValues as handleDimensionsListValues, handlePatch as handleDimensionsPatch, handlePatchValue as handleDimensionsPatchValue, handleSearch as handleDimensionsSearch, handleUpdate as handleDimensionsUpdate } from "@voyzu/finance/common/dimensions/server";
-import { OrganizationDimensionsListPage, OrganizationDimensionDetailPage } from "@voyzu/finance/organization-dimensions/server";
 import { BusinessRuleErrorResponseDto, CodesRequestDto, ConflictErrorResponseDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { DimensionResponseDto } from "../../types/modules/dimensions/dimension.response.dto";
 import { DimensionPatchRequestDto } from "../../types/modules/dimensions/dimension.patch.request.dto";
@@ -18,7 +16,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/dimensions",
-    handler: (request: any) => handleDimensionsList(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleList),
     summary: "List",
     description: "List Organization Dimensions.",
     tags: ["Organization Dimensions"],
@@ -27,7 +25,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/finance/dimensions",
-    handler: (request: any) => handleDimensionsCreate(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleCreate),
     request: { contentType: "application/json", body: DimensionCreateRequestDto },
     summary: "Create",
     description: "Create Organization Dimensions.",
@@ -46,7 +44,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/finance/dimensions/filter",
-    handler: (request: any) => handleDimensionsFilter(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleFilter),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Organization Dimensions.",
@@ -62,7 +60,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/finance/dimensions/search",
-    handler: (request: any) => handleDimensionsSearch(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleSearch),
     request: { query: { parameters: { q: { description: "Search text used to match organization dimension records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Organization Dimensions.",
@@ -79,7 +77,7 @@ export const apiDefinitions = {
   batchCreate: {
     method: "POST",
     path: "/finance/dimensions/batch/create",
-    handler: (request: any) => handleDimensionsBatchCreate(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchCreate),
     request: { contentType: "application/json", body: Type.Array(DimensionCreateRequestDto) },
     summary: "Batch Create",
     description: "Batch Create Organization Dimensions.",
@@ -98,7 +96,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/finance/dimensions/batch/get",
-    handler: (request: any) => handleDimensionsBatchGet(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchGet),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Batch Get Organization Dimensions.",
@@ -115,7 +113,7 @@ export const apiDefinitions = {
   batchUpdate: {
     method: "PUT",
     path: "/finance/dimensions/batch/update",
-    handler: (request: any) => handleDimensionsBatchUpdate(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchUpdate),
     request: { contentType: "application/json", body: Type.Array(DimensionBatchUpdateRequestDto) },
     summary: "Batch Update",
     description: "Batch Update Organization Dimensions.",
@@ -135,7 +133,7 @@ export const apiDefinitions = {
   batchPatch: {
     method: "PATCH",
     path: "/finance/dimensions/batch/patch",
-    handler: (request: any) => handleDimensionsBatchPatch(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchPatch),
     request: { contentType: "application/json", body: Type.Array(DimensionBatchPatchRequestDto) },
     summary: "Batch Patch",
     description: "Batch Patch Organization Dimensions.",
@@ -155,7 +153,7 @@ export const apiDefinitions = {
   batchDelete: {
     method: "POST",
     path: "/finance/dimensions/batch/delete",
-    handler: (request: any) => handleDimensionsBatchDelete(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchDelete),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
     description: "Batch Delete Organization Dimensions.",
@@ -169,7 +167,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "POST",
     path: "/finance/dimensions/batch-activate",
-    handler: (request: any) => handleDimensionsBatchActivate(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchActivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
     description: "Batch Activate Organization Dimensions.",
@@ -187,7 +185,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "POST",
     path: "/finance/dimensions/batch-deactivate",
-    handler: (request: any) => handleDimensionsBatchDeactivate(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchDeactivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
     description: "Batch Deactivate Organization Dimensions.",
@@ -206,7 +204,7 @@ export const apiDefinitions = {
   activate: {
     method: "POST",
     path: "/finance/dimensions/[code]/activate",
-    handler: (request: any, context: any) => handleDimensionsActivate(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleActivate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
     description: "Activate Organization Dimensions.",
@@ -221,7 +219,7 @@ export const apiDefinitions = {
   deactivate: {
     method: "POST",
     path: "/finance/dimensions/[code]/deactivate",
-    handler: (request: any, context: any) => handleDimensionsDeactivate(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleDeactivate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
     description: "Deactivate Organization Dimensions.",
@@ -236,7 +234,7 @@ export const apiDefinitions = {
   listValues: {
     method: "GET",
     path: "/finance/dimensions/[code]/values",
-    handler: (request: any, context: any) => handleDimensionsListValues(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleListValues),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "List Values",
     description: "List Values Organization Dimensions.",
@@ -246,7 +244,7 @@ export const apiDefinitions = {
   createValue: {
     method: "POST",
     path: "/finance/dimensions/[code]/values",
-    handler: (request: any, context: any) => handleDimensionsCreateValue(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleCreateValue),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionValueCreateRequestDto },
     summary: "Create Value",
     description: "Create Value Organization Dimensions.",
@@ -266,7 +264,7 @@ export const apiDefinitions = {
   patchValue: {
     method: "PATCH",
     path: "/finance/dimensions/values/[id]",
-    handler: (request: any, context: any) => handleDimensionsPatchValue(request, context as { params: Promise<{ id: string }> }),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handlePatchValue),
     request: { path: { id: { description: "Unique identifier of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionValuePatchRequestDto },
     summary: "Patch Value",
     description: "Patch Value Organization Dimensions.",
@@ -284,7 +282,7 @@ export const apiDefinitions = {
   deleteValue: {
     method: "DELETE",
     path: "/finance/dimensions/values/[id]",
-    handler: (request: any, context: any) => handleDimensionsDeleteValue(request, context as { params: Promise<{ id: string }> }),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleDeleteValue),
     request: { path: { id: { description: "Unique identifier of the requested record.", schema: { type: "string" } } } },
     summary: "Delete Value",
     description: "Delete Value Organization Dimensions.",
@@ -294,7 +292,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/dimensions/[code]",
-    handler: (request: any, context: any) => handleDimensionsGet(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleGet),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Organization Dimensions.",
@@ -304,7 +302,7 @@ export const apiDefinitions = {
   update: {
     method: "PUT",
     path: "/finance/dimensions/[code]",
-    handler: (request: any, context: any) => handleDimensionsUpdate(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleUpdate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionUpdateRequestDto },
     summary: "Update",
     description: "Update Organization Dimensions.",
@@ -324,7 +322,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/dimensions/[code]",
-    handler: (request: any, context: any) => handleDimensionsPatch(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handlePatch),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionPatchRequestDto },
     summary: "Patch",
     description: "Patch Organization Dimensions.",
@@ -344,7 +342,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/finance/dimensions/[code]",
-    handler: (request: any, context: any) => handleDimensionsDelete(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleDelete),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
     description: "Delete Organization Dimensions.",

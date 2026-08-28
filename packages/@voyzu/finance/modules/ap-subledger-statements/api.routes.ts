@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleListApCounterpartySummaries } from "@voyzu/finance/ap-subledger-statements/server";
-import { ApStatementsListPage, ApStatementDetailPage } from "@voyzu/finance/ap-subledger-statements/server";
 import { InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { ApCounterpartySummaryResponseDto } from "../../types/modules/ap-subledger/ap-counterparty-summary.response.dto";
 
@@ -10,7 +8,7 @@ export const apiDefinitions = {
   summariesList: {
     method: "GET",
     path: "/finance/[companyCode]/ap-subledger/counterparty-summaries",
-    handler: (request: any) => handleListApCounterpartySummaries(request),
+    loadHandler: () => import("./server/api/ap-subledger-statement.http.handlers").then((module) => module.handleListApCounterpartySummaries),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "Summaries List",
     description: "Summaries List AP Subledger Statements.",

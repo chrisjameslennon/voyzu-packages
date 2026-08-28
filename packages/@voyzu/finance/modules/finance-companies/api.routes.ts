@@ -3,20 +3,12 @@ import { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputVali
 import { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
 import { OrganizationSelectionResponseDto, OrganizationSelectionUpdateResponseDto } from "@voyzu/erp-core/types/modules/organization-switcher";
 import { OrganizationSelectionUpdateRequestDto } from "@voyzu/erp-core/organization-switcher/types";
-import {
-  handleActivate,
-  handleGet,
-  handleGetFinanceCompanySelection,
-  handleList,
-  handleSetFinanceCompanySelection,
-  handleUpdate,
-} from "./server/api/finance-company.http.handlers";
 
 const codePath = { code: { description: "ERP company business code.", schema: Type.String() } };
 
 export const apiDefinitions = {
   companySelection: {
-    method: "GET", path: "/finance/company-selection", handler: handleGetFinanceCompanySelection,
+    method: "GET", path: "/finance/company-selection", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleGetFinanceCompanySelection),
     summary: "Get selected Finance company", description: "Lists Finance-enabled companies accessible to the current user and resolves the selected company.", tags: ["Finance Companies"],
     responses: {
       "200": { description: "Finance company selection.", body: OrganizationSelectionResponseDto },
@@ -24,7 +16,7 @@ export const apiDefinitions = {
     },
   },
   setOrganizationSelection: {
-    method: "PUT", path: "/finance/company-selection", handler: handleSetFinanceCompanySelection,
+    method: "PUT", path: "/finance/company-selection", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleSetFinanceCompanySelection),
     request: { contentType: "application/json", body: OrganizationSelectionUpdateRequestDto },
     summary: "Select Finance company", description: "Selects an accessible Finance-enabled company.", tags: ["Finance Companies"],
     responses: {
@@ -35,7 +27,7 @@ export const apiDefinitions = {
     },
   },
   list: {
-    method: "GET", path: "/finance/companies", handler: handleList,
+    method: "GET", path: "/finance/companies", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleList),
     summary: "List Finance companies", description: "Lists ERP companies with their Finance activation state and financial settings.", tags: ["Finance Companies"],
     responses: {
       "200": { description: "ERP organizations with their Finance activation state.", body: Type.Array(FinanceCompanyResponseDto) },
@@ -43,7 +35,7 @@ export const apiDefinitions = {
     },
   },
   get: {
-    method: "GET", path: "/finance/companies/[code]", handler: handleGet,
+    method: "GET", path: "/finance/companies/[code]", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleGet),
     request: { path: codePath }, summary: "Get Finance company", description: "Gets an ERP company and its Finance activation state and settings.", tags: ["Finance Companies"],
     responses: {
       "200": { description: "Finance company details.", body: FinanceCompanyResponseDto },
@@ -52,7 +44,7 @@ export const apiDefinitions = {
     },
   },
   activate: {
-    method: "POST", path: "/finance/companies/[code]/activate", handler: handleActivate,
+    method: "POST", path: "/finance/companies/[code]/activate", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleActivate),
     request: { path: codePath }, summary: "Enable an ERP company for Finance", description: "Creates the Finance company aggregate from its country settings and creates its fiscal calendar.", tags: ["Finance Companies"],
     responses: {
       "200": { description: "Activated Finance company.", body: FinanceCompanyResponseDto },
@@ -62,7 +54,7 @@ export const apiDefinitions = {
     },
   },
   update: {
-    method: "PUT", path: "/finance/companies/[code]", handler: handleUpdate,
+    method: "PUT", path: "/finance/companies/[code]", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleUpdate),
     request: { path: codePath, contentType: "application/json", body: FinanceCompanyUpdateRequestDto },
     summary: "Update Finance company settings", description: "Updates Finance-owned tax, report and standard-setting fields; ERP identity remains read-only.", tags: ["Finance Companies"],
     responses: {

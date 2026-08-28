@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleListApCounterpartySummaries } from "@voyzu/finance/ap-subledger-statements/server";
-import { ApStatementsListPage, ApStatementDetailPage } from "@voyzu/finance/ap-subledger-statements/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "AP Statements",
     helpPath: "modules-help/company-ledger/ap-statements",
     path: "/finance/subledgers/ap/statements",
-    Page: ApStatementsListPage,
+    loadPage: () => import("./server/pages/ApStatementsListPage").then((module) => module.ApStatementsListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "AP Statement",
     helpPath: "modules-help/company-ledger/ap-statements",
     path: "/finance/subledgers/ap/statements/[code]",
-    Page: ApStatementDetailPage,
+    loadPage: () => import("./server/pages/ApStatementDetailPage").then((module) => module.ApStatementDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -33,7 +31,7 @@ export const pageRoutes = {
     id: "voyzu.ap-subledger-statements.page.detail.printable",
     pageTitle: "AP Statement",
     path: "/finance/subledgers/ap/statements/[code]/printable",
-    Page: ApStatementDetailPage,
+    loadPage: () => import("./server/pages/ApStatementDetailPage").then((module) => module.ApStatementDetailPage),
     unframed: true,
     auth: companyFinancePageAuth
   }

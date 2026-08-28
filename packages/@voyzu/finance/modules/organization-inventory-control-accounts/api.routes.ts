@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleListInventoryControlAccounts, handlePatchInventoryControlAccount } from "@voyzu/finance/common/inventory-control-accounts/server";
-import { OrganizationInventoryControlAccountsPage, OrganizationInventoryControlAccountDetailPage } from "@voyzu/finance/organization-inventory-control-accounts/server";
 import { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { InventoryControlAccountSettingResponseDto } from "../../types/modules/inventory-control-accounts/inventory-control-account-setting.response.dto";
 import { InventoryControlAccountPatchRequestDto } from "../../types/modules/inventory-control-accounts/inventory-control-account.patch.request.dto";
@@ -11,7 +9,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/inventory-control-accounts",
-    handler: (request: any) => handleListInventoryControlAccounts(request),
+    loadHandler: () => import("../common/inventory-control-accounts/server/api/inventory-control-account.http.handlers").then((module) => module.handleListInventoryControlAccounts),
     summary: "List",
     description: "List Organization Inventory Control Accounts.",
     tags: ["Organization Inventory Control Accounts"],
@@ -26,7 +24,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/inventory-control-accounts/[code]",
-    handler: (request: any, context: any) => handlePatchInventoryControlAccount(request, context),
+    loadHandler: () => import("../common/inventory-control-accounts/server/api/inventory-control-account.http.handlers").then((module) => module.handlePatchInventoryControlAccount),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: InventoryControlAccountPatchRequestDto },
     summary: "Patch",
     description: "Patch Organization Inventory Control Accounts.",

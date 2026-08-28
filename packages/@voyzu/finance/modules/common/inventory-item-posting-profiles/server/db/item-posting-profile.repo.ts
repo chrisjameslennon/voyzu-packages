@@ -35,12 +35,7 @@ const SELECT_SQL = `
          ipp.updated_actor_type,
          ipp.updated_user_id,
          ipp.updated_mutation_id,
-         COALESCE((
-           SELECT jsonb_agg(jsonb_build_object('type', 'Inventory Categories', 'code', category.code) ORDER BY category.code)
-           FROM inventory_category category
-           WHERE category.finance_organization_id = ipp.finance_organization_id
-             AND category.posting_profile_id = ipp.id
-         ), '[]'::jsonb) AS linked_by
+         '[]'::jsonb AS linked_by
   FROM item_posting_profile ipp
   LEFT JOIN gl_account rev ON rev.finance_organization_id = ipp.finance_organization_id AND rev.id = ipp.revenue_gl_account_id
   LEFT JOIN gl_account cogs ON cogs.finance_organization_id = ipp.finance_organization_id AND cogs.id = ipp.cogs_gl_account_id

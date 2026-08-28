@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleActivate as handleFinancialDocumentDefaultsActivate, handleBatchActivate as handleFinancialDocumentDefaultsBatchActivate, handleBatchCreate as handleFinancialDocumentDefaultsBatchCreate, handleBatchDeactivate as handleFinancialDocumentDefaultsBatchDeactivate, handleBatchDelete as handleFinancialDocumentDefaultsBatchDelete, handleBatchGet as handleFinancialDocumentDefaultsBatchGet, handleBatchPatch as handleFinancialDocumentDefaultsBatchPatch, handleBatchUpdate as handleFinancialDocumentDefaultsBatchUpdate, handleCreate as handleFinancialDocumentDefaultsCreate, handleDeactivate as handleFinancialDocumentDefaultsDeactivate, handleDelete as handleFinancialDocumentDefaultsDelete, handleFilter as handleFinancialDocumentDefaultsFilter, handleGet as handleFinancialDocumentDefaultsGet, handleList as handleFinancialDocumentDefaultsList, handlePatch as handleFinancialDocumentDefaultsPatch, handleSearch as handleFinancialDocumentDefaultsSearch, handleUpdate as handleFinancialDocumentDefaultsUpdate } from "@voyzu/finance/common/financial-document-defaults/server";
-import { OrganizationFinancialDocumentDefaultsListPage, OrganizationFinancialDocumentDefaultDetailPage } from "@voyzu/finance/organization-financial-document-defaults/server";
 import { BusinessRuleErrorResponseDto, ConflictErrorResponseDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { FinancialDocumentDefaultResponseDto } from "../../types/modules/financial-document-defaults/financial-document-default.response.dto";
 import { FinancialDocumentDefaultPatchRequestDto } from "../../types/modules/financial-document-defaults/financial-document-default.patch.request.dto";
@@ -16,7 +14,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/financial-document-defaults",
-    handler: (request: any) => handleFinancialDocumentDefaultsList(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleList),
     summary: "List",
     description: "List Organization Financial Document Defaults.",
     tags: ["Organization Financial Document Defaults"],
@@ -25,7 +23,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/finance/financial-document-defaults",
-    handler: (request: any) => handleFinancialDocumentDefaultsCreate(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleCreate),
     request: { contentType: "application/json", body: FinancialDocumentDefaultCreateRequestDto },
     summary: "Create",
     description: "Create Organization Financial Document Defaults.",
@@ -44,7 +42,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/finance/financial-document-defaults/filter",
-    handler: (request: any) => handleFinancialDocumentDefaultsFilter(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleFilter),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Organization Financial Document Defaults.",
@@ -60,7 +58,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/finance/financial-document-defaults/search",
-    handler: (request: any) => handleFinancialDocumentDefaultsSearch(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleSearch),
     request: { query: { parameters: { q: { description: "Search text used to match organization financial document default records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Organization Financial Document Defaults.",
@@ -77,7 +75,7 @@ export const apiDefinitions = {
   batchCreate: {
     method: "POST",
     path: "/finance/financial-document-defaults/batch/create",
-    handler: (request: any) => handleFinancialDocumentDefaultsBatchCreate(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchCreate),
     request: { contentType: "application/json", body: Type.Array(FinancialDocumentDefaultCreateRequestDto) },
     summary: "Batch Create",
     description: "Batch Create Organization Financial Document Defaults.",
@@ -96,7 +94,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/finance/financial-document-defaults/batch/get",
-    handler: (request: any) => handleFinancialDocumentDefaultsBatchGet(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchGet),
     request: { contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Get",
     description: "Batch Get Organization Financial Document Defaults.",
@@ -113,7 +111,7 @@ export const apiDefinitions = {
   batchUpdate: {
     method: "PUT",
     path: "/finance/financial-document-defaults/batch/update",
-    handler: (request: any) => handleFinancialDocumentDefaultsBatchUpdate(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchUpdate),
     request: { contentType: "application/json", body: Type.Array(FinancialDocumentDefaultBatchUpdateRequestDto) },
     summary: "Batch Update",
     description: "Batch Update Organization Financial Document Defaults.",
@@ -133,7 +131,7 @@ export const apiDefinitions = {
   batchPatch: {
     method: "PATCH",
     path: "/finance/financial-document-defaults/batch/patch",
-    handler: (request: any) => handleFinancialDocumentDefaultsBatchPatch(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchPatch),
     request: { contentType: "application/json", body: Type.Array(FinancialDocumentDefaultBatchPatchRequestDto) },
     summary: "Batch Patch",
     description: "Batch Patch Organization Financial Document Defaults.",
@@ -153,7 +151,7 @@ export const apiDefinitions = {
   batchDelete: {
     method: "POST",
     path: "/finance/financial-document-defaults/batch/delete",
-    handler: (request: any) => handleFinancialDocumentDefaultsBatchDelete(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchDelete),
     request: { contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Delete",
     description: "Batch Delete Organization Financial Document Defaults.",
@@ -168,7 +166,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "POST",
     path: "/finance/financial-document-defaults/batch/activate",
-    handler: (request: any) => handleFinancialDocumentDefaultsBatchActivate(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchActivate),
     request: { contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Activate",
     description: "Batch Activate Organization Financial Document Defaults.",
@@ -183,7 +181,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "POST",
     path: "/finance/financial-document-defaults/batch/deactivate",
-    handler: (request: any) => handleFinancialDocumentDefaultsBatchDeactivate(request),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleBatchDeactivate),
     request: { contentType: "application/json", body: FinancialDocumentDefaultKeysRequestDto },
     summary: "Batch Deactivate",
     description: "Batch Deactivate Organization Financial Document Defaults.",
@@ -198,7 +196,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/financial-document-defaults/[code]",
-    handler: (request: any, context: any) => handleFinancialDocumentDefaultsGet(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleGet),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Organization Financial Document Defaults.",
@@ -208,7 +206,7 @@ export const apiDefinitions = {
   update: {
     method: "PUT",
     path: "/finance/financial-document-defaults/[code]",
-    handler: (request: any, context: any) => handleFinancialDocumentDefaultsUpdate(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleUpdate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultUpdateRequestDto },
     summary: "Update",
     description: "Update Organization Financial Document Defaults.",
@@ -228,7 +226,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/financial-document-defaults/[code]",
-    handler: (request: any, context: any) => handleFinancialDocumentDefaultsPatch(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handlePatch),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: FinancialDocumentDefaultPatchRequestDto },
     summary: "Patch",
     description: "Patch Organization Financial Document Defaults.",
@@ -248,7 +246,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/finance/financial-document-defaults/[code]",
-    handler: (request: any, context: any) => handleFinancialDocumentDefaultsDelete(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleDelete),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
     description: "Delete Organization Financial Document Defaults.",
@@ -258,7 +256,7 @@ export const apiDefinitions = {
   activate: {
     method: "POST",
     path: "/finance/financial-document-defaults/[code]/activate",
-    handler: (request: any, context: any) => handleFinancialDocumentDefaultsActivate(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleActivate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
     description: "Activate Organization Financial Document Defaults.",
@@ -273,7 +271,7 @@ export const apiDefinitions = {
   deactivate: {
     method: "POST",
     path: "/finance/financial-document-defaults/[code]/deactivate",
-    handler: (request: any, context: any) => handleFinancialDocumentDefaultsDeactivate(request, context),
+    loadHandler: () => import("../common/financial-document-defaults/server/api/financial-document-default.http.handlers").then((module) => module.handleDeactivate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
     description: "Deactivate Organization Financial Document Defaults.",

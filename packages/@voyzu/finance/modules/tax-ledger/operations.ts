@@ -1,13 +1,18 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { TaxSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/tax-ledger";
 
-import * as service0 from "./server/lib/tax-ledger.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const getTaxSubledgerEntry = operation(service0.getTaxSubledgerEntry);
-export const listTaxSubledgerEntries = operation(service0.listTaxSubledgerEntries);
+export const getTaxSubledgerEntry = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String()]), result: Type.Union([TaxSubledgerEntryResponseDto, Type.Null()]) },
+  () => import("./server/lib/tax-ledger.service").then((module) => module.getTaxSubledgerEntry),
+);
+export const listTaxSubledgerEntries = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number()]), result: Type.Array(TaxSubledgerEntryResponseDto) },
+  () => import("./server/lib/tax-ledger.service").then((module) => module.listTaxSubledgerEntries),
+);
 
 export const operations = {
   getTaxSubledgerEntry,

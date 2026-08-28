@@ -1,38 +1,72 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { ApSubledgerEntriesAuditResponseDto, ArSubledgerEntriesAuditResponseDto, BankCashMovementResponseDto, FinancialIntegrityResponseDto, InventoryLedgerEntriesAuditResponseDto, JournalEntriesResponseDto, ProfitLossAnalysisResponseDto, ProfitLossBreakdownDto, ProfitLossDimensionSelectionDto, ProfitLossResponseDto, TaxActivityReconciliationResponseDto, TaxActivityResponseDto, TaxLedgerEntriesAuditResponseDto, TaxPositionResponseDto, TrialBalanceResponseDto } from "@voyzu/finance/types/modules/company-reports";
+import { BalanceSheetResponseDto } from "@voyzu/finance/types/modules/company-reports/balance-sheet";
+import { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
 
-import * as service0 from "./ap-subledger-entries-audit/server/lib/ap-subledger-entries-audit.service";
-import * as service1 from "./ar-subledger-entries-audit/server/lib/ar-subledger-entries-audit.service";
-import * as service2 from "./balance-sheet/server/lib/balance-sheet.service";
-import * as service3 from "./bank-cash-movement/server/lib/bank-cash-movement.service";
-import * as service4 from "./financial-integrity/server/lib/financial-integrity.service";
-import * as service5 from "./inventory-ledger-entries-audit/server/lib/inventory-ledger-entries-audit.service";
-import * as service6 from "./journal-entries/server/lib/journal-entries.service";
-import * as service7 from "./profit-loss/server/lib/profit-loss.service";
-import * as service8 from "./tax-activity/server/lib/tax-activity.service";
-import * as service9 from "./tax-activity-reconciliation/server/lib/tax-activity-reconciliation.service";
-import * as service10 from "./tax-ledger-entries-audit/server/lib/tax-ledger-entries-audit.service";
-import * as service11 from "./tax-position/server/lib/tax-position.service";
-import * as service12 from "./trial-balance/server/lib/trial-balance.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const getApSubledgerEntriesAudit = operation(service0.getApSubledgerEntriesAudit);
-export const getArSubledgerEntriesAudit = operation(service1.getArSubledgerEntriesAudit);
-export const listFinancialYearsWithPostings = operation(service2.listFinancialYearsWithPostings);
-export const getBalanceSheet = operation(service2.getBalanceSheet);
-export const getBankCashMovement = operation(service3.getBankCashMovement);
-export const getFinancialIntegrity = operation(service4.getFinancialIntegrity);
-export const getInventoryLedgerEntriesAudit = operation(service5.getInventoryLedgerEntriesAudit);
-export const getJournalEntries = operation(service6.getJournalEntries);
-export const getProfitLoss = operation(service7.getProfitLoss);
-export const getProfitLossAnalysis = operation(service7.getProfitLossAnalysis);
-export const getTaxActivity = operation(service8.getTaxActivity);
-export const getTaxActivityReconciliation = operation(service9.getTaxActivityReconciliation);
-export const getTaxLedgerEntriesAudit = operation(service10.getTaxLedgerEntriesAudit);
-export const getTaxPosition = operation(service11.getTaxPosition);
-export const getTrialBalance = operation(service12.getTrialBalance);
+export const getApSubledgerEntriesAudit = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String(), Type.String()]), result: ApSubledgerEntriesAuditResponseDto },
+  () => import("./ap-subledger-entries-audit/server/lib/ap-subledger-entries-audit.service").then((module) => module.getApSubledgerEntriesAudit),
+);
+export const getArSubledgerEntriesAudit = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String(), Type.String()]), result: ArSubledgerEntriesAuditResponseDto },
+  () => import("./ar-subledger-entries-audit/server/lib/ar-subledger-entries-audit.service").then((module) => module.getArSubledgerEntriesAudit),
+);
+export const listFinancialYearsWithPostings = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number()]), result: Type.Array(FinancialYearResponseDto) },
+  () => import("./balance-sheet/server/lib/balance-sheet.service").then((module) => module.listFinancialYearsWithPostings),
+);
+export const getBalanceSheet = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Number()]), Type.Tuple([Type.Number(), Type.Union([Type.String(), Type.Null()])])]), result: BalanceSheetResponseDto },
+  () => import("./balance-sheet/server/lib/balance-sheet.service").then((module) => module.getBalanceSheet),
+);
+export const getBankCashMovement = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Number(), Type.String(), Type.String()]), Type.Tuple([Type.Number(), Type.String(), Type.String(), Type.Union([Type.String(), Type.Null()])])]), result: BankCashMovementResponseDto },
+  () => import("./bank-cash-movement/server/lib/bank-cash-movement.service").then((module) => module.getBankCashMovement),
+);
+export const getFinancialIntegrity = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Number(), Type.String(), Type.String()]), Type.Tuple([Type.Number(), Type.String(), Type.String(), Type.Union([Type.String(), Type.Null()])])]), result: FinancialIntegrityResponseDto },
+  () => import("./financial-integrity/server/lib/financial-integrity.service").then((module) => module.getFinancialIntegrity),
+);
+export const getInventoryLedgerEntriesAudit = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String(), Type.String()]), result: InventoryLedgerEntriesAuditResponseDto },
+  () => import("./inventory-ledger-entries-audit/server/lib/inventory-ledger-entries-audit.service").then((module) => module.getInventoryLedgerEntriesAudit),
+);
+export const getJournalEntries = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String(), Type.String()]), result: JournalEntriesResponseDto },
+  () => import("./journal-entries/server/lib/journal-entries.service").then((module) => module.getJournalEntries),
+);
+export const getProfitLoss = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String(), Type.String()]), result: ProfitLossResponseDto },
+  () => import("./profit-loss/server/lib/profit-loss.service").then((module) => module.getProfitLoss),
+);
+export const getProfitLossAnalysis = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String(), Type.String(), Type.Array(ProfitLossDimensionSelectionDto), Type.Union([ProfitLossBreakdownDto, Type.Null()])]), result: ProfitLossAnalysisResponseDto },
+  () => import("./profit-loss/server/lib/profit-loss.service").then((module) => module.getProfitLossAnalysis),
+);
+export const getTaxActivity = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String(), Type.String(), Type.String()]), result: TaxActivityResponseDto },
+  () => import("./tax-activity/server/lib/tax-activity.service").then((module) => module.getTaxActivity),
+);
+export const getTaxActivityReconciliation = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Number(), Type.String(), Type.String(), Type.String()]), Type.Tuple([Type.Number(), Type.String(), Type.String(), Type.String(), Type.Union([Type.String(), Type.Null()])])]), result: TaxActivityReconciliationResponseDto },
+  () => import("./tax-activity-reconciliation/server/lib/tax-activity-reconciliation.service").then((module) => module.getTaxActivityReconciliation),
+);
+export const getTaxLedgerEntriesAudit = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String(), Type.String()]), result: TaxLedgerEntriesAuditResponseDto },
+  () => import("./tax-ledger-entries-audit/server/lib/tax-ledger-entries-audit.service").then((module) => module.getTaxLedgerEntriesAudit),
+);
+export const getTaxPosition = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String()]), result: TaxPositionResponseDto },
+  () => import("./tax-position/server/lib/tax-position.service").then((module) => module.getTaxPosition),
+);
+export const getTrialBalance = platformOperation.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Number()]), Type.Tuple([Type.Number(), Type.Union([Type.String(), Type.Null()])])]), result: TrialBalanceResponseDto },
+  () => import("./trial-balance/server/lib/trial-balance.service").then((module) => module.getTrialBalance),
+);
 
 export const operations = {
   getApSubledgerEntriesAudit,

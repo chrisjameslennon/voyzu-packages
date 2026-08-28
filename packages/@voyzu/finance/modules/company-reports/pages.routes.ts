@@ -1,31 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleGetTaxLedgerEntriesAudit } from "@voyzu/finance/company-reports/tax-ledger-entries-audit/server";
-import { handleGetInventoryLedgerEntriesAudit } from "@voyzu/finance/company-reports/inventory-ledger-entries-audit/server";
-import { handleGetApSubledgerEntriesAudit } from "@voyzu/finance/company-reports/ap-subledger-entries-audit/server";
-import { handleGetArSubledgerEntriesAudit } from "@voyzu/finance/company-reports/ar-subledger-entries-audit/server";
-import { handleGetTaxActivityReconciliation } from "@voyzu/finance/company-reports/tax-activity-reconciliation/server";
-import { handleGetTaxActivity } from "@voyzu/finance/company-reports/tax-activity/server";
-import { handleGetProfitLoss, handleGetProfitLossAnalysis } from "@voyzu/finance/company-reports/profit-loss/server";
-import { handleGetFinancialIntegrity } from "@voyzu/finance/company-reports/financial-integrity/server";
-import { handleGetJournalEntries } from "@voyzu/finance/company-reports/journal-entries/server";
-import { handleGetBankCashMovement } from "@voyzu/finance/company-reports/bank-cash-movement/server";
-import { handleGetTaxPosition } from "@voyzu/finance/company-reports/tax-position/server";
-import { handleGetTrialBalance } from "@voyzu/finance/company-reports/trial-balance/server";
-import { handleGetBalanceSheet, handleListFinancialYears, handleGetBalanceSheetPdf } from "@voyzu/finance/company-reports/balance-sheet/server";
-import { BalanceSheetReportPage } from "@voyzu/finance/company-reports/balance-sheet/server";
-import { TrialBalanceReportPage } from "@voyzu/finance/company-reports/trial-balance/server";
-import { TaxPositionReportPage } from "@voyzu/finance/company-reports/tax-position/server";
-import { BankCashMovementReportPage } from "@voyzu/finance/company-reports/bank-cash-movement/server";
-import { JournalEntriesReportPage } from "@voyzu/finance/company-reports/journal-entries/server";
-import { AccountActivityReportPage } from "@voyzu/finance/company-reports/account-activity/server";
-import { FinancialIntegrityReportPage } from "@voyzu/finance/company-reports/financial-integrity/server";
-import { ProfitLossReportPage, ProfitLossAnalysisReportPage } from "@voyzu/finance/company-reports/profit-loss/server";
-import { TaxActivityReportPage } from "@voyzu/finance/company-reports/tax-activity/server";
-import { TaxActivityReconciliationReportPage } from "@voyzu/finance/company-reports/tax-activity-reconciliation/server";
-import { ArSubledgerEntriesAuditReportPage } from "@voyzu/finance/company-reports/ar-subledger-entries-audit/server";
-import { ApSubledgerEntriesAuditReportPage } from "@voyzu/finance/company-reports/ap-subledger-entries-audit/server";
-import { InventoryLedgerEntriesAuditReportPage } from "@voyzu/finance/company-reports/inventory-ledger-entries-audit/server";
-import { TaxLedgerEntriesAuditReportPage } from "@voyzu/finance/company-reports/tax-ledger-entries-audit/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   balanceSheet: {
@@ -33,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Balance Sheet",
     helpPath: "modules-help/company-ledger/balance-sheet",
     path: "/finance/reports/balance-sheet",
-    Page: BalanceSheetReportPage,
+    loadPage: () => import("./balance-sheet/server/pages/BalanceSheetReportPage").then((module) => module.BalanceSheetReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -45,7 +18,7 @@ export const pageRoutes = {
     pageTitle: "Trial Balance",
     helpPath: "modules-help/company-ledger/trial-balance",
     path: "/finance/reports/trial-balance",
-    Page: TrialBalanceReportPage,
+    loadPage: () => import("./trial-balance/server/pages/TrialBalanceReportPage").then((module) => module.TrialBalanceReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -57,7 +30,7 @@ export const pageRoutes = {
     pageTitle: "Tax Position",
     helpPath: "modules-help/company-ledger/tax-position",
     path: "/finance/reports/tax-position",
-    Page: TaxPositionReportPage,
+    loadPage: () => import("./tax-position/server/pages/TaxPositionReportPage").then((module) => module.TaxPositionReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -69,7 +42,7 @@ export const pageRoutes = {
     pageTitle: "Bank / Cash Movement",
     helpPath: "modules-help/company-ledger/bank-cash-movement",
     path: "/finance/reports/bank-cash-movement",
-    Page: BankCashMovementReportPage,
+    loadPage: () => import("./bank-cash-movement/server/pages/BankCashMovementReportPage").then((module) => module.BankCashMovementReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -81,7 +54,7 @@ export const pageRoutes = {
     pageTitle: "Journal Entries",
     helpPath: "modules-help/company-ledger/journal-entries-report",
     path: "/finance/reports/journal-entries",
-    Page: JournalEntriesReportPage,
+    loadPage: () => import("./journal-entries/server/pages/JournalEntriesReportPage").then((module) => module.JournalEntriesReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -94,7 +67,7 @@ export const pageRoutes = {
     pageTitle: "Account Activity",
     helpPath: "modules-help/company-ledger/account-activity",
     path: "/finance/general-ledger/account-activity",
-    Page: AccountActivityReportPage,
+    loadPage: () => import("./account-activity/server/pages/AccountActivityReportPage").then((module) => module.AccountActivityReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Company General Ledger" },
@@ -106,7 +79,7 @@ export const pageRoutes = {
     pageTitle: "Financial Integrity",
     helpPath: "modules-help/company-ledger/financial-integrity",
     path: "/finance/reports/financial-integrity",
-    Page: FinancialIntegrityReportPage,
+    loadPage: () => import("./financial-integrity/server/pages/FinancialIntegrityReportPage").then((module) => module.FinancialIntegrityReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -119,7 +92,7 @@ export const pageRoutes = {
     pageTitle: "Profit & Loss",
     helpPath: "modules-help/company-ledger/profit-loss",
     path: "/finance/reports/profit-loss",
-    Page: ProfitLossReportPage,
+    loadPage: () => import("./profit-loss/server/pages/ProfitLossReportPage").then((module) => module.ProfitLossReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -132,7 +105,7 @@ export const pageRoutes = {
     pageTitle: "Profit & Loss Analysis",
     helpPath: "modules-help/company-ledger/profit-loss-analysis",
     path: "/finance/reports/profit-loss-analysis",
-    Page: ProfitLossAnalysisReportPage,
+    loadPage: () => import("./profit-loss/server/pages/ProfitLossAnalysisReportPage").then((module) => module.ProfitLossAnalysisReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -145,7 +118,7 @@ export const pageRoutes = {
     pageTitle: "Tax Return",
     helpPath: "modules-help/company-ledger/tax-return",
     path: "/finance/reports/tax-activity",
-    Page: TaxActivityReportPage,
+    loadPage: () => import("./tax-activity/server/pages/TaxActivityReportPage").then((module) => module.TaxActivityReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -158,7 +131,7 @@ export const pageRoutes = {
     pageTitle: "Tax Reconciliation",
     helpPath: "modules-help/company-ledger/tax-reconciliation",
     path: "/finance/reports/tax-activity-reconciliation",
-    Page: TaxActivityReconciliationReportPage,
+    loadPage: () => import("./tax-activity-reconciliation/server/pages/TaxActivityReconciliationReportPage").then((module) => module.TaxActivityReconciliationReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -171,7 +144,7 @@ export const pageRoutes = {
     pageTitle: "AR Subledger Entries",
     helpPath: "modules-help/company-ledger/ar-subledger-entries-report",
     path: "/finance/reports/ar-subledger-entries-audit",
-    Page: ArSubledgerEntriesAuditReportPage,
+    loadPage: () => import("./ar-subledger-entries-audit/server/pages/ArSubledgerEntriesAuditReportPage").then((module) => module.ArSubledgerEntriesAuditReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -184,7 +157,7 @@ export const pageRoutes = {
     pageTitle: "AP Subledger Entries",
     helpPath: "modules-help/company-ledger/ap-subledger-entries-report",
     path: "/finance/reports/ap-subledger-entries-audit",
-    Page: ApSubledgerEntriesAuditReportPage,
+    loadPage: () => import("./ap-subledger-entries-audit/server/pages/ApSubledgerEntriesAuditReportPage").then((module) => module.ApSubledgerEntriesAuditReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -197,7 +170,7 @@ export const pageRoutes = {
     pageTitle: "Inventory Ledger Entries",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries-report",
     path: "/finance/reports/inventory-ledger-entries-audit",
-    Page: InventoryLedgerEntriesAuditReportPage,
+    loadPage: () => import("./inventory-ledger-entries-audit/server/pages/InventoryLedgerEntriesAuditReportPage").then((module) => module.InventoryLedgerEntriesAuditReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -210,7 +183,7 @@ export const pageRoutes = {
     pageTitle: "Tax Ledger Entries",
     helpPath: "modules-help/company-ledger/tax-ledger-entries-report",
     path: "/finance/reports/tax-ledger-entries-audit",
-    Page: TaxLedgerEntriesAuditReportPage,
+    loadPage: () => import("./tax-ledger-entries-audit/server/pages/TaxLedgerEntriesAuditReportPage").then((module) => module.TaxLedgerEntriesAuditReportPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Reports" },
@@ -222,7 +195,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.apSubledgerEntriesAudit.printable",
     pageTitle: "AP Subledger Entries",
     path: "/finance/reports/ap-subledger-entries-audit/printable",
-    Page: ApSubledgerEntriesAuditReportPage,
+    loadPage: () => import("./ap-subledger-entries-audit/server/pages/ApSubledgerEntriesAuditReportPage").then((module) => module.ApSubledgerEntriesAuditReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -230,7 +203,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.arSubledgerEntriesAudit.printable",
     pageTitle: "AR Subledger Entries",
     path: "/finance/reports/ar-subledger-entries-audit/printable",
-    Page: ArSubledgerEntriesAuditReportPage,
+    loadPage: () => import("./ar-subledger-entries-audit/server/pages/ArSubledgerEntriesAuditReportPage").then((module) => module.ArSubledgerEntriesAuditReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -238,7 +211,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.balanceSheet.printable",
     pageTitle: "Balance Sheet",
     path: "/finance/reports/balance-sheet/printable",
-    Page: BalanceSheetReportPage,
+    loadPage: () => import("./balance-sheet/server/pages/BalanceSheetReportPage").then((module) => module.BalanceSheetReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -246,7 +219,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.bankCashMovement.printable",
     pageTitle: "Bank / Cash Movement",
     path: "/finance/reports/bank-cash-movement/printable",
-    Page: BankCashMovementReportPage,
+    loadPage: () => import("./bank-cash-movement/server/pages/BankCashMovementReportPage").then((module) => module.BankCashMovementReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -254,7 +227,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.financialIntegrity.printable",
     pageTitle: "Financial Integrity",
     path: "/finance/reports/financial-integrity/printable",
-    Page: FinancialIntegrityReportPage,
+    loadPage: () => import("./financial-integrity/server/pages/FinancialIntegrityReportPage").then((module) => module.FinancialIntegrityReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -262,7 +235,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.inventoryLedgerEntriesAudit.printable",
     pageTitle: "Inventory Ledger Entries",
     path: "/finance/reports/inventory-ledger-entries-audit/printable",
-    Page: InventoryLedgerEntriesAuditReportPage,
+    loadPage: () => import("./inventory-ledger-entries-audit/server/pages/InventoryLedgerEntriesAuditReportPage").then((module) => module.InventoryLedgerEntriesAuditReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -270,7 +243,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.journalEntries.printable",
     pageTitle: "Journal Entries",
     path: "/finance/reports/journal-entries/printable",
-    Page: JournalEntriesReportPage,
+    loadPage: () => import("./journal-entries/server/pages/JournalEntriesReportPage").then((module) => module.JournalEntriesReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -278,7 +251,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.profitLoss.printable",
     pageTitle: "Profit & Loss",
     path: "/finance/reports/profit-loss/printable",
-    Page: ProfitLossReportPage,
+    loadPage: () => import("./profit-loss/server/pages/ProfitLossReportPage").then((module) => module.ProfitLossReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -286,7 +259,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.profitLossAnalysis.printable",
     pageTitle: "Profit & Loss Analysis",
     path: "/finance/reports/profit-loss-analysis/printable",
-    Page: ProfitLossAnalysisReportPage,
+    loadPage: () => import("./profit-loss/server/pages/ProfitLossAnalysisReportPage").then((module) => module.ProfitLossAnalysisReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -294,7 +267,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.taxActivity.printable",
     pageTitle: "Tax Return",
     path: "/finance/reports/tax-activity/printable",
-    Page: TaxActivityReportPage,
+    loadPage: () => import("./tax-activity/server/pages/TaxActivityReportPage").then((module) => module.TaxActivityReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -302,7 +275,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.taxActivityReconciliation.printable",
     pageTitle: "Tax Reconciliation",
     path: "/finance/reports/tax-activity-reconciliation/printable",
-    Page: TaxActivityReconciliationReportPage,
+    loadPage: () => import("./tax-activity-reconciliation/server/pages/TaxActivityReconciliationReportPage").then((module) => module.TaxActivityReconciliationReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -310,7 +283,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.taxLedgerEntriesAudit.printable",
     pageTitle: "Tax Ledger Entries",
     path: "/finance/reports/tax-ledger-entries-audit/printable",
-    Page: TaxLedgerEntriesAuditReportPage,
+    loadPage: () => import("./tax-ledger-entries-audit/server/pages/TaxLedgerEntriesAuditReportPage").then((module) => module.TaxLedgerEntriesAuditReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -318,7 +291,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.taxPosition.printable",
     pageTitle: "Tax Position",
     path: "/finance/reports/tax-position/printable",
-    Page: TaxPositionReportPage,
+    loadPage: () => import("./tax-position/server/pages/TaxPositionReportPage").then((module) => module.TaxPositionReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
@@ -326,7 +299,7 @@ export const pageRoutes = {
     id: "voyzu.companyReports.page.trialBalance.printable",
     pageTitle: "Trial Balance",
     path: "/finance/reports/trial-balance/printable",
-    Page: TrialBalanceReportPage,
+    loadPage: () => import("./trial-balance/server/pages/TrialBalanceReportPage").then((module) => module.TrialBalanceReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   }

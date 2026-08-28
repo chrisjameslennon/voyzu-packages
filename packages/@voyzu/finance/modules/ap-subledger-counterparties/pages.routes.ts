@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleGetApCounterparty, handleListApCounterparties } from "@voyzu/finance/ap-subledger-counterparties/server";
-import { ApCounterpartiesListPage, ApCounterpartyDetailPage } from "@voyzu/finance/ap-subledger-counterparties/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "AP Counterparties",
     helpPath: "modules-help/company-ledger/ap-counterparties",
     path: "/finance/subledgers/ap/counterparties",
-    Page: ApCounterpartiesListPage,
+    loadPage: () => import("./server/pages/ApCounterpartiesListPage").then((module) => module.ApCounterpartiesListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "AP Counterparty",
     helpPath: "modules-help/company-ledger/ap-counterparties",
     path: "/finance/subledgers/ap/counterparties/[code]",
-    Page: ApCounterpartyDetailPage,
+    loadPage: () => import("./server/pages/ApCounterpartyDetailPage").then((module) => module.ApCounterpartyDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -33,7 +31,7 @@ export const pageRoutes = {
     id: "voyzu.ap-subledger-counterparties.page.detail.printable",
     pageTitle: "AP Counterparty",
     path: "/finance/subledgers/ap/counterparties/[code]/printable",
-    Page: ApCounterpartyDetailPage,
+    loadPage: () => import("./server/pages/ApCounterpartyDetailPage").then((module) => module.ApCounterpartyDetailPage),
     unframed: true,
     auth: companyFinancePageAuth
   }

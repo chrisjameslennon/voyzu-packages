@@ -22,8 +22,6 @@ DROP TABLE IF EXISTS fiscal_period;
 DROP TABLE IF EXISTS fiscal_year;
 DROP TABLE IF EXISTS dimension_value;
 DROP TABLE IF EXISTS dimension;
-DROP TABLE IF EXISTS inventory_item;
-DROP TABLE IF EXISTS inventory_category;
 DROP TABLE IF EXISTS item_posting_profile;
 DROP TABLE IF EXISTS tax_control_account;
 DROP TABLE IF EXISTS inventory_control_account;

@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleGet as handleGetControlAccount, handleListAp as handleListApControlAccounts, handlePatch as handlePatchControlAccount } from "@voyzu/finance/common/control-accounts/server";
-import { CompanyApControlAccountsListPage, CompanyApControlAccountDetailPage } from "@voyzu/finance/company-ap-control-accounts/server";
 import { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { ControlAccountResponseDto } from "../../types/modules/control-accounts/control-account.response.dto";
 import { ControlAccountPatchRequestDto } from "../../types/modules/control-accounts/control-account.patch.request.dto";
@@ -12,7 +10,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/ap-control-accounts",
-    handler: (request: any) => handleListApControlAccounts(request),
+    loadHandler: () => import("../common/control-accounts/server/api/control-account.http.handlers").then((module) => module.handleListAp),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List Company AP Control Accounts.",
@@ -28,7 +26,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/ap-control-accounts/[code]",
-    handler: (request: any, context: any) => handleGetControlAccount(request, context),
+    loadHandler: () => import("../common/control-accounts/server/api/control-account.http.handlers").then((module) => module.handleGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Company AP Control Accounts.",
@@ -45,7 +43,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/[companyCode]/ap-control-accounts/[code]",
-    handler: (request: any, context: any) => handlePatchControlAccount(request, context),
+    loadHandler: () => import("../common/control-accounts/server/api/control-account.http.handlers").then((module) => module.handlePatch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: ControlAccountPatchRequestDto },
     summary: "Patch",
     description: "Patch Company AP Control Accounts.",

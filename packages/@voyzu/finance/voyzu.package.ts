@@ -23,10 +23,8 @@ import { companyFinancialDocumentDefaultsModule } from "./modules/company-financ
 import { companyFinancialDocumentTypesModule } from "./modules/company-financial-document-types/module";
 import { companyGlAccountCategoriesModule } from "./modules/company-gl-account-categories/module";
 import { companyGlAccountsModule } from "./modules/company-gl-accounts/module";
-import { companyInventoryCategoriesModule } from "./modules/company-inventory-categories/module";
 import { companyInventoryControlAccountsModule } from "./modules/company-inventory-control-accounts/module";
 import { companyInventoryItemPostingProfilesModule } from "./modules/company-inventory-item-posting-profiles/module";
-import { companyInventoryItemsModule } from "./modules/company-inventory-items/module";
 import { companyReportsModule } from "./modules/company-reports/module";
 import { companyTaxControlAccountsModule } from "./modules/company-tax-control-accounts/module";
 import { financialDocumentProcessingEngineModule } from "./modules/financial-document-processing-engine/module";
@@ -44,10 +42,8 @@ import { organizationFinancialDocumentDefaultsModule } from "./modules/organizat
 import { organizationFinancialDocumentTypesModule } from "./modules/organization-financial-document-types/module";
 import { organizationGlAccountCategoriesModule } from "./modules/organization-gl-account-categories/module";
 import { organizationGlAccountsModule } from "./modules/organization-gl-accounts/module";
-import { organizationInventoryCategoriesModule } from "./modules/organization-inventory-categories/module";
 import { organizationInventoryControlAccountsModule } from "./modules/organization-inventory-control-accounts/module";
 import { organizationInventoryItemPostingProfilesModule } from "./modules/organization-inventory-item-posting-profiles/module";
-import { organizationInventoryItemsModule } from "./modules/organization-inventory-items/module";
 import { organizationReportsModule } from "./modules/organization-reports/module";
 import { organizationTaxControlAccountsModule } from "./modules/organization-tax-control-accounts/module";
 import { taxModule } from "./modules/tax/module";
@@ -67,8 +63,6 @@ export const financeTemplateModules = [
   organizationDimensionsModule,
   organizationTaxControlAccountsModule,
   organizationInventoryControlAccountsModule,
-  organizationInventoryCategoriesModule,
-  organizationInventoryItemsModule,
   organizationInventoryItemPostingProfilesModule,
   organizationReportsModule,
 ] as const;
@@ -76,8 +70,6 @@ export const financeTemplateModules = [
 export const financeModules = [
   journalsModule,
   companyReportsModule,
-  companyInventoryItemsModule,
-  companyInventoryCategoriesModule,
   companyInventoryItemPostingProfilesModule,
   inventoryLedgerModule,
   taxLedgerModule,
@@ -124,14 +116,10 @@ export const financePackage = {
     organizationDimensionsModule,
     organizationTaxControlAccountsModule,
     organizationInventoryControlAccountsModule,
-    organizationInventoryCategoriesModule,
-    organizationInventoryItemsModule,
     organizationInventoryItemPostingProfilesModule,
     organizationReportsModule,
     journalsModule,
     companyReportsModule,
-    companyInventoryItemsModule,
-    companyInventoryCategoriesModule,
     companyInventoryItemPostingProfilesModule,
     inventoryLedgerModule,
     taxLedgerModule,

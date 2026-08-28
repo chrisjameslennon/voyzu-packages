@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleGetTaxEntry, handleListTaxEntries } from "@voyzu/finance/tax-ledger/server";
-import { TaxLedgerEntriesListPage, TaxLedgerEntryDetailPage } from "@voyzu/finance/tax-ledger/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Tax Ledger Entries",
     helpPath: "modules-help/company-ledger/tax-ledger-entries",
     path: "/finance/subledgers/tax/ledger-entries",
-    Page: TaxLedgerEntriesListPage,
+    loadPage: () => import("./server/pages/TaxLedgerEntriesListPage").then((module) => module.TaxLedgerEntriesListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "Tax Ledger Entry",
     helpPath: "modules-help/company-ledger/tax-ledger-entries",
     path: "/finance/subledgers/tax/ledger-entries/[code]",
-    Page: TaxLedgerEntryDetailPage,
+    loadPage: () => import("./server/pages/TaxLedgerEntryDetailPage").then((module) => module.TaxLedgerEntryDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },

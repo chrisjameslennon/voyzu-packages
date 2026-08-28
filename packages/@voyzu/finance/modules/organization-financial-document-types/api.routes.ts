@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleBatchGet as handleFinancialDocumentTypeBatchGet, handleFilter as handleFinancialDocumentTypeFilter, handleGet as handleFinancialDocumentTypeGet, handleList as handleFinancialDocumentTypeList, handleSearch as handleFinancialDocumentTypeSearch } from "@voyzu/finance/common/financial-document-types/server";
-import { OrganizationFinancialDocumentTypesListPage, OrganizationFinancialDocumentTypeDetailPage } from "@voyzu/finance/organization-financial-document-types/server";
 import { CodesRequestDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { FinancialDocumentTypeResponseDto } from "../../types/modules/financial-document-types/financial-document-type.response.dto";
 
@@ -10,7 +8,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/financial-document-types",
-    handler: (request: any) => handleFinancialDocumentTypeList(request),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleList),
     summary: "List",
     description: "List Organization Financial Document Types.",
     tags: ["Organization Financial Document Types"],
@@ -22,7 +20,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/finance/financial-document-types/filter",
-    handler: (request: any) => handleFinancialDocumentTypeFilter(request),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleFilter),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Organization Financial Document Types.",
@@ -35,7 +33,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/finance/financial-document-types/search",
-    handler: (request: any) => handleFinancialDocumentTypeSearch(request),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleSearch),
     request: { query: { parameters: { q: { description: "Search text used to match organization financial document type records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Organization Financial Document Types.",
@@ -49,7 +47,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/finance/financial-document-types/batch/get",
-    handler: (request: any) => handleFinancialDocumentTypeBatchGet(request),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleBatchGet),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Batch Get Organization Financial Document Types.",
@@ -63,7 +61,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/financial-document-types/[code]",
-    handler: (request: any, context: any) => handleFinancialDocumentTypeGet(request, context),
+    loadHandler: () => import("../common/financial-document-types/server/api/financial-document-type.http.handlers").then((module) => module.handleGet),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Organization Financial Document Types.",

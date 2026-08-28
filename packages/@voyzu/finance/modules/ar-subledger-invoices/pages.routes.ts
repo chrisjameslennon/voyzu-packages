@@ -1,5 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { ArInvoicesListPage, ArInvoiceDetailPage } from "@voyzu/finance/ar-subledger-invoices/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -7,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "AR Invoices",
     helpPath: "modules-help/company-ledger/ar-invoices",
     path: "/finance/subledgers/ar/invoices",
-    Page: ArInvoicesListPage,
+    loadPage: () => import("./server/pages/ArInvoicesListPage").then((module) => module.ArInvoicesListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -20,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "AR Invoice",
     helpPath: "modules-help/company-ledger/ar-invoices",
     path: "/finance/subledgers/ar/invoices/[documentId]",
-    Page: ArInvoiceDetailPage,
+    loadPage: () => import("./server/pages/ArInvoiceDetailPage").then((module) => module.ArInvoiceDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Subledgers" },
@@ -32,7 +31,7 @@ export const pageRoutes = {
     id: "voyzu.ar-subledger-invoices.page.detail.printable",
     pageTitle: "AR Invoice",
     path: "/finance/subledgers/ar/invoices/[documentId]/printable",
-    Page: ArInvoiceDetailPage,
+    loadPage: () => import("./server/pages/ArInvoiceDetailPage").then((module) => module.ArInvoiceDetailPage),
     unframed: true,
     auth: companyFinancePageAuth
   }

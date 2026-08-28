@@ -374,31 +374,6 @@ async function copyTemplateSettings(financeCompanyId: number, db: DbExecutor): P
      ON CONFLICT (finance_organization_id, code) DO NOTHING`,
     [financeCompanyId, templateId],
   );
-  await db.query(
-    `INSERT INTO inventory_category (finance_organization_id, code, name, description, posting_profile_id, status)
-     SELECT $1, source.code, source.name, source.description, target_profile.id, source.status
-     FROM inventory_category source
-     JOIN item_posting_profile source_profile ON source_profile.finance_organization_id = source.finance_organization_id AND source_profile.id = source.posting_profile_id
-     JOIN item_posting_profile target_profile ON target_profile.finance_organization_id = $1 AND target_profile.code = source_profile.code
-     WHERE source.finance_organization_id = $2 AND source.status = 'ACTIVE'
-     ON CONFLICT (finance_organization_id, code) DO NOTHING`,
-    [financeCompanyId, templateId],
-  );
-  await db.query(
-    `INSERT INTO inventory_item (
-       finance_organization_id, code, name, description, item_type, category_id, unit_code,
-       status, quantity_on_hand_derived, book_value_derived, avg_unit_book_value_derived
-     )
-     SELECT $1, source.code, source.name, source.description, source.item_type, target_category.id,
-       source.unit_code, source.status, source.quantity_on_hand_derived, source.book_value_derived,
-       source.avg_unit_book_value_derived
-     FROM inventory_item source
-     JOIN inventory_category source_category ON source_category.finance_organization_id = source.finance_organization_id AND source_category.id = source.category_id
-     JOIN inventory_category target_category ON target_category.finance_organization_id = $1 AND target_category.code = source_category.code
-     WHERE source.finance_organization_id = $2 AND source.status = 'ACTIVE'
-     ON CONFLICT (finance_organization_id, code) DO NOTHING`,
-    [financeCompanyId, templateId],
-  );
 }
 
 export async function updateFinanceCompany(

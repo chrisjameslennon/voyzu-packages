@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleActivate as handleBankCashAccountsActivate, handleBatchActivate as handleBankCashAccountsBatchActivate, handleBatchCreate as handleBankCashAccountsBatchCreate, handleBatchDeactivate as handleBankCashAccountsBatchDeactivate, handleBatchDelete as handleBankCashAccountsBatchDelete, handleBatchGet as handleBankCashAccountsBatchGet, handleBatchPatch as handleBankCashAccountsBatchPatch, handleBatchUpdate as handleBankCashAccountsBatchUpdate, handleCreate as handleBankCashAccountsCreate, handleDeactivate as handleBankCashAccountsDeactivate, handleDelete as handleBankCashAccountsDelete, handleFilter as handleBankCashAccountsFilter, handleGet as handleBankCashAccountsGet, handleList as handleBankCashAccountsList, handlePatch as handleBankCashAccountsPatch, handleSearch as handleBankCashAccountsSearch, handleUpdate as handleBankCashAccountsUpdate } from "@voyzu/finance/common/bank-cash-accounts/server";
-import { OrganizationBankCashAccountsListPage, OrganizationBankCashAccountDetailPage } from "@voyzu/finance/organization-bank-cash-accounts/server";
 import { BusinessRuleErrorResponseDto, CodesRequestDto, ConflictErrorResponseDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { BankCashAccountResponseDto } from "../../types/modules/bank-cash-accounts/bank-cash-account.response.dto";
 import { BankCashAccountUpdateRequestDto } from "../../types/modules/bank-cash-accounts/bank-cash-account.update.request.dto";
@@ -15,7 +13,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/bank-cash-accounts",
-    handler: (request: any) => handleBankCashAccountsList(request),
+    loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleList),
     summary: "List",
     description: "List Organization Bank Cash Accounts.",
     tags: ["Organization Bank Cash Accounts"],
@@ -28,7 +26,7 @@ export const apiDefinitions = {
     }
   },
   filter: {
-    method: "POST", path: "/finance/bank-cash-accounts/filter", handler: (request: any) => handleBankCashAccountsFilter(request),
+    method: "POST", path: "/finance/bank-cash-accounts/filter", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleFilter),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Organization Bank Cash Accounts.",
@@ -36,7 +34,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   search: {
-    method: "GET", path: "/finance/bank-cash-accounts/search", handler: (request: any) => handleBankCashAccountsSearch(request),
+    method: "GET", path: "/finance/bank-cash-accounts/search", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleSearch),
     request: { query: { parameters: { q: { description: "Search text used to match bank cash account records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Organization Bank Cash Accounts.",
@@ -44,7 +42,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   batchGet: {
-    method: "POST", path: "/finance/bank-cash-accounts/batch/get", handler: (request: any) => handleBankCashAccountsBatchGet(request),
+    method: "POST", path: "/finance/bank-cash-accounts/batch/get", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleBatchGet),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Batch Get Organization Bank Cash Accounts.",
@@ -52,7 +50,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   batchCreate: {
-    method: "POST", path: "/finance/bank-cash-accounts/batch/create", handler: (request: any) => handleBankCashAccountsBatchCreate(request),
+    method: "POST", path: "/finance/bank-cash-accounts/batch/create", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleBatchCreate),
     request: { contentType: "application/json", body: Type.Array(BankCashAccountCreateRequestDto) },
     summary: "Batch Create",
     description: "Batch Create Organization Bank Cash Accounts.",
@@ -60,7 +58,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   batchUpdate: {
-    method: "PUT", path: "/finance/bank-cash-accounts/batch", handler: (request: any) => handleBankCashAccountsBatchUpdate(request),
+    method: "PUT", path: "/finance/bank-cash-accounts/batch", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleBatchUpdate),
     request: { contentType: "application/json", body: Type.Array(BankCashAccountBatchUpdateRequestDto) },
     summary: "Batch Update",
     description: "Batch Update Organization Bank Cash Accounts.",
@@ -68,7 +66,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   batchPatch: {
-    method: "PATCH", path: "/finance/bank-cash-accounts/batch", handler: (request: any) => handleBankCashAccountsBatchPatch(request),
+    method: "PATCH", path: "/finance/bank-cash-accounts/batch", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleBatchPatch),
     request: { contentType: "application/json", body: Type.Array(BankCashAccountBatchPatchRequestDto) },
     summary: "Batch Patch",
     description: "Batch Patch Organization Bank Cash Accounts.",
@@ -76,7 +74,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   batchDelete: {
-    method: "DELETE", path: "/finance/bank-cash-accounts/batch", handler: (request: any) => handleBankCashAccountsBatchDelete(request),
+    method: "DELETE", path: "/finance/bank-cash-accounts/batch", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleBatchDelete),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
     description: "Batch Delete Organization Bank Cash Accounts.",
@@ -86,7 +84,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/finance/bank-cash-accounts",
-    handler: (request: any) => handleBankCashAccountsCreate(request),
+    loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleCreate),
     request: { contentType: "application/json", body: BankCashAccountCreateRequestDto },
     summary: "Create",
     description: "Create Organization Bank Cash Accounts.",
@@ -105,7 +103,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/bank-cash-accounts/[code]",
-    handler: (request: any, context: any) => handleBankCashAccountsGet(request, context),
+    loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleGet),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Organization Bank Cash Accounts.",
@@ -122,7 +120,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/bank-cash-accounts/[code]",
-    handler: (request: any, context: any) => handleBankCashAccountsPatch(request, context),
+    loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handlePatch),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: BankCashAccountPatchRequestDto },
     summary: "Patch",
     description: "Patch Organization Bank Cash Accounts.",
@@ -139,7 +137,7 @@ export const apiDefinitions = {
     }
   },
   update: {
-    method: "PUT", path: "/finance/bank-cash-accounts/[code]", handler: (request: any, context: any) => handleBankCashAccountsUpdate(request, context),
+    method: "PUT", path: "/finance/bank-cash-accounts/[code]", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleUpdate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: BankCashAccountUpdateRequestDto },
     summary: "Update",
     description: "Update Organization Bank Cash Accounts.",
@@ -149,7 +147,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/finance/bank-cash-accounts/[code]",
-    handler: (request: any, context: any) => handleBankCashAccountsDelete(request, context),
+    loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleDelete),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
     description: "Delete Organization Bank Cash Accounts.",
@@ -163,7 +161,7 @@ export const apiDefinitions = {
     }
   },
   activate: {
-    method: "POST", path: "/finance/bank-cash-accounts/[code]/activate", handler: (request: any, context: any) => handleBankCashAccountsActivate(request, context),
+    method: "POST", path: "/finance/bank-cash-accounts/[code]/activate", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleActivate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
     description: "Activate Organization Bank Cash Accounts.",
@@ -171,7 +169,7 @@ export const apiDefinitions = {
     responses: { "200": { description: "Successful response.", body: BankCashAccountResponseDto } }
   },
   deactivate: {
-    method: "POST", path: "/finance/bank-cash-accounts/[code]/deactivate", handler: (request: any, context: any) => handleBankCashAccountsDeactivate(request, context),
+    method: "POST", path: "/finance/bank-cash-accounts/[code]/deactivate", loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleDeactivate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
     description: "Deactivate Organization Bank Cash Accounts.",
@@ -181,7 +179,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "POST",
     path: "/finance/bank-cash-accounts/batch-activate",
-    handler: (request: any) => handleBankCashAccountsBatchActivate(request),
+    loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleBatchActivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
     description: "Batch Activate Organization Bank Cash Accounts.",
@@ -199,7 +197,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "POST",
     path: "/finance/bank-cash-accounts/batch-deactivate",
-    handler: (request: any) => handleBankCashAccountsBatchDeactivate(request),
+    loadHandler: () => import("../common/bank-cash-accounts/server/api/bank-cash-account.http.handlers").then((module) => module.handleBatchDeactivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
     description: "Batch Deactivate Organization Bank Cash Accounts.",

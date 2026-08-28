@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleActivate as handleActivateDimension, handleBatchActivate as handleBatchActivateDimensions, handleBatchCreate as handleBatchCreateDimensions, handleBatchDeactivate as handleBatchDeactivateDimensions, handleBatchDelete as handleBatchDeleteDimensions, handleBatchGet as handleBatchGetDimensions, handleBatchPatch as handleBatchPatchDimensions, handleBatchUpdate as handleBatchUpdateDimensions, handleCreate as handleCreateDimension, handleCreateValue as handleCreateDimensionValue, handleDeactivate as handleDeactivateDimension, handleDelete as handleDeleteDimension, handleDeleteValue as handleDeleteDimensionValue, handleFilter as handleFilterDimensions, handleGet as handleGetDimension, handleList as handleListDimensions, handleListValues as handleListDimensionValues, handlePatch as handlePatchDimension, handlePatchValue as handlePatchDimensionValue, handleSearch as handleSearchDimensions, handleUpdate as handleUpdateDimension } from "@voyzu/finance/common/dimensions/server";
-import { CompanyDimensionsListPage, CompanyDimensionDetailPage } from "@voyzu/finance/company-dimensions/server";
 import { BusinessRuleErrorResponseDto, CodesRequestDto, ConflictErrorResponseDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { DimensionValueResponseDto } from "../../types/modules/dimensions/dimension-value.response.dto";
 import { DimensionValuePatchRequestDto } from "../../types/modules/dimensions/dimension-value.patch.request.dto";
@@ -18,7 +16,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/dimensions",
-    handler: (request: any) => handleListDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleList),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List Company Dimensions.",
@@ -28,7 +26,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/filter",
-    handler: (request: any) => handleFilterDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleFilter),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Company Dimensions.",
@@ -44,7 +42,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/finance/[companyCode]/dimensions/search",
-    handler: (request: any) => handleSearchDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleSearch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, query: { parameters: { q: { description: "Search text used to match company dimension records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Company Dimensions.",
@@ -61,7 +59,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions",
-    handler: (request: any) => handleCreateDimension(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleCreate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionCreateRequestDto },
     summary: "Create",
     description: "Create Company Dimensions.",
@@ -80,7 +78,7 @@ export const apiDefinitions = {
   batchCreate: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch/create",
-    handler: (request: any) => handleBatchCreateDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchCreate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(DimensionCreateRequestDto) },
     summary: "Batch Create",
     description: "Batch Create Company Dimensions.",
@@ -99,7 +97,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch/get",
-    handler: (request: any) => handleBatchGetDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Batch Get Company Dimensions.",
@@ -116,7 +114,7 @@ export const apiDefinitions = {
   batchUpdate: {
     method: "PUT",
     path: "/finance/[companyCode]/dimensions/batch/update",
-    handler: (request: any) => handleBatchUpdateDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchUpdate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(DimensionBatchUpdateRequestDto) },
     summary: "Batch Update",
     description: "Batch Update Company Dimensions.",
@@ -136,7 +134,7 @@ export const apiDefinitions = {
   batchPatch: {
     method: "PATCH",
     path: "/finance/[companyCode]/dimensions/batch/patch",
-    handler: (request: any) => handleBatchPatchDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchPatch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(DimensionBatchPatchRequestDto) },
     summary: "Batch Patch",
     description: "Batch Patch Company Dimensions.",
@@ -156,7 +154,7 @@ export const apiDefinitions = {
   batchDelete: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch/delete",
-    handler: (request: any) => handleBatchDeleteDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchDelete),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
     description: "Batch Delete Company Dimensions.",
@@ -170,7 +168,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch-activate",
-    handler: (request: any) => handleBatchActivateDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchActivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
     description: "Batch Activate Company Dimensions.",
@@ -188,7 +186,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch-deactivate",
-    handler: (request: any) => handleBatchDeactivateDimensions(request),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleBatchDeactivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
     description: "Batch Deactivate Company Dimensions.",
@@ -207,7 +205,7 @@ export const apiDefinitions = {
   activate: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/[code]/activate",
-    handler: (request: any, context: any) => handleActivateDimension(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleActivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
     description: "Activate Company Dimensions.",
@@ -222,7 +220,7 @@ export const apiDefinitions = {
   deactivate: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/[code]/deactivate",
-    handler: (request: any, context: any) => handleDeactivateDimension(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleDeactivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
     description: "Deactivate Company Dimensions.",
@@ -237,7 +235,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/dimensions/[code]",
-    handler: (request: any, context: any) => handleGetDimension(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Company Dimensions.",
@@ -247,7 +245,7 @@ export const apiDefinitions = {
   update: {
     method: "PUT",
     path: "/finance/[companyCode]/dimensions/[code]",
-    handler: (request: any, context: any) => handleUpdateDimension(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleUpdate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionUpdateRequestDto },
     summary: "Update",
     description: "Update Company Dimensions.",
@@ -267,7 +265,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/[companyCode]/dimensions/[code]",
-    handler: (request: any, context: any) => handlePatchDimension(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handlePatch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionPatchRequestDto },
     summary: "Patch",
     description: "Patch Company Dimensions.",
@@ -287,7 +285,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/finance/[companyCode]/dimensions/[code]",
-    handler: (request: any, context: any) => handleDeleteDimension(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleDelete),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
     description: "Delete Company Dimensions.",
@@ -297,7 +295,7 @@ export const apiDefinitions = {
   listValues: {
     method: "GET",
     path: "/finance/[companyCode]/dimensions/[code]/values",
-    handler: (request: any, context: any) => handleListDimensionValues(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleListValues),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "List Values",
     description: "List Values Company Dimensions.",
@@ -307,7 +305,7 @@ export const apiDefinitions = {
   createValue: {
     method: "POST",
     path: "/finance/[companyCode]/dimensions/[code]/values",
-    handler: (request: any, context: any) => handleCreateDimensionValue(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleCreateValue),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionValueCreateRequestDto },
     summary: "Create Value",
     description: "Create Value Company Dimensions.",
@@ -327,7 +325,7 @@ export const apiDefinitions = {
   patchValue: {
     method: "PATCH",
     path: "/finance/[companyCode]/dimensions/values/[id]",
-    handler: (request: any, context: any) => handlePatchDimensionValue(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handlePatchValue),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, id: { description: "Unique identifier of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: DimensionValuePatchRequestDto },
     summary: "Patch Value",
     description: "Patch Value Company Dimensions.",
@@ -345,7 +343,7 @@ export const apiDefinitions = {
   deleteValue: {
     method: "DELETE",
     path: "/finance/[companyCode]/dimensions/values/[id]",
-    handler: (request: any, context: any) => handleDeleteDimensionValue(request, context),
+    loadHandler: () => import("../common/dimensions/server/api/dimension.http.handlers").then((module) => module.handleDeleteValue),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, id: { description: "Unique identifier of the requested record.", schema: { type: "string" } } } },
     summary: "Delete Value",
     description: "Delete Value Company Dimensions.",

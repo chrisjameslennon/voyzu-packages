@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleActivate as handleActivateBankCashAccount, handleBatchActivate as handleBatchActivateBankCashAccounts, handleBatchCreate as handleBatchCreateBankCashAccounts, handleBatchDeactivate as handleBatchDeactivateBankCashAccounts, handleBatchDelete as handleBatchDeleteBankCashAccounts, handleBatchGet as handleBatchGetBankCashAccounts, handleBatchPatch as handleBatchPatchBankCashAccounts, handleBatchUpdate as handleBatchUpdateBankCashAccounts, handleCreate as handleCreateBankCashAccount, handleDeactivate as handleDeactivateBankCashAccount, handleDelete as handleDeleteBankCashAccount, handleFilter as handleFilterBankCashAccounts, handleGet as handleGetBankCashAccount, handleList as handleListBankCashAccounts, handlePatch as handlePatchBankCashAccount, handleSearch as handleSearchBankCashAccounts, handleUpdate as handleUpdateBankCashAccount } from "@voyzu/finance/common/bank-cash-accounts/server";
-import { CompanyBankCashAccountsListPage, CompanyBankCashAccountDetailPage } from "@voyzu/finance/company-bank-cash-accounts/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Bank / Cash Accounts",
     helpPath: "modules-help/company-ledger/bank-cash-accounts",
     path: "/finance/settings/bank-cash-accounts",
-    Page: CompanyBankCashAccountsListPage,
+    loadPage: () => import("./server/pages/CompanyBankCashAccountsListPage").then((module) => module.CompanyBankCashAccountsListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "Bank / Cash Account",
     helpPath: "modules-help/company-ledger/bank-cash-accounts",
     path: "/finance/settings/bank-cash-accounts/[code]",
-    Page: CompanyBankCashAccountDetailPage,
+    loadPage: () => import("./server/pages/CompanyBankCashAccountDetailPage").then((module) => module.CompanyBankCashAccountDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },

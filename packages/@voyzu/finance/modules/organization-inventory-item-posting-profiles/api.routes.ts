@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleActivate as handleItemPostingProfilesActivate, handleBatchActivate as handleItemPostingProfilesBatchActivate, handleBatchCreate as handleItemPostingProfilesBatchCreate, handleBatchDeactivate as handleItemPostingProfilesBatchDeactivate, handleBatchDelete as handleItemPostingProfilesBatchDelete, handleBatchGet as handleItemPostingProfilesBatchGet, handleBatchPatch as handleItemPostingProfilesBatchPatch, handleBatchUpdate as handleItemPostingProfilesBatchUpdate, handleCreate as handleItemPostingProfilesCreate, handleDeactivate as handleItemPostingProfilesDeactivate, handleDelete as handleItemPostingProfilesDelete, handleFilter as handleItemPostingProfilesFilter, handleGet as handleItemPostingProfilesGet, handleList as handleItemPostingProfilesList, handlePatch as handleItemPostingProfilesPatch, handleSearch as handleItemPostingProfilesSearch, handleUpdate as handleItemPostingProfilesUpdate } from "@voyzu/finance/common/inventory-item-posting-profiles/server";
-import { OrganizationInventoryItemPostingProfilesListPage, OrganizationInventoryItemPostingProfileDetailPage } from "@voyzu/finance/organization-inventory-item-posting-profiles/server";
 import { BusinessRuleErrorResponseDto, CodesRequestDto, EntityNotFoundErrorResponseDto, FilterRequestDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { ItemPostingProfileResponseDto } from "../../types/modules/inventory-item-posting-profiles/item-posting-profile.response.dto";
 import { ItemPostingProfilePatchRequestDto } from "../../types/modules/inventory-item-posting-profiles/item-posting-profile.patch.request.dto";
@@ -15,7 +13,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/template/inventory/item-posting-profiles",
-    handler: (request: any) => handleItemPostingProfilesList(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleList),
     summary: "List",
     description: "List Organization Inventory Item Posting Profiles.",
     tags: ["Organization Inventory Item Posting Profiles"],
@@ -30,7 +28,7 @@ export const apiDefinitions = {
   filter: {
     method: "POST",
     path: "/finance/template/inventory/item-posting-profiles/filter",
-    handler: (request: any) => handleItemPostingProfilesFilter(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleFilter),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
     description: "Filter Organization Inventory Item Posting Profiles.",
@@ -40,7 +38,7 @@ export const apiDefinitions = {
   search: {
     method: "GET",
     path: "/finance/template/inventory/item-posting-profiles/search",
-    handler: (request: any) => handleItemPostingProfilesSearch(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleSearch),
     request: { query: { parameters: { q: { description: "Search text used to match item posting profile records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
     description: "Search Organization Inventory Item Posting Profiles.",
@@ -50,7 +48,7 @@ export const apiDefinitions = {
   batchGet: {
     method: "POST",
     path: "/finance/template/inventory/item-posting-profiles/batch/get",
-    handler: (request: any) => handleItemPostingProfilesBatchGet(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleBatchGet),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
     description: "Batch Get Organization Inventory Item Posting Profiles.",
@@ -60,7 +58,7 @@ export const apiDefinitions = {
   batchCreate: {
     method: "POST",
     path: "/finance/template/inventory/item-posting-profiles/batch/create",
-    handler: (request: any) => handleItemPostingProfilesBatchCreate(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleBatchCreate),
     request: { contentType: "application/json", body: Type.Array(ItemPostingProfileCreateRequestDto) },
     summary: "Batch Create",
     description: "Batch Create Organization Inventory Item Posting Profiles.",
@@ -70,7 +68,7 @@ export const apiDefinitions = {
   batchUpdate: {
     method: "PUT",
     path: "/finance/template/inventory/item-posting-profiles/batch",
-    handler: (request: any) => handleItemPostingProfilesBatchUpdate(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleBatchUpdate),
     request: { contentType: "application/json", body: Type.Array(ItemPostingProfileBatchUpdateRequestDto) },
     summary: "Batch Update",
     description: "Batch Update Organization Inventory Item Posting Profiles.",
@@ -80,7 +78,7 @@ export const apiDefinitions = {
   batchPatch: {
     method: "PATCH",
     path: "/finance/template/inventory/item-posting-profiles/batch",
-    handler: (request: any) => handleItemPostingProfilesBatchPatch(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleBatchPatch),
     request: { contentType: "application/json", body: Type.Array(ItemPostingProfileBatchPatchRequestDto) },
     summary: "Batch Patch",
     description: "Batch Patch Organization Inventory Item Posting Profiles.",
@@ -90,7 +88,7 @@ export const apiDefinitions = {
   batchDelete: {
     method: "DELETE",
     path: "/finance/template/inventory/item-posting-profiles/batch",
-    handler: (request: any) => handleItemPostingProfilesBatchDelete(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleBatchDelete),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
     description: "Batch Delete Organization Inventory Item Posting Profiles.",
@@ -100,7 +98,7 @@ export const apiDefinitions = {
   create: {
     method: "POST",
     path: "/finance/template/inventory/item-posting-profiles",
-    handler: (request: any) => handleItemPostingProfilesCreate(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleCreate),
     request: { contentType: "application/json", body: ItemPostingProfileCreateRequestDto },
     summary: "Create",
     description: "Create Organization Inventory Item Posting Profiles.",
@@ -118,7 +116,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/template/inventory/item-posting-profiles/[code]",
-    handler: (request: any, context: any) => handleItemPostingProfilesGet(request, context),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleGet),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Organization Inventory Item Posting Profiles.",
@@ -128,7 +126,7 @@ export const apiDefinitions = {
   update: {
     method: "PUT",
     path: "/finance/template/inventory/item-posting-profiles/[code]",
-    handler: (request: any, context: any) => handleItemPostingProfilesUpdate(request, context),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleUpdate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: ItemPostingProfileUpdateRequestDto },
     summary: "Update",
     description: "Update Organization Inventory Item Posting Profiles.",
@@ -147,7 +145,7 @@ export const apiDefinitions = {
   patch: {
     method: "PATCH",
     path: "/finance/template/inventory/item-posting-profiles/[code]",
-    handler: (request: any, context: any) => handleItemPostingProfilesPatch(request, context),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handlePatch),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: ItemPostingProfilePatchRequestDto },
     summary: "Patch",
     description: "Patch Organization Inventory Item Posting Profiles.",
@@ -166,7 +164,7 @@ export const apiDefinitions = {
   delete: {
     method: "DELETE",
     path: "/finance/template/inventory/item-posting-profiles/[code]",
-    handler: (request: any, context: any) => handleItemPostingProfilesDelete(request, context),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleDelete),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Delete",
     description: "Delete Organization Inventory Item Posting Profiles.",
@@ -181,7 +179,7 @@ export const apiDefinitions = {
   activate: {
     method: "POST",
     path: "/finance/template/inventory/item-posting-profiles/[code]/activate",
-    handler: (request: any, context: any) => handleItemPostingProfilesActivate(request, context),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleActivate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
     description: "Activate Organization Inventory Item Posting Profiles.",
@@ -191,7 +189,7 @@ export const apiDefinitions = {
   deactivate: {
     method: "POST",
     path: "/finance/template/inventory/item-posting-profiles/[code]/deactivate",
-    handler: (request: any, context: any) => handleItemPostingProfilesDeactivate(request, context),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleDeactivate),
     request: { path: { code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
     description: "Deactivate Organization Inventory Item Posting Profiles.",
@@ -201,7 +199,7 @@ export const apiDefinitions = {
   batchActivate: {
     method: "POST",
     path: "/finance/template/inventory/item-posting-profiles/batch-activate",
-    handler: (request: any) => handleItemPostingProfilesBatchActivate(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleBatchActivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",
     description: "Batch Activate Organization Inventory Item Posting Profiles.",
@@ -220,7 +218,7 @@ export const apiDefinitions = {
   batchDeactivate: {
     method: "POST",
     path: "/finance/template/inventory/item-posting-profiles/batch-deactivate",
-    handler: (request: any) => handleItemPostingProfilesBatchDeactivate(request),
+    loadHandler: () => import("../common/inventory-item-posting-profiles/server/api/item-posting-profile.http.handlers").then((module) => module.handleBatchDeactivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",
     description: "Batch Deactivate Organization Inventory Item Posting Profiles.",

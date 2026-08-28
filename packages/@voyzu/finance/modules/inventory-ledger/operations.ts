@@ -1,13 +1,18 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { InventoryLedgerEntryDetailResponseDto, InventoryLedgerEntryResponseDto } from "@voyzu/finance/types/modules/inventory-ledger";
 
-import * as service0 from "./server/lib/inventory-ledger.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const listInventoryLedgerEntries = operation(service0.listInventoryLedgerEntries);
-export const getInventoryLedgerEntry = operation(service0.getInventoryLedgerEntry);
+export const listInventoryLedgerEntries = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number()]), result: Type.Array(InventoryLedgerEntryResponseDto) },
+  () => import("./server/lib/inventory-ledger.service").then((module) => module.listInventoryLedgerEntries),
+);
+export const getInventoryLedgerEntry = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String()]), result: Type.Union([InventoryLedgerEntryDetailResponseDto, Type.Null()]) },
+  () => import("./server/lib/inventory-ledger.service").then((module) => module.getInventoryLedgerEntry),
+);
 
 export const operations = {
   listInventoryLedgerEntries,

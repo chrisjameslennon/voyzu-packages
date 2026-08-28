@@ -1,13 +1,18 @@
 import "server-only";
+import { operation as platformOperation } from "@voyzu/capability/operations";
+import Type from "typebox";
+import { ApSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
 
-import * as service0 from "./server/lib/ap-subledger-ledger-entries.service";
 
-function operation<TArgs extends unknown[], TResult>(service: (...args: TArgs) => TResult) {
-  return (...args: TArgs): TResult => service(...args);
-}
 
-export const listApSubledgerEntries = operation(service0.listApSubledgerEntries);
-export const getApSubledgerEntry = operation(service0.getApSubledgerEntry);
+export const listApSubledgerEntries = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number()]), result: Type.Array(ApSubledgerEntryResponseDto) },
+  () => import("./server/lib/ap-subledger-ledger-entries.service").then((module) => module.listApSubledgerEntries),
+);
+export const getApSubledgerEntry = platformOperation.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), Type.String()]), result: Type.Union([ApSubledgerEntryResponseDto, Type.Null()]) },
+  () => import("./server/lib/ap-subledger-ledger-entries.service").then((module) => module.getApSubledgerEntry),
+);
 
 export const operations = {
   listApSubledgerEntries,

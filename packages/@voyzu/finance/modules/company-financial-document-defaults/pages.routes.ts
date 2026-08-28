@@ -1,6 +1,4 @@
-import { companyFinancePageAuth } from "@voyzu/finance/common/server";
-import { handleActivate as handleActivateFinancialDocumentDefault, handleBatchActivate as handleBatchActivateFinancialDocumentDefaults, handleBatchCreate as handleBatchCreateFinancialDocumentDefaults, handleBatchDeactivate as handleBatchDeactivateFinancialDocumentDefaults, handleBatchDelete as handleBatchDeleteFinancialDocumentDefaults, handleBatchGet as handleBatchGetFinancialDocumentDefaults, handleBatchPatch as handleBatchPatchFinancialDocumentDefaults, handleBatchUpdate as handleBatchUpdateFinancialDocumentDefaults, handleCreate as handleCreateFinancialDocumentDefault, handleDeactivate as handleDeactivateFinancialDocumentDefault, handleDelete as handleDeleteFinancialDocumentDefault, handleFilter as handleFilterFinancialDocumentDefaults, handleGet as handleGetFinancialDocumentDefault, handleList as handleListFinancialDocumentDefaults, handlePatch as handlePatchFinancialDocumentDefault, handleSearch as handleSearchFinancialDocumentDefaults, handleUpdate as handleUpdateFinancialDocumentDefault } from "@voyzu/finance/common/financial-document-defaults/server";
-import { CompanyFinancialDocumentDefaultsListPage, CompanyFinancialDocumentDefaultDetailPage } from "@voyzu/finance/company-financial-document-defaults/server";
+import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
   list: {
@@ -8,7 +6,7 @@ export const pageRoutes = {
     pageTitle: "Financial Document Defaults",
     helpPath: "modules-help/company-ledger/financial-document-defaults",
     path: "/finance/integration/financial-document-defaults",
-    Page: () => CompanyFinancialDocumentDefaultsListPage(),
+    loadPage: () => import("./server/pages/CompanyFinancialDocumentDefaultsListPage").then((module) => module.CompanyFinancialDocumentDefaultsListPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },
@@ -21,7 +19,7 @@ export const pageRoutes = {
     pageTitle: "Financial Document Default",
     helpPath: "modules-help/company-ledger/financial-document-defaults",
     path: "/finance/integration/financial-document-defaults/[code]",
-    Page: CompanyFinancialDocumentDefaultDetailPage,
+    loadPage: () => import("./server/pages/CompanyFinancialDocumentDefaultDetailPage").then((module) => module.CompanyFinancialDocumentDefaultDetailPage),
     breadcrumbBase: [
       { label: "Finance" },
       { label: "Settings" },

@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleGetInventoryEntry, handleListInventoryEntries } from "@voyzu/finance/inventory-ledger/server";
-import { InventoryLedgerEntriesListPage, InventoryLedgerEntryDetailPage } from "@voyzu/finance/inventory-ledger/server";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { InventoryLedgerEntryDetailResponseDto, InventoryLedgerEntryResponseDto } from "../../types/modules/inventory-ledger/index";
 
@@ -10,7 +8,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/inventory/ledger",
-    handler: (request: any) => handleListInventoryEntries(request),
+    loadHandler: () => import("./server/api/inventory-ledger.http.handlers").then((module) => module.handleListInventoryEntries),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List Inventory Ledger.",
@@ -27,7 +25,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/inventory/ledger/[code]",
-    handler: (request: any, context: any) => handleGetInventoryEntry(request, context),
+    loadHandler: () => import("./server/api/inventory-ledger.http.handlers").then((module) => module.handleGetInventoryEntry),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get Inventory Ledger.",

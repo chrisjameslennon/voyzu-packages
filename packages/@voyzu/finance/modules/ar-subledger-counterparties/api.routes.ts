@@ -1,6 +1,4 @@
 import Type from "typebox";
-import { handleGetArCounterparty, handleListArCounterparties } from "@voyzu/finance/ar-subledger-counterparties/server";
-import { ArCounterpartiesListPage, ArCounterpartyDetailPage } from "@voyzu/finance/ar-subledger-counterparties/server";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { ArCounterpartyResponseDto } from "../../types/modules/ar-subledger/ar-counterparty.response.dto";
 
@@ -10,7 +8,7 @@ export const apiDefinitions = {
   list: {
     method: "GET",
     path: "/finance/[companyCode]/ar-subledger/counterparties",
-    handler: (request: any) => handleListArCounterparties(request),
+    loadHandler: () => import("./server/api/ar-subledger-counterparty.http.handlers").then((module) => module.handleListArCounterparties),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } } } },
     summary: "List",
     description: "List AR Subledger Counterparties.",
@@ -27,7 +25,7 @@ export const apiDefinitions = {
   get: {
     method: "GET",
     path: "/finance/[companyCode]/ar-subledger/counterparties/[code]",
-    handler: (request: any, context: any) => handleGetArCounterparty(request, context),
+    loadHandler: () => import("./server/api/ar-subledger-counterparty.http.handlers").then((module) => module.handleGetArCounterparty),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Get",
     description: "Get AR Subledger Counterparties.",
