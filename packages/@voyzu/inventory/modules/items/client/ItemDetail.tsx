@@ -9,7 +9,7 @@ import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type { ItemListRow } from "../types/item-list.types";
-import type { ItemCategoryOptionDto, ItemComponentDto, ItemPatchRequestDto, ItemResponseDto, PostingProfileOption } from "../types/item.types";
+import type { ItemCategoryOptionDto, ItemComponentDto, ItemPatchRequestDto, ItemResponseDto } from "../types/item.types";
 import { UNIT_VALUES } from "../../core/types";
 import type { Unit } from "../../core/types";
 import styles from "./items.module.css";
@@ -19,10 +19,10 @@ function isEmptyCustomValue(value: ItemResponseDto["customFields"][number]["valu
   return value == null || value === "" || (Array.isArray(value) && value.length === 0);
 }
 
-export function ItemDetail({ item, categories, itemOptions, postingProfiles }: { item: ItemResponseDto; categories: ItemCategoryOptionDto[]; itemOptions: ItemListRow[]; postingProfiles: PostingProfileOption[]; }) {
+export function ItemDetail({ item, categories, itemOptions }: { item: ItemResponseDto; categories: ItemCategoryOptionDto[]; itemOptions: ItemListRow[]; }) {
   const router = useRouter(); const pathname = usePathname(); const [current, setCurrent] = useState(item);
   const [name, setName] = useState(item.name); const [description, setDescription] = useState(item.description); const [categoryId, setCategoryId] = useState(item.category ? String(item.category.id) : "");
-  const [unit, setUnit] = useState<Unit | "">(item.unit ?? ""); const [quantityTracked, setQuantityTracked] = useState(item.quantityTracked); const [postingProfileId, setPostingProfileId] = useState(item.itemPostingCodeId ? String(item.itemPostingCodeId) : "");
+  const [unit, setUnit] = useState<Unit | "">(item.unit ?? ""); const [quantityTracked, setQuantityTracked] = useState(item.quantityTracked);
   const [itemType, setItemType] = useState(item.itemType); const [components, setComponents] = useState<ItemComponentDto[]>(item.components); const [componentId, setComponentId] = useState(""); const [componentQuantity, setComponentQuantity] = useState("1");
   const [customValues, setCustomValues] = useState<Record<number, ItemResponseDto["customFields"][number]["value"]>>(Object.fromEntries(item.customFields.map((field) => [field.id, field.value])));
   const [error, setError] = useState(""); const [saving, setSaving] = useState(false); const [showDelete, setShowDelete] = useState(false); const [showNameWarning, setShowNameWarning] = useState(false); const [toast, setToast] = useState("");
@@ -30,7 +30,7 @@ export function ItemDetail({ item, categories, itemOptions, postingProfiles }: {
   const request = async (path: string, init: RequestInit) => { setError(""); const response = await fetch(path, init); if (!response.ok) { const body = await response.json().catch(() => null) as { message?: string } | null; setError(body?.message ?? "The operation could not be completed"); return null; } return response; };
   const save = async () => { if (!validation.attempt()) return; const missingCustomFields = current.customFields.filter((field) => field.required && field.status === "ACTIVE" && isEmptyCustomValue(customValues[field.id])); if (missingCustomFields.length) { setError(`Complete required custom field${missingCustomFields.length === 1 ? "" : "s"}: ${missingCustomFields.map(({ name: fieldName }) => fieldName).join(", ")}`); return; }
     setSaving(true); try { const payload: ItemPatchRequestDto = { name: name.trim(), description: description.trim(), categoryId: categoryId ? Number(categoryId) : null, unit: quantityTracked && unit ? unit : null, quantityTracked,
-      itemPostingCodeId: postingProfileId ? Number(postingProfileId) : null, itemType, components: itemType === "ASSEMBLY" ? components.map(({ itemId, quantity }) => ({ itemId, quantity })) : [],
+      itemType, components: itemType === "ASSEMBLY" ? components.map(({ itemId, quantity }) => ({ itemId, quantity })) : [],
       customFields: current.customFields.filter(({ status }) => status === "ACTIVE").map((field) => ({ customFieldId: field.id, value: customValues[field.id] ?? null })) };
     const response = await request(`/api/inventory/items/${encodeURIComponent(current.sku)}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); if (!response) return;
     const changed = await response.json() as ItemResponseDto; setCurrent(changed); setComponents(changed.components); setCustomValues(Object.fromEntries(changed.customFields.map((field) => [field.id, field.value]))); setToast(`Item ${changed.sku} saved`); } finally { setSaving(false); } };
@@ -46,7 +46,6 @@ export function ItemDetail({ item, categories, itemOptions, postingProfiles }: {
     <div className={detailStyles.fieldGroup}><label className={typography.fieldLabel}>Name</label><Input value={name} invalid={validation.hasError("name")} onChange={(event) => setName(event.target.value)} /></div>
     <div className={`${detailStyles.fieldGroup} ${detailStyles.fieldFull}`}><label className={typography.fieldLabel}>Description</label><textarea className={styles.textarea} value={description} rows={3} onChange={(event) => setDescription(event.target.value)} /></div>
     <div className={detailStyles.fieldGroup}><label className={typography.fieldLabel}>Category</label><SearchableSelect value={categoryId} onChange={setCategoryId} clearable options={categories.map((category) => ({ value: String(category.id), label: category.name, code: category.code }))} placeholder="Uncategorised" /></div>
-    <div className={detailStyles.fieldGroup}><label className={typography.fieldLabel}>Financial Posting Profile</label><SearchableSelect value={postingProfileId} onChange={setPostingProfileId} clearable options={postingProfiles.filter((profile) => profile.status === "ACTIVE" || String(profile.id) === postingProfileId).map((profile) => ({ value: String(profile.id), label: profile.name, code: profile.code }))} placeholder={postingProfiles.length ? "Select a posting profile" : "Finance profiles unavailable"} disabled={!postingProfiles.length} /></div>
     <label className={styles.checkboxField}><Checkbox checked={quantityTracked} onChange={(checked) => { setQuantityTracked(checked); if (!checked) setUnit(""); }} /><span>Quantity Tracked</span></label>
     <div className={detailStyles.fieldGroup}><label className={typography.fieldLabel}>Unit</label><SearchableSelect value={unit} onChange={(value) => setUnit(value as Unit)} options={UNIT_OPTIONS} searchable={false} disabled={!quantityTracked} placeholder={quantityTracked ? "Select a unit" : "Not applicable"} /></div>
   </div></section></div>;

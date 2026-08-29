@@ -12,6 +12,7 @@ export const financeInstall = {
     "./install/db/objects/table.inventory_control_account.create.sql",
     "./install/db/objects/table.tax_control_account.create.sql",
     "./install/db/objects/table.item_posting_profile.create.sql",
+    "./install/db/objects/table.inventory_item_posting_profile_assignment.create.sql",
     "./install/db/objects/table.dimension.create.sql",
     "./install/db/objects/table.dimension_value.create.sql",
     "./install/db/objects/table.fiscal_year.create.sql",

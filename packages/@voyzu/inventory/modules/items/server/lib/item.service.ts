@@ -2,7 +2,7 @@ import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, ConflictError, DataError, NotFoundError } from "@voyzu/capability/errors";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/audit/stamps";
 import type { ItemListRow, ItemStatus } from "../../types/item-list.types";
-import type { FinanceItemDto, ItemPostingCodeUsageDto } from "../../types/finance-item.types";
+import type { OperationalItemDto } from "../../types/operational-item.types";
 import type { ItemCategoryOptionDto, ItemCreateRequestDto, ItemPatchRequestDto, ItemResponseDto } from "../../types/item.types";
 import { ItemRepo } from "../db/item.repo";
 import type { ItemRow } from "../db/item.row.types";
@@ -16,7 +16,7 @@ async function toResponse(repo: ItemRepo, row: ItemRow): Promise<ItemResponseDto
     id: row.id, sku: row.sku, name: row.name, description: row.description,
     category: row.item_category_id === null ? null : { id: row.item_category_id, code: row.category_code ?? "", name: row.category_name ?? "" },
     unit: row.unit, itemType: row.item_type, quantityTracked: row.quantity_tracked,
-    itemPostingCodeId: row.item_posting_code_id, status: row.status, inUse: row.in_use,
+    status: row.status, inUse: row.in_use,
     components: components.map((component) => ({ itemId: component.component_item_id, sku: component.sku, name: component.name, quantity: component.quantity, unit: component.unit })),
     customFields,
     audit: {
@@ -52,7 +52,7 @@ export async function createItem(organizationId: number, input: ItemCreateReques
       const repo = new ItemRepo(db); const sku = input.sku ? normalizeSku(input.sku) : await repo.nextSku(organizationId);
       const row = await repo.insert(organizationId, withCreationAudit({ sku, name: input.name.trim(), description: "", item_category_id: input.categoryId,
         unit: input.quantityTracked ? input.unit : null, item_type: "SINGLE_ITEM", quantity_tracked: input.quantityTracked,
-        item_posting_code_id: input.itemPostingCodeId, status: "ACTIVE" }, await createCreationAuditStamp()));
+        status: "ACTIVE" }, await createCreationAuditStamp()));
       return toResponse(repo, row);
     });
   } catch (error) { return translateConflict(error); }
@@ -88,7 +88,7 @@ export async function patchItem(organizationId: number, sku: string, input: Item
       }
       const audit = await createUpdateAuditStamp();
       const changed = await repo.patch(organizationId, sku, withUpdateAudit({ name: input.name?.trim(), description: input.description?.trim(), item_category_id: input.categoryId,
-        unit: targetUnit, item_type: input.itemType, quantity_tracked: input.quantityTracked, item_posting_code_id: input.itemPostingCodeId }, audit));
+        unit: targetUnit, item_type: input.itemType, quantity_tracked: input.quantityTracked }, audit));
       if (components) await repo.replaceComponents(organizationId, current.id, targetType === "ASSEMBLY" ? components : [], audit);
       if (input.customFields) await repo.replaceCustomFieldValues(organizationId, current.id, input.customFields, customFieldDefinitions, audit);
       return toResponse(repo, (await repo.get(organizationId, changed.sku)) ?? changed);
@@ -106,11 +106,20 @@ export async function deactivateItem(organizationId: number, sku: string) { retu
 export async function activateItems(organizationId: number, skus: string[]) { return transitionItems(organizationId, skus, "ACTIVE"); }
 export async function deactivateItems(organizationId: number, skus: string[]) { return transitionItems(organizationId, skus, "INACTIVE"); }
 
+export async function changeItemsCategory(organizationId: number, skus: string[], categoryId: number): Promise<ItemResponseDto[]> {
+  return withTransaction(async (db) => {
+    const repo = new ItemRepo(db); const normalized = normalizeSkus(skus);
+    await requireItems(repo, organizationId, normalized);
+    if (!await repo.categoryExists(organizationId, categoryId)) throw new BusinessRuleError("Select an active item category");
+    await repo.changeCategory(organizationId, normalized, categoryId, await createUpdateAuditStamp());
+    return Promise.all((await requireItems(repo, organizationId, normalized)).map((row) => toResponse(repo, row)));
+  });
+}
+
 export async function deleteItems(organizationId: number, skus: string[]): Promise<void> {
   await withTransaction(async (db) => { const repo = new ItemRepo(db); const normalized = normalizeSkus(skus); const rows = await requireItems(repo, organizationId, normalized);
     const inUse = rows.filter(({ in_use }) => in_use); if (inUse.length) throw new BusinessRuleError(`In-use item ${inUse.map(({ sku }) => sku).join(", ")} cannot be deleted`);
     await repo.delete(organizationId, normalized, await createUpdateAuditStamp()); });
 }
 export async function deleteItem(organizationId: number, sku: string) { return deleteItems(organizationId, [sku]); }
-export async function getItemsForFinance(organizationId: number, skus: string[]): Promise<FinanceItemDto[]> { return new ItemRepo(getDb()).listForFinance(organizationId, skus); }
-export async function getItemPostingCodeUsages(postingCodeIds: number[]): Promise<ItemPostingCodeUsageDto[]> { return new ItemRepo(getDb()).listPostingCodeUsages(postingCodeIds); }
+export async function getOperationalItems(organizationId: number, skus: string[]): Promise<OperationalItemDto[]> { return new ItemRepo(getDb()).listOperationalItems(organizationId, skus); }

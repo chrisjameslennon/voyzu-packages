@@ -25,6 +25,7 @@ import { companyGlAccountCategoriesModule } from "./modules/company-gl-account-c
 import { companyGlAccountsModule } from "./modules/company-gl-accounts/module";
 import { companyInventoryControlAccountsModule } from "./modules/company-inventory-control-accounts/module";
 import { companyInventoryItemPostingProfilesModule } from "./modules/company-inventory-item-posting-profiles/module";
+import { companyInventoryItemPostingProfileAssignmentsModule } from "./modules/company-inventory-item-posting-profile-assignments/module";
 import { companyReportsModule } from "./modules/company-reports/module";
 import { companyTaxControlAccountsModule } from "./modules/company-tax-control-accounts/module";
 import { financialDocumentProcessingEngineModule } from "./modules/financial-document-processing-engine/module";
@@ -71,6 +72,7 @@ export const financeModules = [
   journalsModule,
   companyReportsModule,
   companyInventoryItemPostingProfilesModule,
+  companyInventoryItemPostingProfileAssignmentsModule,
   inventoryLedgerModule,
   taxLedgerModule,
   apSubledgerLedgerEntriesModule,
@@ -121,6 +123,7 @@ export const financePackage = {
     journalsModule,
     companyReportsModule,
     companyInventoryItemPostingProfilesModule,
+    companyInventoryItemPostingProfileAssignmentsModule,
     inventoryLedgerModule,
     taxLedgerModule,
     apSubledgerLedgerEntriesModule,

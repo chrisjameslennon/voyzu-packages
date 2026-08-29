@@ -1,0 +1,8 @@
+import { InternalServerErrorResponseDto } from "@voyzu/types";
+import { AssignPostingProfileRequestDto, PostingAssignmentsDto } from "./types";
+
+const companyCode = { description: "Company code that identifies the company scope.", schema: { type: "string" } };
+export const apiDefinitions = {
+  list: { method: "GET", path: "/finance/[companyCode]/inventory/item-posting-profile-assignments", loadHandler: () => import("./server/api/posting-profile-assignment.http.handlers").then((module) => module.handleList), request: { path: { companyCode } }, summary: "List item posting profile assignments", description: "Lists Inventory items and their Finance-owned posting profile assignments.", tags: ["Company Inventory Item Posting Profile Assignments"], responses: { "200": { description: "Successful response.", body: PostingAssignmentsDto }, "500": { description: "Unexpected error.", body: InternalServerErrorResponseDto } } },
+  assign: { method: "POST", path: "/finance/[companyCode]/inventory/item-posting-profile-assignments", loadHandler: () => import("./server/api/posting-profile-assignment.http.handlers").then((module) => module.handleAssign), request: { path: { companyCode }, contentType: "application/json", body: AssignPostingProfileRequestDto }, summary: "Assign an item posting profile", description: "Assigns a Finance-owned posting profile to Inventory item ids.", tags: ["Company Inventory Item Posting Profile Assignments"], responses: { "200": { description: "Successful response.", body: PostingAssignmentsDto }, "500": { description: "Unexpected error.", body: InternalServerErrorResponseDto } } },
+} as const;

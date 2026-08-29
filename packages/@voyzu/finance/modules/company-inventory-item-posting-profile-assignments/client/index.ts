@@ -1,0 +1,1 @@
+export { PostingProfileAssignmentsView } from "./PostingProfileAssignmentsView";

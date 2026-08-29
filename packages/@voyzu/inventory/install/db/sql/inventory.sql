@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS item (
     unit                     TEXT,
     item_type                TEXT NOT NULL DEFAULT 'SINGLE_ITEM',
     quantity_tracked         BOOLEAN NOT NULL DEFAULT TRUE,
-    item_posting_code_id     BIGINT,
     status                   active_status NOT NULL DEFAULT 'ACTIVE',
 
     creation_date            audit_timestamp,

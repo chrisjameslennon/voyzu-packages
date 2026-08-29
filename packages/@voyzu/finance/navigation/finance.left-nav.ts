@@ -24,6 +24,7 @@ import { pageRoutes as companyInventoryControlAccountsPageRoutes } from "@voyzu/
 import { pageRoutes as companyFinancialDocumentTypesPageRoutes } from "@voyzu/finance/company-financial-document-types/pages.routes";
 import { pageRoutes as companyFinancialDocumentDefaultsPageRoutes } from "@voyzu/finance/company-financial-document-defaults/pages.routes";
 import { pageRoutes as companyInventoryItemPostingProfilesPageRoutes } from "@voyzu/finance/company-inventory-item-posting-profiles/pages.routes";
+import { pageRoutes as companyInventoryItemPostingProfileAssignmentsPageRoutes } from "@voyzu/finance/company-inventory-item-posting-profile-assignments/pages.routes";
 import { pageRoutes as companyDimensionsPageRoutes } from "@voyzu/finance/company-dimensions/pages.routes";
 
 export const financeLeftNav = [
@@ -123,6 +124,7 @@ export const financeLeftNav = [
               { label: "Financial Document Types", routeId: companyFinancialDocumentTypesPageRoutes.list.id },
               { label: "Financial Document Defaults", routeId: companyFinancialDocumentDefaultsPageRoutes.list.id },
               { label: "Item Posting Profiles", routeId: companyInventoryItemPostingProfilesPageRoutes.list.id },
+              { label: "Posting Profile Assignments", routeId: companyInventoryItemPostingProfileAssignmentsPageRoutes.list.id },
             ],
           },
           { label: "Dimensions", routeId: companyDimensionsPageRoutes.list.id },

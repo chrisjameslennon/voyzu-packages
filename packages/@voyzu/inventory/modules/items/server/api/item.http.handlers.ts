@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
 import { businessRuleError, conflictError, created, noContent, notFoundError, ok, parseBody, serverError } from "@voyzu/capability/http";
 import { BusinessRuleError, ConflictError, NotFoundError } from "@voyzu/capability/errors";
-import type { ItemCodeListRequestDto, ItemCreateRequestDto, ItemPatchRequestDto } from "../../types/item.types";
+import type { ItemCategoryChangeRequestDto, ItemCodeListRequestDto, ItemCreateRequestDto, ItemPatchRequestDto } from "../../types/item.types";
 import { getSelectedOrganization } from "../../../common/server/organization-context";
-import { activateItem, activateItems, createItem, deactivateItem, deactivateItems, deleteItem, deleteItems, generateItemSku, getItem, listItemCategories, listItems, patchItem } from "../lib/item.service";
+import { activateItem, activateItems, changeItemsCategory, createItem, deactivateItem, deactivateItems, deleteItem, deleteItems, generateItemSku, getItem, listItemCategories, listItems, patchItem } from "../lib/item.service";
 
 type RouteContext = { params: Promise<{ sku: string }> };
 function errorResponse(error: unknown) {
@@ -28,4 +28,5 @@ export async function handleActivate(_request: NextRequest, { params }: RouteCon
 export async function handleDeactivate(_request: NextRequest, { params }: RouteContext) { try { const { sku } = await params; return ok(await deactivateItem(await organizationId(), sku)); } catch (error) { return errorResponse(error); } }
 export async function handleBatchActivate(request: NextRequest) { try { const { skus } = await parseBody<ItemCodeListRequestDto>(request); return ok(await activateItems(await organizationId(), skus)); } catch (error) { return errorResponse(error); } }
 export async function handleBatchDeactivate(request: NextRequest) { try { const { skus } = await parseBody<ItemCodeListRequestDto>(request); return ok(await deactivateItems(await organizationId(), skus)); } catch (error) { return errorResponse(error); } }
+export async function handleBatchChangeCategory(request: NextRequest) { try { const { skus, categoryId } = await parseBody<ItemCategoryChangeRequestDto>(request); return ok(await changeItemsCategory(await organizationId(), skus, categoryId)); } catch (error) { return errorResponse(error); } }
 export async function handleBatchDelete(request: NextRequest) { try { const { skus } = await parseBody<ItemCodeListRequestDto>(request); await deleteItems(await organizationId(), skus); return noContent(); } catch (error) { return errorResponse(error); } }

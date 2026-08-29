@@ -70,6 +70,12 @@ CREATE TRIGGER item_posting_profile_audit_trigger
   FOR EACH ROW
   EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
 
+DROP TRIGGER IF EXISTS inventory_item_posting_profile_assignment_audit_trigger ON inventory_item_posting_profile_assignment;
+CREATE TRIGGER inventory_item_posting_profile_assignment_audit_trigger
+  BEFORE INSERT OR UPDATE OR DELETE ON inventory_item_posting_profile_assignment
+  FOR EACH ROW
+  EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
+
 DROP TRIGGER IF EXISTS bank_cash_control_account_audit_trigger ON bank_cash_control_account;
 CREATE TRIGGER bank_cash_control_account_audit_trigger
   BEFORE INSERT OR UPDATE OR DELETE ON bank_cash_control_account

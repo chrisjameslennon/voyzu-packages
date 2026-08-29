@@ -10,7 +10,7 @@
     "allowInstall": true,
     "dependencies": ["@voyzu/erp-core"],
     "pageRootPaths": ["/inventory"],
-    "apiRootPaths": ["/inventory/items"],
+    "apiRootPaths": ["/inventory"],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }
@@ -51,6 +51,42 @@
     "./items/operations": {
       "types": "./modules/items/operations.ts",
       "import": "./modules/items/operations.ts"
+    },
+    "./configuration/pages.routes": {
+      "types": "./modules/configuration/pages.routes.ts",
+      "import": "./modules/configuration/pages.routes.ts"
+    },
+    "./configuration/api.routes": {
+      "types": "./modules/configuration/api.routes.ts",
+      "import": "./modules/configuration/api.routes.ts"
+    },
+    "./configuration/operations": {
+      "types": "./modules/configuration/operations.ts",
+      "import": "./modules/configuration/operations.ts"
+    },
+    "./stock/pages.routes": {
+      "types": "./modules/stock/pages.routes.ts",
+      "import": "./modules/stock/pages.routes.ts"
+    },
+    "./stock/api.routes": {
+      "types": "./modules/stock/api.routes.ts",
+      "import": "./modules/stock/api.routes.ts"
+    },
+    "./stock/operations": {
+      "types": "./modules/stock/operations.ts",
+      "import": "./modules/stock/operations.ts"
+    },
+    "./reports/pages.routes": {
+      "types": "./modules/reports/pages.routes.ts",
+      "import": "./modules/reports/pages.routes.ts"
+    },
+    "./reports/api.routes": {
+      "types": "./modules/reports/api.routes.ts",
+      "import": "./modules/reports/api.routes.ts"
+    },
+    "./reports/operations": {
+      "types": "./modules/reports/operations.ts",
+      "import": "./modules/reports/operations.ts"
     }
   },
   "peerDependencies": {

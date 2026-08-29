@@ -1,4 +1,7 @@
 import { pageRoutes } from "../modules/items/pages.routes";
+import { pageRoutes as configurationRoutes } from "../modules/configuration/pages.routes";
+import { pageRoutes as reportRoutes } from "../modules/reports/pages.routes";
+import { pageRoutes as stockRoutes } from "../modules/stock/pages.routes";
 
 export const inventoryLeftNav = [
   {
@@ -12,48 +15,27 @@ export const inventoryLeftNav = [
       {
         label: "Item Categories",
         icon: "category",
-        path: "/inventory/item-categories",
+        routeId: configurationRoutes.categories.id,
       },
       {
         label: "Stock",
         icon: "inventory",
-        path: "/inventory/stock",
+        routeId: stockRoutes.stock.id,
       },
       {
         label: "Stock Counts",
         icon: "fact_check",
-        path: "/inventory/stock-counts",
+        routeId: stockRoutes.counts.id,
       },
       {
         label: "Stock Activity",
         icon: "history",
-        path: "/inventory/stock-activity",
+        routeId: stockRoutes.activity.id,
       },
       {
         label: "Warehouses",
         icon: "warehouse",
-        path: "/inventory/warehouses",
-      },
-    ],
-  },
-  {
-    label: "Integration",
-    items: [
-      {
-        label: "Finance",
-        icon: "account_balance",
-        children: [
-          {
-            label: "View Posting Profiles",
-            icon: "visibility",
-            path: "/inventory/integration/finance/posting-profiles",
-          },
-          {
-            label: "Posting Profile Assignment",
-            icon: "assignment",
-            path: "/inventory/integration/finance/posting-profile-assignment",
-          },
-        ],
+        routeId: configurationRoutes.warehouses.id,
       },
     ],
   },
@@ -63,12 +45,12 @@ export const inventoryLeftNav = [
       {
         label: "Custom Fields",
         icon: "dynamic_form",
-        path: "/inventory/settings/custom-fields",
+        routeId: configurationRoutes.customFields.id,
       },
       {
         label: "Custom Field Option Lists",
         icon: "list_alt",
-        path: "/inventory/settings/option-lists",
+        routeId: configurationRoutes.optionLists.id,
       },
     ],
   },
@@ -81,11 +63,11 @@ export const inventoryLeftNav = [
         children: [
           {
             label: "Items",
-            path: "/inventory/reports/items",
+            routeId: reportRoutes.items.id,
           },
           {
             label: "Item Categories",
-            path: "/inventory/reports/item-categories",
+            routeId: reportRoutes.categories.id,
           },
         ],
       },
@@ -95,31 +77,31 @@ export const inventoryLeftNav = [
         children: [
           {
             label: "Stock on Hand",
-            path: "/inventory/reports/stock-on-hand",
+            routeId: reportRoutes.onHand.id,
           },
           {
             label: "Stock Availability",
-            path: "/inventory/reports/stock-availability",
+            routeId: reportRoutes.availability.id,
           },
           {
             label: "Stock Activity",
-            path: "/inventory/reports/stock-activity",
+            routeId: reportRoutes.activity.id,
           },
           {
             label: "Stock Transfers",
-            path: "/inventory/reports/stock-transfers",
+            routeId: reportRoutes.transfers.id,
           },
           {
             label: "Stock Reservations",
-            path: "/inventory/reports/stock-reservations",
+            routeId: reportRoutes.reservations.id,
           },
           {
             label: "Stocktake Variance",
-            path: "/inventory/reports/stocktake-variance",
+            routeId: reportRoutes.variance.id,
           },
           {
             label: "Quantity Adjustments",
-            path: "/inventory/reports/quantity-adjustments",
+            routeId: reportRoutes.adjustments.id,
           },
         ],
       },

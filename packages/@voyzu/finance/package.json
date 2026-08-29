@@ -9,8 +9,7 @@
     "voyzu-package": true,
     "allowInstall": true,
     "dependencies": [
-      "@voyzu/erp-core",
-      "@voyzu/inventory"
+      "@voyzu/erp-core"
     ],
     "pageRootPaths": [
       "/finance"
@@ -338,6 +337,18 @@
       "types": "./modules/company-inventory-item-posting-profiles/server/index.ts",
       "import": "./modules/company-inventory-item-posting-profiles/server/index.ts"
     },
+    "./company-inventory-item-posting-profile-assignments": {
+      "types": "./modules/company-inventory-item-posting-profile-assignments/module.ts",
+      "import": "./modules/company-inventory-item-posting-profile-assignments/module.ts"
+    },
+    "./company-inventory-item-posting-profile-assignments/client": {
+      "types": "./modules/company-inventory-item-posting-profile-assignments/client/index.ts",
+      "import": "./modules/company-inventory-item-posting-profile-assignments/client/index.ts"
+    },
+    "./company-inventory-item-posting-profile-assignments/server": {
+      "types": "./modules/company-inventory-item-posting-profile-assignments/server/index.ts",
+      "import": "./modules/company-inventory-item-posting-profile-assignments/server/index.ts"
+    },
     "./company-reports": {
       "types": "./modules/company-reports/module.ts",
       "import": "./modules/company-reports/module.ts"
@@ -597,6 +608,10 @@
     "./company-inventory-item-posting-profiles/operations": {
       "types": "./modules/company-inventory-item-posting-profiles/operations.ts",
       "import": "./modules/company-inventory-item-posting-profiles/operations.ts"
+    },
+    "./company-inventory-item-posting-profile-assignments/operations": {
+      "types": "./modules/company-inventory-item-posting-profile-assignments/operations.ts",
+      "import": "./modules/company-inventory-item-posting-profile-assignments/operations.ts"
     },
     "./company-tax-control-accounts/operations": {
       "types": "./modules/company-tax-control-accounts/operations.ts",
@@ -869,6 +884,14 @@
     "./company-inventory-item-posting-profiles/api.routes": {
       "types": "./modules/company-inventory-item-posting-profiles/api.routes.ts",
       "import": "./modules/company-inventory-item-posting-profiles/api.routes.ts"
+    },
+    "./company-inventory-item-posting-profile-assignments/pages.routes": {
+      "types": "./modules/company-inventory-item-posting-profile-assignments/pages.routes.ts",
+      "import": "./modules/company-inventory-item-posting-profile-assignments/pages.routes.ts"
+    },
+    "./company-inventory-item-posting-profile-assignments/api.routes": {
+      "types": "./modules/company-inventory-item-posting-profile-assignments/api.routes.ts",
+      "import": "./modules/company-inventory-item-posting-profile-assignments/api.routes.ts"
     },
     "./company-reports/pages.routes": {
       "types": "./modules/company-reports/pages.routes.ts",

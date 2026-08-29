@@ -5,7 +5,7 @@ import type { ItemPostingProfileBatchPatchRequestDto, ItemPostingProfileBatchUpd
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
-import { getItemPostingCodeUsages } from "../../../server/operational-inventory";
+import { getItemPostingProfileUsages } from "../../../server/operational-inventory";
 
 import { ItemPostingProfileRepo } from "../db/item-posting-profile.repo";
 import type { ItemPostingProfileRow } from "../db/item-posting-profile.row.types";
@@ -16,7 +16,7 @@ function repo() {
 }
 
 async function enrichRow(row: ItemPostingProfileRow): Promise<ItemPostingProfileResponseDto> {
-  const usages = await getItemPostingCodeUsages([row.id]);
+  const usages = await getItemPostingProfileUsages([row.id]);
   const dto = await withAuditActors(toDto({
     ...row,
     linked_by: usages.map((usage) => ({ type: "Inventory Items", code: usage.sku })),

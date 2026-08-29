@@ -6,14 +6,32 @@ import { pathToFileURL } from "node:url";
 
 const root = process.cwd();
 const runtimeRoot = resolve(root, ".run");
-const requestedTests = process.argv.slice(2).map((value) => value.toLowerCase());
-const testFiles = readdirSync(resolve(root, "packages"), { recursive: true, withFileTypes: true })
-  .filter((entry) => entry.isFile()
-    && entry.name.endsWith(".test.ts")
-    && entry.parentPath.replaceAll("\\", "/").includes("/tests/operations"))
+const requestedTests = process.argv
+  .slice(2)
+  .map((value) => value.toLowerCase());
+const matchesRequest = (file, requested) => {
+  const normalizedFile = file.replaceAll("\\", "/").toLowerCase();
+  if (requested.startsWith("@")) {
+    return normalizedFile.includes(`/packages/${requested}/tests/operations/`);
+  }
+  return normalizedFile.includes(requested);
+};
+const testFiles = readdirSync(resolve(root, "packages"), {
+  recursive: true,
+  withFileTypes: true,
+})
+  .filter(
+    (entry) =>
+      entry.isFile() &&
+      entry.name.endsWith(".test.ts") &&
+      entry.parentPath.replaceAll("\\", "/").includes("/tests/operations"),
+  )
   .map((entry) => resolve(entry.parentPath, entry.name))
-  .filter((file) => requestedTests.length === 0
-    || requestedTests.some((requested) => file.toLowerCase().includes(requested)));
+  .filter(
+    (file) =>
+      requestedTests.length === 0 ||
+      requestedTests.some((requested) => matchesRequest(file, requested)),
+  );
 
 if (testFiles.length === 0) {
   console.error(`No operation tests matched: ${requestedTests.join(", ")}`);
@@ -25,9 +43,23 @@ const args = [
   "--import",
   pathToFileURL(resolve(runtimeRoot, "node_modules/tsx/dist/loader.mjs")).href,
   "--import",
-  pathToFileURL(resolve(runtimeRoot, "voyzu/lib/runtime-tools/src/register-runner-loader.mjs")).href,
+  pathToFileURL(
+    resolve(
+      runtimeRoot,
+      "voyzu/lib/runtime-tools/src/register-runner-loader.mjs",
+    ),
+  ).href,
   "--import",
-  pathToFileURL(resolve(runtimeRoot, "voyzu/apps/web/.generated/operations/register.ts")).href,
+  pathToFileURL(
+    resolve(
+      runtimeRoot,
+      "voyzu/apps/web/.generated/operations/pre-installed.ts",
+    ),
+  ).href,
+  "--import",
+  pathToFileURL(
+    resolve(runtimeRoot, "voyzu/apps/web/.generated/operations/installed.ts"),
+  ).href,
   "--test",
   "--test-concurrency=1",
   ...testFiles,

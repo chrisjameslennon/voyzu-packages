@@ -4,7 +4,7 @@ export const pageRoutes = {
     path: "/inventory/items",
     loadPage: () => import("./server/pages/ItemsListPage").then((module) => module.ItemsListPage),
     pageTitle: "Items",
-    breadcrumbBase: [{ label: "Inventory", href: "/inventory/items" }],
+    breadcrumbBase: [{ label: "Inventory" }],
     auth: { required: true, minRole: "STANDARD" },
   },
   detail: {
@@ -12,7 +12,7 @@ export const pageRoutes = {
     path: "/inventory/items/[sku]",
     loadPage: () => import("./server/pages/ItemDetailPage").then((module) => module.ItemDetailPage),
     pageTitle: "Item",
-    breadcrumbBase: [{ label: "Inventory", href: "/inventory/items" }, { label: "Items", href: "/inventory/items" }],
+    breadcrumbBase: [{ label: "Inventory" }, { label: "Items", href: "/inventory/items" }],
     auth: { required: true, minRole: "STANDARD" },
   },
 } as const;

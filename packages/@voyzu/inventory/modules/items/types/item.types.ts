@@ -26,13 +26,13 @@ export const ItemCustomFieldInputDto = StrictObject({ customFieldId: PositiveId,
 export type ItemCustomFieldInputDto = Static<typeof ItemCustomFieldInputDto>;
 export const ItemCreateRequestDto = StrictObject({
   sku: Type.Optional(ItemSku), name: NonBlankText, unit: Type.Union([Unit, Type.Null()]),
-  categoryId: PositiveId, quantityTracked: Type.Boolean(), itemPostingCodeId: Type.Union([PositiveId, Type.Null()]),
+  categoryId: PositiveId, quantityTracked: Type.Boolean(),
 });
 export type ItemCreateRequestDto = Static<typeof ItemCreateRequestDto>;
 export const ItemPatchRequestDto = StrictObject({
   name: Type.Optional(NonBlankText), description: Type.Optional(Type.String()),
   categoryId: Type.Optional(Type.Union([PositiveId, Type.Null()])), unit: Type.Optional(Type.Union([Unit, Type.Null()])),
-  quantityTracked: Type.Optional(Type.Boolean()), itemPostingCodeId: Type.Optional(Type.Union([PositiveId, Type.Null()])),
+  quantityTracked: Type.Optional(Type.Boolean()),
   itemType: Type.Optional(ItemTypeDto), components: Type.Optional(Type.Array(ItemComponentInputDto)),
   customFields: Type.Optional(Type.Array(ItemCustomFieldInputDto)),
 });
@@ -40,7 +40,7 @@ export type ItemPatchRequestDto = Static<typeof ItemPatchRequestDto>;
 export const ItemResponseDto = StrictObject({
   id: PositiveId, sku: ItemSku, name: NonBlankText, description: Type.String(),
   category: Type.Union([ItemCategoryOptionDto, Type.Null()]), unit: Type.Union([Unit, Type.Null()]),
-  itemType: ItemTypeDto, quantityTracked: Type.Boolean(), itemPostingCodeId: Type.Union([PositiveId, Type.Null()]),
+  itemType: ItemTypeDto, quantityTracked: Type.Boolean(),
   status: Status, inUse: Type.Boolean(), components: Type.Array(ItemComponentDto), customFields: Type.Array(ItemCustomFieldDto), audit: AuditMetadataDto,
 });
 export type ItemResponseDto = Static<typeof ItemResponseDto>;
@@ -52,5 +52,9 @@ export const ItemListRowDto = StrictObject({
 export type ItemListRowDto = Static<typeof ItemListRowDto>;
 export const ItemCodeListRequestDto = StrictObject({ skus: Type.Array(ItemSku, { minItems: 1 }) });
 export type ItemCodeListRequestDto = Static<typeof ItemCodeListRequestDto>;
-export interface PostingProfileOption { id: number; code: string; name: string; status: "ACTIVE" | "INACTIVE"; }
+export const ItemCategoryChangeRequestDto = StrictObject({
+  skus: Type.Array(ItemSku, { minItems: 1 }),
+  categoryId: PositiveId,
+});
+export type ItemCategoryChangeRequestDto = Static<typeof ItemCategoryChangeRequestDto>;
 export const ItemOptionsDto = StrictObject({ categories: Type.Array(ItemCategoryOptionDto), nextSku: ItemSku });

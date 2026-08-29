@@ -72,9 +72,9 @@ function suffix(): string {
 
 async function createItem(code: string): Promise<void> {
   await getPool().query(
-    `INSERT INTO item (
+    `WITH created AS (INSERT INTO item (
        organization_id, sku, name, description, item_type, unit, quantity_tracked,
-       item_posting_code_id, status, creation_date, creation_actor_type
+       status, creation_date, creation_actor_type
      )
      SELECT organization.id,
             $1,
@@ -83,16 +83,20 @@ async function createItem(code: string): Promise<void> {
             'SINGLE_ITEM',
             'ea',
             true,
-            profile.id,
             'ACTIVE',
             now(),
             'SYSTEM'
      FROM organization
      JOIN finance_organization finance ON finance.organization_id = organization.id
-     JOIN item_posting_profile profile ON profile.finance_organization_id = finance.id AND profile.code = 'RESALE_GOODS'
      WHERE organization.code = 'ACME'
      ORDER BY organization.id
-     LIMIT 1`,
+     LIMIT 1
+     RETURNING id, organization_id)
+     INSERT INTO inventory_item_posting_profile_assignment (finance_organization_id, inventory_item_id, item_posting_profile_id)
+     SELECT finance.id, created.id, profile.id
+     FROM created
+     JOIN finance_organization finance ON finance.organization_id = created.organization_id
+     JOIN item_posting_profile profile ON profile.finance_organization_id = finance.id AND profile.code = 'RESALE_GOODS'`,
     [code, `Downstream ${code}`, "Downstream inventory integration test item"],
   );
   createdItemCodes.push(code);

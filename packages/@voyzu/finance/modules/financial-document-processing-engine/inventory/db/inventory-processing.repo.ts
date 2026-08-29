@@ -176,7 +176,7 @@ export class InventoryProcessingRepo {
   }
 
   async listInventoryItems(companyId: number, items: OperationalInventoryItem[]): Promise<InventoryItemPostingRow[]> {
-    const profileIds = items.flatMap((item) => item.itemPostingCodeId == null ? [] : [item.itemPostingCodeId]);
+    const profileIds = items.flatMap((item) => item.itemPostingProfileId == null ? [] : [item.itemPostingProfileId]);
     if (profileIds.length === 0) return [];
     const { rows } = await this.db.query(
       `SELECT ipp.id::int AS posting_profile_id,
@@ -215,7 +215,7 @@ export class InventoryProcessingRepo {
     );
     const profiles = new Map(rows.map((row: Record<string, unknown>) => [Number(row.posting_profile_id), row]));
     return items.flatMap((item) => {
-      const profile = item.itemPostingCodeId == null ? undefined : profiles.get(item.itemPostingCodeId);
+      const profile = item.itemPostingProfileId == null ? undefined : profiles.get(item.itemPostingProfileId);
       if (!profile) return [];
       return [inventoryItemRow({
         ...profile,

@@ -1,0 +1,1 @@
+export { InventoryReportView } from "./InventoryReportView";
