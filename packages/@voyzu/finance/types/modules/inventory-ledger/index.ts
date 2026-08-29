@@ -20,6 +20,12 @@ export const InventoryLedgerEntryResponseDto = StrictObject({
 });
 export type InventoryLedgerEntryResponseDto = Type.Static<typeof InventoryLedgerEntryResponseDto>;
 
+export const InventoryValuationResponseDto = StrictObject({
+  id: PositiveId, itemCode: BusinessCode, itemName: NonBlankText, quantityOnHand: Type.Number(),
+  averageUnitCost: Type.Number(), bookValue: Type.Number(), baseCurrencyCode: CurrencyCode, asAtDate: IsoDate,
+});
+export type InventoryValuationResponseDto = Type.Static<typeof InventoryValuationResponseDto>;
+
 export const InventoryLedgerEntryDetailLineDto = StrictObject({
   id: PositiveId, lineNumber: PositiveId, movement: Type.String(), itemCode: BusinessCode, itemName: NonBlankText,
   qtyDelta: Type.Number(), unitValueSupplied: Type.Union([Type.Number(), Type.Null()]), bookValueDelta: Type.Number(),

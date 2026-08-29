@@ -24,10 +24,6 @@ import type {
   StockCountRow,
   StockPosition,
 } from "../types/stock.types";
-const money = new Intl.NumberFormat("en-NZ", {
-  style: "currency",
-  currency: "NZD",
-});
 const date = (value: string) => new Date(value).toLocaleDateString("en-NZ");
 function Shell({
   title,
@@ -173,19 +169,6 @@ export function StockPositionsView({
     { key: "onHand", label: "On Hand", align: "right" },
     { key: "reserved", label: "Reserved", align: "right" },
     { key: "available", label: "Available", align: "right" },
-    {
-      key: "averageUnitCost",
-      label: "Avg. Unit Cost",
-      align: "right",
-      render: (r) =>
-        r.averageUnitCost === null ? "—" : money.format(r.averageUnitCost),
-    },
-    {
-      key: "bookValue",
-      label: "Book Value",
-      align: "right",
-      render: (r) => (r.bookValue === null ? "—" : money.format(r.bookValue)),
-    },
   ];
   const primaryAction = (
     <Button
@@ -350,13 +333,6 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
           ? "—"
           : `${r.quantityChange > 0 ? "+" : ""}${r.quantityChange}`,
     },
-    {
-      key: "valueChange",
-      label: "Value Change",
-      align: "right",
-      render: (r) =>
-        r.valueChange === null ? "—" : money.format(r.valueChange),
-    },
     { key: "source", label: "Source", render: (r) => r.source ?? "—" },
     {
       key: "sourceId",
@@ -367,7 +343,7 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
   return (
     <Shell
       title="Stock Activity"
-      description="Read-only history of stock changes, reservations, transfers, adjustments, and valuation activity."
+      description="Read-only history of stock changes, reservations, transfers, and quantity adjustments."
       icon="history"
       search={search}
       setSearch={setSearch}

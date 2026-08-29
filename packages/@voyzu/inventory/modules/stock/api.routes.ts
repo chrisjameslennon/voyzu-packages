@@ -41,7 +41,7 @@ export const apiDefinitions = {
     loadHandler: () => load().then((m) => m.handlePositions),
     summary: "List stock positions",
     description:
-      "Lists derived on-hand, reserved, available, and valuation positions by item and warehouse.",
+      "Lists derived on-hand, reserved, and available positions by item and warehouse.",
     tags: ["Inventory Stock"],
     responses: {
       "200": {

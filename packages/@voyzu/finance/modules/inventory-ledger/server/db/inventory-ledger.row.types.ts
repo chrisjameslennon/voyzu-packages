@@ -42,3 +42,8 @@ export interface InventoryLedgerEntryRow {
   creation_date: string | null;
   updated_date: string | null;
 }
+
+export interface InventoryValuationRow {
+  item_id: number; item_code: string; item_name: string; qty_balance: number;
+  avg_unit_value: number; book_value_balance: number; base_currency_code: string; posting_date: string;
+}

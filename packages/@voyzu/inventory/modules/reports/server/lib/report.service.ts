@@ -10,10 +10,6 @@ import {
   listStockCounts,
   listStockPositions,
 } from "../../../stock/server/lib/stock.service";
-const money = new Intl.NumberFormat("en-NZ", {
-  style: "currency",
-  currency: "NZD",
-});
 const n = (value: number) => String(value);
 const d = (value: string) => new Date(value).toLocaleDateString("en-NZ");
 export async function getInventoryReport(
@@ -68,8 +64,6 @@ export async function getInventoryReport(
         "Warehouse",
         "On Hand",
         ...(key === "stock-availability" ? ["Reserved", "Available"] : []),
-        "Avg. Unit Cost",
-        "Book Value",
       ],
       rows: positions.map((r) => ({
         id: String(r.id),
@@ -81,8 +75,6 @@ export async function getInventoryReport(
           ...(key === "stock-availability"
             ? [n(r.reserved), n(r.available)]
             : []),
-          r.averageUnitCost === null ? "—" : money.format(r.averageUnitCost),
-          r.bookValue === null ? "—" : money.format(r.bookValue),
         ],
       })),
     };
@@ -162,7 +154,6 @@ export async function getInventoryReport(
       "Item Name",
       "Warehouse",
       "Qty Change",
-      "Value Change",
       "Source",
       "Reference",
     ],
@@ -175,7 +166,6 @@ export async function getInventoryReport(
         r.itemName,
         r.warehouse,
         r.quantityChange === null ? "—" : n(r.quantityChange),
-        r.valueChange === null ? "—" : money.format(r.valueChange),
         r.source ?? "—",
         r.sourceId ?? r.reference ?? "—",
       ],

@@ -1,6 +1,15 @@
 import { companyFinancePageAuth } from "@voyzu/finance/common/page-auth";
 
 export const pageRoutes = {
+  valuation: {
+    id: "voyzu.inventory-ledger.page.valuation",
+    pageTitle: "Stock Valuation",
+    helpPath: "modules-help/company-ledger/inventory-ledger-entries",
+    path: "/finance/inventory/valuation",
+    loadPage: () => import("./server/pages/InventoryValuationPage").then((module) => module.InventoryValuationPage),
+    breadcrumbBase: [{ label: "Finance" }, { label: "Inventory" }],
+    auth: companyFinancePageAuth,
+  },
   list: {
     id: "voyzu.inventory-ledger.page.list",
     pageTitle: "Inventory Ledger Entries",

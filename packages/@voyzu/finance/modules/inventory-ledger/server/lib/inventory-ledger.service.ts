@@ -1,6 +1,7 @@
 import type {
   InventoryLedgerEntryDetailResponseDto,
   InventoryLedgerEntryResponseDto,
+  InventoryValuationResponseDto,
 } from "@voyzu/finance/types/modules/inventory-ledger";
 import { getDb } from "@voyzu/capability/db";
 import { InventoryLedgerRepo } from "../db/inventory-ledger.repo";
@@ -45,6 +46,14 @@ function toDto(row: InventoryLedgerEntryRow): InventoryLedgerEntryResponseDto {
 
 export async function listInventoryLedgerEntries(companyId: number): Promise<InventoryLedgerEntryResponseDto[]> {
   return (await new InventoryLedgerRepo(getDb()).listEntries(companyId)).map(toDto);
+}
+
+export async function listInventoryValuations(companyId: number): Promise<InventoryValuationResponseDto[]> {
+  return (await new InventoryLedgerRepo(getDb()).listValuations(companyId)).map((row) => ({
+    id: row.item_id, itemCode: row.item_code, itemName: row.item_name, quantityOnHand: row.qty_balance,
+    averageUnitCost: row.avg_unit_value, bookValue: row.book_value_balance,
+    baseCurrencyCode: row.base_currency_code, asAtDate: row.posting_date,
+  }));
 }
 
 function toDetailDto(rows: InventoryLedgerEntryRow[]): InventoryLedgerEntryDetailResponseDto | null {

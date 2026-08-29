@@ -15,8 +15,6 @@ export const StockPositionDto = StrictObject({
   onHand: Type.Number(),
   reserved: Type.Number({ minimum: 0 }),
   available: Type.Number(),
-  averageUnitCost: Type.Union([Type.Number(), Type.Null()]),
-  bookValue: Type.Union([Type.Number(), Type.Null()]),
 });
 export type StockPosition = Static<typeof StockPositionDto>;
 export const StockActivityDto = StrictObject({
@@ -27,7 +25,6 @@ export const StockActivityDto = StrictObject({
   itemName: Text,
   warehouse: Text,
   quantityChange: Type.Union([Type.Number(), Type.Null()]),
-  valueChange: Type.Union([Type.Number(), Type.Null()]),
   source: Type.Union([Type.String(), Type.Null()]),
   sourceId: Type.Union([Type.String(), Type.Null()]),
   reference: Type.Union([Type.String(), Type.Null()]),
@@ -43,9 +40,6 @@ export type StockOption = Static<typeof StockOptionDto>;
 export const MovementLineDto = StrictObject({
   itemId: Id,
   quantity: Qty,
-  unitCost: Type.Optional(
-    Type.Union([Type.Number({ minimum: 0 }), Type.Null()]),
-  ),
 });
 export type MovementLine = Static<typeof MovementLineDto>;
 export const StockCustomFieldValueDto = Type.Union([

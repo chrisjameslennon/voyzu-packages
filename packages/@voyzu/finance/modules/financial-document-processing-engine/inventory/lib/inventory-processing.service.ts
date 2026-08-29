@@ -393,7 +393,7 @@ async function resolveContext(repo: InventoryProcessingRepo, request: ResolvedIn
     company ? repo.listInventoryItems(company.id, operationalItems) : Promise.resolve([]),
     settingsCompanyId ? repo.listDimensionValues(settingsCompanyId, requestedDimensionPairs(request)) : Promise.resolve([]),
   ]);
-  const balances = mapBalances(await repo.listCurrentBalances(items.map((item) => item.id)));
+  const balances = mapBalances(company ? await repo.listCurrentBalances(company.id, items.map((item) => item.id)) : []);
   const data: InventoryDataValidationContext = {
     company,
     documentProcessor,

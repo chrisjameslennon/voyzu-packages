@@ -76,7 +76,7 @@ test("stock commands expose movements, reservations, and positions", async () =>
       date: commandDate,
       warehouseId: warehouseOneId,
       reference: "TEST-RECEIPT",
-      lines: [{ itemId, quantity: 10, unitCost: 5 }],
+      lines: [{ itemId, quantity: 10 }],
     })) > 0,
   );
   await reserveInventoryStock(organizationId, {

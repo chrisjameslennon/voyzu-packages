@@ -39,7 +39,7 @@ before(async () => {
     date: "2026-08-29",
     warehouseId: warehouse.id,
     reference: "TEST-REPORT-RECEIPT",
-    lines: [{ itemId: item.id, quantity: 3, unitCost: 4 }],
+    lines: [{ itemId: item.id, quantity: 3 }],
   });
 });
 

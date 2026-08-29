@@ -84,6 +84,7 @@ export const financeLeftNav = [
             path: "/finance/inventory/ledger",
             children: [
               { label: "Ledger Entries", routeId: inventoryLedgerPageRoutes.list.id },
+              { label: "Stock Valuation", routeId: inventoryLedgerPageRoutes.valuation.id },
             ],
           },
         ],

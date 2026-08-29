@@ -229,7 +229,7 @@ export class InventoryProcessingRepo {
     });
   }
 
-  async listCurrentBalances(itemIds: number[]): Promise<InventoryBalanceRow[]> {
+  async listCurrentBalances(companyId: number, itemIds: number[]): Promise<InventoryBalanceRow[]> {
     if (itemIds.length === 0) return [];
     const { rows } = await this.db.query(
       `SELECT DISTINCT ON (l.item_id)
@@ -239,9 +239,9 @@ export class InventoryProcessingRepo {
               l.book_value_balance::float8 AS book_value_balance
        FROM inventory_ledger_entry_line l
        JOIN inventory_ledger_entry_header h ON h.id = l.inventory_ledger_entry_header_id
-       WHERE l.item_id = ANY($1::bigint[])
+       WHERE h.finance_organization_id = $1 AND l.item_id = ANY($2::bigint[])
        ORDER BY l.item_id, h.posting_date DESC, h.id DESC, l.line_number DESC, l.id DESC`,
-      [itemIds],
+      [companyId, itemIds],
     );
     return rows.map((row: Record<string, unknown>) => ({
       item_id: Number(row.item_id),

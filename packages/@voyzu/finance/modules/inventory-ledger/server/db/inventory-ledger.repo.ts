@@ -1,6 +1,6 @@
 import type { DbExecutor } from "@voyzu/capability/db";
 
-import type { InventoryLedgerEntryRow } from "./inventory-ledger.row.types";
+import type { InventoryLedgerEntryRow, InventoryValuationRow } from "./inventory-ledger.row.types";
 
 const INVENTORY_ENTRY_COLUMNS = `
   h.id::int                         AS id,
@@ -87,6 +87,21 @@ export class InventoryLedgerRepo {
       [companyId],
     );
     return rows as unknown as InventoryLedgerEntryRow[];
+  }
+
+  async listValuations(companyId: number): Promise<InventoryValuationRow[]> {
+    const { rows } = await this.db.query(
+      `SELECT DISTINCT ON (l.item_id)
+          l.item_id::int, l.item_code, l.item_name, l.qty_balance::float8,
+          l.avg_unit_value::float8, l.book_value_balance::float8,
+          h.base_currency_code, h.posting_date::text
+       FROM inventory_ledger_entry_line l
+       JOIN inventory_ledger_entry_header h ON h.id = l.inventory_ledger_entry_header_id
+       WHERE h.finance_organization_id = $1 AND h.status = 'POSTED'
+       ORDER BY l.item_id, h.posting_date DESC, h.id DESC, l.line_number DESC, l.id DESC`,
+      [companyId],
+    );
+    return rows as unknown as InventoryValuationRow[];
   }
 
   async getEntry(companyId: number, code: string): Promise<InventoryLedgerEntryRow[]> {

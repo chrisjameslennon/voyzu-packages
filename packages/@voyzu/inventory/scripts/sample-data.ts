@@ -81,17 +81,16 @@ const items = [
 ] as const;
 
 const stockTargets = [
-  { sku: "SAMPLE-BEANS", warehouseCode: "MAIN", quantity: 80, unitCost: 28 },
-  { sku: "SAMPLE-BEANS", warehouseCode: "SOUTH", quantity: 35, unitCost: 28 },
-  { sku: "SAMPLE-MUG", warehouseCode: "MAIN", quantity: 120, unitCost: 7.5 },
-  { sku: "SAMPLE-MUG", warehouseCode: "SOUTH", quantity: 40, unitCost: 7.5 },
-  { sku: "SAMPLE-BOX", warehouseCode: "MAIN", quantity: 200, unitCost: 1.2 },
-  { sku: "SAMPLE-GIFT-SET", warehouseCode: "MAIN", quantity: 24, unitCost: 42 },
+  { sku: "SAMPLE-BEANS", warehouseCode: "MAIN", quantity: 80 },
+  { sku: "SAMPLE-BEANS", warehouseCode: "SOUTH", quantity: 35 },
+  { sku: "SAMPLE-MUG", warehouseCode: "MAIN", quantity: 120 },
+  { sku: "SAMPLE-MUG", warehouseCode: "SOUTH", quantity: 40 },
+  { sku: "SAMPLE-BOX", warehouseCode: "MAIN", quantity: 200 },
+  { sku: "SAMPLE-GIFT-SET", warehouseCode: "MAIN", quantity: 24 },
   {
     sku: "SAMPLE-GIFT-SET",
     warehouseCode: "RETURNS",
     quantity: 2,
-    unitCost: 42,
   },
 ] as const;
 
@@ -199,7 +198,7 @@ async function seedOrganization(organization: Organization): Promise<void> {
       warehouseId,
       reference: "SAMPLE-DATA",
       notes: "Inventory package sample data",
-      lines: [{ itemId, quantity, unitCost: target.unitCost }],
+      lines: [{ itemId, quantity }],
     });
   }
 

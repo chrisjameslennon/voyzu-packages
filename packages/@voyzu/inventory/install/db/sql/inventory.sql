@@ -172,7 +172,6 @@ CREATE TABLE IF NOT EXISTS inventory_transaction_line (
     item_id                  BIGINT NOT NULL,
     warehouse_id             BIGINT NOT NULL,
     quantity_change          NUMERIC(18, 4) NOT NULL,
-    unit_cost                NUMERIC(18, 4),
 
     creation_date            audit_timestamp,
     creation_actor_type      actor_type,
@@ -196,8 +195,7 @@ CREATE TABLE IF NOT EXISTS inventory_transaction_line (
       FOREIGN KEY (organization_id, item_id) REFERENCES item(organization_id, id),
     CONSTRAINT fk_inventory_transaction_line_warehouse_scope
       FOREIGN KEY (organization_id, warehouse_id) REFERENCES warehouse(organization_id, id),
-    CONSTRAINT ck_inventory_transaction_line_quantity CHECK (quantity_change <> 0),
-    CONSTRAINT ck_inventory_transaction_line_cost CHECK (unit_cost IS NULL OR unit_cost >= 0)
+    CONSTRAINT ck_inventory_transaction_line_quantity CHECK (quantity_change <> 0)
 );
 
 CREATE TABLE IF NOT EXISTS inventory_reservation (
