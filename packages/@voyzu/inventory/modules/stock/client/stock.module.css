@@ -109,6 +109,76 @@
   grid-template-columns: 1fr;
   gap: 1rem;
 }
+.issueConfirmDocument {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.75rem;
+}
+.issueConfirmBox {
+  padding: 1rem;
+  border: 1px solid var(--voyzu-color-neutral-border);
+  border-radius: var(--voyzu-radius-surface);
+  background: var(--voyzu-color-neutral-bg);
+  color: var(--voyzu-color-text);
+}
+.issueConfirmSummary {
+  margin: 0 0 1rem;
+}
+.issueConfirmMetadata {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--voyzu-color-neutral-border);
+}
+.issueConfirmMetadata dt {
+  color: var(--voyzu-color-text-tertiary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.issueConfirmMetadata dd {
+  margin: 0.25rem 0 0;
+  color: var(--voyzu-color-text);
+  font-weight: 600;
+}
+.issueConfirmItems {
+  padding: 0;
+  overflow: hidden;
+}
+.issueConfirmItemsScroll {
+  max-height: 12rem;
+  overflow-y: auto;
+}
+.issueConfirmItemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+.issueConfirmItemsTable th,
+.issueConfirmItemsTable td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--voyzu-color-neutral-border);
+}
+.issueConfirmItemsTable th {
+  position: sticky;
+  top: 0;
+  background: var(--voyzu-color-neutral-bg);
+  color: var(--voyzu-color-text-tertiary);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.issueConfirmItemsTable th:last-child,
+.issueConfirmItemsTable td:last-child {
+  text-align: right;
+}
+.issueConfirmItemsTable tbody tr:last-child td {
+  border-bottom: 0;
+}
 .issueItemsSection {
   display: flex;
   flex-direction: column;

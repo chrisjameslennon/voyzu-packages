@@ -5,6 +5,7 @@ import {
   Breadcrumbs,
   Button,
   Checkbox,
+  ConfirmDialog,
   EditableGrid,
   Input,
   SearchableSelect,
@@ -70,6 +71,7 @@ export function StockOperationView({
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [saving, setSaving] = useState(false);
+  const [confirmIssue, setConfirmIssue] = useState(false);
   const [customValues, setCustomValues] = useState<
     Record<number, string | string[] | boolean>
   >({});
@@ -437,8 +439,31 @@ export function StockOperationView({
       setSaving(false);
     }
   };
+  const requestSubmit = () => {
+    if (kind !== "issue") {
+      void submit();
+      return;
+    }
+    if (!validate()) return;
+    setError("");
+    setConfirmIssue(true);
+  };
   const title = titles[kind][0];
   const selectedItem = items.find((i) => i.id === Number(itemId));
+  const issueLines = lines.filter(
+    (line) => line.itemId && Number(line.quantity) > 0,
+  );
+  const issueLineCount = issueLines.length;
+  const issueWarehouse = warehouses.find(
+    (warehouse) => warehouse.id === Number(warehouseId),
+  );
+  const issueDate = date
+    ? new Date(`${date}T00:00:00`).toLocaleDateString("en-NZ", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "—";
   const customFieldControls = customFields.map((field) => (
     <div className={styles.field} key={field.id}>
       <label className={typography.fieldLabel}>
@@ -563,7 +588,7 @@ export function StockOperationView({
               <Button
                 variant="primary"
                 disabled={saving}
-                onClick={() => void submit()}
+                onClick={requestSubmit}
               >
                 {saving
                   ? kind === "transfer"
@@ -642,6 +667,9 @@ export function StockOperationView({
                   <label className={typography.fieldLabel}>Warehouse</label>
                   <SearchableSelect
                     value={warehouseId}
+                    hasError={
+                      error === "Complete all required fields" && !warehouseId
+                    }
                     onChange={(value) => {
                       setWarehouseId(value);
                       setItemId("");
@@ -940,6 +968,63 @@ export function StockOperationView({
           </Button>
         </div> : null}
       </main>
+      <ConfirmDialog
+        isOpen={confirmIssue}
+        title="Confirm Issue Stock"
+        confirmLabel="Issue Stock"
+        confirmVariant="primary"
+        onClose={() => setConfirmIssue(false)}
+        onConfirm={() => {
+          setConfirmIssue(false);
+          void submit();
+        }}
+        message={
+          <div className={styles.issueConfirmDocument}>
+            <div className={styles.issueConfirmBox}>
+              <p className={styles.issueConfirmSummary}>
+                Issue <strong>{issueLineCount}</strong>{" "}
+                {issueLineCount === 1 ? "item" : "items"} from{" "}
+                <strong>{issueWarehouse?.name ?? "the selected warehouse"}</strong>.
+              </p>
+              <dl className={styles.issueConfirmMetadata}>
+                <div>
+                  <dt>Date</dt>
+                  <dd>{issueDate}</dd>
+                </div>
+                <div>
+                  <dt>Reference</dt>
+                  <dd>{reference.trim() || "—"}</dd>
+                </div>
+              </dl>
+            </div>
+            <div className={`${styles.issueConfirmBox} ${styles.issueConfirmItems}`}>
+              <div className={styles.issueConfirmItemsScroll}>
+                <table className={styles.issueConfirmItemsTable}>
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Quantity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {issueLines.map((line) => {
+                      const item = items.find(
+                        (candidate) => candidate.id === Number(line.itemId),
+                      );
+                      return (
+                        <tr key={line.id}>
+                          <td>{item?.name ?? line.itemName}</td>
+                          <td>{line.quantity}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
+      />
       <Toast isVisible={!!toast} message={toast} onClose={() => setToast("")} />
     </div>
   );

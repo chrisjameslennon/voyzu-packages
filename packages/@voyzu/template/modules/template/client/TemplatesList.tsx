@@ -8,6 +8,7 @@ import {
   Button,
   ConfirmDialog,
   DataTable,
+  DropdownMenu,
   FilterChips,
   FilterPanel,
   Input,
@@ -18,6 +19,7 @@ import {
   required,
   useFormValidation,
   type DataTableColumn,
+  type DropdownMenuItem,
   type FilterState,
   type FilterTab,
 } from "@voyzu/ui-components";
@@ -54,6 +56,7 @@ export function TemplatesList({ templates }: { templates: TemplateResponseDto[] 
   const [serverError, setServerError] = useState("");
   const [listError, setListError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
@@ -82,6 +85,75 @@ export function TemplatesList({ templates }: { templates: TemplateResponseDto[] 
     sessionStorage.removeItem(TOAST_KEY);
     setToastMessage(stored);
   }, []);
+  useEffect(() => setRows(templates), [templates]);
+
+  const refresh = () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    window.setTimeout(() => {
+      router.refresh();
+      setRefreshing(false);
+    }, 500);
+  };
+
+  const exportCsv = async (
+    exportRows: TemplateResponseDto[],
+    suffix: string,
+  ) => {
+    const filename = `templates_${suffix}`;
+    const response = await fetch("/api/capability/export", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        filename,
+        columns: [
+          { key: "code", label: "Code" },
+          { key: "description", label: "Description" },
+          { key: "status", label: "Status" },
+        ],
+        rows: exportRows.map((row) => ({
+          code: row.code,
+          description: row.description ?? "",
+          status: row.status,
+        })),
+      }),
+    });
+    if (!response.ok) return;
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${filename}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportItems = useMemo<DropdownMenuItem[]>(
+    () => [
+      {
+        value: "selected",
+        label: `Selected (${selected.length})`,
+        icon: "check_box",
+        disabled: selected.length === 0,
+        onSelect: () => void exportCsv(selected, "selected"),
+      },
+      {
+        value: "current-view",
+        label: `Current view (${visibleRows.length})`,
+        icon: "visibility",
+        disabled: visibleRows.length === 0,
+        onSelect: () => void exportCsv(visibleRows, "current_view"),
+      },
+      {
+        value: "full-dataset",
+        label: `Full dataset (${rows.length})`,
+        icon: "database",
+        disabled: rows.length === 0,
+        onSelect: () => void exportCsv(rows, "full_dataset"),
+      },
+    ],
+    [rows, selected, visibleRows],
+  );
 
   const resetCreate = () => {
     setCode("");
@@ -177,7 +249,7 @@ export function TemplatesList({ templates }: { templates: TemplateResponseDto[] 
       <div className={layout.listToolbar}>
         <div className={layout.slotToolbarLeft}><FilterPanel tabs={filterTabs} filters={filters} onApply={setFilters} onClear={() => setFilters({})} onRemoveFilter={(key) => setFilters((current) => { const next = { ...current }; delete next[key]; return next; })} showChips={false} /></div>
         <div className={layout.slotToolbarSearch}><Input search containerClassName={layout.slotSearchControl} placeholder="Search templates..." value={search} onChange={(event) => setSearch(event.target.value)} /></div>
-        <div className={layout.slotToolbarRight}><div className={listStyles.toolbarActions}><Button variant="secondary" icon="check_circle" disabled={!selected.some(({ status }) => status === "INACTIVE")} title="Activate selected" onClick={() => { void transitionSelected("activate"); }}>Activate</Button><Button variant="secondary" icon="block" disabled={!selected.some(({ status }) => status === "ACTIVE")} title="Deactivate selected" onClick={() => { void transitionSelected("deactivate"); }}>Deactivate</Button><Button variant="secondary-destructive" icon="delete" disabled={!selected.length} title="Delete selected" onClick={() => setShowDelete(true)} /></div></div>
+        <div className={layout.slotToolbarRight}><div className={listStyles.toolbarActions}><Button variant="secondary" icon="check_circle" disabled={!selected.some(({ status }) => status === "INACTIVE")} title="Activate selected" onClick={() => { void transitionSelected("activate"); }}>Activate</Button><Button variant="secondary" icon="block" disabled={!selected.some(({ status }) => status === "ACTIVE")} title="Deactivate selected" onClick={() => { void transitionSelected("deactivate"); }}>Deactivate</Button><Button variant="secondary-destructive" icon="delete" disabled={!selected.length} title="Delete selected" onClick={() => setShowDelete(true)} /><Button variant="plain" icon="sync" className={refreshing ? listStyles.spinning : undefined} disabled={refreshing} title="Refresh" onClick={refresh} /><DropdownMenu trigger={<Button variant="plain" icon="file_download" title="Export" />} items={exportItems} alignment="right" width={260} /></div></div>
       </div>
 
       {(search.trim() || Object.keys(filters).length) ? <div className={layout.chipsRow}><div className={layout.slotChips}><FilterChips tabs={filterTabs} filters={filters} additionalChips={search.trim() ? [{ key: "search", label: "Search contains", value: search.trim(), onRemove: () => setSearch("") }] : []} onClear={() => { setFilters({}); setSearch(""); }} onRemoveFilter={(key) => setFilters((current) => { const next = { ...current }; delete next[key]; return next; })} /></div></div> : null}
