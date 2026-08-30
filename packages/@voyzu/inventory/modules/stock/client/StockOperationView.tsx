@@ -593,6 +593,7 @@ export function StockOperationView({
                   {warehouseId ? (
                     <EditableGrid
                       key={`issue-${warehouseId}`}
+                      className={styles.issueGrid}
                       columns={issueMovementColumns}
                       initialRows={lines}
                       allowAddRows

@@ -103,6 +103,10 @@
   background: var(--voyzu-color-neutral-bg);
   color: var(--voyzu-color-text-secondary);
 }
+.issueGrid td button {
+  font-size: 0.8125rem !important;
+  font-weight: 400 !important;
+}
 @media (max-width: 767px) {
   .fields,
   .customFields,
