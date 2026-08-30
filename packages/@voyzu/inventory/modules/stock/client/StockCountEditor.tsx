@@ -1,6 +1,6 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { AuditPanel } from "@voyzu/audit/client";
 import {
   Badge,
@@ -29,7 +29,7 @@ import type {
 import styles from "./stock.module.css";
 type Row = {
   id: number;
-  itemId: number;
+  itemId: number | string;
   sku: string;
   itemName: string;
   expectedQuantity: number;
@@ -39,12 +39,10 @@ type Row = {
 export function StockCountEditor({
   record: initial,
   positions,
-  items,
   warehouses,
 }: {
   record?: StockCountDetail;
   positions: StockPosition[];
-  items: StockOption[];
   warehouses: StockOption[];
 }) {
   const router = useRouter();
@@ -68,34 +66,24 @@ export function StockCountEditor({
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [confirm, setConfirm] = useState(false);
-  const warehousePositions = useMemo(
-    () =>
-      items.map((item) => {
-        const position = positions.find(
-          (candidate) =>
-            candidate.warehouseId === Number(warehouseId) &&
-            candidate.itemId === item.id,
-        );
-        return {
-          id: item.id,
-          itemId: item.id,
-          sku: item.code,
-          itemName: item.name,
-          expectedQuantity: position?.onHand ?? 0,
-          countedQuantity: "" as const,
-          variance: "—",
-        };
-      }),
-    [items, positions, warehouseId],
-  );
-  const displayRows = rows.length ? rows : warehousePositions;
-  const calculated = displayRows.map((row) => ({
-    ...row,
-    variance:
-      row.countedQuantity === ""
-        ? "—"
-        : Number(row.countedQuantity) - row.expectedQuantity,
-  }));
+  const [saving, setSaving] = useState(false);
+  const calculated = rows.map((row) => {
+    const expectedQuantity = record
+      ? row.expectedQuantity
+      : (positions.find(
+          (position) =>
+            position.warehouseId === Number(warehouseId) &&
+            position.itemId === Number(row.itemId),
+        )?.onHand ?? 0);
+    return {
+      ...row,
+      expectedQuantity,
+      variance:
+        row.countedQuantity === ""
+          ? "—"
+          : Number(row.countedQuantity) - expectedQuantity,
+    };
+  });
   const changes = calculated.filter(
     (row) => row.countedQuantity !== "" && Number(row.variance) !== 0,
   );
@@ -130,12 +118,74 @@ export function StockCountEditor({
       width: 100,
     },
   ];
+  const newColumns: EditableGridColumn<Row>[] = [
+    {
+      key: "itemId",
+      label: "Item",
+      type: "select",
+      width: 320,
+      options: positions
+        .filter(
+          (position) => position.warehouseId === Number(warehouseId),
+        )
+        .map((position) => ({
+          value: String(position.itemId),
+          label: position.itemName,
+          code: position.sku,
+        })),
+    },
+    {
+      key: "expectedQuantity",
+      label: "On Hand",
+      type: "number",
+      readOnly: true,
+      width: 120,
+      calculate: (row) =>
+        positions.find(
+          (position) =>
+            position.warehouseId === Number(warehouseId) &&
+            position.itemId === Number(row.itemId),
+        )?.onHand ?? 0,
+    },
+    {
+      key: "countedQuantity",
+      label: "Actual Quantity",
+      type: "number",
+      width: 150,
+    },
+    {
+      key: "variance",
+      label: "Variance",
+      type: "text",
+      readOnly: true,
+      width: 110,
+      calculate: (row) => {
+        if (row.countedQuantity === "") return "—";
+        const expected =
+          positions.find(
+            (position) =>
+              position.warehouseId === Number(warehouseId) &&
+              position.itemId === Number(row.itemId),
+          )?.onHand ?? 0;
+        return Number(row.countedQuantity) - expected;
+      },
+    },
+  ];
+  const createRow = (): Row => ({
+    id: Date.now() + Math.random(),
+    itemId: "",
+    sku: "",
+    itemName: "",
+    expectedQuantity: 0,
+    countedQuantity: "",
+    variance: "—",
+  });
   const payload = () => ({
     warehouseId: Number(warehouseId),
     countDate,
     notes,
-    lines: calculated.map((row) => ({
-      itemId: row.itemId,
+    lines: calculated.filter((row) => row.itemId).map((row) => ({
+      itemId: Number(row.itemId),
       countedQuantity:
         row.countedQuantity === "" ? null : Number(row.countedQuantity),
     })),
@@ -159,6 +209,18 @@ export function StockCountEditor({
       setError("Warehouse is required");
       return;
     }
+    if (!rows.some((row) => row.itemId)) {
+      setError("Add at least one item");
+      return;
+    }
+    const selectedItemIds = rows
+      .filter((row) => row.itemId)
+      .map((row) => Number(row.itemId));
+    if (new Set(selectedItemIds).size !== selectedItemIds.length) {
+      setError("Each item can only be added once");
+      return;
+    }
+    setSaving(true);
     const response = await request(
       record
         ? `/api/inventory/stock-counts/${record.id}`
@@ -169,6 +231,7 @@ export function StockCountEditor({
         body: JSON.stringify(record ? { ...payload(), status } : payload()),
       },
     );
+    setSaving(false);
     if (!response) return;
     const changed = (await response.json()) as StockCountDetail;
     setRecord(changed);
@@ -191,6 +254,14 @@ export function StockCountEditor({
     return changed;
   };
   const complete = async () => {
+    if (
+      !rows.some(
+        (row) => row.itemId && row.countedQuantity !== "",
+      )
+    ) {
+      setError("Enter an actual quantity for at least one item");
+      return;
+    }
     const current = await save("IN_PROGRESS");
     if (!current) return;
     const response = await request(
@@ -215,6 +286,134 @@ export function StockCountEditor({
   const title = review
     ? "Confirm Stocktake"
     : (record?.countNo ?? "New Stocktake");
+  if (!record)
+    return (
+      <div
+        className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}
+      >
+        <header className={layout.detailHeader}>
+          <div className={layout.slotBreadcrumb}>
+            <Breadcrumbs />
+          </div>
+          <div className={layout.slotTitle}>
+            <div className={styles.titleTextBlock}>
+              <h1
+                className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}
+              >
+                New Stocktake
+              </h1>
+              <p className={typography.headingByline}>
+                Record the actual stock quantities held in a warehouse.
+              </p>
+            </div>
+          </div>
+          <div className={layout.slotActions}>
+            <div className={detailStyles.headerActions}>
+              <Button
+                variant="secondary"
+                onClick={() => router.push("/inventory/stock-counts")}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="secondary"
+                icon="save"
+                disabled={saving}
+                onClick={() => void save("DRAFT")}
+              >
+                Save as Draft
+              </Button>
+              <Button
+                variant="primary"
+                disabled={saving}
+                onClick={() => void complete()}
+              >
+                {saving ? "Completing..." : "Complete Stocktake"}
+              </Button>
+            </div>
+          </div>
+          <div className={layout.slotAlert}>
+            <ValidationAlert
+              errors={error ? [error] : []}
+              visible={!!error}
+              onDismiss={() => setError("")}
+            />
+          </div>
+        </header>
+        <aside className={layout.statusSection}>
+          <div className={styles.documentPanel}>
+            <div className={styles.documentPanelLabel}>
+              Stocktake document
+            </div>
+            <div className={styles.documentPanelFields}>
+              <div className={styles.field}>
+                <label className={typography.fieldLabel}>Count Date</label>
+                <Input
+                  type="date"
+                  value={countDate}
+                  onChange={(event) => setCountDate(event.target.value)}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={typography.fieldLabel}>Notes</label>
+                <textarea
+                  className={styles.textarea}
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </aside>
+        <main className={`${layout.mainSection} ${styles.stack}`}>
+          <section className={detailStyles.card}>
+            <h2 className={typography.sectionHeading}>Stocktake Details</h2>
+            <div className={styles.issueWarehouseField}>
+              <label className={typography.fieldLabel}>Warehouse</label>
+              <SearchableSelect
+                value={warehouseId}
+                onChange={(value) => {
+                  setWarehouseId(value);
+                  setRows(value ? [createRow()] : []);
+                }}
+                options={warehouses.map((warehouse) => ({
+                  value: String(warehouse.id),
+                  label: warehouse.name,
+                  code: warehouse.code,
+                }))}
+                placeholder="Select a warehouse"
+              />
+            </div>
+            <div className={styles.issueItemsSection}>
+              <h2 className={typography.sectionHeading}>Items</h2>
+              {warehouseId ? (
+                <EditableGrid
+                  key={`stocktake-${warehouseId}`}
+                  columns={newColumns}
+                  initialRows={rows}
+                  allowAddRows
+                  allowDeleteRows
+                  createRow={createRow}
+                  onRowsChange={setRows}
+                  addRowLabel="Add Item"
+                  emptyText="No items have been added"
+                  ariaLabel="Stocktake quantities"
+                />
+              ) : (
+                <p className={styles.issueItemsHint}>
+                  Select a warehouse to add items.
+                </p>
+              )}
+            </div>
+          </section>
+        </main>
+        <Toast
+          isVisible={!!toast}
+          message={toast}
+          onClose={() => setToast("")}
+        />
+      </div>
+    );
   const body = (
     <main className={`${layout.mainSection} ${styles.stack}`}>
       <section className={detailStyles.card}>
@@ -345,18 +544,6 @@ export function StockCountEditor({
       </div>
     </header>
   );
-  if (!record)
-    return (
-      <div className={layout.detailView}>
-        {header}
-        {body}
-        <Toast
-          isVisible={!!toast}
-          message={toast}
-          onClose={() => setToast("")}
-        />
-      </div>
-    );
   const filter = record.audit.updated.mutationId
     ? `mutationId=${encodeURIComponent(record.audit.updated.mutationId)}`
     : `entityType=stock_count&entityId=${record.id}`;

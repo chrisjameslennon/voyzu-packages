@@ -58,7 +58,6 @@ export const MovementRequestDto = StrictObject({
   date: Text,
   warehouseId: Id,
   reference: Type.Optional(Type.String()),
-  notes: Type.Optional(Type.String()),
   lines: Type.Array(MovementLineDto, { minItems: 1 }),
   customFields: Type.Optional(Type.Array(StockCustomFieldInputDto)),
 });
@@ -70,7 +69,6 @@ export const TransferRequestDto = StrictObject({
   toWarehouseId: Id,
   quantity: Qty,
   reference: Type.Optional(Type.String()),
-  notes: Type.Optional(Type.String()),
 });
 export type TransferRequest = Static<typeof TransferRequestDto>;
 export const ReservationLineDto = StrictObject({
@@ -79,16 +77,14 @@ export const ReservationLineDto = StrictObject({
 });
 export const ReservationRequestDto = StrictObject({
   itemId: Id,
-  reference: Text,
-  notes: Type.Optional(Type.String()),
+  reference: Type.Optional(Type.String()),
   lines: Type.Array(ReservationLineDto, { minItems: 1 }),
 });
 export type ReservationRequest = Static<typeof ReservationRequestDto>;
 export const AdjustmentRequestDto = StrictObject({
   date: Text,
   warehouseId: Id,
-  reference: Text,
-  notes: Type.Optional(Type.String()),
+  reference: Type.Optional(Type.String()),
   lines: Type.Array(
     StrictObject({ itemId: Id, quantityChange: Type.Number() }),
     { minItems: 1 },

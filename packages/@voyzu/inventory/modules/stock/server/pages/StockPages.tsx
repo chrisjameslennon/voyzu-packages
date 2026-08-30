@@ -90,7 +90,6 @@ export async function StockCountNewPage() {
   return (
     <StockCountEditor
       positions={c.positions}
-      items={c.options.items}
       warehouses={c.options.warehouses}
     />
   );
@@ -104,7 +103,6 @@ export async function StockCountDetailPage({ id }: { id?: string }) {
     <StockCountEditor
       record={record}
       positions={c.positions}
-      items={c.options.items}
       warehouses={c.options.warehouses}
     />
   );

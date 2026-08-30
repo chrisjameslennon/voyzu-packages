@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Badge,
@@ -31,6 +31,8 @@ import type {
   ConfigurationKind,
   ConfigurationRow,
 } from "../types/configuration.types";
+import { InventoryListActions } from "../../../client/InventoryListActions";
+import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
 import styles from "./configuration.module.css";
 type Meta = {
   title: string;
@@ -68,6 +70,7 @@ export function ConfigurationListView({
   const [requiredField, setRequiredField] = useState(false);
   const [optionListId, setOptionListId] = useState("");
   const [optionSource, setOptionSource] = useState<"SHARED" | "CREATE">("SHARED");
+  useEffect(() => setRows(initialRows), [initialRows]);
   const hasOptionValues = dataType === "OPTION" || dataType === "MULTIPLE_OPTIONS";
   const validation = useFormValidation(() => ({
     name: { label: "name", value: name, rules: [required()] },
@@ -165,6 +168,26 @@ export function ConfigurationListView({
         </Badge>
       ),
     },
+  ];
+  const exportColumns = [
+    ...(kind === "category" || kind === "warehouse"
+      ? [{ key: "code", label: "Code" }, { key: "name", label: "Name" }]
+      : [{ key: "name", label: "Name" }]),
+    ...(kind === "category"
+      ? [
+          { key: "description", label: "Description" },
+          { key: "count", label: "Items" },
+        ]
+      : kind === "custom-field"
+        ? [
+            { key: "dataType", label: "Type" },
+            { key: "appliesTo", label: "Applies To" },
+            { key: "count", label: "Recorded Values" },
+          ]
+        : kind === "option-list"
+          ? [{ key: "count", label: "Options" }]
+          : [{ key: "secondary", label: "Location" }]),
+    { key: "status", label: "Status" },
   ];
   const reset = () => {
     setCode("");
@@ -437,7 +460,9 @@ export function ConfigurationListView({
             placeholder={`Search ${meta.title.toLowerCase()}...`}
           />
         </div>
-        <div className={layout.slotToolbarRight}>
+        <div
+          className={`${layout.slotToolbarRight} ${inventoryListStyles.toolbarLayer}`}
+        >
           <div className={listStyles.toolbarActions}>
             {kind === "warehouse" ? (
               <Button
@@ -474,6 +499,18 @@ export function ConfigurationListView({
               icon="delete"
               disabled={!selected.size}
               onClick={() => setConfirm(true)}
+            />
+            <InventoryListActions
+              rows={rows}
+              visibleRows={visible}
+              selectedIds={selected}
+              filename={`inventory_${kind.replaceAll("-", "_")}`}
+              columns={exportColumns}
+              toExportRow={(row) => ({
+                ...row,
+                dataType: row.dataType?.replaceAll("_", " ") ?? null,
+                appliesTo: row.appliesTo?.replaceAll("_", " ") ?? null,
+              })}
             />
           </div>
         </div>

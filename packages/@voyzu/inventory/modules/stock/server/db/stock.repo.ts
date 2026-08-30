@@ -183,7 +183,7 @@ export class StockRepo {
       type,
       input.date,
       input.reference,
-      input.notes,
+      undefined,
       input.lines.map((line) => ({
         itemId: line.itemId,
         warehouseId: input.warehouseId,
@@ -203,7 +203,7 @@ export class StockRepo {
       "TRANSFER",
       input.date,
       input.reference,
-      input.notes,
+      undefined,
       [
         {
           itemId: input.itemId,
@@ -229,7 +229,7 @@ export class StockRepo {
       "ADJUSTMENT",
       input.date,
       input.reference,
-      input.notes,
+      undefined,
       input.lines
         .filter((line) => line.quantityChange !== 0)
         .map((line) => ({
@@ -344,19 +344,15 @@ export class StockRepo {
         .filter((p) => p.warehouseId === input.warehouseId)
         .map((p) => [p.itemId, p.onHand]),
     );
-    const opts = await this.options(organizationId);
-    for (const item of opts.items) {
-      const counted =
-        input.lines.find((line) => line.itemId === item.id)?.countedQuantity ??
-        null;
+    for (const line of input.lines) {
       await this.db.query(
         `INSERT INTO stock_count_line(organization_id,stock_count_id,item_id,expected_quantity,counted_quantity,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
         [
           organizationId,
           id,
-          item.id,
-          byItem.get(item.id) ?? 0,
-          counted,
+          line.itemId,
+          byItem.get(line.itemId) ?? 0,
+          line.countedQuantity,
           ...e.map(([, v]) => v),
         ],
       );

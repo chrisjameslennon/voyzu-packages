@@ -16,6 +16,7 @@ import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type { ConfigurationDetail } from "../../configuration/types/configuration.types";
+import { Transfer } from "../domain/operation-policy";
 import type { StockOption, StockPosition } from "../types/stock.types";
 import styles from "./stock.module.css";
 type Kind = "receive" | "issue" | "transfer" | "reserve" | "adjust";
@@ -42,7 +43,7 @@ const titles = {
   reserve: ["Reserve Stock", "Reserve available stock for an item."],
   adjust: [
     "Adjust Quantity",
-    "Adjust the recorded quantity of stock held in a warehouse.",
+    "Manually adjust the recorded quantity of a stocked item held in a warehouse.",
   ],
 } as const;
 export function StockOperationView({
@@ -64,10 +65,8 @@ export function StockOperationView({
   const [toWarehouseId, setToWarehouseId] = useState("");
   const [itemId, setItemId] = useState("");
   const [reference, setReference] = useState("");
-  const [notes, setNotes] = useState("");
   const [quantity, setQuantity] = useState("");
   const [lines, setLines] = useState<Line[]>([]);
-  const [step, setStep] = useState(1);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [saving, setSaving] = useState(false);
@@ -107,6 +106,48 @@ export function StockOperationView({
         warehouse: position.warehouseName,
       })),
     );
+  }, [kind, positions]);
+  useEffect(() => {
+    if (kind !== "adjust") return;
+    const params = new URLSearchParams(window.location.search);
+    const requestedWarehouseId = Number(params.get("warehouseId"));
+    const requestedItemId = Number(params.get("itemId"));
+    if (!requestedWarehouseId || !requestedItemId) return;
+    const requestedPosition = positions.find(
+      (position) =>
+        position.warehouseId === requestedWarehouseId &&
+        position.itemId === requestedItemId,
+    );
+    if (!requestedPosition) return;
+    setItemId(String(requestedItemId));
+    setWarehouseId(String(requestedWarehouseId));
+  }, [kind, positions]);
+  useEffect(() => {
+    if (kind !== "reserve") return;
+    const requestedItemId = Number(
+      new URLSearchParams(window.location.search).get("itemId"),
+    );
+    if (!requestedItemId || !items.some((item) => item.id === requestedItemId))
+      return;
+    setItemId(String(requestedItemId));
+  }, [items, kind]);
+  useEffect(() => {
+    if (kind !== "transfer") return;
+    const params = new URLSearchParams(window.location.search);
+    const requestedItemId = Number(params.get("itemId"));
+    const requestedWarehouseId = Number(params.get("warehouseId"));
+    if (!requestedItemId || !requestedWarehouseId) return;
+    if (
+      !positions.some(
+        (position) =>
+          position.itemId === requestedItemId &&
+          position.warehouseId === requestedWarehouseId,
+      )
+    )
+      return;
+    setItemId(String(requestedItemId));
+    setWarehouseId(String(requestedWarehouseId));
+    setToWarehouseId(String(requestedWarehouseId));
   }, [kind, positions]);
   const movementColumns: EditableGridColumn<Line>[] = [
     {
@@ -197,6 +238,22 @@ export function StockOperationView({
       width: 140,
     },
   ];
+  const createIssueLine = (selectedWarehouseId: string): Line => ({
+    id: Date.now() + Math.random(),
+    itemId: "",
+    sku: "",
+    itemName: "",
+    onHand: 0,
+    reserved: 0,
+    available: 0,
+    quantity: "",
+    quantityChange: "",
+    warehouseId: selectedWarehouseId,
+    warehouse:
+      warehouses.find(
+        (warehouse) => warehouse.id === Number(selectedWarehouseId),
+      )?.name ?? "",
+  });
   const reserveColumns: EditableGridColumn<Line>[] = [
     {
       key: "warehouse",
@@ -228,45 +285,34 @@ export function StockOperationView({
     },
     { key: "quantity", label: "Reserve", type: "number", width: 110 },
   ];
-  const adjustColumns: EditableGridColumn<Line>[] = [
-    { key: "sku", label: "SKU", type: "text", readOnly: true, width: 150 },
-    {
-      key: "itemName",
-      label: "Item Name",
-      type: "text",
-      readOnly: true,
-      width: 240,
-    },
-    {
-      key: "onHand",
-      label: "On Hand",
-      type: "number",
-      readOnly: true,
-      width: 100,
-    },
-    {
-      key: "reserved",
-      label: "Currently Reserved",
-      type: "number",
-      readOnly: true,
-      width: 150,
-    },
-    {
-      key: "quantityChange",
-      label: "Adjust Quantity",
-      type: "number",
-      width: 140,
-    },
-  ];
+  const adjustmentWarehouses = warehouses.filter((warehouse) =>
+    positions.some(
+      (position) =>
+        position.itemId === Number(itemId) &&
+        position.warehouseId === warehouse.id,
+    ),
+  );
+  const adjustmentPosition = positions.find(
+    (position) =>
+      position.itemId === Number(itemId) &&
+      position.warehouseId === Number(warehouseId),
+  );
   const validate = () => {
     if (
       (kind !== "reserve" && !warehouseId) ||
-      !reference.trim() ||
       (kind === "transfer" && (!itemId || !toWarehouseId || !quantity)) ||
-      (kind === "reserve" && !itemId)
+      (kind === "reserve" && !itemId) ||
+      (kind === "adjust" && (!itemId || quantity === ""))
     ) {
       setError("Complete all required fields");
       return false;
+    }
+    if (kind === "transfer") {
+      const blockers = Transfer(Number(warehouseId), Number(toWarehouseId));
+      if (blockers.length) {
+        setError(blockers[0]!.message);
+        return false;
+      }
     }
     if (
       (kind === "receive" || kind === "issue") &&
@@ -275,14 +321,25 @@ export function StockOperationView({
       setError("Add at least one item and quantity");
       return false;
     }
+    if (kind === "adjust") {
+      if (!adjustmentPosition) {
+        setError("Select an item and warehouse with recorded stock");
+        return false;
+      }
+      const revisedQuantity = Number(quantity);
+      if (!Number.isFinite(revisedQuantity) || revisedQuantity < 0) {
+        setError("Revised quantity must be zero or greater");
+        return false;
+      }
+      if (revisedQuantity === adjustmentPosition.onHand) {
+        setError("Revised quantity must be different from the recorded quantity");
+        return false;
+      }
+    }
     return true;
   };
   const submit = async () => {
     if (!validate()) return;
-    if (kind === "adjust" && step < 3) {
-      setStep(step + 1);
-      return;
-    }
     setSaving(true);
     setError("");
     try {
@@ -312,12 +369,12 @@ export function StockOperationView({
           return { customFieldId: field.id, value };
         })
         .filter(({ value }) => value !== null && value !== "");
+      const optionalReference = reference.trim() || undefined;
       if (kind === "receive" || kind === "issue")
         body = {
           date,
           warehouseId: Number(warehouseId),
-          reference,
-          ...(kind === "receive" ? { notes } : {}),
+          reference: optionalReference,
           lines: lines
             .filter((l) => l.itemId && Number(l.quantity) > 0)
             .map((l) => ({
@@ -333,14 +390,12 @@ export function StockOperationView({
           fromWarehouseId: Number(warehouseId),
           toWarehouseId: Number(toWarehouseId),
           quantity: Number(quantity),
-          reference,
-          notes,
+          reference: optionalReference,
         };
       else if (kind === "reserve")
         body = {
           itemId: Number(itemId),
-          reference,
-          notes,
+          reference: optionalReference,
           lines: lines
             .filter((l) => Number(l.quantity) > 0)
             .map((l) => ({
@@ -352,14 +407,14 @@ export function StockOperationView({
         body = {
           date,
           warehouseId: Number(warehouseId),
-          reference,
-          notes,
-          lines: lines
-            .filter((l) => Number(l.quantityChange) !== 0)
-            .map((l) => ({
-              itemId: Number(l.itemId),
-              quantityChange: Number(l.quantityChange),
-            })),
+          reference: optionalReference,
+          lines: [
+            {
+              itemId: Number(itemId),
+              quantityChange:
+                Number(quantity) - (adjustmentPosition?.onHand ?? 0),
+            },
+          ],
         };
       const response = await fetch(`/api/inventory/stock/${path}`, {
         method: "POST",
@@ -382,12 +437,8 @@ export function StockOperationView({
       setSaving(false);
     }
   };
-  const title =
-    step === 3 && kind === "adjust"
-      ? "Review Quantity Adjustments"
-      : titles[kind][0];
+  const title = titles[kind][0];
   const selectedItem = items.find((i) => i.id === Number(itemId));
-  const review = lines.filter((l) => Number(l.quantityChange) !== 0);
   const customFieldControls = customFields.map((field) => (
     <div className={styles.field} key={field.id}>
       <label className={typography.fieldLabel}>
@@ -460,7 +511,12 @@ export function StockOperationView({
   return (
     <div
       className={`${layout.detailView} ${
-        kind === "issue" ? layout.detailViewWithStatusRail : ""
+        kind === "issue" ||
+        kind === "transfer" ||
+        kind === "reserve" ||
+        kind === "adjust"
+          ? layout.detailViewWithStatusRail
+          : ""
       }`}
     >
       <header className={layout.detailHeader}>
@@ -474,10 +530,28 @@ export function StockOperationView({
             >
               {title}
             </h1>
-            <p className={typography.headingByline}>{titles[kind][1]}</p>
+            <p className={typography.headingByline}>
+              {titles[kind][1]}
+              {kind === "adjust" ? (
+                <>
+                  {" "}Generally quantity adjustment should be done as part of
+                  a{" "}
+                  <a
+                    className={styles.stockCountLink}
+                    href="/inventory/stock-counts"
+                  >
+                    Stock Count
+                  </a>
+                  .
+                </>
+              ) : null}
+            </p>
           </div>
         </div>
-        {kind === "issue" ? (
+        {kind === "issue" ||
+        kind === "transfer" ||
+        kind === "reserve" ||
+        kind === "adjust" ? (
           <div className={layout.slotActions}>
             <div className={detailStyles.headerActions}>
               <Button
@@ -491,7 +565,15 @@ export function StockOperationView({
                 disabled={saving}
                 onClick={() => void submit()}
               >
-                {saving ? "Issuing..." : "Issue Stock"}
+                {saving
+                  ? kind === "transfer"
+                    ? "Transferring..."
+                    : kind === "reserve"
+                      ? "Reserving..."
+                      : kind === "adjust"
+                        ? "Adjusting..."
+                        : "Issuing..."
+                  : titles[kind][0]}
               </Button>
             </div>
           </div>
@@ -504,21 +586,36 @@ export function StockOperationView({
           />
         </div>
       </header>
-      {kind === "issue" ? (
+      {kind === "issue" ||
+      kind === "transfer" ||
+      kind === "reserve" ||
+      kind === "adjust" ? (
         <aside className={layout.statusSection}>
           <div className={styles.documentPanel}>
-            <div className={styles.documentPanelLabel}>Issue document</div>
+            <div className={styles.documentPanelLabel}>
+              {kind === "transfer"
+                ? "Transfer document"
+                : kind === "reserve"
+                  ? "Reservation document"
+                  : kind === "adjust"
+                    ? "Adjustment document"
+                    : "Issue document"}
+            </div>
             <div className={styles.documentPanelFields}>
+              {kind !== "reserve" ? (
+                <div className={styles.field}>
+                  <label className={typography.fieldLabel}>Date</label>
+                  <Input
+                    type="date"
+                    value={date}
+                    onChange={(event) => setDate(event.target.value)}
+                  />
+                </div>
+              ) : null}
               <div className={styles.field}>
-                <label className={typography.fieldLabel}>Date</label>
-                <Input
-                  type="date"
-                  value={date}
-                  onChange={(event) => setDate(event.target.value)}
-                />
-              </div>
-              <div className={styles.field}>
-                <label className={typography.fieldLabel}>Reference</label>
+                <label className={typography.fieldLabel}>
+                  Reference (optional)
+                </label>
                 <Input
                   value={reference}
                   onChange={(event) => setReference(event.target.value)}
@@ -526,7 +623,7 @@ export function StockOperationView({
               </div>
             </div>
           </div>
-          {customFields.length ? (
+          {(kind === "issue" || kind === "adjust") && customFields.length ? (
             <div className={detailStyles.card}>
               <h2 className={typography.sectionHeading}>Custom Fields</h2>
               <div className={styles.railCustomFields}>
@@ -537,35 +634,6 @@ export function StockOperationView({
         </aside>
       ) : null}
       <main className={`${layout.mainSection} ${styles.stack}`}>
-        {kind === "adjust" && step === 3 ? (
-          <section className={detailStyles.card}>
-            <p className={styles.reviewWarning}>
-              Completing these adjustments updates stock quantities. Any future
-              Finance integration can use the resulting adjustment transaction.
-            </p>
-            <div className={styles.summary}>
-              <span>
-                Warehouse:{" "}
-                {warehouses.find((w) => w.id === Number(warehouseId))?.name}
-              </span>
-              <span>Reference: {reference}</span>
-            </div>
-            <EditableGrid
-              columns={[
-                ...adjustColumns.slice(0, 3),
-                {
-                  key: "quantityChange",
-                  label: "Adjustment",
-                  type: "number",
-                  readOnly: true,
-                  width: 120,
-                },
-              ]}
-              initialRows={review}
-              ariaLabel="Quantity adjustment review"
-            />
-          </section>
-        ) : (
           <>
             {kind === "issue" ? (
               <section className={detailStyles.card}>
@@ -578,7 +646,7 @@ export function StockOperationView({
                       setWarehouseId(value);
                       setItemId("");
                       setQuantity("");
-                      setLines([]);
+                      setLines(value ? [createIssueLine(value)] : []);
                       }}
                     options={issueWarehouses.map((warehouse) => ({
                       value: String(warehouse.id),
@@ -597,23 +665,7 @@ export function StockOperationView({
                       initialRows={lines}
                       allowAddRows
                       allowDeleteRows
-                      createRow={() => ({
-                        id: Date.now() + Math.random(),
-                        itemId: "",
-                        sku: "",
-                        itemName: "",
-                        onHand: 0,
-                        reserved: 0,
-                        available: 0,
-                        quantity: "" as const,
-                        quantityChange: "" as const,
-                        warehouseId,
-                        warehouse:
-                          warehouses.find(
-                            (warehouse) =>
-                              warehouse.id === Number(warehouseId),
-                          )?.name ?? "",
-                      })}
+                      createRow={() => createIssueLine(warehouseId)}
                       onRowsChange={setLines}
                       addRowLabel="Add Item"
                       emptyText="No items have been added"
@@ -626,21 +678,184 @@ export function StockOperationView({
                   )}
                 </div>
               </section>
+            ) : kind === "transfer" ? (
+              <section className={detailStyles.card}>
+                <h2 className={typography.sectionHeading}>Transfer Details</h2>
+                <div className={styles.transferStory}>
+                  <div className={styles.transferSentence}>
+                    <span>Transfer</span>
+                    <Input
+                      type="number"
+                      value={quantity}
+                      onChange={(event) => setQuantity(event.target.value)}
+                    />
+                    <span>units of</span>
+                    <SearchableSelect
+                      value={itemId}
+                      onChange={setItemId}
+                      options={items.map((item) => ({
+                        value: String(item.id),
+                        label: item.name,
+                        code: item.code,
+                      }))}
+                      ariaLabel="Item to transfer"
+                      placeholder="Select an item"
+                    />
+                  </div>
+                  <div className={styles.transferWarehouses}>
+                    <span>from</span>
+                    <SearchableSelect
+                      value={warehouseId}
+                      onChange={setWarehouseId}
+                      options={warehouses.map((warehouse) => ({
+                        value: String(warehouse.id),
+                        label: warehouse.name,
+                        code: warehouse.code,
+                      }))}
+                      ariaLabel="From warehouse"
+                      placeholder="Select source warehouse"
+                    />
+                    <span
+                      className={`material-symbols-outlined ${styles.transferArrow}`}
+                      aria-hidden="true"
+                    >
+                      arrow_forward
+                    </span>
+                    <span>to</span>
+                    <SearchableSelect
+                      value={toWarehouseId}
+                      onChange={setToWarehouseId}
+                      options={warehouses.map((warehouse) => ({
+                        value: String(warehouse.id),
+                        label: warehouse.name,
+                        code: warehouse.code,
+                      }))}
+                      ariaLabel="To warehouse"
+                      placeholder="Select destination warehouse"
+                    />
+                  </div>
+                </div>
+              </section>
+            ) : kind === "reserve" ? (
+              <section className={detailStyles.card}>
+                <h2 className={typography.sectionHeading}>Reserve Item</h2>
+                <div className={styles.reserveItemForm}>
+                  <div className={styles.field}>
+                    <label className={typography.fieldLabel}>Item</label>
+                    <SearchableSelect
+                      value={itemId}
+                      onChange={setItemId}
+                      options={items.map((item) => ({
+                        value: String(item.id),
+                        label: item.name,
+                        code: item.code,
+                      }))}
+                      placeholder="Select an item"
+                    />
+                  </div>
+                  {selectedItem ? (
+                    <EditableGrid
+                      key={itemId}
+                      columns={reserveColumns}
+                      initialRows={positionRows}
+                      onRowsChange={setLines}
+                      ariaLabel="Reserve item by warehouse"
+                    />
+                  ) : (
+                    <p className={styles.issueItemsHint}>
+                      Select an item to view available stock by warehouse.
+                    </p>
+                  )}
+                </div>
+              </section>
+            ) : kind === "adjust" ? (
+              <section className={detailStyles.card}>
+                <h2 className={typography.sectionHeading}>
+                  Adjustment Details
+                </h2>
+                <div className={styles.adjustmentFields}>
+                  <div className={styles.field}>
+                    <label className={typography.fieldLabel}>Item</label>
+                    <SearchableSelect
+                      value={itemId}
+                      onChange={(value) => {
+                        setItemId(value);
+                        setWarehouseId("");
+                        setQuantity("");
+                      }}
+                      options={items
+                        .filter((item) =>
+                          positions.some(
+                            (position) => position.itemId === item.id,
+                          ),
+                        )
+                        .map((item) => ({
+                          value: String(item.id),
+                          label: item.name,
+                          code: item.code,
+                        }))}
+                      placeholder="Select an item"
+                    />
+                  </div>
+                  <div className={styles.field}>
+                    <label className={typography.fieldLabel}>Warehouse</label>
+                    <SearchableSelect
+                      value={warehouseId}
+                      onChange={(value) => {
+                        setWarehouseId(value);
+                        setQuantity("");
+                      }}
+                      disabled={!itemId}
+                      options={adjustmentWarehouses.map((warehouse) => ({
+                        value: String(warehouse.id),
+                        label: warehouse.name,
+                        code: warehouse.code,
+                      }))}
+                      placeholder={
+                        itemId
+                          ? "Select a warehouse"
+                          : "Select an item first"
+                      }
+                    />
+                  </div>
+                </div>
+                {adjustmentPosition ? (
+                  <div className={styles.adjustmentQuantities}>
+                    <h2 className={typography.sectionHeading}>
+                      Recorded Quantities
+                    </h2>
+                    <dl className={styles.quantityFacts}>
+                      <div>
+                        <dt>On Hand</dt>
+                        <dd>{adjustmentPosition.onHand}</dd>
+                      </div>
+                      <div>
+                        <dt>Reserved</dt>
+                        <dd>{adjustmentPosition.reserved}</dd>
+                      </div>
+                      <div>
+                        <dt>Available</dt>
+                        <dd>{adjustmentPosition.available}</dd>
+                      </div>
+                    </dl>
+                    <div className={styles.revisedQuantityField}>
+                      <label className={typography.fieldLabel}>
+                        Revised Quantity
+                      </label>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={quantity}
+                        onChange={(event) => setQuantity(event.target.value)}
+                      />
+                    </div>
+                  </div>
+                ) : null}
+              </section>
             ) : (
-            <section className={detailStyles.card}>
-              <h2 className={typography.sectionHeading}>
-                {kind === "transfer"
-                  ? "Transfer Details"
-                  : kind === "reserve"
-                    ? "Reservation Details"
-                    : kind === "adjust"
-                      ? "Adjustment Details"
-                      : kind === "receive"
-                        ? "Receipt Details"
-                        : "Issue Details"}
-              </h2>
-              <div className={styles.fields}>
-                {kind !== "reserve" ? (
+              <section className={detailStyles.card}>
+                <h2 className={typography.sectionHeading}>Receipt Details</h2>
+                <div className={styles.fields}>
                   <div className={styles.field}>
                     <label className={typography.fieldLabel}>Date</label>
                     <Input
@@ -649,32 +864,11 @@ export function StockOperationView({
                       onChange={(e) => setDate(e.target.value)}
                     />
                   </div>
-                ) : null}
-                {kind === "reserve" || kind === "transfer" ? (
                   <div className={styles.field}>
-                    <label className={typography.fieldLabel}>Item</label>
-                    <SearchableSelect
-                      value={itemId}
-                      onChange={setItemId}
-                      options={items.map((i) => ({
-                        value: String(i.id),
-                        label: i.name,
-                        code: i.code,
-                      }))}
-                    />
-                  </div>
-                ) : null}
-                {kind !== "reserve" ? (
-                  <div className={styles.field}>
-                    <label className={typography.fieldLabel}>
-                      {kind === "transfer" ? "From Warehouse" : "Warehouse"}
-                    </label>
+                    <label className={typography.fieldLabel}>Warehouse</label>
                     <SearchableSelect
                       value={warehouseId}
-                      onChange={(value) => {
-                        setWarehouseId(value);
-                        if (kind === "adjust") setLines([]);
-                      }}
+                      onChange={setWarehouseId}
                       options={warehouses.map((w) => ({
                         value: String(w.id),
                         label: w.name,
@@ -682,52 +876,17 @@ export function StockOperationView({
                       }))}
                     />
                   </div>
-                ) : null}
-                {kind === "transfer" ? (
-                  <>
-                    <div className={styles.field}>
-                      <label className={typography.fieldLabel}>
-                        To Warehouse
-                      </label>
-                      <SearchableSelect
-                        value={toWarehouseId}
-                        onChange={setToWarehouseId}
-                        options={warehouses
-                          .filter((w) => String(w.id) !== warehouseId)
-                          .map((w) => ({
-                            value: String(w.id),
-                            label: w.name,
-                            code: w.code,
-                          }))}
-                      />
-                    </div>
-                    <div className={styles.field}>
-                      <label className={typography.fieldLabel}>Quantity</label>
-                      <Input
-                        type="number"
-                        value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
-                      />
-                    </div>
-                  </>
-                ) : null}
-                <div className={styles.field}>
-                  <label className={typography.fieldLabel}>Reference</label>
-                  <Input
-                    value={reference}
-                    onChange={(e) => setReference(e.target.value)}
-                  />
+                  <div className={styles.field}>
+                    <label className={typography.fieldLabel}>
+                      Reference (optional)
+                    </label>
+                    <Input
+                      value={reference}
+                      onChange={(e) => setReference(e.target.value)}
+                    />
+                  </div>
                 </div>
-                <div className={`${styles.field} ${styles.wide}`}>
-                  <label className={typography.fieldLabel}>Notes</label>
-                  <textarea
-                    className={styles.textarea}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                  />
-                </div>
-              </div>
-            </section>
+              </section>
             )}
             {kind === "receive" ? (
               <section className={detailStyles.card}>
@@ -756,33 +915,7 @@ export function StockOperationView({
                 />
               </section>
             ) : null}
-            {kind === "reserve" && selectedItem ? (
-              <section className={detailStyles.card}>
-                <h2 className={typography.sectionHeading}>
-                  Stock by Warehouse
-                </h2>
-                <EditableGrid
-                  key={itemId}
-                  columns={reserveColumns}
-                  initialRows={positionRows}
-                  onRowsChange={setLines}
-                  ariaLabel="Reserve stock by warehouse"
-                />
-              </section>
-            ) : null}
-            {kind === "adjust" && warehouseId && step === 2 ? (
-              <section className={detailStyles.card}>
-                <h2 className={typography.sectionHeading}>Set Quantities</h2>
-                <EditableGrid
-                  key={warehouseId}
-                  columns={adjustColumns}
-                  initialRows={positionRows}
-                  onRowsChange={setLines}
-                  ariaLabel="Adjust stock quantities"
-                />
-              </section>
-            ) : null}
-            {customFields.length && kind !== "issue" ? (
+            {customFields.length && kind !== "issue" && kind !== "adjust" ? (
               <section className={detailStyles.card}>
                 <h2 className={typography.sectionHeading}>Custom Fields</h2>
                 <div className={styles.customFields}>
@@ -791,28 +924,19 @@ export function StockOperationView({
               </section>
             ) : null}
           </>
-        )}
-        {kind !== "issue" ? <div className={styles.actions}>
+        {kind === "receive" ? <div className={styles.actions}>
           <Button
             variant="secondary"
-            onClick={() =>
-              step > 1 ? setStep(step - 1) : router.push("/inventory/stock")
-            }
+            onClick={() => router.push("/inventory/stock")}
           >
-            {step > 1 ? "Back" : "Cancel"}
+            Cancel
           </Button>
           <Button
             variant="primary"
             disabled={saving}
             onClick={() => void submit()}
           >
-            {kind === "adjust" && step === 1
-              ? "Proceed to Adjust Quantity"
-              : kind === "adjust" && step === 2
-                ? "Review Quantity Adjustments"
-                : saving
-                  ? "Completing..."
-                  : titles[kind][0]}
+            {saving ? "Completing..." : titles[kind][0]}
           </Button>
         </div> : null}
       </main>

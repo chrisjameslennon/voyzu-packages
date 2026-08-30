@@ -24,6 +24,8 @@ import type {
   StockCountRow,
   StockPosition,
 } from "../types/stock.types";
+import { InventoryListActions } from "../../../client/InventoryListActions";
+import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
 const date = (value: string) => new Date(value).toLocaleDateString("en-NZ");
 function Shell({
   title,
@@ -100,7 +102,11 @@ function Shell({
           />
         </div>
         {toolbarRight ? (
-          <div className={layout.slotToolbarRight}>{toolbarRight}</div>
+          <div
+            className={`${layout.slotToolbarRight} ${inventoryListStyles.toolbarLayer}`}
+          >
+            {toolbarRight}
+          </div>
         ) : null}
       </div>
       {chips ? (
@@ -197,13 +203,50 @@ export function StockPositionsView({
           key={path}
           variant="secondary"
           onClick={() => {
+            const selectedPositions = positions.filter(({ id }) =>
+              selectedIds.has(id),
+            );
+            if (path === "transfer") {
+              if (selectedPositions.length === 1) {
+                const selected = selectedPositions[0]!;
+                const params = new URLSearchParams({
+                  itemId: String(selected.itemId),
+                  warehouseId: String(selected.warehouseId),
+                });
+                router.push(`/inventory/stock/transfer?${params.toString()}`);
+                return;
+              }
+              router.push("/inventory/stock/transfer");
+              return;
+            }
+            if (path === "reserve") {
+              if (selectedPositions.length === 1) {
+                const params = new URLSearchParams({
+                  itemId: String(selectedPositions[0]!.itemId),
+                });
+                router.push(`/inventory/stock/reserve?${params.toString()}`);
+                return;
+              }
+              router.push("/inventory/stock/reserve");
+              return;
+            }
+            if (path === "adjust") {
+              if (selectedPositions.length === 1) {
+                const selected = selectedPositions[0]!;
+                const params = new URLSearchParams({
+                  itemId: String(selected.itemId),
+                  warehouseId: String(selected.warehouseId),
+                });
+                router.push(`/inventory/stock/adjust?${params.toString()}`);
+                return;
+              }
+              router.push("/inventory/stock/adjust");
+              return;
+            }
             if (path !== "issue") {
               router.push(`/inventory/stock/${path}`);
               return;
             }
-            const selectedPositions = positions.filter(({ id }) =>
-              selectedIds.has(id),
-            );
             const selectedWarehouses = new Set(
               selectedPositions.map(({ warehouseId }) => warehouseId),
             );
@@ -214,15 +257,30 @@ export function StockPositionsView({
                   .map(({ itemId }) => itemId)
                   .join(","),
               });
-              router.push(`/inventory/stock/issue?${params.toString()}`);
+              router.push(`/inventory/stock/${path}?${params.toString()}`);
               return;
             }
-            router.push("/inventory/stock/issue");
+            router.push(`/inventory/stock/${path}`);
           }}
         >
           {label}
         </Button>
       ))}
+      <InventoryListActions
+        rows={positions}
+        visibleRows={visible}
+        selectedIds={selectedIds}
+        filename="inventory_stock_positions"
+        columns={[
+          { key: "sku", label: "SKU" },
+          { key: "itemName", label: "Item Name" },
+          { key: "warehouseName", label: "Warehouse" },
+          { key: "onHand", label: "On Hand" },
+          { key: "reserved", label: "Reserved" },
+          { key: "available", label: "Available" },
+        ]}
+        toExportRow={(row) => ({ ...row })}
+      />
     </div>
   );
   return (
@@ -327,6 +385,7 @@ export function StockPositionsView({
 export function StockActivityView({ rows }: { rows: StockActivity[] }) {
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<FilterState>({});
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const selectedTypes = filters.type as string[] | undefined;
   const visible = rows.filter(
     (r) =>
@@ -394,6 +453,31 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
           showChips={false}
         />
       }
+      toolbarRight={
+        <div className={listStyles.toolbarActions}>
+          <InventoryListActions
+            rows={rows}
+            visibleRows={visible}
+            selectedIds={selectedIds}
+            filename="inventory_stock_activity"
+            columns={[
+              { key: "date", label: "Date" },
+              { key: "type", label: "Type" },
+              { key: "sku", label: "SKU" },
+              { key: "itemName", label: "Item Name" },
+              { key: "warehouse", label: "Warehouse" },
+              { key: "quantityChange", label: "Quantity Change" },
+              { key: "source", label: "Source" },
+              { key: "sourceId", label: "Source ID" },
+            ]}
+            toExportRow={(row) => ({
+              ...row,
+              date: date(row.date),
+              sourceId: row.sourceId ?? row.reference ?? null,
+            })}
+          />
+        </div>
+      }
       chips={
         search.trim() || Object.keys(filters).length ? (
           <FilterChips
@@ -423,12 +507,25 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
       <DataTable
         columns={columns}
         rows={visible}
-        selectedIds={new Set<number>()}
-        isAllSelected={false}
-        isSomeSelected={false}
-        onSelectAll={() => undefined}
-        onSelectOne={() => undefined}
-        noSelectionColumn
+        selectedIds={selectedIds}
+        isAllSelected={
+          visible.length > 0 && visible.every((row) => selectedIds.has(row.id))
+        }
+        isSomeSelected={visible.some((row) => selectedIds.has(row.id))}
+        onSelectAll={() =>
+          setSelectedIds(
+            visible.every((row) => selectedIds.has(row.id))
+              ? new Set()
+              : new Set(visible.map((row) => row.id)),
+          )
+        }
+        onSelectOne={(id) =>
+          setSelectedIds((current) => {
+            const next = new Set(current);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+          })
+        }
         onRowClick={() => undefined}
         currentPage={1}
         totalPages={1}
@@ -454,6 +551,7 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
   const [confirm, setConfirm] = useState(false);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
+  useEffect(() => setRows(initial), [initial]);
   const selectedStatuses = filters.status as string[] | undefined;
   const visible = rows.filter(
     (r) =>
@@ -560,6 +658,25 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
               disabled={!selected.size}
               title="Delete selected"
               onClick={() => setConfirm(true)}
+            />
+            <InventoryListActions
+              rows={rows}
+              visibleRows={visible}
+              selectedIds={selected}
+              filename="inventory_stock_counts"
+              columns={[
+                { key: "countNo", label: "Count No." },
+                { key: "warehouse", label: "Warehouse" },
+                { key: "countDate", label: "Count Date" },
+                { key: "items", label: "Items" },
+                { key: "adjustments", label: "Adjustments" },
+                { key: "status", label: "Status" },
+              ]}
+              toExportRow={(row) => ({
+                ...row,
+                countDate: date(row.countDate),
+                status: row.status.replace("_", " "),
+              })}
             />
           </div>
         }

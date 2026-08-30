@@ -13,6 +13,12 @@
 .titleTextBlock p {
   margin: 0;
 }
+.stockCountLink {
+  color: var(--voyzu-color-info-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
 .stack {
   display: flex;
   flex-direction: column;
@@ -41,18 +47,6 @@
   background: var(--voyzu-color-surface);
   color: var(--voyzu-color-text);
   font: inherit;
-}
-.summary {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  font-weight: 600;
-}
-.reviewWarning {
-  padding: 1rem;
-  border-left: 3px solid var(--voyzu-color-warning);
-  background: var(--voyzu-color-warning-surface);
-  margin: 0;
 }
 .customFields {
   display: grid;
@@ -103,13 +97,98 @@
   background: var(--voyzu-color-neutral-bg);
   color: var(--voyzu-color-text-secondary);
 }
+.transferStory {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 0.5rem;
+}
+.transferSentence {
+  display: grid;
+  grid-template-columns: auto minmax(7rem, 9rem) auto minmax(16rem, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--voyzu-color-text-label);
+}
+.transferWarehouses {
+  display: grid;
+  grid-template-columns: auto minmax(14rem, 1fr) auto auto minmax(14rem, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--voyzu-color-text-label);
+}
+.transferArrow {
+  color: var(--voyzu-color-text-tertiary);
+  font-size: 1.125rem;
+}
+.reserveItemForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.adjustmentFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 2rem;
+}
+.adjustmentQuantities {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--voyzu-color-surface-secondary);
+}
+.quantityFacts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+.quantityFacts > div {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--voyzu-color-neutral-border);
+  border-radius: var(--voyzu-radius-surface);
+  background: var(--voyzu-color-neutral-bg);
+}
+.quantityFacts dt {
+  color: var(--voyzu-color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.quantityFacts dd {
+  margin: 0.375rem 0 0;
+  color: var(--voyzu-color-text);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.revisedQuantityField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 18rem;
+}
 @media (max-width: 767px) {
   .fields,
   .customFields,
-  .documentPanelFields {
+  .documentPanelFields,
+  .adjustmentFields,
+  .quantityFacts {
     grid-template-columns: 1fr;
   }
   .wide {
     grid-column: auto;
+  }
+  .transferSentence,
+  .transferWarehouses {
+    grid-template-columns: 1fr;
+  }
+  .transferArrow {
+    transform: rotate(90deg);
+    justify-self: center;
   }
 }
