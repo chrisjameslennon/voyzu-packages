@@ -279,7 +279,7 @@ export class StockRepo {
     id: number,
   ): Promise<StockCountDetail | null> {
     const { rows } = await this.db.query(
-      `SELECT count.*,warehouse.name warehouse FROM stock_count count JOIN warehouse ON warehouse.organization_id=count.organization_id AND warehouse.id=count.warehouse_id WHERE count.organization_id=$1 AND count.id=$2`,
+      `SELECT count.*,count.count_date::text count_date_text,warehouse.name warehouse FROM stock_count count JOIN warehouse ON warehouse.organization_id=count.organization_id AND warehouse.id=count.warehouse_id WHERE count.organization_id=$1 AND count.id=$2`,
       [organizationId, id],
     );
     const row = rows[0] as Record<string, unknown> | undefined;
@@ -293,7 +293,7 @@ export class StockRepo {
       countNo: String(row.count_no),
       warehouseId: Number(row.warehouse_id),
       warehouse: String(row.warehouse),
-      countDate: String(row.count_date),
+      countDate: String(row.count_date_text),
       notes: String(row.notes),
       status: row.status as StockCountDetail["status"],
       lines: lines.rows.map((line: Record<string, unknown>) => ({

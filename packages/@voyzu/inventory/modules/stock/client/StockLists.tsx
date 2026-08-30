@@ -552,6 +552,13 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   useEffect(() => setRows(initial), [initial]);
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const message = url.searchParams.get("toast");
+    if (!message) return;
+    setToast(message);
+    window.history.replaceState(null, "", url.pathname);
+  }, []);
   const selectedStatuses = filters.status as string[] | undefined;
   const visible = rows.filter(
     (r) =>

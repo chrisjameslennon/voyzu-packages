@@ -4,6 +4,7 @@ import { AuditMetadataDto } from "@voyzu/types/modules/core";
 const Id = Type.Integer({ minimum: 1 });
 const Qty = Type.Number({ exclusiveMinimum: 0 });
 const Text = Type.String({ pattern: "\\S" });
+const DateText = Type.String({ pattern: "^\\d{4}-\\d{2}-\\d{2}$" });
 export const StockPositionDto = StrictObject({
   id: Id,
   itemId: Id,
@@ -133,7 +134,7 @@ export const StockCountDetailDto = StrictObject({
 export type StockCountDetail = Static<typeof StockCountDetailDto>;
 export const StockCountRequestDto = StrictObject({
   warehouseId: Id,
-  countDate: Text,
+  countDate: DateText,
   notes: Type.Optional(Type.String()),
   lines: Type.Array(
     StrictObject({

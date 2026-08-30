@@ -21,6 +21,13 @@
   background: var(--voyzu-color-surface);
   color: var(--voyzu-color-text);
   font: inherit;
+  outline: none;
+  transition: border-color var(--voyzu-transition-fast), box-shadow var(--voyzu-transition-fast);
+  box-shadow: var(--voyzu-shadow-surface);
+}
+.textarea:focus:not(:disabled) {
+  border-color: var(--voyzu-color-primary-focus-ring);
+  box-shadow: 0 0 0 2px var(--voyzu-color-surface), 0 0 0 5px var(--voyzu-color-primary-focus-ring);
 }
 .stack {
   display: flex;

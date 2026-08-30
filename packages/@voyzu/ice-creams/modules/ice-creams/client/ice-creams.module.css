@@ -16,6 +16,10 @@
   gap: 1rem;
 }
 
+.toolbarLayer.toolbarLayer {
+  z-index: 20;
+}
+
 @media (max-width: 900px) {
   .createFields,
   .detailFields {

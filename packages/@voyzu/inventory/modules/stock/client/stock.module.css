@@ -34,6 +34,12 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+.datePickerFieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
 .wide {
   grid-column: 1/-1;
 }
@@ -47,6 +53,27 @@
   background: var(--voyzu-color-surface);
   color: var(--voyzu-color-text);
   font: inherit;
+  outline: none;
+  transition: border-color var(--voyzu-transition-fast), box-shadow var(--voyzu-transition-fast);
+  box-shadow: var(--voyzu-shadow-surface);
+}
+.textarea:focus:not(:disabled) {
+  border-color: var(--voyzu-color-primary-focus-ring);
+  box-shadow: 0 0 0 2px var(--voyzu-color-surface), 0 0 0 5px var(--voyzu-color-primary-focus-ring);
+}
+.stocktakeNotes {
+  min-height: 10rem;
+}
+.completedStocktakeNotes {
+  min-height: 4rem;
+  height: 4rem;
+}
+.stocktakeGrid thead :global(.material-symbols-outlined) {
+  display: none;
+}
+.varianceValue {
+  color: var(--voyzu-color-danger);
+  font-weight: 700;
 }
 .customFields {
   display: grid;

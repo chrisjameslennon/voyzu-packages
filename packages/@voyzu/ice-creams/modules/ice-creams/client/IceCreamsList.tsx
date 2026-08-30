@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Badge,
@@ -8,6 +8,7 @@ import {
   Button,
   ConfirmDialog,
   DataTable,
+  DropdownMenu,
   FilterChips,
   FilterPanel,
   Input,
@@ -17,6 +18,7 @@ import {
   pattern,
   useFormValidation,
   type DataTableColumn,
+  type DropdownMenuItem,
   type FilterState,
   type FilterTab,
 } from "@voyzu/ui-components";
@@ -71,6 +73,9 @@ export function IceCreamsList({
   const [name, setName] = useState("");
   const [flavorCode, setFlavorCode] = useState("");
   const [supplier, setSupplier] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => setRows(iceCreams), [iceCreams]);
 
   const validation = useFormValidation(() => ({
     code: { label: "code", value: code, rules: [required(), pattern(CODE_PATTERN, "Use uppercase letters, numbers, underscores or hyphens")] },
@@ -102,6 +107,78 @@ export function IceCreamsList({
   }, [filters, rows, search]);
   const selected = rows.filter(({ id }) => selectedIds.has(id));
   const allSelected = visibleRows.length > 0 && visibleRows.every(({ id }) => selectedIds.has(id));
+
+  const refresh = () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    window.setTimeout(() => {
+      router.refresh();
+      setRefreshing(false);
+    }, 500);
+  };
+
+  const exportCsv = async (
+    exportRows: IceCreamResponseDto[],
+    suffix: string,
+  ) => {
+    const filename = `ice_creams_${suffix}`;
+    const response = await fetch("/api/capability/export", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        filename,
+        columns: [
+          { key: "code", label: "Code" },
+          { key: "name", label: "Name" },
+          { key: "flavor", label: "Flavour" },
+          { key: "supplier", label: "Supplier" },
+          { key: "status", label: "Status" },
+        ],
+        rows: exportRows.map((row) => ({
+          code: row.code,
+          name: row.name,
+          flavor: row.flavor.name,
+          supplier: row.supplier,
+          status: row.status,
+        })),
+      }),
+    });
+    if (!response.ok) return;
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${filename}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportItems = useMemo<DropdownMenuItem[]>(
+    () => [
+      {
+        value: "selected",
+        label: `Selected (${selected.length})`,
+        icon: "check_box",
+        disabled: selected.length === 0,
+        onSelect: () => void exportCsv(selected, "selected"),
+      },
+      {
+        value: "current-view",
+        label: `Current view (${visibleRows.length})`,
+        icon: "visibility",
+        disabled: visibleRows.length === 0,
+        onSelect: () => void exportCsv(visibleRows, "current_view"),
+      },
+      {
+        value: "full-dataset",
+        label: `Full dataset (${rows.length})`,
+        icon: "database",
+        disabled: rows.length === 0,
+        onSelect: () => void exportCsv(rows, "full_dataset"),
+      },
+    ],
+    [rows, selected, visibleRows],
+  );
 
   const resetCreate = () => {
     setCode("");
@@ -209,11 +286,13 @@ export function IceCreamsList({
       <div className={layout.listToolbar}>
         <div className={layout.slotToolbarLeft}><FilterPanel tabs={filterTabs} filters={filters} onApply={setFilters} onClear={() => setFilters({})} onRemoveFilter={(key) => setFilters((current) => { const next = { ...current }; delete next[key]; return next; })} showChips={false} /></div>
         <div className={layout.slotToolbarSearch}><Input search placeholder="Search ice creams..." value={search} onChange={(event) => setSearch(event.target.value)} /></div>
-        <div className={layout.slotToolbarRight}>
+        <div className={`${layout.slotToolbarRight} ${styles.toolbarLayer}`}>
           <div className={listStyles.toolbarActions}>
             <Button variant="secondary" icon="check_circle" disabled={!selected.some(({ status }) => status === "INACTIVE")} onClick={() => { void transitionSelected("activate"); }}>Activate</Button>
             <Button variant="secondary" icon="block" disabled={!selected.some(({ status }) => status === "ACTIVE")} onClick={() => { void transitionSelected("deactivate"); }}>Deactivate</Button>
             <Button variant="secondary-destructive" icon="delete" disabled={!selected.length} onClick={() => setShowDelete(true)} />
+            <Button variant="plain" icon="sync" className={refreshing ? listStyles.spinning : undefined} disabled={refreshing} title="Refresh" onClick={refresh} />
+            <DropdownMenu trigger={<Button variant="plain" icon="file_download" title="Export" />} items={exportItems} alignment="right" width={260} />
           </div>
         </div>
       </div>

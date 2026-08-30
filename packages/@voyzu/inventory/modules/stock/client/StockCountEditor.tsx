@@ -7,8 +7,8 @@ import {
   Breadcrumbs,
   Button,
   ConfirmDialog,
+  DatePicker,
   EditableGrid,
-  Input,
   SearchableSelect,
   Toast,
   ValidationAlert,
@@ -116,70 +116,28 @@ export function StockCountEditor({
       type: "text",
       readOnly: true,
       width: 100,
-    },
-  ];
-  const newColumns: EditableGridColumn<Row>[] = [
-    {
-      key: "itemId",
-      label: "Item",
-      type: "select",
-      width: 320,
-      options: positions
-        .filter(
-          (position) => position.warehouseId === Number(warehouseId),
-        )
-        .map((position) => ({
-          value: String(position.itemId),
-          label: position.itemName,
-          code: position.sku,
-        })),
-    },
-    {
-      key: "expectedQuantity",
-      label: "On Hand",
-      type: "number",
-      readOnly: true,
-      width: 120,
+      valueClassName: styles.varianceValue,
       calculate: (row) =>
-        positions.find(
-          (position) =>
-            position.warehouseId === Number(warehouseId) &&
-            position.itemId === Number(row.itemId),
-        )?.onHand ?? 0,
-    },
-    {
-      key: "countedQuantity",
-      label: "Actual Quantity",
-      type: "number",
-      width: 150,
-    },
-    {
-      key: "variance",
-      label: "Variance",
-      type: "text",
-      readOnly: true,
-      width: 110,
-      calculate: (row) => {
-        if (row.countedQuantity === "") return "—";
-        const expected =
-          positions.find(
-            (position) =>
-              position.warehouseId === Number(warehouseId) &&
-              position.itemId === Number(row.itemId),
-          )?.onHand ?? 0;
-        return Number(row.countedQuantity) - expected;
-      },
+        row.countedQuantity === ""
+          ? "—"
+          : Number(row.countedQuantity) - row.expectedQuantity,
     },
   ];
-  const createRow = (): Row => ({
-    id: Date.now() + Math.random(),
-    itemId: "",
-    sku: "",
-    itemName: "",
-    expectedQuantity: 0,
-    countedQuantity: "",
-    variance: "—",
-  });
+  const warehouseRows = (selectedWarehouseId: string): Row[] =>
+    positions
+      .filter(
+        (position) =>
+          position.warehouseId === Number(selectedWarehouseId),
+      )
+      .map((position) => ({
+        id: position.id,
+        itemId: position.itemId,
+        sku: position.sku,
+        itemName: position.itemName,
+        expectedQuantity: position.onHand,
+        countedQuantity: "",
+        variance: "—",
+      }));
   const payload = () => ({
     warehouseId: Number(warehouseId),
     countDate,
@@ -209,6 +167,10 @@ export function StockCountEditor({
       setError("Warehouse is required");
       return;
     }
+    if (!countDate) {
+      setError("Count Date is required");
+      return;
+    }
     if (!rows.some((row) => row.itemId)) {
       setError("Add at least one item");
       return;
@@ -234,6 +196,12 @@ export function StockCountEditor({
     setSaving(false);
     if (!response) return;
     const changed = (await response.json()) as StockCountDetail;
+    if (status === "DRAFT") {
+      router.push(
+        `/inventory/stock-counts?toast=${encodeURIComponent("Stocktake saved as draft")}`,
+      );
+      return changed;
+    }
     setRecord(changed);
     setRows(
       changed.lines.map((l) => ({
@@ -242,15 +210,7 @@ export function StockCountEditor({
         variance: l.variance ?? "—",
       })),
     );
-    setToast(
-      status === "DRAFT" ? "Stocktake saved as draft" : "Stocktake saved",
-    );
-    if (!initial)
-      window.history.replaceState(
-        null,
-        "",
-        `/inventory/stock-counts/${changed.id}`,
-      );
+    setToast("Stocktake saved");
     return changed;
   };
   const complete = async () => {
@@ -273,6 +233,26 @@ export function StockCountEditor({
     setReview(false);
     setToast("Stocktake completed");
   };
+  const reviewStocktake = () => {
+    setError("");
+    if (!warehouseId) {
+      setError("Warehouse is required");
+      return;
+    }
+    if (!countDate) {
+      setError("Count Date is required");
+      return;
+    }
+    if (!rows.length) {
+      setError("The selected warehouse has no stocked items");
+      return;
+    }
+    if (!rows.some((row) => row.countedQuantity !== "")) {
+      setError("Enter an actual quantity for at least one item");
+      return;
+    }
+    setReview(true);
+  };
   const remove = async () => {
     if (!record) return;
     const response = await request(`/api/inventory/stock-counts/${record.id}`, {
@@ -284,9 +264,9 @@ export function StockCountEditor({
   };
   const readOnly = record?.status === "COMPLETED";
   const title = review
-    ? "Confirm Stocktake"
+    ? "Review Stocktake"
     : (record?.countNo ?? "New Stocktake");
-  if (!record)
+  if (!record || !readOnly)
     return (
       <div
         className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}
@@ -300,36 +280,67 @@ export function StockCountEditor({
               <h1
                 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}
               >
-                New Stocktake
+                {review
+                  ? "Review Stocktake"
+                  : (record?.countNo ?? "New Stocktake")}
               </h1>
               <p className={typography.headingByline}>
-                Record the actual stock quantities held in a warehouse.
+                {review
+                  ? "Review the quantity adjustments before submitting the stocktake."
+                  : "Record the actual stock quantities held in a warehouse."}
               </p>
             </div>
           </div>
           <div className={layout.slotActions}>
             <div className={detailStyles.headerActions}>
               <Button
-                variant="secondary"
+                variant="cancel"
                 onClick={() => router.push("/inventory/stock-counts")}
               >
                 Cancel
               </Button>
-              <Button
-                variant="secondary"
-                icon="save"
-                disabled={saving}
-                onClick={() => void save("DRAFT")}
-              >
-                Save as Draft
-              </Button>
-              <Button
-                variant="primary"
-                disabled={saving}
-                onClick={() => void complete()}
-              >
-                {saving ? "Completing..." : "Complete Stocktake"}
-              </Button>
+              {review ? (
+                <>
+                  <Button
+                    variant="cancel"
+                    icon="arrow_back"
+                    onClick={() => setReview(false)}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="primary"
+                    disabled={saving}
+                    onClick={() => void complete()}
+                  >
+                    {saving ? "Submitting..." : "Submit Stocktake"}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="secondary"
+                    icon="save"
+                    disabled={saving}
+                    onClick={() => void save("DRAFT")}
+                  >
+                    Save as Draft
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    disabled={saving}
+                    onClick={reviewStocktake}
+                  >
+                    Review Stocktake
+                    <span
+                      className="material-symbols-outlined"
+                      aria-hidden="true"
+                    >
+                      arrow_forward
+                    </span>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           <div className={layout.slotAlert}>
@@ -348,17 +359,24 @@ export function StockCountEditor({
             <div className={styles.documentPanelFields}>
               <div className={styles.field}>
                 <label className={typography.fieldLabel}>Count Date</label>
-                <Input
-                  type="date"
-                  value={countDate}
-                  onChange={(event) => setCountDate(event.target.value)}
-                />
+                <fieldset
+                  className={styles.datePickerFieldset}
+                  disabled={review}
+                >
+                  <DatePicker
+                    value={countDate}
+                    onChange={setCountDate}
+                    clearable={!review}
+                    hasError={error === "Count Date is required"}
+                  />
+                </fieldset>
               </div>
               <div className={styles.field}>
                 <label className={typography.fieldLabel}>Notes</label>
                 <textarea
-                  className={styles.textarea}
+                  className={`${styles.textarea} ${styles.stocktakeNotes}`}
                   value={notes}
+                  disabled={review}
                   onChange={(event) => setNotes(event.target.value)}
                 />
               </div>
@@ -374,8 +392,11 @@ export function StockCountEditor({
                 value={warehouseId}
                 onChange={(value) => {
                   setWarehouseId(value);
-                  setRows(value ? [createRow()] : []);
+                  setRows(value ? warehouseRows(value) : []);
+                  if (value && error === "Warehouse is required") setError("");
                 }}
+                disabled={review || !!record}
+                hasError={error === "Warehouse is required"}
                 options={warehouses.map((warehouse) => ({
                   value: String(warehouse.id),
                   label: warehouse.name,
@@ -385,23 +406,28 @@ export function StockCountEditor({
               />
             </div>
             <div className={styles.issueItemsSection}>
-              <h2 className={typography.sectionHeading}>Items</h2>
+              <h2 className={typography.sectionHeading}>
+                {review ? "Adjustments" : "Items"}
+              </h2>
               {warehouseId ? (
                 <EditableGrid
-                  key={`stocktake-${warehouseId}`}
-                  columns={newColumns}
-                  initialRows={rows}
-                  allowAddRows
-                  allowDeleteRows
-                  createRow={createRow}
-                  onRowsChange={setRows}
-                  addRowLabel="Add Item"
-                  emptyText="No items have been added"
+                  key={`stocktake-${warehouseId}-${review}`}
+                  className={styles.stocktakeGrid}
+                  columns={columns.map((column) =>
+                    review ? { ...column, readOnly: true } : column,
+                  )}
+                  initialRows={review ? changes : calculated}
+                  onRowsChange={review ? undefined : setRows}
+                  emptyText={
+                    review
+                      ? "No quantity adjustments"
+                      : "This warehouse has no stocked items"
+                  }
                   ariaLabel="Stocktake quantities"
                 />
               ) : (
                 <p className={styles.issueItemsHint}>
-                  Select a warehouse to add items.
+                  Select a warehouse to load its stocked items.
                 </p>
               )}
             </div>
@@ -437,17 +463,23 @@ export function StockCountEditor({
           </div>
           <div className={styles.field}>
             <label className={typography.fieldLabel}>Count Date</label>
-            <Input
-              type="date"
-              value={countDate}
+            <fieldset
+              className={styles.datePickerFieldset}
               disabled={readOnly}
-              onChange={(e) => setCountDate(e.target.value)}
-            />
+            >
+              <DatePicker
+                value={countDate}
+                onChange={setCountDate}
+                clearable={!readOnly}
+                hasError={error === "Count Date is required"}
+              />
+            </fieldset>
           </div>
           <div className={`${styles.field} ${styles.wide}`}>
             <label className={typography.fieldLabel}>Notes</label>
             <textarea
-              className={styles.textarea}
+              className={`${styles.textarea} ${styles.completedStocktakeNotes}`}
+              rows={2}
               value={notes}
               disabled={readOnly}
               onChange={(e) => setNotes(e.target.value)}
@@ -461,14 +493,10 @@ export function StockCountEditor({
             Completing this stocktake adjusts stock quantities for the variances
             shown below.
           </p>
-        ) : (
-          <p className={styles.reviewWarning}>
-            Enter the actual quantity counted. Blank quantities retain the
-            current On Hand quantity.
-          </p>
-        )}
+        ) : null}
         <EditableGrid
           key={`${warehouseId}-${review}-${readOnly}`}
+          className={styles.stocktakeGrid}
           columns={columns.map((column) =>
             review ? { ...column, readOnly: true } : column,
           )}
@@ -480,13 +508,20 @@ export function StockCountEditor({
       {!readOnly ? (
         <div className={styles.actions}>
           <Button
-            variant="secondary"
-            onClick={() =>
-              review ? setReview(false) : router.push("/inventory/stock-counts")
-            }
+            variant="cancel"
+            onClick={() => router.push("/inventory/stock-counts")}
           >
-            {review ? "Back" : "Cancel"}
+            Cancel
           </Button>
+          {review ? (
+            <Button
+              variant="cancel"
+              icon="arrow_back"
+              onClick={() => setReview(false)}
+            >
+              Back
+            </Button>
+          ) : null}
           {!review ? (
             <Button
               variant="secondary"
@@ -497,10 +532,22 @@ export function StockCountEditor({
             </Button>
           ) : null}
           <Button
-            variant="primary"
-            onClick={() => (review ? void complete() : setReview(true))}
+            variant={review ? "primary" : "secondary"}
+            onClick={() => (review ? void complete() : reviewStocktake())}
           >
-            {review ? "Complete Stocktake" : "Review Stocktake"}
+            {review ? (
+              "Submit Stocktake"
+            ) : (
+              <>
+                Review Stocktake
+                <span
+                  className="material-symbols-outlined"
+                  aria-hidden="true"
+                >
+                  arrow_forward
+                </span>
+              </>
+            )}
           </Button>
         </div>
       ) : null}
@@ -515,11 +562,6 @@ export function StockCountEditor({
         <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>
           {title}
         </h1>
-        <div className={layout.slotTitleByline}>
-          <p className={typography.headingByline}>
-            Record the actual stock quantities held in a warehouse.
-          </p>
-        </div>
       </div>
       {record ? (
         <div className={layout.slotActions}>

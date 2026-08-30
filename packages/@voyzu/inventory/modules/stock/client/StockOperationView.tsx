@@ -555,7 +555,7 @@ export function StockOperationView({
           <div className={layout.slotActions}>
             <div className={detailStyles.headerActions}>
               <Button
-                variant="secondary"
+                variant="cancel"
                 onClick={() => router.push("/inventory/stock")}
               >
                 Cancel
@@ -926,7 +926,7 @@ export function StockOperationView({
           </>
         {kind === "receive" ? <div className={styles.actions}>
           <Button
-            variant="secondary"
+            variant="cancel"
             onClick={() => router.push("/inventory/stock")}
           >
             Cancel

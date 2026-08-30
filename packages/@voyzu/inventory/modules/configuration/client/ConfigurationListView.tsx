@@ -421,7 +421,7 @@ export function ConfigurationListView({
             </div>
             <div className={modalStyles.footer}>
               <Button
-                variant="secondary"
+                variant="cancel"
                 onClick={() => {
                   reset();
                   setModal(false);

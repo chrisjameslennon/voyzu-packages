@@ -3,7 +3,7 @@
 .inlineField, .componentAdder { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.75rem; align-items: center; }
 .checkboxField { display: flex; align-items: center; gap: 0.625rem; font-size: 0.875rem; font-weight: 600; color: var(--voyzu-color-text-label); }
 .textarea { width: 100%; resize: vertical; min-height: 5rem; padding: 0.75rem 1rem; border: 1px solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-control); background: var(--voyzu-color-surface); color: var(--voyzu-color-text); font: inherit; box-shadow: var(--voyzu-shadow-surface); }
-.textarea:focus { outline: none; box-shadow: 0 0 0 2px var(--voyzu-color-surface), 0 0 0 5px var(--voyzu-color-primary-focus-ring); }
+.textarea:focus:not(:disabled) { outline: none; border-color: var(--voyzu-color-primary-focus-ring); box-shadow: 0 0 0 2px var(--voyzu-color-surface), 0 0 0 5px var(--voyzu-color-primary-focus-ring); }
 .componentAdder { grid-template-columns: minmax(14rem, 1fr) 8rem auto; }
 .componentAdderPanel { padding: 1rem; border: 1px solid var(--voyzu-color-neutral-border); border-radius: var(--voyzu-radius-surface); background: var(--voyzu-color-neutral-bg); }
 .assemblyComponentsSection { display: flex; flex-direction: column; gap: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--voyzu-color-surface-secondary); }
