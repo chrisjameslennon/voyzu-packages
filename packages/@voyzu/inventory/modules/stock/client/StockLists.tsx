@@ -123,6 +123,7 @@ export function StockPositionsView({
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<FilterState>({});
   const [warehouseFilter, setWarehouseFilter] = useState<number | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   useEffect(() => {
     const value = new URLSearchParams(window.location.search).get(
       "warehouseId",
@@ -170,6 +171,8 @@ export function StockPositionsView({
     { key: "reserved", label: "Reserved", align: "right" },
     { key: "available", label: "Available", align: "right" },
   ];
+  const isAllSelected =
+    visible.length > 0 && visible.every(({ id }) => selectedIds.has(id));
   const primaryAction = (
     <Button
       variant="primary"
@@ -193,7 +196,29 @@ export function StockPositionsView({
         <Button
           key={path}
           variant="secondary"
-          onClick={() => router.push(`/inventory/stock/${path}`)}
+          onClick={() => {
+            if (path !== "issue") {
+              router.push(`/inventory/stock/${path}`);
+              return;
+            }
+            const selectedPositions = positions.filter(({ id }) =>
+              selectedIds.has(id),
+            );
+            const selectedWarehouses = new Set(
+              selectedPositions.map(({ warehouseId }) => warehouseId),
+            );
+            if (selectedPositions.length && selectedWarehouses.size === 1) {
+              const params = new URLSearchParams({
+                warehouseId: String(selectedPositions[0]!.warehouseId),
+                itemIds: selectedPositions
+                  .map(({ itemId }) => itemId)
+                  .join(","),
+              });
+              router.push(`/inventory/stock/issue?${params.toString()}`);
+              return;
+            }
+            router.push("/inventory/stock/issue");
+          }}
         >
           {label}
         </Button>
@@ -266,11 +291,23 @@ export function StockPositionsView({
       <DataTable
         columns={columns}
         rows={visible}
-        selectedIds={new Set<number>()}
-        isAllSelected={false}
-        isSomeSelected={false}
-        onSelectAll={() => undefined}
-        onSelectOne={() => undefined}
+        selectedIds={selectedIds}
+        isAllSelected={isAllSelected}
+        isSomeSelected={
+          !isAllSelected && visible.some(({ id }) => selectedIds.has(id))
+        }
+        onSelectAll={() =>
+          setSelectedIds(
+            isAllSelected ? new Set() : new Set(visible.map(({ id }) => id)),
+          )
+        }
+        onSelectOne={(id) =>
+          setSelectedIds((current) => {
+            const next = new Set(current);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+          })
+        }
         onRowClick={() => undefined}
         currentPage={1}
         totalPages={1}
@@ -391,6 +428,7 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
         isSomeSelected={false}
         onSelectAll={() => undefined}
         onSelectOne={() => undefined}
+        noSelectionColumn
         onRowClick={() => undefined}
         currentPage={1}
         totalPages={1}

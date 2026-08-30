@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Breadcrumbs,
@@ -74,6 +74,40 @@ export function StockOperationView({
   const [customValues, setCustomValues] = useState<
     Record<number, string | string[] | boolean>
   >({});
+  useEffect(() => {
+    if (kind !== "issue") return;
+    const params = new URLSearchParams(window.location.search);
+    const requestedWarehouseId = Number(params.get("warehouseId"));
+    const requestedItemIds = new Set(
+      (params.get("itemIds") ?? "")
+        .split(",")
+        .map(Number)
+        .filter(Number.isFinite),
+    );
+    if (!requestedWarehouseId || !requestedItemIds.size) return;
+    const requestedPositions = positions.filter(
+      (position) =>
+        position.warehouseId === requestedWarehouseId &&
+        requestedItemIds.has(position.itemId),
+    );
+    if (!requestedPositions.length) return;
+    setWarehouseId(String(requestedWarehouseId));
+    setLines(
+      requestedPositions.map((position) => ({
+        id: position.id,
+        itemId: String(position.itemId),
+        sku: position.sku,
+        itemName: position.itemName,
+        onHand: position.onHand,
+        reserved: position.reserved,
+        available: position.available,
+        quantity: 1,
+        quantityChange: "",
+        warehouseId: String(position.warehouseId),
+        warehouse: position.warehouseName,
+      })),
+    );
+  }, [kind, positions]);
   const movementColumns: EditableGridColumn<Line>[] = [
     {
       key: "itemId",
@@ -115,6 +149,54 @@ export function StockOperationView({
         })),
     [positions, itemId, warehouseId, kind],
   );
+  const issueWarehouses = useMemo(
+    () =>
+      warehouses.filter((warehouse) =>
+        positions.some(
+          (position) =>
+            position.warehouseId === warehouse.id && position.available > 0,
+        ),
+      ),
+    [positions, warehouses],
+  );
+  const issueMovementColumns: EditableGridColumn<Line>[] = [
+    {
+      key: "itemId",
+      label: "Item",
+      type: "select",
+      width: 320,
+      options: positions
+        .filter(
+          (position) =>
+            position.warehouseId === Number(warehouseId) &&
+            position.available > 0,
+        )
+        .map((position) => ({
+          value: String(position.itemId),
+          label: position.itemName,
+          code: position.sku,
+        })),
+    },
+    {
+      key: "available",
+      label: "Available",
+      type: "number",
+      readOnly: true,
+      width: 120,
+      calculate: (line) =>
+        positions.find(
+          (position) =>
+            position.warehouseId === Number(warehouseId) &&
+            position.itemId === Number(line.itemId),
+        )?.available ?? 0,
+    },
+    {
+      key: "quantity",
+      label: "Quantity",
+      type: "number",
+      width: 140,
+    },
+  ];
   const reserveColumns: EditableGridColumn<Line>[] = [
     {
       key: "warehouse",
@@ -235,7 +317,7 @@ export function StockOperationView({
           date,
           warehouseId: Number(warehouseId),
           reference,
-          notes,
+          ...(kind === "receive" ? { notes } : {}),
           lines: lines
             .filter((l) => l.itemId && Number(l.quantity) > 0)
             .map((l) => ({
@@ -306,22 +388,114 @@ export function StockOperationView({
       : titles[kind][0];
   const selectedItem = items.find((i) => i.id === Number(itemId));
   const review = lines.filter((l) => Number(l.quantityChange) !== 0);
+  const customFieldControls = customFields.map((field) => (
+    <div className={styles.field} key={field.id}>
+      <label className={typography.fieldLabel}>
+        {field.name}
+        {field.required ? " *" : ""}
+      </label>
+      {field.dataType === "BOOLEAN" ? (
+        <Checkbox
+          checked={Boolean(customValues[field.id])}
+          onChange={(value) =>
+            setCustomValues((current) => ({
+              ...current,
+              [field.id]: value,
+            }))
+          }
+        />
+      ) : field.dataType === "MULTIPLE_OPTIONS" ? (
+        <SearchableSelect
+          multiple
+          value={
+            Array.isArray(customValues[field.id])
+              ? (customValues[field.id] as string[])
+              : []
+          }
+          onChange={(value) =>
+            setCustomValues((current) => ({
+              ...current,
+              [field.id]: value,
+            }))
+          }
+          options={field.options.map((option) => ({
+            value: String(option.id),
+            label: option.value,
+          }))}
+        />
+      ) : field.dataType === "OPTION" ? (
+        <SearchableSelect
+          value={String(customValues[field.id] ?? "")}
+          onChange={(value) =>
+            setCustomValues((current) => ({
+              ...current,
+              [field.id]: value,
+            }))
+          }
+          options={field.options.map((option) => ({
+            value: String(option.id),
+            label: option.value,
+          }))}
+        />
+      ) : (
+        <Input
+          type={
+            field.dataType === "DATE"
+              ? "date"
+              : field.dataType === "NUMBER"
+                ? "number"
+                : "text"
+          }
+          value={String(customValues[field.id] ?? "")}
+          onChange={(event) =>
+            setCustomValues((current) => ({
+              ...current,
+              [field.id]: event.target.value,
+            }))
+          }
+        />
+      )}
+    </div>
+  ));
   return (
-    <div className={layout.detailView}>
+    <div
+      className={`${layout.detailView} ${
+        kind === "issue" ? layout.detailViewWithStatusRail : ""
+      }`}
+    >
       <header className={layout.detailHeader}>
         <div className={layout.slotBreadcrumb}>
           <Breadcrumbs />
         </div>
         <div className={layout.slotTitle}>
-          <h1
-            className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}
-          >
-            {title}
-          </h1>
-          <div className={layout.slotTitleByline}>
+          <div className={styles.titleTextBlock}>
+            <h1
+              className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}
+            >
+              {title}
+            </h1>
             <p className={typography.headingByline}>{titles[kind][1]}</p>
           </div>
         </div>
+        {kind === "issue" ? (
+          <div className={layout.slotActions}>
+            <div className={detailStyles.headerActions}>
+              <Button
+                variant="secondary"
+                onClick={() => router.push("/inventory/stock")}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                disabled={saving}
+                onClick={() => void submit()}
+              >
+                {saving ? "Issuing..." : "Issue Stock"}
+              </Button>
+            </div>
+          </div>
+        ) : null}
         <div className={layout.slotAlert}>
           <ValidationAlert
             errors={error ? [error] : []}
@@ -330,6 +504,38 @@ export function StockOperationView({
           />
         </div>
       </header>
+      {kind === "issue" ? (
+        <aside className={layout.statusSection}>
+          <div className={styles.documentPanel}>
+            <div className={styles.documentPanelLabel}>Issue document</div>
+            <div className={styles.documentPanelFields}>
+              <div className={styles.field}>
+                <label className={typography.fieldLabel}>Date</label>
+                <Input
+                  type="date"
+                  value={date}
+                  onChange={(event) => setDate(event.target.value)}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={typography.fieldLabel}>Reference</label>
+                <Input
+                  value={reference}
+                  onChange={(event) => setReference(event.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          {customFields.length ? (
+            <div className={detailStyles.card}>
+              <h2 className={typography.sectionHeading}>Custom Fields</h2>
+              <div className={styles.railCustomFields}>
+                {customFieldControls}
+              </div>
+            </div>
+          ) : null}
+        </aside>
+      ) : null}
       <main className={`${layout.mainSection} ${styles.stack}`}>
         {kind === "adjust" && step === 3 ? (
           <section className={detailStyles.card}>
@@ -361,6 +567,66 @@ export function StockOperationView({
           </section>
         ) : (
           <>
+            {kind === "issue" ? (
+              <section className={detailStyles.card}>
+                <h2 className={typography.sectionHeading}>Issue Details</h2>
+                <div className={styles.issueWarehouseField}>
+                  <label className={typography.fieldLabel}>Warehouse</label>
+                  <SearchableSelect
+                    value={warehouseId}
+                    onChange={(value) => {
+                      setWarehouseId(value);
+                      setItemId("");
+                      setQuantity("");
+                      setLines([]);
+                      }}
+                    options={issueWarehouses.map((warehouse) => ({
+                      value: String(warehouse.id),
+                      label: warehouse.name,
+                      code: warehouse.code,
+                    }))}
+                    placeholder="Select a warehouse with available stock"
+                  />
+                </div>
+                <div className={styles.issueItemsSection}>
+                  <h2 className={typography.sectionHeading}>Items</h2>
+                  {warehouseId ? (
+                    <EditableGrid
+                      key={`issue-${warehouseId}`}
+                      columns={issueMovementColumns}
+                      initialRows={lines}
+                      allowAddRows
+                      allowDeleteRows
+                      createRow={() => ({
+                        id: Date.now() + Math.random(),
+                        itemId: "",
+                        sku: "",
+                        itemName: "",
+                        onHand: 0,
+                        reserved: 0,
+                        available: 0,
+                        quantity: "" as const,
+                        quantityChange: "" as const,
+                        warehouseId,
+                        warehouse:
+                          warehouses.find(
+                            (warehouse) =>
+                              warehouse.id === Number(warehouseId),
+                          )?.name ?? "",
+                      })}
+                      onRowsChange={setLines}
+                      addRowLabel="Add Item"
+                      emptyText="No items have been added"
+                      ariaLabel="Issue stock items"
+                    />
+                  ) : (
+                    <p className={styles.issueItemsHint}>
+                      Select a warehouse to add items.
+                    </p>
+                  )}
+                </div>
+              </section>
+            ) : (
             <section className={detailStyles.card}>
               <h2 className={typography.sectionHeading}>
                 {kind === "transfer"
@@ -462,7 +728,8 @@ export function StockOperationView({
                 </div>
               </div>
             </section>
-            {kind === "receive" || kind === "issue" ? (
+            )}
+            {kind === "receive" ? (
               <section className={detailStyles.card}>
                 <h2 className={typography.sectionHeading}>Items</h2>
                 <EditableGrid
@@ -515,85 +782,17 @@ export function StockOperationView({
                 />
               </section>
             ) : null}
-            {customFields.length ? (
+            {customFields.length && kind !== "issue" ? (
               <section className={detailStyles.card}>
                 <h2 className={typography.sectionHeading}>Custom Fields</h2>
                 <div className={styles.customFields}>
-                  {customFields.map((field) => (
-                    <div className={styles.field} key={field.id}>
-                      <label className={typography.fieldLabel}>
-                        {field.name}
-                        {field.required ? " *" : ""}
-                      </label>
-                      {field.dataType === "BOOLEAN" ? (
-                        <Checkbox
-                          checked={Boolean(customValues[field.id])}
-                          onChange={(value) =>
-                            setCustomValues((c) => ({
-                              ...c,
-                              [field.id]: value,
-                            }))
-                          }
-                        />
-                      ) : field.dataType === "MULTIPLE_OPTIONS" ? (
-                        <SearchableSelect
-                          multiple
-                          value={
-                            Array.isArray(customValues[field.id])
-                              ? (customValues[field.id] as string[])
-                              : []
-                          }
-                          onChange={(value) =>
-                            setCustomValues((c) => ({
-                              ...c,
-                              [field.id]: value,
-                            }))
-                          }
-                          options={field.options.map((o) => ({
-                            value: String(o.id),
-                            label: o.value,
-                          }))}
-                        />
-                      ) : field.dataType === "OPTION" ? (
-                        <SearchableSelect
-                          value={String(customValues[field.id] ?? "")}
-                          onChange={(value) =>
-                            setCustomValues((c) => ({
-                              ...c,
-                              [field.id]: value,
-                            }))
-                          }
-                          options={field.options.map((o) => ({
-                            value: String(o.id),
-                            label: o.value,
-                          }))}
-                        />
-                      ) : (
-                        <Input
-                          type={
-                            field.dataType === "DATE"
-                              ? "date"
-                              : field.dataType === "NUMBER"
-                                ? "number"
-                                : "text"
-                          }
-                          value={String(customValues[field.id] ?? "")}
-                          onChange={(e) =>
-                            setCustomValues((c) => ({
-                              ...c,
-                              [field.id]: e.target.value,
-                            }))
-                          }
-                        />
-                      )}
-                    </div>
-                  ))}
+                  {customFieldControls}
                 </div>
               </section>
             ) : null}
           </>
         )}
-        <div className={styles.actions}>
+        {kind !== "issue" ? <div className={styles.actions}>
           <Button
             variant="secondary"
             onClick={() =>
@@ -615,7 +814,7 @@ export function StockOperationView({
                   ? "Completing..."
                   : titles[kind][0]}
           </Button>
-        </div>
+        </div> : null}
       </main>
       <Toast isVisible={!!toast} message={toast} onClose={() => setToast("")} />
     </div>

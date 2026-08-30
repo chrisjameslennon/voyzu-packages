@@ -77,7 +77,7 @@ export class StockRepo {
         JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id
         WHERE line.organization_id=$1
         UNION ALL
-        SELECT (-reservation.id)::int,reservation.reserved_at,CASE WHEN reservation.status='RELEASED' THEN 'RESERVATION RELEASE' ELSE 'RESERVATION' END,item.sku,item.name,warehouse.name,NULL::float8,NULL::float8,reservation.source_business_object,reservation.source_id,reservation.reference
+        SELECT (-reservation.id)::int,reservation.reserved_at,CASE WHEN reservation.status='RELEASED' THEN 'RESERVATION RELEASE' ELSE 'RESERVATION' END,item.sku,item.name,warehouse.name,NULL::float8,reservation.source_business_object,reservation.source_id,reservation.reference
         FROM inventory_reservation reservation
         JOIN item ON item.organization_id=reservation.organization_id AND item.id=reservation.item_id
         JOIN warehouse ON warehouse.organization_id=reservation.organization_id AND warehouse.id=reservation.warehouse_id
