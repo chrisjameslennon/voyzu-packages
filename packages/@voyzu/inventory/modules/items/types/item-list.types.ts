@@ -9,7 +9,6 @@ export interface ItemListRow {
   itemType: ItemType;
   unit: Unit | null;
   quantityTracked: boolean;
-  cost: number | null;
   status: ItemStatus;
 }
 import type { Unit } from "../../core/types";

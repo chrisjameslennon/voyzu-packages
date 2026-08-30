@@ -26,7 +26,7 @@ export class ItemRepo {
     const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 ORDER BY item.sku`, [organizationId]);
     return rows.map((row: Record<string, unknown>) => ({ id: Number(row.id), sku: String(row.sku), name: String(row.name),
       category: row.category_name === null ? null : String(row.category_name), itemType: row.item_type as ItemListRow["itemType"],
-      unit: row.unit == null ? null : String(row.unit) as ItemListRow["unit"], quantityTracked: Boolean(row.quantity_tracked), cost: null, status: row.status as ItemListRow["status"] }));
+      unit: row.unit == null ? null : String(row.unit) as ItemListRow["unit"], quantityTracked: Boolean(row.quantity_tracked), status: row.status as ItemListRow["status"] }));
   }
 
   async get(organizationId: number, sku: string): Promise<ItemRow | null> {
@@ -39,6 +39,44 @@ export class ItemRepo {
     const columns = ["organization_id", ...entries.map(([key]) => key)];
     await this.db.query(`INSERT INTO item (${columns.join(", ")}) VALUES (${values.map((_, index) => `$${index + 1}`).join(", ")})`, values);
     const created = await this.get(organizationId, String(row.sku));
+    if (!created) throw new DataError("Created item could not be loaded");
+    return created;
+  }
+
+  async insertAutoSku(organizationId: number, row: Record<string, unknown>): Promise<ItemRow> {
+    const entries = Object.entries(row); const values = [organizationId, ...entries.map(([, value]) => value)];
+    const columns = ["organization_id", ...entries.map(([key]) => key)];
+    const { rows } = await this.db.query(
+      `WITH reserved AS (
+         SELECT nextval(pg_get_serial_sequence('item', 'id'))::bigint AS id
+       )
+       INSERT INTO item (id, sku, ${columns.join(", ")})
+       SELECT reserved.id, 'SKU-' || reserved.id::text, ${values.map((_, index) => `$${index + 1}`).join(", ")}
+       FROM reserved
+       RETURNING sku`,
+      values,
+    );
+    const created = await this.get(organizationId, String(rows[0]?.sku));
+    if (!created) throw new DataError("Created item could not be loaded");
+    return created;
+  }
+
+  async reserveAutoSku(): Promise<{ id: number; sku: string }> {
+    const { rows } = await this.db.query(
+      "SELECT nextval(pg_get_serial_sequence('item', 'id')) AS id",
+    );
+    const id = Number(rows[0]?.id);
+    return { id, sku: `SKU-${id}` };
+  }
+
+  async insertReservedAutoSku(organizationId: number, id: number, row: Record<string, unknown>): Promise<ItemRow> {
+    const entries = Object.entries(row); const values = [id, `SKU-${id}`, organizationId, ...entries.map(([, value]) => value)];
+    const columns = ["id", "sku", "organization_id", ...entries.map(([key]) => key)];
+    await this.db.query(
+      `INSERT INTO item (${columns.join(", ")}) VALUES (${values.map((_, index) => `$${index + 1}`).join(", ")})`,
+      values,
+    );
+    const created = await this.get(organizationId, `SKU-${id}`);
     if (!created) throw new DataError("Created item could not be loaded");
     return created;
   }
@@ -130,11 +168,6 @@ export class ItemRepo {
 
   async getItemsByIds(organizationId: number, ids: number[]): Promise<ItemRow[]> {
     if (!ids.length) return []; const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 AND item.id = ANY($2::bigint[])`, [organizationId, ids]); return rows.map(normalizeItem);
-  }
-
-  async nextSku(organizationId: number): Promise<string> {
-    const { rows } = await this.db.query("SELECT COALESCE(MAX(substring(sku FROM '^SKU-([0-9]+)$')::int), 0) + 1 AS next_number FROM item WHERE organization_id = $1", [organizationId]);
-    return `SKU-${String(Number(rows[0]?.next_number ?? 1)).padStart(6, "0")}`;
   }
 
   async transition(organizationId: number, skus: string[], status: ItemStatus, audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {

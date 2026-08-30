@@ -11,6 +11,7 @@ import {
   FilterChips,
   FilterPanel,
   Input,
+  RadioGroup,
   SearchableSelect,
   Toast,
   ValidationAlert,
@@ -66,12 +67,20 @@ export function ConfigurationListView({
   const [appliesTo, setAppliesTo] = useState("ITEM");
   const [requiredField, setRequiredField] = useState(false);
   const [optionListId, setOptionListId] = useState("");
+  const [optionSource, setOptionSource] = useState<"SHARED" | "CREATE">("SHARED");
+  const hasOptionValues = dataType === "OPTION" || dataType === "MULTIPLE_OPTIONS";
   const validation = useFormValidation(() => ({
     name: { label: "name", value: name, rules: [required()] },
     code: {
       label: "code",
       value: code,
       enabled: kind === "category" || kind === "warehouse",
+      rules: [required()],
+    },
+    optionList: {
+      label: "shared options list",
+      value: optionListId,
+      enabled: kind === "custom-field" && hasOptionValues && optionSource === "SHARED",
       rules: [required()],
     },
   }));
@@ -133,10 +142,11 @@ export function ConfigurationListView({
           { key: "description", label: "Description" },
           { key: "count", label: "Items", align: "right" as const },
         ]
-      : kind === "custom-field"
-        ? [
-            { key: "secondary", label: "Type / Applies To" },
-            { key: "count", label: "Values", align: "right" as const },
+        : kind === "custom-field"
+          ? [
+            { key: "dataType", label: "Type", render: (row: ConfigurationRow) => row.dataType?.replaceAll("_", " ") ?? "—" },
+            { key: "appliesTo", label: "Applies To", render: (row: ConfigurationRow) => row.appliesTo?.replaceAll("_", " ") ?? "—" },
+            { key: "count", label: "Recorded Values", align: "right" as const },
           ]
         : kind === "option-list"
           ? [{ key: "count", label: "Options", align: "right" as const }]
@@ -164,6 +174,7 @@ export function ConfigurationListView({
     setAppliesTo("ITEM");
     setRequiredField(false);
     setOptionListId("");
+    setOptionSource("SHARED");
     setError("");
     validation.reset();
   };
@@ -179,8 +190,8 @@ export function ConfigurationListView({
         dataType,
         appliesTo,
         required: requiredField,
-        optionListId: optionListId ? Number(optionListId) : null,
-        isShared: true,
+        optionListId: hasOptionValues && optionSource === "SHARED" && optionListId ? Number(optionListId) : null,
+        isShared: optionSource === "SHARED",
       };
       const response = await fetch(`/api/inventory/configuration/${kind}`, {
         method: "POST",
@@ -195,26 +206,7 @@ export function ConfigurationListView({
         return;
       }
       const detail = (await response.json()) as ConfigurationDetail;
-      setRows((current) =>
-        [
-          ...current,
-          {
-            id: detail.id,
-            code: detail.code,
-            name: detail.name,
-            description: detail.description,
-            secondary:
-              kind === "custom-field"
-                ? `${detail.dataType} · ${detail.appliesTo}`
-                : "",
-            count: 0,
-            status: detail.status,
-          },
-        ].sort((a, b) => a.name.localeCompare(b.name)),
-      );
-      reset();
-      setModal(false);
-      setToast(`${meta.singular} created`);
+      router.push(`${meta.href}/${detail.id}`);
     } finally {
       setSaving(false);
     }
@@ -319,6 +311,7 @@ export function ConfigurationListView({
                   <div className={styles.field}>
                     <label className={typography.fieldLabel}>Code</label>
                     <Input
+                      invalid={validation.hasError("code")}
                       value={code}
                       onChange={(event) =>
                         setCode(event.target.value.toUpperCase())
@@ -329,6 +322,7 @@ export function ConfigurationListView({
                 <div className={styles.field}>
                   <label className={typography.fieldLabel}>Name</label>
                   <Input
+                    invalid={validation.hasError("name")}
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                   />
@@ -385,25 +379,17 @@ export function ConfigurationListView({
                       />
                       Required
                     </label>
-                    {dataType === "OPTION" ||
-                    dataType === "MULTIPLE_OPTIONS" ? (
-                      <div className={styles.field}>
-                        <label className={typography.fieldLabel}>
-                          Shared Options List
-                        </label>
-                        <SearchableSelect
-                          value={optionListId}
-                          onChange={setOptionListId}
-                          clearable
-                          options={optionLists.map((list) => ({
-                            value: String(list.id),
-                            label: list.name,
-                          }))}
-                        />
-                        <p className={styles.hint}>
-                          Leave blank to create custom options after creation,
-                          or select a shared list.
-                        </p>
+                    {hasOptionValues ? (
+                      <div className={styles.customFieldOptionsSection}>
+                        <div className={styles.field}>
+                          <label className={typography.fieldLabel}>Options</label>
+                          <RadioGroup name="custom-field-option-source" value={optionSource} onChange={(value) => { const source = value as "SHARED" | "CREATE"; setOptionSource(source); if (source === "CREATE") setOptionListId(""); }} options={[{ value: "SHARED", label: "Use shared list" }, { value: "CREATE", label: "Create options" }]} />
+                        </div>
+                        <div className={styles.field}>
+                          <label className={typography.fieldLabel}>Shared Options List</label>
+                          <SearchableSelect value={optionListId} onChange={setOptionListId} hasError={validation.hasError("optionList")} clearable disabled={optionSource === "CREATE"} options={optionLists.map((list) => ({ value: String(list.id), label: list.name }))} />
+                          {optionSource === "CREATE" ? <p className={styles.hint}>Create options on the next screen.</p> : null}
+                        </div>
                       </div>
                     ) : null}
                   </>

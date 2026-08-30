@@ -50,11 +50,11 @@ export class ConfigurationRepo {
             ? "LEFT JOIN custom_field_value v ON v.organization_id = source.organization_id AND v.custom_field_id = source.id"
             : "";
     const secondary =
-      kind === "custom-field"
-        ? "source.data_type || ' · ' || replace(source.applies_to, '_', ' ')"
-        : kind === "warehouse"
+      kind === "warehouse"
           ? "concat_ws(', ', nullif(source.city, ''), nullif(source.country_code, ''))"
           : "''";
+    const dataType = kind === "custom-field" ? "source.data_type" : "NULL::text";
+    const appliesTo = kind === "custom-field" ? "source.applies_to" : "NULL::text";
     const description = kind === "category" ? "source.description" : "''";
     const count =
       kind === "category"
@@ -66,7 +66,7 @@ export class ConfigurationRepo {
             : "0";
     const shared = kind === "option-list" ? "AND source.is_shared = true" : "";
     const { rows } = await this.db.query(
-      `SELECT source.id::int, ${kind === "category" || kind === "warehouse" ? "source.code" : "NULL::text AS code"}, source.name, ${description} AS description, ${secondary} AS secondary, ${count}::int AS count, source.status FROM ${table} source ${joins} WHERE source.organization_id = $1 ${shared} GROUP BY source.id ORDER BY source.name`,
+      `SELECT source.id::int, ${kind === "category" || kind === "warehouse" ? "source.code" : "NULL::text AS code"}, source.name, ${description} AS description, ${secondary} AS secondary, ${dataType} AS "dataType", ${appliesTo} AS "appliesTo", ${count}::int AS count, source.status FROM ${table} source ${joins} WHERE source.organization_id = $1 ${shared} GROUP BY source.id ORDER BY source.name`,
       [organizationId],
     );
     return rows as ConfigurationRow[];
@@ -211,22 +211,13 @@ export class ConfigurationRepo {
     input: ConfigurationPatch,
     audit: Record<string, unknown>,
   ): Promise<void> {
-    const map: Record<string, string> = {
-      code: "code",
-      name: "name",
-      description: "description",
-      addressLine1: "address_line_1",
-      addressLine2: "address_line_2",
-      city: "city",
-      region: "region",
-      postcode: "postcode",
-      countryCode: "country_code",
-      dataType: "data_type",
-      appliesTo: "applies_to",
-      required: "required",
-      optionListId: "option_list_id",
-      isShared: "is_shared",
+    const maps: Record<ConfigurationKind, Record<string, string>> = {
+      category: { code: "code", name: "name", description: "description" },
+      warehouse: { code: "code", name: "name", addressLine1: "address_line_1", addressLine2: "address_line_2", city: "city", region: "region", postcode: "postcode", countryCode: "country_code" },
+      "custom-field": { name: "name", dataType: "data_type", appliesTo: "applies_to", required: "required", optionListId: "option_list_id" },
+      "option-list": { name: "name", isShared: "is_shared" },
     };
+    const map = maps[kind];
     const row: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(input))
       if (value !== undefined && map[key])

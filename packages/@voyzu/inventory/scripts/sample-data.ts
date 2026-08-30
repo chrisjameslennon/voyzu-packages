@@ -1,7 +1,9 @@
 import { getDb } from "@voyzu/capability/db";
 
 import {
+  addInventoryOptionValue,
   createInventoryConfiguration,
+  getInventoryConfiguration,
   listInventoryConfiguration,
 } from "../modules/configuration/operations";
 import {
@@ -50,6 +52,19 @@ const warehouses = [
     name: "Returns Warehouse",
     city: "Auckland",
     countryCode: "NZ",
+  },
+] as const;
+
+const customOptionLists = [
+  {
+    name: "Quality Inspection",
+    description: "Quality inspection outcomes for inventory items.",
+    values: ["Passed", "Failed", "Pending"],
+  },
+  {
+    name: "Size",
+    description: "Standard clothing and product sizes.",
+    values: ["XS", "S", "M", "L", "XL", "XXL"],
   },
 ] as const;
 
@@ -143,6 +158,40 @@ async function seedOrganization(organization: Organization): Promise<void> {
     warehouseIds.set(warehouse.code, created.id);
   }
 
+  const optionListRows = await listInventoryConfiguration(
+    organization.id,
+    "option-list",
+  );
+  const optionListIds = new Map(
+    optionListRows.map(({ name, id }) => [name, id]),
+  );
+  for (const optionList of customOptionLists) {
+    let optionListId = optionListIds.get(optionList.name);
+    if (!optionListId) {
+      const created = await createInventoryConfiguration(
+        organization.id,
+        "option-list",
+        {
+          name: optionList.name,
+          description: optionList.description,
+          isShared: true,
+        },
+      );
+      optionListId = created.id;
+      optionListIds.set(optionList.name, optionListId);
+    }
+    const detail = await getInventoryConfiguration(
+      organization.id,
+      "option-list",
+      optionListId,
+    );
+    const existingValues = new Set(detail?.options.map(({ value }) => value));
+    for (const value of optionList.values) {
+      if (existingValues.has(value)) continue;
+      await addInventoryOptionValue(organization.id, optionListId, { value });
+    }
+  }
+
   const existingItems = new Map(
     (await listInventoryItems(organization.id)).map((item) => [item.sku, item]),
   );
@@ -156,6 +205,8 @@ async function seedOrganization(organization: Organization): Promise<void> {
         categoryId,
         unit: item.unit,
         quantityTracked: true,
+        itemType: "SINGLE_ITEM",
+        components: [],
       });
       itemIds.set(item.sku, changed.id);
       continue;
@@ -173,7 +224,7 @@ async function seedOrganization(organization: Organization): Promise<void> {
   await patchInventoryItem(organization.id, "SAMPLE-GIFT-SET", {
     itemType: "ASSEMBLY",
     components: [
-      { itemId: itemIds.get("SAMPLE-BEANS")!, quantity: 0.5 },
+      { itemId: itemIds.get("SAMPLE-BEANS")!, quantity: 1 },
       { itemId: itemIds.get("SAMPLE-MUG")!, quantity: 1 },
       { itemId: itemIds.get("SAMPLE-BOX")!, quantity: 1 },
     ],
@@ -203,7 +254,7 @@ async function seedOrganization(organization: Organization): Promise<void> {
   }
 
   console.log(
-    `Inventory sample data ready for ${organization.code} (${organization.name}): ${categories.length} categories, ${warehouses.length} warehouses, ${items.length} items.`,
+    `Inventory sample data ready for ${organization.code} (${organization.name}): ${categories.length} categories, ${warehouses.length} warehouses, ${customOptionLists.length} custom option lists, ${items.length} items.`,
   );
 }
 

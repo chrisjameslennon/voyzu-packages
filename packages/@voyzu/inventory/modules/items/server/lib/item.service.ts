@@ -42,17 +42,22 @@ async function requireItems(repo: ItemRepo, organizationId: number, skus: string
 
 export async function listItems(organizationId: number): Promise<ItemListRow[]> { return new ItemRepo(getDb()).list(organizationId); }
 export async function listItemCategories(organizationId: number): Promise<ItemCategoryOptionDto[]> { return new ItemRepo(getDb()).listCategories(organizationId); }
-export async function generateItemSku(organizationId: number): Promise<string> { return new ItemRepo(getDb()).nextSku(organizationId); }
+export async function reserveItemSku(): Promise<{ id: number; sku: string }> { return new ItemRepo(getDb()).reserveAutoSku(); }
 export async function getItem(organizationId: number, sku: string): Promise<ItemResponseDto | null> { const repo = new ItemRepo(getDb()); const row = await repo.get(organizationId, normalizeSku(sku)); return row ? toResponse(repo, row) : null; }
 
 export async function createItem(organizationId: number, input: ItemCreateRequestDto): Promise<ItemResponseDto> {
   try {
     return await withTransaction(async (db) => {
+      if (input.sku && input.reservedId) throw new BusinessRuleError("Use either a manual SKU or a reserved automatic SKU");
       if (input.quantityTracked && input.unit === null) throw new BusinessRuleError("Unit is required when quantity tracking is enabled");
-      const repo = new ItemRepo(db); const sku = input.sku ? normalizeSku(input.sku) : await repo.nextSku(organizationId);
-      const row = await repo.insert(organizationId, withCreationAudit({ sku, name: input.name.trim(), description: "", item_category_id: input.categoryId,
+      const repo = new ItemRepo(db); const values = withCreationAudit({ name: input.name.trim(), description: "", item_category_id: input.categoryId,
         unit: input.quantityTracked ? input.unit : null, item_type: "SINGLE_ITEM", quantity_tracked: input.quantityTracked,
-        status: "ACTIVE" }, await createCreationAuditStamp()));
+        status: "ACTIVE" }, await createCreationAuditStamp());
+      const row = input.sku
+        ? await repo.insert(organizationId, { sku: normalizeSku(input.sku), ...values })
+        : input.reservedId
+          ? await repo.insertReservedAutoSku(organizationId, input.reservedId, values)
+          : await repo.insertAutoSku(organizationId, values);
       return toResponse(repo, row);
     });
   } catch (error) { return translateConflict(error); }
@@ -68,6 +73,10 @@ export async function patchItem(organizationId: number, sku: string, input: Item
       if (targetQuantityTracked && targetUnit === null) throw new BusinessRuleError("Unit is required when quantity tracking is enabled");
       const targetType = input.itemType ?? current.item_type; const components = input.components;
       if (targetType === "SINGLE_ITEM" && components?.length) throw new BusinessRuleError("A single item cannot have assembly components");
+      if (targetType === "ASSEMBLY") {
+        const componentCount = components?.length ?? (await repo.listComponents(organizationId, current.id)).length;
+        if (componentCount < 2) throw new BusinessRuleError("An assembly must contain at least two components");
+      }
       if (components) {
         const ids = components.map(({ itemId }) => itemId);
         if (new Set(ids).size !== ids.length) throw new BusinessRuleError("An assembly component can only be added once");

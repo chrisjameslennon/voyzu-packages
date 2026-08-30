@@ -3,7 +3,7 @@ import { businessRuleError, conflictError, created, noContent, notFoundError, ok
 import { BusinessRuleError, ConflictError, NotFoundError } from "@voyzu/capability/errors";
 import type { ItemCategoryChangeRequestDto, ItemCodeListRequestDto, ItemCreateRequestDto, ItemPatchRequestDto } from "../../types/item.types";
 import { getSelectedOrganization } from "../../../common/server/organization-context";
-import { activateItem, activateItems, changeItemsCategory, createItem, deactivateItem, deactivateItems, deleteItem, deleteItems, generateItemSku, getItem, listItemCategories, listItems, patchItem } from "../lib/item.service";
+import { activateItem, activateItems, changeItemsCategory, createItem, deactivateItem, deactivateItems, deleteItem, deleteItems, getItem, listItemCategories, listItems, patchItem, reserveItemSku } from "../lib/item.service";
 
 type RouteContext = { params: Promise<{ sku: string }> };
 function errorResponse(error: unknown) {
@@ -19,7 +19,8 @@ async function organizationId() {
 }
 
 export async function handleList() { try { return ok(await listItems(await organizationId())); } catch (error) { return errorResponse(error); } }
-export async function handleOptions() { try { const id = await organizationId(); return ok({ categories: await listItemCategories(id), nextSku: await generateItemSku(id) }); } catch (error) { return errorResponse(error); } }
+export async function handleOptions() { try { return ok({ categories: await listItemCategories(await organizationId()) }); } catch (error) { return errorResponse(error); } }
+export async function handleReserveSku() { try { await organizationId(); return ok(await reserveItemSku()); } catch (error) { return errorResponse(error); } }
 export async function handleGet(_request: NextRequest, { params }: RouteContext) { try { const { sku } = await params; const item = await getItem(await organizationId(), sku); return item ? ok(item) : notFoundError(`Item ${sku} was not found`); } catch (error) { return errorResponse(error); } }
 export async function handleCreate(request: NextRequest) { try { return created(await createItem(await organizationId(), await parseBody<ItemCreateRequestDto>(request))); } catch (error) { return errorResponse(error); } }
 export async function handlePatch(request: NextRequest, { params }: RouteContext) { try { const { sku } = await params; return ok(await patchItem(await organizationId(), sku, await parseBody<ItemPatchRequestDto>(request))); } catch (error) { return errorResponse(error); } }

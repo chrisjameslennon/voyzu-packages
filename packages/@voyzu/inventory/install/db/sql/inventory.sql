@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS item_component (
     organization_id          BIGINT NOT NULL,
     item_id                  BIGINT NOT NULL,
     component_item_id        BIGINT NOT NULL,
-    quantity                 NUMERIC(18, 4) NOT NULL,
+    quantity                 BIGINT NOT NULL,
 
     creation_date            audit_timestamp,
     creation_actor_type      actor_type,

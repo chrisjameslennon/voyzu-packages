@@ -17,6 +17,8 @@ export const ConfigurationRowDto = StrictObject({
   name: Text,
   description: Type.String(),
   secondary: Type.String(),
+  dataType: Type.Union([Type.String(), Type.Null()]),
+  appliesTo: Type.Union([Type.String(), Type.Null()]),
   count: Type.Integer({ minimum: 0 }),
   status: Status,
 });

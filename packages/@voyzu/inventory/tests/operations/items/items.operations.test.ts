@@ -10,12 +10,12 @@ import {
   deactivateInventoryItems,
   deleteInventoryItem,
   deleteInventoryItems,
-  generateInventoryItemSku,
   getInventoryItem,
   getOperationalInventoryItems,
   listInventoryItemCategories,
   listInventoryItems,
   patchInventoryItem,
+  reserveInventoryItemSku,
 } from "../../../modules/items/operations";
 import {
   createTestOrganization,
@@ -42,12 +42,23 @@ after(async () => {
 
 test("item commands expose create, read, patch, and delete", async () => {
   const organizationId = organization!.id;
-  assert.match(await generateInventoryItemSku(organizationId), /^SKU-\d{6}$/);
   assert.ok(
     (await listInventoryItemCategories(organizationId)).some(
       ({ id }) => id === categoryId,
     ),
   );
+
+  const reservation = await reserveInventoryItemSku();
+  assert.equal(reservation.sku, `SKU-${reservation.id}`);
+  const generated = await createInventoryItem(organizationId, {
+    reservedId: reservation.id,
+    name: "Auto SKU item",
+    unit: "each",
+    categoryId,
+    quantityTracked: true,
+  });
+  assert.equal(generated.id, reservation.id);
+  assert.equal(generated.sku, `SKU-${generated.id}`);
 
   const created = await createInventoryItem(organizationId, {
     sku: "TEST-ITEM-1",
@@ -87,6 +98,7 @@ test("item commands expose create, read, patch, and delete", async () => {
     "ACTIVE",
   );
   await deleteInventoryItem(organizationId, created.sku);
+  await deleteInventoryItem(organizationId, generated.sku);
   assert.equal(await getInventoryItem(organizationId, created.sku), null);
 });
 

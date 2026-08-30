@@ -9,6 +9,7 @@ import {
   Checkbox,
   ConfirmDialog,
   DataTable,
+  DropdownMenu,
   Input,
   SearchableSelect,
   Toast,
@@ -16,6 +17,7 @@ import {
   required,
   useFormValidation,
   type DataTableColumn,
+  type DropdownMenuItem,
 } from "@voyzu/ui-components";
 import {
   DetailBackButton,
@@ -23,7 +25,7 @@ import {
 } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
-import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
+import modalStyles from "@voyzu/ui-style/css-modules/modal.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type {
   ConfigurationDetail,
@@ -39,6 +41,7 @@ type Meta = {
   icon: string;
   href: string;
 };
+type OptionRow = ConfigurationDetail["options"][number];
 export function ConfigurationDetailView({
   kind,
   meta,
@@ -66,15 +69,20 @@ export function ConfigurationDetailView({
     record.optionListId ? String(record.optionListId) : "",
   );
   const [optionValue, setOptionValue] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState<Set<number>>(
-    new Set(),
-  );
-  const [optionConfirm, setOptionConfirm] = useState(false);
+  const [editingOption, setEditingOption] = useState<OptionRow | null>(null);
+  const [editingOptionValue, setEditingOptionValue] = useState("");
+  const [deletingOption, setDeletingOption] = useState<OptionRow | null>(null);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [confirm, setConfirm] = useState(false);
   const validation = useFormValidation(() => ({
     name: { label: "name", value: name, rules: [required()] },
+  }));
+  const optionValidation = useFormValidation(() => ({
+    option: { label: "option value", value: optionValue, rules: [required()] },
+  }));
+  const editingOptionValidation = useFormValidation(() => ({
+    option: { label: "option value", value: editingOptionValue, rules: [required()] },
   }));
   const request = async (path: string, init: RequestInit) => {
     setError("");
@@ -90,18 +98,13 @@ export function ConfigurationDetailView({
   };
   const save = async () => {
     if (!validation.attempt()) return;
-    const body: ConfigurationPatch = {
-      name,
-      description,
-      addressLine1,
-      addressLine2,
-      city,
-      region,
-      postcode,
-      countryCode: countryCode || null,
-      required: requiredField,
-      optionListId: optionListId ? Number(optionListId) : null,
-    };
+    const body: ConfigurationPatch = kind === "category"
+      ? { name, description }
+      : kind === "warehouse"
+        ? { name, addressLine1, addressLine2, city, region, postcode, countryCode: countryCode || null }
+        : kind === "custom-field"
+          ? { name, required: requiredField, optionListId: optionListId ? Number(optionListId) : null }
+          : { name };
     const response = await request(
       `/api/inventory/configuration/${kind}/${record.id}`,
       {
@@ -142,94 +145,80 @@ export function ConfigurationDetailView({
         : { ...current, options: changed.options },
     );
   };
-  const saveOption = async () => {
-    if (!optionValue.trim()) {
-      setError("Option value is required");
-      return;
-    }
+  const addOption = async () => {
+    if (!optionValidation.attempt()) return;
     if (!optionListTargetId) return;
-    const selectedId =
-      selectedOptions.size === 1 ? [...selectedOptions][0] : null;
     const response = await request(
-      `/api/inventory/configuration/option-list/${optionListTargetId}/options${selectedId ? `/${selectedId}` : ""}`,
+      `/api/inventory/configuration/option-list/${optionListTargetId}/options`,
       {
-        method: selectedId ? "PATCH" : "POST",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value: optionValue }),
+        body: JSON.stringify({ value: optionValue.trim() }),
       },
     );
     if (!response) return;
     applyOptionListResponse((await response.json()) as ConfigurationDetail);
     setOptionValue("");
-    setSelectedOptions(new Set());
-    setToast(selectedId ? "Option updated" : "Option added");
+    optionValidation.reset();
+    setToast("Option added");
   };
-  const transitionOptions = async (status: "ACTIVE" | "INACTIVE") => {
-    if (!optionListTargetId) return;
-    let changed: ConfigurationDetail | null = null;
-    for (const optionId of selectedOptions) {
-      const response = await request(
-        `/api/inventory/configuration/option-list/${optionListTargetId}/options/${optionId}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        },
-      );
-      if (!response) return;
-      changed = (await response.json()) as ConfigurationDetail;
-    }
-    if (changed) applyOptionListResponse(changed);
-    setSelectedOptions(new Set());
-    setToast("Options updated");
+  const openOptionEditor = (option: OptionRow) => {
+    setEditingOption(option);
+    setEditingOptionValue(option.value);
+    editingOptionValidation.reset();
   };
-  const deleteOptions = async () => {
+  const closeOptionEditor = () => {
+    setEditingOption(null);
+    setEditingOptionValue("");
+    editingOptionValidation.reset();
+  };
+  const updateOption = async () => {
+    if (!editingOptionValidation.attempt() || !editingOption || !optionListTargetId) return;
+    const response = await request(
+      `/api/inventory/configuration/option-list/${optionListTargetId}/options/${editingOption.id}`,
+      { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ value: editingOptionValue.trim() }) },
+    );
+    if (!response) return;
+    applyOptionListResponse((await response.json()) as ConfigurationDetail);
+    closeOptionEditor();
+    setToast("Option updated");
+  };
+  const transitionOption = async (option: OptionRow, status: "ACTIVE" | "INACTIVE") => {
     if (!optionListTargetId) return;
-    let changed: ConfigurationDetail | null = null;
-    for (const optionId of selectedOptions) {
-      const response = await request(
-        `/api/inventory/configuration/option-list/${optionListTargetId}/options/${optionId}`,
-        { method: "DELETE" },
-      );
-      if (!response) return;
-      changed = (await response.json()) as ConfigurationDetail;
-    }
-    if (changed) applyOptionListResponse(changed);
-    setSelectedOptions(new Set());
-    setOptionConfirm(false);
-    setToast("Options deleted");
+    const response = await request(
+      `/api/inventory/configuration/option-list/${optionListTargetId}/options/${option.id}`,
+      { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) },
+    );
+    if (!response) return;
+    applyOptionListResponse((await response.json()) as ConfigurationDetail);
+    setToast(`Option ${status.toLowerCase()}`);
+  };
+  const deleteOption = async () => {
+    if (!optionListTargetId || !deletingOption) return;
+    const response = await request(
+      `/api/inventory/configuration/option-list/${optionListTargetId}/options/${deletingOption.id}`,
+      { method: "DELETE" },
+    );
+    if (!response) return;
+    applyOptionListResponse((await response.json()) as ConfigurationDetail);
+    setDeletingOption(null);
+    setToast("Option removed");
   };
   const auditFilter = record.audit.updated.mutationId
     ? `mutationId=${encodeURIComponent(record.audit.updated.mutationId)}`
     : `entityType=${kind.replace("-", "_")}&entityId=${record.id}`;
-  const optionColumns: DataTableColumn<
-    ConfigurationDetail["options"][number]
-  >[] = [
-    {
-      key: "value",
-      label: "Value",
-      render: (row) => <span className={listStyles.nameCell}>{row.value}</span>,
-    },
-    {
-      key: "status",
-      label: "Status",
-      render: (row) => (
-        <Badge
-          variant="soft"
-          size="x-small"
-          color={row.status === "ACTIVE" ? "success" : "neutral"}
-        >
-          {row.status}
-        </Badge>
-      ),
-    },
-    {
-      key: "usedBy",
-      label: "Used By",
-      align: "right",
-      render: (row) => `${row.usedBy} record${row.usedBy === 1 ? "" : "s"}`,
-    },
+  const optionActions = (option: OptionRow): DropdownMenuItem[] => [
+    { value: "edit", label: "Edit", icon: "edit", onSelect: () => openOptionEditor(option) },
+    option.status === "ACTIVE"
+      ? { value: "deactivate", label: "Deactivate", icon: "block", onSelect: () => { void transitionOption(option, "INACTIVE"); } }
+      : { value: "activate", label: "Activate", icon: "check_circle", onSelect: () => { void transitionOption(option, "ACTIVE"); } },
+    { value: "remove", label: "Remove", icon: "delete", variant: "danger", onSelect: () => setDeletingOption(option) },
   ];
+  const optionEditor = <div className={styles.optionsSection}>
+    <h2 className={typography.sectionHeading}>Options</h2>
+    <div className={styles.optionAdderPanel}><div className={styles.optionAdder}><Input value={optionValue} invalid={optionValidation.hasError("option")} onChange={(event) => setOptionValue(event.target.value)} placeholder="New option value" /><Button variant="secondary" icon="add" onClick={() => { void addOption(); }}>Add Option</Button></div></div>
+    <div className={styles.optionTableWrap}><table className={detailStyles.table}><thead><tr><th>Value</th><th>Status</th><th className={detailStyles.numericCell}>Used By</th><th /></tr></thead><tbody>{record.options.length ? record.options.map((option) => <tr key={option.id}><td className={detailStyles.strongCell}>{option.value}</td><td><Badge variant="soft" size="x-small" color={option.status === "ACTIVE" ? "success" : "neutral"}>{option.status}</Badge></td><td className={detailStyles.numericCell}>{option.usedBy} record{option.usedBy === 1 ? "" : "s"}</td><td className={styles.optionActionCell}><DropdownMenu trigger={<Button variant="plain" size="small" icon="more_horiz" title={`Actions for ${option.value}`} />} items={optionActions(option)} alignment="right" width={180} /></td></tr>) : <tr><td colSpan={4} className={styles.emptyCell}>No options have been added.</td></tr>}</tbody></table></div>
+  </div>;
   const usedColumns: DataTableColumn<ConfigurationDetail["usedBy"][number]>[] =
     [
       { key: "name", label: "Custom Field" },
@@ -289,10 +278,11 @@ export function ConfigurationDetailView({
         </div>
         <div className={layout.slotAlert}>
           <ValidationAlert
-            errors={[...validation.errors, ...(error ? [error] : [])]}
-            visible={validation.showErrors || !!error}
+            errors={[...(validation.showErrors ? validation.errors : []), ...(optionValidation.showErrors ? optionValidation.errors : []), ...(error ? [error] : [])]}
+            visible={validation.showErrors || optionValidation.showErrors || !!error}
             onDismiss={() => {
               validation.dismiss();
+              optionValidation.dismiss();
               setError("");
             }}
           />
@@ -355,6 +345,7 @@ export function ConfigurationDetailView({
             <div className={styles.field}>
               <label className={typography.fieldLabel}>Name</label>
               <Input
+                invalid={validation.hasError("name")}
                 value={name}
                 onChange={(event) => setName(event.target.value)}
               />
@@ -478,138 +469,30 @@ export function ConfigurationDetailView({
               </>
             ) : null}
           </div>
+          {kind === "option-list" ||
+          (kind === "custom-field" &&
+            (record.dataType === "OPTION" ||
+              record.dataType === "MULTIPLE_OPTIONS") &&
+            !record.isShared)
+            ? optionEditor
+            : null}
         </section>
-        {kind === "option-list" ||
-        (kind === "custom-field" &&
-          (record.dataType === "OPTION" ||
-            record.dataType === "MULTIPLE_OPTIONS") &&
-          !record.isShared) ? (
-          <>
-            <section className={detailStyles.card}>
-              <div className={detailStyles.cardHeader}>
-                <h2
-                  className={`${typography.sectionHeading} ${detailStyles.cardHeaderTitle}`}
-                >
-                  Options
-                </h2>
-                <div className={styles.toolbar}>
-                  <Input
-                    value={optionValue}
-                    onChange={(event) => setOptionValue(event.target.value)}
-                    placeholder="New option value"
-                  />
-                  <Button
-                    variant="secondary"
-                    icon={selectedOptions.size === 1 ? "edit" : "add"}
-                    onClick={() => void saveOption()}
-                  >
-                    {selectedOptions.size === 1 ? "Save Option" : "Add Option"}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    icon="check_circle"
-                    disabled={!selectedOptions.size}
-                    onClick={() => void transitionOptions("ACTIVE")}
-                  >
-                    Activate
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    icon="block"
-                    disabled={!selectedOptions.size}
-                    onClick={() => void transitionOptions("INACTIVE")}
-                  >
-                    Deactivate
-                  </Button>
-                  <Button
-                    variant="secondary-destructive"
-                    icon="delete"
-                    disabled={!selectedOptions.size}
-                    onClick={() => setOptionConfirm(true)}
-                  />
-                </div>
-              </div>
-              <DataTable
-                columns={optionColumns}
-                rows={record.options}
-                selectedIds={selectedOptions}
-                isAllSelected={
-                  record.options.length > 0 &&
-                  record.options.every((option) =>
-                    selectedOptions.has(option.id),
-                  )
-                }
-                isSomeSelected={record.options.some((option) =>
-                  selectedOptions.has(option.id),
-                )}
-                onSelectAll={() =>
-                  setSelectedOptions(
-                    record.options.every((option) =>
-                      selectedOptions.has(option.id),
-                    )
-                      ? new Set()
-                      : new Set(record.options.map((option) => option.id)),
-                  )
-                }
-                onSelectOne={(id) =>
-                  setSelectedOptions((current) => {
-                    const next = new Set(current);
-                    next.has(id) ? next.delete(id) : next.add(id);
-                    return next;
-                  })
-                }
-                onRowClick={(option) => {
-                  setSelectedOptions(new Set([option.id]));
-                  setOptionValue(option.value);
-                }}
-                currentPage={1}
-                totalPages={1}
-                onPageChange={() => undefined}
-                totalCount={record.options.length}
-                filteredCount={record.options.length}
-                itemLabel="options"
-                hasData={record.options.length > 0}
-                emptyIcon="list_alt"
-                emptyTitle="No options"
-                emptyText="Add the first option"
-              />
-            </section>
-            {kind === "option-list" ? (
-              <section className={detailStyles.card}>
-                <h2 className={typography.sectionHeading}>Used By</h2>
-                <DataTable
-                  columns={usedColumns}
-                  rows={record.usedBy}
-                  selectedIds={new Set<number>()}
-                  isAllSelected={false}
-                  isSomeSelected={false}
-                  onSelectAll={() => undefined}
-                  onSelectOne={() => undefined}
-                  onRowClick={() => undefined}
-                  currentPage={1}
-                  totalPages={1}
-                  onPageChange={() => undefined}
-                  totalCount={record.usedBy.length}
-                  filteredCount={record.usedBy.length}
-                  itemLabel="custom fields"
-                  hasData={record.usedBy.length > 0}
-                  emptyIcon="dynamic_form"
-                  emptyTitle="Not used"
-                  emptyText="No custom fields use this list"
-                />
-              </section>
-            ) : null}
-          </>
+        {kind === "option-list" ? (
+          <section className={detailStyles.card}>
+            <h2 className={typography.sectionHeading}>Used By</h2>
+            <DataTable columns={usedColumns} rows={record.usedBy} selectedIds={new Set<number>()} isAllSelected={false} isSomeSelected={false} onSelectAll={() => undefined} onSelectOne={() => undefined} onRowClick={() => undefined} currentPage={1} totalPages={1} onPageChange={() => undefined} totalCount={record.usedBy.length} filteredCount={record.usedBy.length} itemLabel="custom fields" hasData={record.usedBy.length > 0} emptyIcon="dynamic_form" emptyTitle="Not used" emptyText="No custom fields use this list" />
+          </section>
         ) : null}
       </main>
+      {editingOption ? <div className={modalStyles.backdrop}><div className={modalStyles.modal} onClick={(event) => event.stopPropagation()}><div className={modalStyles.header}><h3 className={typography.contentTitle}>Edit Option</h3><Button variant="plain" icon="close" title="Close" onClick={closeOptionEditor} /></div><div className={modalStyles.body}><ValidationAlert errors={editingOptionValidation.errors} visible={editingOptionValidation.showErrors} onDismiss={editingOptionValidation.dismiss} /><div className={modalStyles.fieldGroup}><label className={typography.fieldLabel}>Option Value</label><Input value={editingOptionValue} invalid={editingOptionValidation.hasError("option")} onChange={(event) => setEditingOptionValue(event.target.value)} /></div></div><div className={modalStyles.footer}><Button variant="secondary" onClick={closeOptionEditor}>Cancel</Button><Button variant="primary" onClick={() => { void updateOption(); }}>Update Option</Button></div></div></div> : null}
       <ConfirmDialog
-        isOpen={optionConfirm}
-        title="Delete Options"
-        message="Delete the selected options? Values already saved against records will be permanently deleted."
-        confirmLabel="Delete"
+        isOpen={!!deletingOption}
+        title="Remove Option"
+        message={`Remove ${deletingOption?.value ?? "this option"}? Values already saved against records will be permanently deleted.`}
+        confirmLabel="Remove"
         confirmVariant="danger"
-        onClose={() => setOptionConfirm(false)}
-        onConfirm={() => void deleteOptions()}
+        onClose={() => setDeletingOption(null)}
+        onConfirm={() => void deleteOption()}
       />
       <ConfirmDialog
         isOpen={confirm}

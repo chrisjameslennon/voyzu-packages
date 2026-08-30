@@ -2,12 +2,12 @@ import "server-only";
 import { operation } from "@voyzu/capability/operations";
 import Type from "typebox";
 import { OperationalItemDto } from "./types/operational-item.types";
-import { ItemCategoryChangeRequestDto, ItemCategoryOptionDto, ItemCodeListRequestDto, ItemCreateRequestDto, ItemListRowDto, ItemPatchRequestDto, ItemResponseDto } from "./types/item.types";
+import { ItemCategoryChangeRequestDto, ItemCategoryOptionDto, ItemCodeListRequestDto, ItemCreateRequestDto, ItemListRowDto, ItemPatchRequestDto, ItemResponseDto, ItemSkuReservationDto } from "./types/item.types";
 
 const loadService = () => import("./server/lib/item.service");
 export const listInventoryItems = operation.defineLazy({ parameters: Type.Tuple([Type.Number()]), result: Type.Array(ItemListRowDto) }, () => loadService().then((module) => module.listItems));
 export const listInventoryItemCategories = operation.defineLazy({ parameters: Type.Tuple([Type.Number()]), result: Type.Array(ItemCategoryOptionDto) }, () => loadService().then((module) => module.listItemCategories));
-export const generateInventoryItemSku = operation.defineLazy({ parameters: Type.Tuple([Type.Number()]), result: Type.String() }, () => loadService().then((module) => module.generateItemSku));
+export const reserveInventoryItemSku = operation.defineLazy({ parameters: Type.Tuple([]), result: ItemSkuReservationDto }, () => loadService().then((module) => module.reserveItemSku));
 export const getInventoryItem = operation.defineLazy({ parameters: Type.Tuple([Type.Number(), Type.String()]), result: Type.Union([ItemResponseDto, Type.Null()]) }, () => loadService().then((module) => module.getItem));
 export const createInventoryItem = operation.defineLazy({ parameters: Type.Tuple([Type.Number(), ItemCreateRequestDto]), result: ItemResponseDto }, () => loadService().then((module) => module.createItem));
 export const patchInventoryItem = operation.defineLazy({ parameters: Type.Tuple([Type.Number(), Type.String(), ItemPatchRequestDto]), result: ItemResponseDto }, () => loadService().then((module) => module.patchItem));
@@ -20,6 +20,6 @@ export const changeInventoryItemsCategory = operation.defineLazy({ parameters: T
 export const deleteInventoryItems = operation.defineLazy({ parameters: Type.Tuple([Type.Number(), ItemCodeListRequestDto.properties.skus]), result: Type.Undefined() }, () => loadService().then((module) => module.deleteItems));
 export const getOperationalInventoryItems = operation.defineLazy({ parameters: Type.Tuple([Type.Number(), Type.Array(Type.String())]), result: Type.Array(OperationalItemDto) }, () => loadService().then((module) => module.getOperationalItems));
 
-export const operations = { listInventoryItems, listInventoryItemCategories, generateInventoryItemSku, getInventoryItem, createInventoryItem, patchInventoryItem,
+export const operations = { listInventoryItems, listInventoryItemCategories, reserveInventoryItemSku, getInventoryItem, createInventoryItem, patchInventoryItem,
   deleteInventoryItem, activateInventoryItem, deactivateInventoryItem, activateInventoryItems, deactivateInventoryItems, changeInventoryItemsCategory, deleteInventoryItems,
   getOperationalInventoryItems } as const;

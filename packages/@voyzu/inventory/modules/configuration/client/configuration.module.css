@@ -33,6 +33,31 @@
   align-items: center;
   flex-wrap: wrap;
 }
+.optionsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--voyzu-color-surface-secondary);
+}
+.optionAdderPanel {
+  padding: 1rem;
+  border: 1px solid var(--voyzu-color-neutral-border);
+  border-radius: var(--voyzu-radius-surface);
+  background: var(--voyzu-color-neutral-bg);
+}
+.optionAdder {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+.optionTableWrap { overflow: visible; }
+.optionTableWrap th { padding: 0.625rem 1rem; }
+.optionTableWrap td { padding: 0.125rem 1rem; }
+.optionActionCell { width: 1%; text-align: right; white-space: nowrap; }
+.emptyCell { padding: 1.5rem !important; text-align: center; color: var(--voyzu-color-text-tertiary) !important; }
+.customFieldOptionsSection { display: flex; flex-direction: column; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--voyzu-color-surface-secondary); }
 .hint {
   color: var(--voyzu-color-text-tertiary);
   font-size: 0.875rem;
@@ -44,5 +69,8 @@
   }
   .wide {
     grid-column: auto;
+  }
+  .optionAdder {
+    grid-template-columns: 1fr;
   }
 }
