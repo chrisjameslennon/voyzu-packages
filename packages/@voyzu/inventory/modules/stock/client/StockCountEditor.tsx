@@ -215,14 +215,6 @@ export function StockCountEditor({
     return changed;
   };
   const complete = async () => {
-    if (
-      !rows.some(
-        (row) => row.itemId && row.countedQuantity !== "",
-      )
-    ) {
-      setError("Enter an actual quantity for at least one item");
-      return;
-    }
     const current = await save("IN_PROGRESS");
     if (!current) return;
     const response = await request(
@@ -245,10 +237,6 @@ export function StockCountEditor({
     }
     if (!rows.length) {
       setError("The selected warehouse has no stocked items");
-      return;
-    }
-    if (!rows.some((row) => row.countedQuantity !== "")) {
-      setError("Enter an actual quantity for at least one item");
       return;
     }
     setConfirmComplete(true);
@@ -388,6 +376,9 @@ export function StockCountEditor({
               <h2 className={typography.sectionHeading}>
                 Items
               </h2>
+              <p className={styles.stocktakeItemsHelp}>
+                Leave the Actual Quantity blank to accept the On Hand value.
+              </p>
               {warehouseId ? (
                 <EditableGrid
                   key={`stocktake-${warehouseId}`}

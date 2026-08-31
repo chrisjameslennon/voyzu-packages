@@ -197,6 +197,11 @@
   background: var(--voyzu-color-neutral-bg);
   color: var(--voyzu-color-text-secondary);
 }
+.stocktakeItemsHelp {
+  margin: -0.5rem 0 0;
+  color: var(--voyzu-color-text-secondary);
+  font-size: 0.875rem;
+}
 .transferStory {
   display: flex;
   flex-direction: column;

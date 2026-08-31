@@ -28,7 +28,7 @@ const columns: DataTableColumn<ItemListRow>[] = [
 ];
 
 export function ItemsList({ items, categories }: { items: ItemListRow[]; categories: ItemCategoryOptionDto[]; }) {
-  const router = useRouter(); const [rows, setRows] = useState(items); const [search, setSearch] = useState(""); const [filters, setFilters] = useState<FilterState>({});
+  const router = useRouter(); const [rows, setRows] = useState(items); const [search, setSearch] = useState(""); const [filters, setFilters] = useState<FilterState>({ status: ["ACTIVE"] });
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set()); const [showCreate, setShowCreate] = useState(false); const [showDelete, setShowDelete] = useState(false);
   const [showCategoryChange, setShowCategoryChange] = useState(false); const [changeCategoryId, setChangeCategoryId] = useState(""); const [changingCategory, setChangingCategory] = useState(false);
   const [sku, setSku] = useState(""); const [name, setName] = useState(""); const [unit, setUnit] = useState<Unit | "">("each"); const [quantityTracked, setQuantityTracked] = useState(true);

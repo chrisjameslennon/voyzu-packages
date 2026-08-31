@@ -30,15 +30,23 @@ export function InventoryReportView({
   initialShowInactive?: boolean;
   initialShowCustomFields?: boolean;
 }) {
-  const hasItemOptions = reportKey === "items";
+  const hasCustomFieldOption = reportKey === "items";
+  const hasInactiveItemOption = [
+    "items",
+    "item-categories",
+    "stock-on-hand",
+    "stock-availability",
+  ].includes(reportKey);
   const [showInactive, setShowInactive] = useState(initialShowInactive);
   const [showCustomFields, setShowCustomFields] = useState(
     initialShowCustomFields,
   );
   const reportParams = () => {
     const params = new URLSearchParams();
-    if (hasItemOptions) {
+    if (hasInactiveItemOption) {
       params.set("showInactive", String(showInactive));
+    }
+    if (hasCustomFieldOption) {
       params.set("showCustomFields", String(showCustomFields));
     }
     return params;
@@ -54,8 +62,10 @@ export function InventoryReportView({
       filename: `inventory-${reportKey}`,
       orientation: "landscape",
     });
-    if (hasItemOptions) {
+    if (hasInactiveItemOption) {
       params.set("showInactive", String(showInactive));
+    }
+    if (hasCustomFieldOption) {
       params.set("showCustomFields", String(showCustomFields));
     }
     return `/api/capability/${mode}?${params}`;
@@ -83,12 +93,23 @@ export function InventoryReportView({
     () => ({
       ...report,
       rows: report.rows
-        .filter((row) => showInactive || !row.inactive)
+        .filter(
+          (row) =>
+            !hasInactiveItemOption || showInactive || !row.inactive,
+        )
         .map((row) =>
-          showCustomFields ? row : { ...row, details: undefined },
+          !hasCustomFieldOption || showCustomFields
+            ? row
+            : { ...row, details: undefined },
         ),
     }),
-    [report, showCustomFields, showInactive],
+    [
+      hasCustomFieldOption,
+      hasInactiveItemOption,
+      report,
+      showCustomFields,
+      showInactive,
+    ],
   );
   const document = (
     <InventoryReportTemplate report={visibleReport} generatedAt={generatedAt} />
@@ -107,19 +128,19 @@ export function InventoryReportView({
             {report.title}
           </h1>
         </div>
-        {hasItemOptions ? (
+        {hasInactiveItemOption ? (
           <div className={`${layout.slotToolbarLeft} ${localStyles.toolbarLeft}`}>
             <label className={localStyles.inlineCheckboxOption}>
               <Checkbox
                 checked={showInactive}
                 onChange={() => setShowInactive((current) => !current)}
               />
-              <span>Show inactive</span>
+              <span>Show inactive items</span>
             </label>
           </div>
         ) : null}
         <div className={layout.slotToolbarRight}>
-          {hasItemOptions ? (
+          {hasCustomFieldOption ? (
             <DropdownMenu
               trigger={
                 <Button variant="plain" icon="tune">

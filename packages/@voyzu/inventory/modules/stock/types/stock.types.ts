@@ -1,6 +1,6 @@
 import Type, { type Static } from "typebox";
 import { StrictObject } from "@voyzu/types/api";
-import { AuditMetadataDto } from "@voyzu/types/modules/core";
+import { AuditMetadataDto, Status } from "@voyzu/types/modules/core";
 const Id = Type.Integer({ minimum: 1 });
 const Qty = Type.Number({ exclusiveMinimum: 0 });
 const Text = Type.String({ pattern: "\\S" });
@@ -10,6 +10,7 @@ export const StockPositionDto = StrictObject({
   itemId: Id,
   sku: Text,
   itemName: Text,
+  itemStatus: Status,
   unit: Type.Union([Type.String(), Type.Null()]),
   warehouseId: Id,
   warehouseName: Text,

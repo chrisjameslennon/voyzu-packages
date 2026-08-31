@@ -127,7 +127,7 @@ export function StockPositionsView({
 }) {
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState<FilterState>({});
+  const [filters, setFilters] = useState<FilterState>({ status: ["ACTIVE"] });
   const [warehouseFilter, setWarehouseFilter] = useState<number | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   useEffect(() => {
@@ -139,12 +139,14 @@ export function StockPositionsView({
   const visible = useMemo(() => {
     const q = search.toLowerCase();
     const warehouses = filters.warehouse as string[] | undefined;
+    const statuses = filters.status as string[] | undefined;
     return positions.filter(
       (p) =>
         (warehouseFilter === null || p.warehouseId === warehouseFilter) &&
         (!warehouses?.length || warehouses.includes(p.warehouseName)) &&
+        (!statuses?.length || statuses.includes(p.itemStatus)) &&
         (!q ||
-          [p.sku, p.itemName, p.warehouseName].some((v) =>
+          [p.sku, p.itemName, p.warehouseName, p.itemStatus].some((v) =>
             v.toLowerCase().includes(q),
           )),
     );
@@ -157,6 +159,12 @@ export function StockPositionsView({
       options: [
         ...new Set(positions.map((position) => position.warehouseName)),
       ].sort(),
+    },
+    {
+      key: "status",
+      label: "Item Status",
+      type: "checkbox",
+      options: ["ACTIVE", "INACTIVE"],
     },
   ];
   const removeFilter = (key: string) =>
@@ -173,6 +181,20 @@ export function StockPositionsView({
     },
     { key: "itemName", label: "Item Name" },
     { key: "warehouseName", label: "Warehouse" },
+    {
+      key: "itemStatus",
+      label: "Item Status",
+      align: "center",
+      render: (row) => (
+        <Badge
+          variant="soft"
+          size="x-small"
+          color={row.itemStatus === "ACTIVE" ? "success" : "neutral"}
+        >
+          {row.itemStatus}
+        </Badge>
+      ),
+    },
     { key: "onHand", label: "On Hand", align: "right" },
     { key: "reserved", label: "Reserved", align: "right" },
     { key: "available", label: "Available", align: "right" },
@@ -275,6 +297,7 @@ export function StockPositionsView({
           { key: "sku", label: "SKU" },
           { key: "itemName", label: "Item Name" },
           { key: "warehouseName", label: "Warehouse" },
+          { key: "itemStatus", label: "Item Status" },
           { key: "onHand", label: "On Hand" },
           { key: "reserved", label: "Reserved" },
           { key: "available", label: "Available" },
@@ -415,19 +438,21 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
       return next;
     });
   const columns: DataTableColumn<StockActivity>[] = [
-    { key: "code", label: "Code" },
-    { key: "date", label: "Date", render: (r) => date(r.date) },
-    { key: "type", label: "Type" },
+    { key: "code", label: "Code", width: "15%" },
+    { key: "date", label: "Date", width: "13%", render: (r) => date(r.date) },
+    { key: "type", label: "Type", width: "14%" },
     {
       key: "lineCount",
       label: "Lines",
+      width: "7%",
       align: "right",
     },
-    { key: "reference", label: "Reference", render: (r) => r.reference ?? "—" },
-    { key: "source", label: "Source", render: (r) => r.source ?? "—" },
+    { key: "reference", label: "Reference", width: "18%", render: (r) => r.reference ?? "—" },
+    { key: "source", label: "Source", width: "15%", render: (r) => r.source ?? "—" },
     {
       key: "sourceCode",
       label: "Source Code",
+      width: "18%",
       render: (r) => r.sourceCode ?? "—",
     },
   ];

@@ -55,7 +55,11 @@ export function ConfigurationListView({
   const router = useRouter();
   const [rows, setRows] = useState(initialRows);
   const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState<FilterState>({});
+  const [filters, setFilters] = useState<FilterState>(() =>
+    kind === "category" || kind === "warehouse"
+      ? { status: ["ACTIVE"] }
+      : {},
+  );
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [modal, setModal] = useState(false);
   const [confirm, setConfirm] = useState(false);

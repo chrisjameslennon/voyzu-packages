@@ -7,6 +7,8 @@ export const InventoryReportKeyDto = Type.Union([
   Type.Literal("stock-availability"),
   Type.Literal("stock-activity"),
   Type.Literal("stock-reservation-activity"),
+  Type.Literal("stock-issuances"),
+  Type.Literal("stock-receipts"),
   Type.Literal("stock-transfers"),
   Type.Literal("stocktake-variance"),
   Type.Literal("quantity-adjustments"),

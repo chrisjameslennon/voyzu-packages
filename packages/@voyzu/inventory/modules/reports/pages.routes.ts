@@ -6,6 +6,8 @@ type PageName =
   | "StockAvailabilityReportPage"
   | "StockActivityReportPage"
   | "StockReservationActivityReportPage"
+  | "StockIssuancesReportPage"
+  | "StockReceiptsReportPage"
   | "StockTransfersReportPage"
   | "StocktakeVarianceReportPage"
   | "QuantityAdjustmentsReportPage";
@@ -92,6 +94,32 @@ export const pageRoutes = {
     "stock-activity",
     "Stock Activity",
     "StockActivityReportPage",
+  ),
+  issuances: report(
+    "stock-issuances",
+    "stock-issuances",
+    "Stock Issuances",
+    "StockIssuancesReportPage",
+    "Stock",
+  ),
+  issuancesPrintable: printable(
+    "stock-issuances",
+    "stock-issuances",
+    "Stock Issuances",
+    "StockIssuancesReportPage",
+  ),
+  receipts: report(
+    "stock-receipts",
+    "stock-receipts",
+    "Stock Receipts",
+    "StockReceiptsReportPage",
+    "Stock",
+  ),
+  receiptsPrintable: printable(
+    "stock-receipts",
+    "stock-receipts",
+    "Stock Receipts",
+    "StockReceiptsReportPage",
   ),
   transfers: report(
     "stock-transfers",

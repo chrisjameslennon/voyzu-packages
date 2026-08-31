@@ -148,12 +148,13 @@ export async function getInventoryReport(
       headers: ["Code", "Category Name", "Description", "Items", "Status"],
       rows: rows.map((r) => ({
         id: String(r.id),
+        inactive: r.status === "INACTIVE",
         cells: [r.code ?? "", r.name, r.description, n(r.count), r.status],
       })),
     };
   }
   const positions = await listStockPositions(organizationId);
-  if (key === "stock-on-hand" || key === "stock-availability")
+  if (key === "stock-on-hand" || key === "stock-availability") {
     return {
       title: key === "stock-on-hand" ? "Stock on Hand" : "Stock Availability",
       headers: [
@@ -165,6 +166,7 @@ export async function getInventoryReport(
       ],
       rows: positions.map((r) => ({
         id: String(r.id),
+        inactive: r.itemStatus === "INACTIVE",
         cells: [
           r.sku,
           r.itemName,
@@ -176,6 +178,7 @@ export async function getInventoryReport(
         ],
       })),
     };
+  }
   if (key === "stock-reservation-activity") {
     const result = await getDb().query(
       `SELECT line.id,reservation.code,item.sku,item.name item_name,warehouse.name warehouse,line.quantity_change::float8,reservation.reference,reservation.reserved_at,reservation.source_business_object,CASE WHEN reservation.source_business_object='STOCK_COUNT' THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=reservation.organization_id AND count.id=reservation.source_id) ELSE NULL END source_code FROM inventory_reservation reservation JOIN inventory_reservation_line line ON line.organization_id=reservation.organization_id AND line.inventory_reservation_id=reservation.id JOIN item ON item.organization_id=line.organization_id AND item.id=line.item_id JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id WHERE reservation.organization_id=$1 ORDER BY reservation.creation_date DESC,reservation.id DESC,line.id`,
@@ -237,18 +240,26 @@ export async function getInventoryReport(
   }
   const activity = await listStockActivity(organizationId);
   const filtered =
-    key === "stock-transfers"
-      ? activity.filter((r) => r.type === "TRANSFER")
-      : key === "quantity-adjustments"
-        ? activity.filter((r) => r.type === "ADJUSTMENT")
-        : activity;
+    key === "stock-issuances"
+      ? activity.filter((r) => r.type === "ISSUE")
+      : key === "stock-receipts"
+        ? activity.filter((r) => r.type === "RECEIPT")
+        : key === "stock-transfers"
+          ? activity.filter((r) => r.type === "TRANSFER")
+          : key === "quantity-adjustments"
+            ? activity.filter((r) => r.type === "ADJUSTMENT")
+            : activity;
   return {
     title:
-      key === "stock-transfers"
-        ? "Stock Transfers"
-        : key === "quantity-adjustments"
-          ? "Quantity Adjustments"
-          : "Stock Activity",
+      key === "stock-issuances"
+        ? "Stock Issuances"
+        : key === "stock-receipts"
+          ? "Stock Receipts"
+          : key === "stock-transfers"
+            ? "Stock Transfers"
+            : key === "quantity-adjustments"
+              ? "Quantity Adjustments"
+              : "Stock Activity",
     headers: [
       "Code",
       "Date",

@@ -47,6 +47,8 @@ export const StockOnHandReportPage = (p?: ReportPageProps) => page("stock-on-han
 export const StockAvailabilityReportPage = (p?: ReportPageProps) => page("stock-availability", p);
 export const StockActivityReportPage = (p?: ReportPageProps) => page("stock-activity", p);
 export const StockReservationActivityReportPage = (p?: ReportPageProps) => page("stock-reservation-activity", p);
+export const StockIssuancesReportPage = (p?: ReportPageProps) => page("stock-issuances", p);
+export const StockReceiptsReportPage = (p?: ReportPageProps) => page("stock-receipts", p);
 export const StockTransfersReportPage = (p?: ReportPageProps) => page("stock-transfers", p);
 export const StocktakeVarianceReportPage = (p?: ReportPageProps) => page("stocktake-variance", p);
 export const QuantityAdjustmentsReportPage = (p?: ReportPageProps) => page("quantity-adjustments", p);
