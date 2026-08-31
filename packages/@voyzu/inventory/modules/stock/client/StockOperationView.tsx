@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Breadcrumbs,
@@ -11,7 +11,9 @@ import {
   SearchableSelect,
   Toast,
   ValidationAlert,
+  required,
   type EditableGridColumn,
+  type EditableGridHandle,
 } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
@@ -68,6 +70,7 @@ export function StockOperationView({
   const [reference, setReference] = useState("");
   const [quantity, setQuantity] = useState("");
   const [lines, setLines] = useState<Line[]>([]);
+  const movementGridRef = useRef<EditableGridHandle<Line>>(null);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [saving, setSaving] = useState(false);
@@ -162,12 +165,21 @@ export function StockOperationView({
         label: i.name,
         code: i.code,
       })),
+      rules: [required()],
     },
     {
       key: "quantity",
       label: "Quantity",
       type: "number",
       width: 160,
+      rules: [
+        required(),
+        {
+          kind: "format",
+          test: (value) => Number(value) > 0,
+          message: "Quantity must be greater than zero",
+        },
+      ],
     },
   ];
   const positionRows = useMemo(
@@ -220,6 +232,7 @@ export function StockOperationView({
           label: position.itemName,
           code: position.sku,
         })),
+      rules: [required()],
     },
     {
       key: "available",
@@ -239,6 +252,14 @@ export function StockOperationView({
       label: "Quantity",
       type: "number",
       width: 140,
+      rules: [
+        required(),
+        {
+          kind: "format",
+          test: (value) => Number(value) > 0,
+          message: "Quantity must be greater than zero",
+        },
+      ],
     },
   ];
   const createMovementLine = (selectedWarehouseId: string): Line => ({
@@ -302,6 +323,7 @@ export function StockOperationView({
   );
   const validate = () => {
     if (
+      (kind !== "reserve" && !date) ||
       (kind !== "reserve" && !warehouseId) ||
       (kind === "transfer" && (!itemId || !toWarehouseId || !quantity)) ||
       (kind === "reserve" && !itemId) ||
@@ -309,6 +331,13 @@ export function StockOperationView({
     ) {
       setError("Complete all required fields");
       return false;
+    }
+    if (kind === "receive" || kind === "issue") {
+      const gridValidation = movementGridRef.current?.attemptValidation();
+      if (gridValidation && !gridValidation.isValid) {
+        setError(gridValidation.errors[0] ?? "Complete all required item fields");
+        return false;
+      }
     }
     if (kind === "transfer") {
       const blockers = Transfer(Number(warehouseId), Number(toWarehouseId));
@@ -345,6 +374,21 @@ export function StockOperationView({
         setError("Revised quantity must be different from the recorded quantity");
         return false;
       }
+    }
+    const missingCustomFields = customFields.filter((field) => {
+      if (!field.required) return false;
+      const value = customValues[field.id];
+      return (
+        value == null ||
+        value === "" ||
+        (Array.isArray(value) && value.length === 0)
+      );
+    });
+    if (missingCustomFields.length) {
+      setError(
+        `Complete required custom field${missingCustomFields.length === 1 ? "" : "s"}: ${missingCustomFields.map(({ name }) => name).join(", ")}`,
+      );
+      return false;
     }
     return true;
   };
@@ -486,6 +530,9 @@ export function StockOperationView({
     confirmReference.length > 40
       ? `${confirmReference.slice(0, 39)}…`
       : (confirmReference || "—");
+  const showCustomFieldErrors = error.startsWith(
+    "Complete required custom field",
+  );
   const customFieldControls = customFields.map((field) => (
     <div className={styles.field} key={field.id}>
       <label className={typography.fieldLabel}>
@@ -505,6 +552,12 @@ export function StockOperationView({
       ) : field.dataType === "MULTIPLE_OPTIONS" ? (
         <SearchableSelect
           multiple
+          hasError={
+            showCustomFieldErrors &&
+            field.required &&
+            (!Array.isArray(customValues[field.id]) ||
+              (customValues[field.id] as unknown[]).length === 0)
+          }
           value={
             Array.isArray(customValues[field.id])
               ? (customValues[field.id] as string[])
@@ -524,6 +577,11 @@ export function StockOperationView({
       ) : field.dataType === "OPTION" ? (
         <SearchableSelect
           value={String(customValues[field.id] ?? "")}
+          hasError={
+            showCustomFieldErrors &&
+            field.required &&
+            !customValues[field.id]
+          }
           onChange={(value) =>
             setCustomValues((current) => ({
               ...current,
@@ -545,6 +603,11 @@ export function StockOperationView({
                 : "text"
           }
           value={String(customValues[field.id] ?? "")}
+          invalid={
+            showCustomFieldErrors &&
+            field.required &&
+            (customValues[field.id] == null || customValues[field.id] === "")
+          }
           onChange={(event) =>
             setCustomValues((current) => ({
               ...current,
@@ -662,6 +725,9 @@ export function StockOperationView({
                   <Input
                     type="date"
                     value={date}
+                    invalid={
+                      error === "Complete all required fields" && !date
+                    }
                     onChange={(event) => setDate(event.target.value)}
                   />
                 </div>
@@ -726,6 +792,7 @@ export function StockOperationView({
                   <h2 className={typography.sectionHeading}>Items</h2>
                   {warehouseId ? (
                     <EditableGrid
+                      ref={movementGridRef}
                       key={`${kind}-${warehouseId}`}
                       columns={
                         kind === "issue"
@@ -757,11 +824,17 @@ export function StockOperationView({
                     <Input
                       type="number"
                       value={quantity}
+                      invalid={
+                        error === "Complete all required fields" && !quantity
+                      }
                       onChange={(event) => setQuantity(event.target.value)}
                     />
                     <span>units of</span>
                     <SearchableSelect
                       value={itemId}
+                      hasError={
+                        error === "Complete all required fields" && !itemId
+                      }
                       onChange={setItemId}
                       options={items.map((item) => ({
                         value: String(item.id),
@@ -776,6 +849,10 @@ export function StockOperationView({
                     <span>from</span>
                     <SearchableSelect
                       value={warehouseId}
+                      hasError={
+                        error === "Complete all required fields" &&
+                        !warehouseId
+                      }
                       onChange={setWarehouseId}
                       options={warehouses.map((warehouse) => ({
                         value: String(warehouse.id),
@@ -794,6 +871,13 @@ export function StockOperationView({
                     <span>to</span>
                     <SearchableSelect
                       value={toWarehouseId}
+                      hasError={
+                        error === "Complete all required fields" &&
+                        !toWarehouseId ||
+                        (!!error &&
+                          !!warehouseId &&
+                          warehouseId === toWarehouseId)
+                      }
                       onChange={setToWarehouseId}
                       options={warehouses.map((warehouse) => ({
                         value: String(warehouse.id),
@@ -814,6 +898,9 @@ export function StockOperationView({
                     <label className={typography.fieldLabel}>Item</label>
                     <SearchableSelect
                       value={itemId}
+                      hasError={
+                        error === "Complete all required fields" && !itemId
+                      }
                       onChange={setItemId}
                       options={items.map((item) => ({
                         value: String(item.id),
@@ -849,6 +936,11 @@ export function StockOperationView({
                     <label className={typography.fieldLabel}>Item</label>
                     <SearchableSelect
                       value={itemId}
+                      hasError={
+                        (error === "Complete all required fields" && !itemId) ||
+                        error ===
+                          "Select an item and warehouse with recorded stock"
+                      }
                       onChange={(value) => {
                         setItemId(value);
                         setWarehouseId("");
@@ -872,6 +964,12 @@ export function StockOperationView({
                     <label className={typography.fieldLabel}>Warehouse</label>
                     <SearchableSelect
                       value={warehouseId}
+                      hasError={
+                        (error === "Complete all required fields" &&
+                          !warehouseId) ||
+                        error ===
+                          "Select an item and warehouse with recorded stock"
+                      }
                       onChange={(value) => {
                         setWarehouseId(value);
                         setQuantity("");
@@ -911,12 +1009,20 @@ export function StockOperationView({
                     </dl>
                     <div className={styles.revisedQuantityField}>
                       <label className={typography.fieldLabel}>
-                        Revised Quantity
+                        Revised Quantity on Hand
                       </label>
                       <Input
                         type="number"
                         min={0}
                         value={quantity}
+                        invalid={
+                          (error === "Complete all required fields" &&
+                            quantity === "") ||
+                          error ===
+                            "Revised quantity must be zero or greater" ||
+                          error ===
+                            "Revised quantity must be different from the recorded quantity"
+                        }
                         onChange={(event) => setQuantity(event.target.value)}
                       />
                     </div>

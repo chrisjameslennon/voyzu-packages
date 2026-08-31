@@ -52,7 +52,7 @@ export class StockRepo {
   }
   async positions(organizationId: number): Promise<StockPosition[]> {
     const { rows } = await this.db.query(
-      `WITH movement AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 on_hand FROM inventory_transaction_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), reservation AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 reserved FROM inventory_reservation_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), pairs AS (SELECT item_id,warehouse_id FROM movement UNION SELECT item_id,warehouse_id FROM reservation) SELECT pairs.item_id::int,pairs.warehouse_id::int,item.sku,item.name item_name,item.status item_status,item.unit,warehouse.name warehouse_name,coalesce(movement.on_hand,0)::float8 on_hand,coalesce(reservation.reserved,0)::float8 reserved FROM pairs JOIN item ON item.organization_id=$1 AND item.id=pairs.item_id JOIN warehouse ON warehouse.organization_id=$1 AND warehouse.id=pairs.warehouse_id LEFT JOIN movement USING(item_id,warehouse_id) LEFT JOIN reservation USING(item_id,warehouse_id) ORDER BY item.sku,warehouse.name`,
+      `WITH movement AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 on_hand FROM inventory_transaction_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), reservation AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 reserved FROM inventory_reservation_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), pairs AS (SELECT item_id,warehouse_id FROM movement UNION SELECT item_id,warehouse_id FROM reservation) SELECT pairs.item_id::int,pairs.warehouse_id::int,item.sku,item.name item_name,item.status item_status,item.quantity_tracked,item.unit,warehouse.name warehouse_name,coalesce(movement.on_hand,0)::float8 on_hand,coalesce(reservation.reserved,0)::float8 reserved FROM pairs JOIN item ON item.organization_id=$1 AND item.id=pairs.item_id JOIN warehouse ON warehouse.organization_id=$1 AND warehouse.id=pairs.warehouse_id LEFT JOIN movement USING(item_id,warehouse_id) LEFT JOIN reservation USING(item_id,warehouse_id) ORDER BY item.sku,warehouse.name`,
       [organizationId],
     );
     return rows.map((row: Record<string, unknown>) => ({
@@ -61,6 +61,7 @@ export class StockRepo {
       sku: String(row.sku),
       itemName: String(row.item_name),
       itemStatus: row.item_status as StockPosition["itemStatus"],
+      quantityTracked: Boolean(row.quantity_tracked),
       unit: row.unit == null ? null : String(row.unit),
       warehouseId: Number(row.warehouse_id),
       warehouseName: String(row.warehouse_name),
@@ -77,8 +78,8 @@ export class StockRepo {
               transaction.transaction_date date,
               transaction.transaction_type type,
               count(line.id)::int line_count,
-              transaction.source_business_object source,
-              CASE WHEN transaction.source_business_object='STOCK_COUNT'
+              transaction.source_type source,
+              CASE WHEN transaction.source_type='STOCK_COUNT'
                 THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
                 ELSE NULL
               END source_code,
@@ -116,8 +117,8 @@ export class StockRepo {
               'TRANSACTION'::text activity_source,
               transaction.transaction_date date,
               transaction.transaction_type type,
-              transaction.source_business_object,
-              CASE WHEN transaction.source_business_object='STOCK_COUNT'
+              transaction.source_type,
+              CASE WHEN transaction.source_type='STOCK_COUNT'
                 THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
                 ELSE NULL
               END source_code,
@@ -157,9 +158,9 @@ export class StockRepo {
       date: new Date(String(row.date)).toISOString(),
       type: String(row.type),
       source:
-        row.source_business_object == null
+        row.source_type == null
           ? null
-          : String(row.source_business_object),
+          : String(row.source_type),
       sourceCode:
         row.source_code == null ? null : String(row.source_code),
       reference: row.reference == null ? null : String(row.reference),
@@ -190,7 +191,7 @@ export class StockRepo {
     stamp: Record<string, unknown>,
     customFields: StockCustomFieldInput[] = [],
     options: {
-      source?: { businessObject: string; id: number };
+      source?: { type: "ITEM_DELETION" | "STOCK_COUNT"; id: number };
     } = {},
   ) {
     const e = Object.entries(stamp);
@@ -206,7 +207,7 @@ export class StockRepo {
     };
     const code = `${prefixes[type] ?? "INV-TXN"}-${transactionId}`;
     await this.db.query(
-      `INSERT INTO inventory_transaction(id,organization_id,code,transaction_type,transaction_date,reference,notes,source_business_object,source_id,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5::timestamptz,$6,$7,$8,$9,${e.map((_, i) => `$${i + 10}`).join(",")}) RETURNING id::int`,
+      `INSERT INTO inventory_transaction(id,organization_id,code,transaction_type,transaction_date,reference,notes,source_type,source_id,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5::timestamptz,$6,$7,$8,$9,${e.map((_, i) => `$${i + 10}`).join(",")}) RETURNING id::int`,
       [
         transactionId,
         organizationId,
@@ -215,14 +216,14 @@ export class StockRepo {
         date,
         reference ?? null,
         notes ?? "",
-        options.source?.businessObject ?? null,
+        options.source?.type ?? "DIRECT",
         options.source?.id ?? null,
         ...e.map(([, v]) => v),
       ],
     );
     for (const line of lines)
       await this.db.query(
-        `INSERT INTO inventory_transaction_line(organization_id,inventory_transaction_id,item_id,warehouse_id,quantity_change,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
+        `INSERT INTO inventory_transaction_line(organization_id,inventory_transaction_id,item_id,item_code,item_name,warehouse_id,quantity_change,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,(SELECT sku FROM item WHERE organization_id=$1 AND id=$3),(SELECT name FROM item WHERE organization_id=$1 AND id=$3),$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
         [
           organizationId,
           transactionId,
@@ -346,7 +347,7 @@ export class StockRepo {
     const reservationId = Number(sequence.rows[0].id);
     const code = `INV-RSV-${reservationId}`;
     await this.db.query(
-      `INSERT INTO inventory_reservation(id,organization_id,code,reference,reserved_at,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,now(),${e.map((_, i) => `$${i + 5}`).join(",")})`,
+      `INSERT INTO inventory_reservation(id,organization_id,code,source_type,reference,reserved_at,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,'DIRECT',$4,now(),${e.map((_, i) => `$${i + 5}`).join(",")})`,
       [
         reservationId,
         organizationId,
@@ -357,7 +358,7 @@ export class StockRepo {
     );
     for (const line of input.lines)
       await this.db.query(
-        `INSERT INTO inventory_reservation_line(organization_id,inventory_reservation_id,item_id,warehouse_id,quantity_change,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
+        `INSERT INTO inventory_reservation_line(organization_id,inventory_reservation_id,item_id,item_code,item_name,warehouse_id,quantity_change,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,(SELECT sku FROM item WHERE organization_id=$1 AND id=$3),(SELECT name FROM item WHERE organization_id=$1 AND id=$3),$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
         [
           organizationId,
           reservationId,
@@ -518,7 +519,7 @@ export class StockRepo {
         stamp,
         [],
         {
-          source: { businessObject: "STOCK_COUNT", id },
+          source: { type: "STOCK_COUNT", id },
         },
       );
     const e = Object.entries(stamp);

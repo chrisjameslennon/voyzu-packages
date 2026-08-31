@@ -11,6 +11,7 @@ export const StockPositionDto = StrictObject({
   sku: Text,
   itemName: Text,
   itemStatus: Status,
+  quantityTracked: Type.Boolean(),
   unit: Type.Union([Type.String(), Type.Null()]),
   warehouseId: Id,
   warehouseName: Text,

@@ -127,7 +127,7 @@ export function StockPositionsView({
 }) {
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState<FilterState>({ status: ["ACTIVE"] });
+  const [filters, setFilters] = useState<FilterState>({});
   const [warehouseFilter, setWarehouseFilter] = useState<number | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   useEffect(() => {
@@ -139,14 +139,14 @@ export function StockPositionsView({
   const visible = useMemo(() => {
     const q = search.toLowerCase();
     const warehouses = filters.warehouse as string[] | undefined;
-    const statuses = filters.status as string[] | undefined;
     return positions.filter(
       (p) =>
+        p.itemStatus === "ACTIVE" &&
+        p.quantityTracked &&
         (warehouseFilter === null || p.warehouseId === warehouseFilter) &&
         (!warehouses?.length || warehouses.includes(p.warehouseName)) &&
-        (!statuses?.length || statuses.includes(p.itemStatus)) &&
         (!q ||
-          [p.sku, p.itemName, p.warehouseName, p.itemStatus].some((v) =>
+          [p.sku, p.itemName, p.warehouseName].some((v) =>
             v.toLowerCase().includes(q),
           )),
     );
@@ -157,14 +157,15 @@ export function StockPositionsView({
       label: "Warehouse",
       type: "checkbox",
       options: [
-        ...new Set(positions.map((position) => position.warehouseName)),
+        ...new Set(
+          positions
+            .filter(
+              (position) =>
+                position.itemStatus === "ACTIVE" && position.quantityTracked,
+            )
+            .map((position) => position.warehouseName),
+        ),
       ].sort(),
-    },
-    {
-      key: "status",
-      label: "Item Status",
-      type: "checkbox",
-      options: ["ACTIVE", "INACTIVE"],
     },
   ];
   const removeFilter = (key: string) =>
@@ -181,20 +182,6 @@ export function StockPositionsView({
     },
     { key: "itemName", label: "Item Name" },
     { key: "warehouseName", label: "Warehouse" },
-    {
-      key: "itemStatus",
-      label: "Item Status",
-      align: "center",
-      render: (row) => (
-        <Badge
-          variant="soft"
-          size="x-small"
-          color={row.itemStatus === "ACTIVE" ? "success" : "neutral"}
-        >
-          {row.itemStatus}
-        </Badge>
-      ),
-    },
     { key: "onHand", label: "On Hand", align: "right" },
     { key: "reserved", label: "Reserved", align: "right" },
     { key: "available", label: "Available", align: "right" },
@@ -289,7 +276,10 @@ export function StockPositionsView({
         </Button>
       ))}
       <InventoryListActions
-        rows={positions}
+        rows={positions.filter(
+          ({ itemStatus, quantityTracked }) =>
+            itemStatus === "ACTIVE" && quantityTracked,
+        )}
         visibleRows={visible}
         selectedIds={selectedIds}
         filename="inventory_stock_positions"
@@ -297,7 +287,6 @@ export function StockPositionsView({
           { key: "sku", label: "SKU" },
           { key: "itemName", label: "Item Name" },
           { key: "warehouseName", label: "Warehouse" },
-          { key: "itemStatus", label: "Item Status" },
           { key: "onHand", label: "On Hand" },
           { key: "reserved", label: "Reserved" },
           { key: "available", label: "Available" },
@@ -309,7 +298,7 @@ export function StockPositionsView({
   return (
     <Shell
       title="Stock"
-      description="Current stock position by item and warehouse."
+      description="Current stock position by item and warehouse. Inactive and non-quantity-tracked items are excluded as stock operations can only be performed on active, quantity-tracked items."
       icon="inventory"
       primaryAction={primaryAction}
       toolbarLeft={

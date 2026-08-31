@@ -6,7 +6,6 @@ import type {
 import { listConfiguration } from "../../../configuration/server/lib/configuration.service";
 import { listItems } from "../../../items/server/lib/item.service";
 import {
-  listStockActivity,
   listStockCounts,
   listStockPositions,
 } from "../../../stock/server/lib/stock.service";
@@ -181,7 +180,7 @@ export async function getInventoryReport(
   }
   if (key === "stock-reservation-activity") {
     const result = await getDb().query(
-      `SELECT line.id,reservation.code,item.sku,item.name item_name,warehouse.name warehouse,line.quantity_change::float8,reservation.reference,reservation.reserved_at,reservation.source_business_object,CASE WHEN reservation.source_business_object='STOCK_COUNT' THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=reservation.organization_id AND count.id=reservation.source_id) ELSE NULL END source_code FROM inventory_reservation reservation JOIN inventory_reservation_line line ON line.organization_id=reservation.organization_id AND line.inventory_reservation_id=reservation.id JOIN item ON item.organization_id=line.organization_id AND item.id=line.item_id JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id WHERE reservation.organization_id=$1 ORDER BY reservation.creation_date DESC,reservation.id DESC,line.id`,
+      `SELECT line.id,reservation.code,line.item_code,line.item_name,warehouse.name warehouse,line.quantity_change::float8,reservation.reference,reservation.reserved_at,reservation.source_type,NULL::text source_code FROM inventory_reservation reservation JOIN inventory_reservation_line line ON line.organization_id=reservation.organization_id AND line.inventory_reservation_id=reservation.id JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id WHERE reservation.organization_id=$1 ORDER BY reservation.creation_date DESC,reservation.id DESC,line.id`,
       [organizationId],
     );
     return {
@@ -202,12 +201,12 @@ export async function getInventoryReport(
         cells: [
           d(String(r.reserved_at)),
           String(r.code),
-          String(r.sku),
+          String(r.item_code),
           String(r.item_name),
           String(r.warehouse),
           n(Number(r.quantity_change)),
           String(r.reference ?? "—"),
-          String(r.source_business_object ?? "—"),
+          String(r.source_type),
           String(r.source_code ?? "—"),
         ],
       })),
@@ -238,7 +237,33 @@ export async function getInventoryReport(
       })),
     };
   }
-  const activity = await listStockActivity(organizationId);
+  const activityResult = await getDb().query(
+    `SELECT line.id,
+            transaction.code,
+            transaction.transaction_date date,
+            transaction.transaction_type type,
+            line.item_code,
+            line.item_name,
+            warehouse.name warehouse,
+            line.quantity_change::float8 quantity_change,
+            transaction.reference,
+            transaction.source_type source,
+            CASE WHEN transaction.source_type='STOCK_COUNT'
+              THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
+              ELSE NULL
+            END source_code
+     FROM inventory_transaction transaction
+     JOIN inventory_transaction_line line
+       ON line.organization_id=transaction.organization_id
+      AND line.inventory_transaction_id=transaction.id
+     JOIN warehouse
+       ON warehouse.organization_id=line.organization_id
+      AND warehouse.id=line.warehouse_id
+     WHERE transaction.organization_id=$1
+     ORDER BY transaction.creation_date DESC,transaction.id DESC,line.id`,
+    [organizationId],
+  );
+  const activity = activityResult.rows as Record<string, unknown>[];
   const filtered =
     key === "stock-issuances"
       ? activity.filter((r) => r.type === "ISSUE")
@@ -264,7 +289,10 @@ export async function getInventoryReport(
       "Code",
       "Date",
       "Type",
-      "Lines",
+      "Item Code",
+      "Item Name",
+      "Warehouse",
+      "Quantity Change",
       "Reference",
       "Source",
       "Source Code",
@@ -272,13 +300,16 @@ export async function getInventoryReport(
     rows: filtered.map((r) => ({
       id: String(r.id),
       cells: [
-        r.code,
-        d(r.date),
-        r.type,
-        n(r.lineCount),
-        r.reference ?? "—",
-        r.source ?? "—",
-        r.sourceCode ?? "—",
+        String(r.code),
+        d(String(r.date)),
+        String(r.type),
+        String(r.item_code),
+        String(r.item_name),
+        String(r.warehouse),
+        n(Number(r.quantity_change)),
+        String(r.reference ?? "—"),
+        String(r.source ?? "—"),
+        String(r.source_code ?? "—"),
       ],
     })),
   };

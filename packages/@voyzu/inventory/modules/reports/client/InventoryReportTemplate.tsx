@@ -18,6 +18,7 @@ const numericHeaders = new Set([
 const codeHeaders = new Set([
   "SKU",
   "Code",
+  "Item Code",
   "Reference",
   "Source Code",
 ]);
