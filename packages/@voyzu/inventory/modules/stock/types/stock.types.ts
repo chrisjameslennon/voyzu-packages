@@ -20,17 +20,40 @@ export const StockPositionDto = StrictObject({
 export type StockPosition = Static<typeof StockPositionDto>;
 export const StockActivityDto = StrictObject({
   id: Type.Integer(),
+  code: Text,
+  activitySource: Type.Literal("TRANSACTION"),
   date: Type.String(),
   type: Text,
-  sku: Text,
-  itemName: Text,
-  warehouse: Text,
-  quantityChange: Type.Union([Type.Number(), Type.Null()]),
+  lineCount: Type.Integer({ minimum: 0 }),
   source: Type.Union([Type.String(), Type.Null()]),
-  sourceId: Type.Union([Type.String(), Type.Null()]),
+  sourceCode: Type.Union([Type.String(), Type.Null()]),
   reference: Type.Union([Type.String(), Type.Null()]),
 });
 export type StockActivity = Static<typeof StockActivityDto>;
+export const StockTransactionLineDto = StrictObject({
+  id: Id,
+  itemId: Id,
+  sku: Text,
+  itemName: Text,
+  warehouseId: Id,
+  warehouse: Text,
+  quantityChange: Type.Number(),
+});
+export type StockTransactionLine = Static<typeof StockTransactionLineDto>;
+export const StockActivityDetailDto = StrictObject({
+  id: Id,
+  code: Text,
+  activitySource: Type.Literal("TRANSACTION"),
+  date: Type.String(),
+  type: Text,
+  source: Type.Union([Type.String(), Type.Null()]),
+  sourceCode: Type.Union([Type.String(), Type.Null()]),
+  reference: Type.Union([Type.String(), Type.Null()]),
+  notes: Type.String(),
+  lines: Type.Array(StockTransactionLineDto),
+  audit: AuditMetadataDto,
+});
+export type StockActivityDetail = Static<typeof StockActivityDetailDto>;
 export const StockOptionDto = StrictObject({
   id: Id,
   code: Text,
@@ -104,7 +127,7 @@ export const StockCountLineDto = StrictObject({
 export type StockCountLine = Static<typeof StockCountLineDto>;
 export const StockCountRowDto = StrictObject({
   id: Id,
-  countNo: Text,
+  code: Text,
   warehouse: Text,
   countDate: Text,
   items: Type.Integer({ minimum: 0 }),
@@ -118,7 +141,7 @@ export const StockCountRowDto = StrictObject({
 export type StockCountRow = Static<typeof StockCountRowDto>;
 export const StockCountDetailDto = StrictObject({
   id: Id,
-  countNo: Text,
+  code: Text,
   warehouseId: Id,
   warehouse: Text,
   countDate: Text,

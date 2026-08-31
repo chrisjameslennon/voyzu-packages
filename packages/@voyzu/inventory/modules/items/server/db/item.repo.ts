@@ -126,9 +126,9 @@ export class ItemRepo {
 
   async listCustomFields(organizationId: number, itemId: number): Promise<ItemCustomFieldDto[]> {
     const [{ rows: fieldRows }, { rows: optionRows }, { rows: valueRows }] = await Promise.all([
-      this.db.query("SELECT id::int, name, data_type, required, status, option_list_id::int FROM custom_field WHERE organization_id = $1 AND applies_to = 'ITEM' ORDER BY name", [organizationId]),
-      this.db.query("SELECT value.id::int, value.option_list_id::int, value.value FROM option_list_value value JOIN option_list list ON list.organization_id = value.organization_id AND list.id = value.option_list_id WHERE value.organization_id = $1 AND value.status = 'ACTIVE' AND list.status = 'ACTIVE' ORDER BY value.sort_order, value.value", [organizationId]),
-      this.db.query("SELECT custom_field_id::int, text_value, number_value, date_value, boolean_value, option_list_value_id::int FROM custom_field_value WHERE organization_id = $1 AND record_id = $2 ORDER BY id", [organizationId, itemId]),
+      this.db.query("SELECT id::int, name, data_type, required, status, option_list_id::int FROM inv_custom_field WHERE organization_id = $1 AND applies_to = 'ITEM' ORDER BY name", [organizationId]),
+      this.db.query("SELECT value.id::int, value.option_list_id::int, value.value FROM inv_option_list_value value JOIN inv_option_list list ON list.organization_id = value.organization_id AND list.id = value.option_list_id WHERE value.organization_id = $1 AND value.status = 'ACTIVE' AND list.status = 'ACTIVE' ORDER BY value.sort_order, value.value", [organizationId]),
+      this.db.query("SELECT custom_field_id::int, text_value, number_value, date_value, boolean_value, option_list_value_id::int FROM inv_custom_field_value WHERE organization_id = $1 AND record_id = $2 ORDER BY id", [organizationId, itemId]),
     ]);
     const optionsByList = new Map<number, Array<{ id: number; value: string }>>();
     for (const row of optionRows as Record<string, unknown>[]) { const listId = Number(row.option_list_id); const values = optionsByList.get(listId) ?? []; values.push({ id: Number(row.id), value: String(row.value) }); optionsByList.set(listId, values); }
@@ -151,7 +151,7 @@ export class ItemRepo {
     const definitionById = new Map(definitions.map((field) => [field.id, field]));
     for (const field of fields) {
       const definition = definitionById.get(field.customFieldId); if (!definition || definition.status !== "ACTIVE") continue;
-      await this.db.query("DELETE FROM custom_field_value WHERE organization_id = $1 AND custom_field_id = $2 AND record_id = $3", [organizationId, field.customFieldId, itemId]);
+      await this.db.query("DELETE FROM inv_custom_field_value WHERE organization_id = $1 AND custom_field_id = $2 AND record_id = $3", [organizationId, field.customFieldId, itemId]);
       const values = definition.dataType === "MULTIPLE_OPTIONS" && Array.isArray(field.value) ? field.value : field.value === null || field.value === "" ? [] : [field.value];
       for (const value of values) {
         const columns: Record<string, unknown> = { text_value: null, number_value: null, date_value: null, boolean_value: null, option_list_value_id: null };
@@ -160,7 +160,7 @@ export class ItemRepo {
         else if (definition.dataType === "DATE") columns.date_value = String(value);
         else if (definition.dataType === "BOOLEAN") columns.boolean_value = Boolean(value);
         else columns.option_list_value_id = Number(value);
-        await this.db.query(`INSERT INTO custom_field_value (organization_id, custom_field_id, record_id, text_value, number_value, date_value, boolean_value, option_list_value_id, creation_date, creation_actor_type, creation_user_id, creation_mutation_id, updated_date, updated_actor_type, updated_user_id, updated_mutation_id)
+        await this.db.query(`INSERT INTO inv_custom_field_value (organization_id, custom_field_id, record_id, text_value, number_value, date_value, boolean_value, option_list_value_id, creation_date, creation_actor_type, creation_user_id, creation_mutation_id, updated_date, updated_actor_type, updated_user_id, updated_mutation_id)
           VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9::timestamptz, $10::actor_type, $11, $12::uuid, $9::timestamptz, $10::actor_type, $11, $12::uuid)`, [organizationId, field.customFieldId, itemId, columns.text_value, columns.number_value, columns.date_value, columns.boolean_value, columns.option_list_value_id, audit.timestamp, audit.actorType, audit.userId, audit.mutationId]);
       }
     }

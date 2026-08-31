@@ -3,6 +3,7 @@ const load =
     name:
       | "StockPage"
       | "StockActivityPage"
+      | "StockTransactionDetailPage"
       | "StockCountsPage"
       | "StockCountNewPage"
       | "StockCountDetailPage"
@@ -34,6 +35,17 @@ export const pageRoutes = {
     loadPage: load("StockActivityPage"),
     pageTitle: "Stock Activity",
     breadcrumbBase: [{ label: "Inventory" }],
+    auth,
+  },
+  activityDetail: {
+    id: "voyzu.inventory.stock-activity.page.detail",
+    path: "/inventory/stock-activity/[code]",
+    loadPage: load("StockTransactionDetailPage"),
+    pageTitle: "Stock Activity",
+    breadcrumbBase: [
+      { label: "Inventory" },
+      { label: "Stock Activity", href: "/inventory/stock-activity" },
+    ],
     auth,
   },
   counts: {

@@ -11,17 +11,18 @@ export type TestOrganization = { id: number; code: string };
 async function purgeInventoryData(organizationId: number): Promise<void> {
   const db = getDb();
   for (const table of [
-    "custom_field_value",
-    "option_list_value",
+    "inv_custom_field_value",
+    "inv_option_list_value",
     "item_component",
+    "inventory_reservation_line",
     "inventory_reservation",
     "stock_count_line",
     "stock_count",
     "inventory_transaction_line",
     "inventory_transaction",
     "item",
-    "custom_field",
-    "option_list",
+    "inv_custom_field",
+    "inv_option_list",
     "warehouse",
     "item_category",
   ]) {

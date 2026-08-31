@@ -383,6 +383,7 @@ export function StockPositionsView({
   );
 }
 export function StockActivityView({ rows }: { rows: StockActivity[] }) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<FilterState>({});
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -393,11 +394,10 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
       (!search ||
         [
           r.type,
-          r.sku,
-          r.itemName,
-          r.warehouse,
+          r.code,
+          r.reference ?? "",
           r.source ?? "",
-          r.sourceId ?? "",
+          r.sourceCode ?? "",
         ].some((v) => v.toLowerCase().includes(search.toLowerCase()))),
   );
   const filterTabs: FilterTab[] = [
@@ -415,31 +415,26 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
       return next;
     });
   const columns: DataTableColumn<StockActivity>[] = [
+    { key: "code", label: "Code" },
     { key: "date", label: "Date", render: (r) => date(r.date) },
     { key: "type", label: "Type" },
-    { key: "sku", label: "SKU" },
-    { key: "itemName", label: "Item Name" },
-    { key: "warehouse", label: "Warehouse" },
     {
-      key: "quantityChange",
-      label: "Qty Change",
+      key: "lineCount",
+      label: "Lines",
       align: "right",
-      render: (r) =>
-        r.quantityChange === null
-          ? "—"
-          : `${r.quantityChange > 0 ? "+" : ""}${r.quantityChange}`,
     },
+    { key: "reference", label: "Reference", render: (r) => r.reference ?? "—" },
     { key: "source", label: "Source", render: (r) => r.source ?? "—" },
     {
-      key: "sourceId",
-      label: "Source ID",
-      render: (r) => r.sourceId ?? r.reference ?? "—",
+      key: "sourceCode",
+      label: "Source Code",
+      render: (r) => r.sourceCode ?? "—",
     },
   ];
   return (
     <Shell
       title="Stock Activity"
-      description="Read-only history of stock changes, reservations, transfers, and quantity adjustments."
+      description="Read-only history of stock receipts, issues, transfers, and quantity adjustments."
       icon="history"
       search={search}
       setSearch={setSearch}
@@ -461,19 +456,18 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
             selectedIds={selectedIds}
             filename="inventory_stock_activity"
             columns={[
+              { key: "code", label: "Code" },
               { key: "date", label: "Date" },
               { key: "type", label: "Type" },
-              { key: "sku", label: "SKU" },
-              { key: "itemName", label: "Item Name" },
-              { key: "warehouse", label: "Warehouse" },
-              { key: "quantityChange", label: "Quantity Change" },
+              { key: "lineCount", label: "Lines" },
+              { key: "reference", label: "Reference" },
               { key: "source", label: "Source" },
-              { key: "sourceId", label: "Source ID" },
+              { key: "sourceCode", label: "Source Code" },
             ]}
             toExportRow={(row) => ({
               ...row,
               date: date(row.date),
-              sourceId: row.sourceId ?? row.reference ?? null,
+              sourceCode: row.sourceCode ?? null,
             })}
           />
         </div>
@@ -526,7 +520,9 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
             return next;
           })
         }
-        onRowClick={() => undefined}
+        onRowClick={(row) =>
+          router.push(`/inventory/stock-activity/${row.code}`)
+        }
         currentPage={1}
         totalPages={1}
         onPageChange={() => undefined}
@@ -564,7 +560,7 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
     (r) =>
       (!selectedStatuses?.length || selectedStatuses.includes(r.status)) &&
       (!search ||
-        [r.countNo, r.warehouse, r.status].some((v) =>
+        [r.code, r.warehouse, r.status].some((v) =>
           v.toLowerCase().includes(search.toLowerCase()),
         )),
   );
@@ -584,9 +580,9 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
     });
   const columns: DataTableColumn<StockCountRow>[] = [
     {
-      key: "countNo",
-      label: "Count No.",
-      render: (r) => <span className={listStyles.codeCell}>{r.countNo}</span>,
+      key: "code",
+      label: "Code",
+      render: (r) => <span className={listStyles.codeCell}>{r.code}</span>,
     },
     { key: "warehouse", label: "Warehouse" },
     { key: "countDate", label: "Count Date", render: (r) => date(r.countDate) },
@@ -672,7 +668,7 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
               selectedIds={selected}
               filename="inventory_stock_counts"
               columns={[
-                { key: "countNo", label: "Count No." },
+                { key: "code", label: "Code" },
                 { key: "warehouse", label: "Warehouse" },
                 { key: "countDate", label: "Count Date" },
                 { key: "items", label: "Items" },

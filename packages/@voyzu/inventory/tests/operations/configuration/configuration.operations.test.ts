@@ -34,7 +34,7 @@ test("configuration commands expose category and warehouse lifecycles", async ()
     "category",
     { code: "TESTCAT", name: "Test category", description: "Original" },
   );
-  assert.equal(category.code, "TESTCAT");
+  assert.equal(category.code, "INV-TESTCAT");
   assert.equal(
     (await getInventoryConfiguration(organizationId, "category", category.id))
       ?.name,

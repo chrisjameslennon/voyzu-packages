@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import type { InventoryReport } from "../types/report.types";
 import {
   inventoryReportCss,
@@ -9,11 +10,17 @@ const numericHeaders = new Set([
   "Reserved",
   "Available",
   "Qty Change",
+  "Quantity Change",
   "Items",
   "Adjustments",
   "Quantity",
 ]);
-const codeHeaders = new Set(["SKU", "Code", "Count No.", "Reference"]);
+const codeHeaders = new Set([
+  "SKU",
+  "Code",
+  "Reference",
+  "Source Code",
+]);
 
 function cellClass(header: string): string | undefined {
   if (numericHeaders.has(header)) return styles.numeric;
@@ -48,16 +55,34 @@ export function InventoryReportTemplate({
         </thead>
         <tbody>
           {report.rows.map((row) => (
-            <tr key={row.id}>
-              {row.cells.map((cell, index) => (
-                <td
-                  key={`${row.id}-${index}`}
-                  className={cellClass(report.headers[index] ?? "")}
+            <Fragment key={row.id}>
+              <tr className={row.inactive ? styles.inactiveRow : undefined}>
+                {row.cells.map((cell, index) => (
+                  <td
+                    key={`${row.id}-${index}`}
+                    className={cellClass(report.headers[index] ?? "")}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+              {row.details?.length ? (
+                <tr
+                  className={`${styles.detailRow}${row.inactive ? ` ${styles.inactiveRow}` : ""}`}
                 >
-                  {cell}
-                </td>
-              ))}
-            </tr>
+                  <td colSpan={report.headers.length}>
+                    <div className={styles.detailLines}>
+                      {row.details.map((detail) => (
+                        <div className={styles.detailLine} key={detail.label}>
+                          <span>{detail.label}</span>
+                          <strong>{detail.value}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              ) : null}
+            </Fragment>
           ))}
         </tbody>
       </table>

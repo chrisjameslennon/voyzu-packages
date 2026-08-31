@@ -12,12 +12,108 @@ import {
 } from "../../../stock/server/lib/stock.service";
 const n = (value: number) => String(value);
 const d = (value: string) => new Date(value).toLocaleDateString("en-NZ");
+
+type CustomFieldDefinition = {
+  id: number;
+  name: string;
+  dataType: string;
+};
+
+function customFieldValue(
+  definition: CustomFieldDefinition,
+  values: Array<Record<string, unknown>>,
+): string {
+  if (!values.length) return "—";
+  if (definition.dataType === "TEXT")
+    return String(values[0]?.text_value ?? "—");
+  if (definition.dataType === "NUMBER")
+    return values[0]?.number_value == null
+      ? "—"
+      : String(values[0].number_value);
+  if (definition.dataType === "DATE")
+    return values[0]?.date_value == null
+      ? "—"
+      : d(String(values[0].date_value));
+  if (definition.dataType === "BOOLEAN")
+    return values[0]?.boolean_value == null
+      ? "—"
+      : values[0].boolean_value
+        ? "Yes"
+        : "No";
+  const selected = values
+    .map((value) => value.option_value)
+    .filter((value): value is string => typeof value === "string");
+  return selected.length ? selected.join(", ") : "—";
+}
+
+async function itemCustomFields(
+  organizationId: number,
+  itemIds: number[],
+): Promise<Map<number, Array<{ label: string; value: string }>>> {
+  const db = getDb();
+  const [{ rows: definitionRows }, { rows: valueRows }] = await Promise.all([
+    db.query(
+      `SELECT id::int, name, data_type
+       FROM inv_custom_field
+       WHERE organization_id = $1 AND applies_to = 'ITEM' AND status = 'ACTIVE'
+       ORDER BY name`,
+      [organizationId],
+    ),
+    db.query(
+      `SELECT field_value.record_id::int, field_value.custom_field_id::int,
+              field_value.text_value, field_value.number_value, field_value.date_value,
+              field_value.boolean_value, option_value.value AS option_value
+       FROM inv_custom_field_value field_value
+       JOIN inv_custom_field field
+         ON field.organization_id = field_value.organization_id
+        AND field.id = field_value.custom_field_id
+       LEFT JOIN inv_option_list_value option_value
+         ON option_value.organization_id = field_value.organization_id
+        AND option_value.id = field_value.option_list_value_id
+       WHERE field_value.organization_id = $1
+         AND field.applies_to = 'ITEM'
+         AND field.status = 'ACTIVE'
+       ORDER BY field_value.record_id, field.name, field_value.id`,
+      [organizationId],
+    ),
+  ]);
+  const definitions = (definitionRows as Record<string, unknown>[]).map(
+    (row): CustomFieldDefinition => ({
+      id: Number(row.id),
+      name: String(row.name),
+      dataType: String(row.data_type),
+    }),
+  );
+  const valuesByItemAndField = new Map<string, Array<Record<string, unknown>>>();
+  for (const row of valueRows as Record<string, unknown>[]) {
+    const key = `${Number(row.record_id)}:${Number(row.custom_field_id)}`;
+    const values = valuesByItemAndField.get(key) ?? [];
+    values.push(row);
+    valuesByItemAndField.set(key, values);
+  }
+  return new Map(
+    itemIds.map((itemId) => [
+      itemId,
+      definitions.map((definition) => ({
+        label: definition.name,
+        value: customFieldValue(
+          definition,
+          valuesByItemAndField.get(`${itemId}:${definition.id}`) ?? [],
+        ),
+      })),
+    ]),
+  );
+}
 export async function getInventoryReport(
   organizationId: number,
   key: InventoryReportKey,
 ): Promise<InventoryReport> {
   if (key === "items") {
     const rows = await listItems(organizationId);
+    const customFields = await itemCustomFields(
+      organizationId,
+      rows.map(({ id }) => id),
+    );
     return {
       title: "Items",
       headers: [
@@ -31,6 +127,8 @@ export async function getInventoryReport(
       ],
       rows: rows.map((r) => ({
         id: String(r.id),
+        inactive: r.status === "INACTIVE",
+        details: customFields.get(r.id) ?? [],
         cells: [
           r.sku,
           r.name,
@@ -78,32 +176,36 @@ export async function getInventoryReport(
         ],
       })),
     };
-  if (key === "stock-reservations") {
+  if (key === "stock-reservation-activity") {
     const result = await getDb().query(
-      `SELECT reservation.id,item.sku,item.name item_name,warehouse.name warehouse,reservation.quantity::float8,reservation.reference,reservation.status,reservation.reserved_at FROM inventory_reservation reservation JOIN item ON item.organization_id=reservation.organization_id AND item.id=reservation.item_id JOIN warehouse ON warehouse.organization_id=reservation.organization_id AND warehouse.id=reservation.warehouse_id WHERE reservation.organization_id=$1 ORDER BY reservation.reserved_at DESC`,
+      `SELECT line.id,reservation.code,item.sku,item.name item_name,warehouse.name warehouse,line.quantity_change::float8,reservation.reference,reservation.reserved_at,reservation.source_business_object,CASE WHEN reservation.source_business_object='STOCK_COUNT' THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=reservation.organization_id AND count.id=reservation.source_id) ELSE NULL END source_code FROM inventory_reservation reservation JOIN inventory_reservation_line line ON line.organization_id=reservation.organization_id AND line.inventory_reservation_id=reservation.id JOIN item ON item.organization_id=line.organization_id AND item.id=line.item_id JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id WHERE reservation.organization_id=$1 ORDER BY reservation.creation_date DESC,reservation.id DESC,line.id`,
       [organizationId],
     );
     return {
-      title: "Stock Reservations",
+      title: "Stock Reservation Activity",
       headers: [
         "Date",
+        "Reservation Code",
         "SKU",
         "Item Name",
         "Warehouse",
-        "Quantity",
+        "Quantity Change",
         "Reference",
-        "Status",
+        "Source",
+        "Source Code",
       ],
       rows: result.rows.map((r: Record<string, unknown>) => ({
         id: String(r.id),
         cells: [
           d(String(r.reserved_at)),
+          String(r.code),
           String(r.sku),
           String(r.item_name),
           String(r.warehouse),
-          n(Number(r.quantity)),
+          n(Number(r.quantity_change)),
           String(r.reference ?? "—"),
-          String(r.status),
+          String(r.source_business_object ?? "—"),
+          String(r.source_code ?? "—"),
         ],
       })),
     };
@@ -113,7 +215,7 @@ export async function getInventoryReport(
     return {
       title: "Stocktake Variance",
       headers: [
-        "Count No.",
+        "Code",
         "Warehouse",
         "Count Date",
         "Items",
@@ -123,7 +225,7 @@ export async function getInventoryReport(
       rows: counts.map((r) => ({
         id: String(r.id),
         cells: [
-          r.countNo,
+          r.code,
           r.warehouse,
           d(r.countDate),
           n(r.items),
@@ -148,26 +250,24 @@ export async function getInventoryReport(
           ? "Quantity Adjustments"
           : "Stock Activity",
     headers: [
+      "Code",
       "Date",
       "Type",
-      "SKU",
-      "Item Name",
-      "Warehouse",
-      "Qty Change",
-      "Source",
+      "Lines",
       "Reference",
+      "Source",
+      "Source Code",
     ],
     rows: filtered.map((r) => ({
       id: String(r.id),
       cells: [
+        r.code,
         d(r.date),
         r.type,
-        r.sku,
-        r.itemName,
-        r.warehouse,
-        r.quantityChange === null ? "—" : n(r.quantityChange),
+        n(r.lineCount),
+        r.reference ?? "—",
         r.source ?? "—",
-        r.sourceId ?? r.reference ?? "—",
+        r.sourceCode ?? "—",
       ],
     })),
   };

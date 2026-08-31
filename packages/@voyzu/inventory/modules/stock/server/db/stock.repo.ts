@@ -10,6 +10,7 @@ import type {
   StockCustomFieldInput,
   StockOption,
   StockPosition,
+  StockActivityDetail,
   TransferRequest,
 } from "../../types/stock.types";
 const isoDate = (value: unknown) => new Date(String(value)).toISOString();
@@ -51,7 +52,7 @@ export class StockRepo {
   }
   async positions(organizationId: number): Promise<StockPosition[]> {
     const { rows } = await this.db.query(
-      `WITH movement AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 on_hand FROM inventory_transaction_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), reservation AS (SELECT item_id,warehouse_id,sum(quantity)::float8 reserved FROM inventory_reservation WHERE organization_id=$1 AND status='ACTIVE' GROUP BY item_id,warehouse_id), pairs AS (SELECT item_id,warehouse_id FROM movement UNION SELECT item_id,warehouse_id FROM reservation) SELECT pairs.item_id::int,pairs.warehouse_id::int,item.sku,item.name item_name,item.unit,warehouse.name warehouse_name,coalesce(movement.on_hand,0)::float8 on_hand,coalesce(reservation.reserved,0)::float8 reserved FROM pairs JOIN item ON item.organization_id=$1 AND item.id=pairs.item_id JOIN warehouse ON warehouse.organization_id=$1 AND warehouse.id=pairs.warehouse_id LEFT JOIN movement USING(item_id,warehouse_id) LEFT JOIN reservation USING(item_id,warehouse_id) ORDER BY item.sku,warehouse.name`,
+      `WITH movement AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 on_hand FROM inventory_transaction_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), reservation AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 reserved FROM inventory_reservation_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), pairs AS (SELECT item_id,warehouse_id FROM movement UNION SELECT item_id,warehouse_id FROM reservation) SELECT pairs.item_id::int,pairs.warehouse_id::int,item.sku,item.name item_name,item.unit,warehouse.name warehouse_name,coalesce(movement.on_hand,0)::float8 on_hand,coalesce(reservation.reserved,0)::float8 reserved FROM pairs JOIN item ON item.organization_id=$1 AND item.id=pairs.item_id JOIN warehouse ON warehouse.organization_id=$1 AND warehouse.id=pairs.warehouse_id LEFT JOIN movement USING(item_id,warehouse_id) LEFT JOIN reservation USING(item_id,warehouse_id) ORDER BY item.sku,warehouse.name`,
       [organizationId],
     );
     return rows.map((row: Record<string, unknown>) => ({
@@ -69,35 +70,110 @@ export class StockRepo {
   }
   async activity(organizationId: number): Promise<StockActivity[]> {
     const { rows } = await this.db.query(
-      `SELECT * FROM (
-        SELECT line.id::int,transaction.transaction_date date,transaction.transaction_type type,item.sku,item.name item_name,warehouse.name warehouse,line.quantity_change::float8,transaction.source_business_object source,transaction.source_id,transaction.reference
-        FROM inventory_transaction_line line
-        JOIN inventory_transaction transaction ON transaction.organization_id=line.organization_id AND transaction.id=line.inventory_transaction_id
-        JOIN item ON item.organization_id=line.organization_id AND item.id=line.item_id
-        JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id
-        WHERE line.organization_id=$1
-        UNION ALL
-        SELECT (-reservation.id)::int,reservation.reserved_at,CASE WHEN reservation.status='RELEASED' THEN 'RESERVATION RELEASE' ELSE 'RESERVATION' END,item.sku,item.name,warehouse.name,NULL::float8,reservation.source_business_object,reservation.source_id,reservation.reference
-        FROM inventory_reservation reservation
-        JOIN item ON item.organization_id=reservation.organization_id AND item.id=reservation.item_id
-        JOIN warehouse ON warehouse.organization_id=reservation.organization_id AND warehouse.id=reservation.warehouse_id
-        WHERE reservation.organization_id=$1
-      ) activity ORDER BY date DESC,id DESC`,
+      `SELECT transaction.id::int id,
+              transaction.code,
+              'TRANSACTION'::text activity_source,
+              transaction.transaction_date date,
+              transaction.transaction_type type,
+              count(line.id)::int line_count,
+              transaction.source_business_object source,
+              CASE WHEN transaction.source_business_object='STOCK_COUNT'
+                THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
+                ELSE NULL
+              END source_code,
+              transaction.reference
+       FROM inventory_transaction transaction
+       LEFT JOIN inventory_transaction_line line
+         ON line.organization_id=transaction.organization_id
+        AND line.inventory_transaction_id=transaction.id
+       WHERE transaction.organization_id=$1
+       GROUP BY transaction.id
+       ORDER BY transaction.creation_date DESC,transaction.id DESC`,
       [organizationId],
     );
     return rows.map((row: Record<string, unknown>) => ({
       id: Number(row.id),
+      code: String(row.code),
+      activitySource: row.activity_source as StockActivity["activitySource"],
       date: new Date(String(row.date)).toISOString(),
       type: String(row.type),
-      sku: String(row.sku),
-      itemName: String(row.item_name),
-      warehouse: String(row.warehouse),
-      quantityChange:
-        row.quantity_change == null ? null : Number(row.quantity_change),
+      lineCount: Number(row.line_count),
       source: row.source == null ? null : String(row.source),
-      sourceId: row.source_id == null ? null : String(row.source_id),
+      sourceCode:
+        row.source_code == null ? null : String(row.source_code),
       reference: row.reference == null ? null : String(row.reference),
     }));
+  }
+  async activityDetail(
+    organizationId: number,
+    code: string,
+  ): Promise<StockActivityDetail | null> {
+    const { rows } = await this.db.query(
+      `SELECT transaction.id::int,
+              transaction.organization_id,
+              transaction.code,
+              'TRANSACTION'::text activity_source,
+              transaction.transaction_date date,
+              transaction.transaction_type type,
+              transaction.source_business_object,
+              CASE WHEN transaction.source_business_object='STOCK_COUNT'
+                THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
+                ELSE NULL
+              END source_code,
+              transaction.reference,
+              transaction.notes,
+              transaction.creation_date,
+              transaction.creation_actor_type,
+              transaction.creation_user_id,
+              transaction.creation_mutation_id,
+              transaction.updated_date,
+              transaction.updated_actor_type,
+              transaction.updated_user_id,
+              transaction.updated_mutation_id
+       FROM inventory_transaction transaction
+       WHERE transaction.organization_id=$1 AND transaction.code=$2
+       LIMIT 1`,
+      [organizationId, code],
+    );
+    const row = rows[0] as Record<string, unknown> | undefined;
+    if (!row) return null;
+    const lines = await this.db.query(
+      `SELECT line.id::int,line.item_id::int,item.sku,item.name item_name,line.warehouse_id::int,warehouse.name warehouse,line.quantity_change::float8
+       FROM inventory_transaction_line line
+       JOIN item ON item.organization_id=line.organization_id AND item.id=line.item_id
+       JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id
+       WHERE line.organization_id=$1 AND line.inventory_transaction_id=$2
+       ORDER BY line.id`,
+      [
+        organizationId,
+        Number(row.id),
+      ],
+    );
+    return {
+      id: Number(row.id),
+      code: String(row.code),
+      activitySource: row.activity_source as StockActivityDetail["activitySource"],
+      date: new Date(String(row.date)).toISOString(),
+      type: String(row.type),
+      source:
+        row.source_business_object == null
+          ? null
+          : String(row.source_business_object),
+      sourceCode:
+        row.source_code == null ? null : String(row.source_code),
+      reference: row.reference == null ? null : String(row.reference),
+      notes: String(row.notes ?? ""),
+      lines: lines.rows.map((line: Record<string, unknown>) => ({
+        id: Number(line.id),
+        itemId: Number(line.item_id),
+        sku: String(line.sku),
+        itemName: String(line.item_name),
+        warehouseId: Number(line.warehouse_id),
+        warehouse: String(line.warehouse),
+        quantityChange: Number(line.quantity_change),
+      })),
+      audit: audit(row),
+    };
   }
   private async insertTransaction(
     organizationId: number,
@@ -112,20 +188,37 @@ export class StockRepo {
     }>,
     stamp: Record<string, unknown>,
     customFields: StockCustomFieldInput[] = [],
+    options: {
+      source?: { businessObject: string; id: number };
+    } = {},
   ) {
     const e = Object.entries(stamp);
-    const result = await this.db.query(
-      `INSERT INTO inventory_transaction(organization_id,transaction_type,transaction_date,reference,notes,source_business_object,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3::timestamptz,$4,$5,'INVENTORY_${type}',${e.map((_, i) => `$${i + 6}`).join(",")}) RETURNING id::int`,
+    const sequence = await this.db.query(
+      "SELECT nextval(pg_get_serial_sequence('inventory_transaction','id')) AS id",
+    );
+    const transactionId = Number(sequence.rows[0].id);
+    const prefixes: Record<string, string> = {
+      RECEIPT: "INV-REC",
+      ISSUE: "INV-ISS",
+      TRANSFER: "INV-TRF",
+      ADJUSTMENT: "INV-ADJ",
+    };
+    const code = `${prefixes[type] ?? "INV-TXN"}-${transactionId}`;
+    await this.db.query(
+      `INSERT INTO inventory_transaction(id,organization_id,code,transaction_type,transaction_date,reference,notes,source_business_object,source_id,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5::timestamptz,$6,$7,$8,$9,${e.map((_, i) => `$${i + 10}`).join(",")}) RETURNING id::int`,
       [
+        transactionId,
         organizationId,
+        code,
         type,
         date,
         reference ?? null,
         notes ?? "",
+        options.source?.businessObject ?? null,
+        options.source?.id ?? null,
         ...e.map(([, v]) => v),
       ],
     );
-    const transactionId = Number(result.rows[0].id);
     for (const line of lines)
       await this.db.query(
         `INSERT INTO inventory_transaction_line(organization_id,inventory_transaction_id,item_id,warehouse_id,quantity_change,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
@@ -140,7 +233,7 @@ export class StockRepo {
       );
     for (const field of customFields) {
       const definition = await this.db.query(
-        "SELECT data_type FROM custom_field WHERE organization_id=$1 AND id=$2 AND status='ACTIVE'",
+        "SELECT data_type FROM inv_custom_field WHERE organization_id=$1 AND id=$2 AND status='ACTIVE'",
         [organizationId, field.customFieldId],
       );
       const dataType = String(definition.rows[0]?.data_type ?? "");
@@ -159,7 +252,7 @@ export class StockRepo {
                   : { text_value: value };
         const valueEntries = Object.entries(valueColumns);
         await this.db.query(
-          `INSERT INTO custom_field_value(organization_id,custom_field_id,record_id,${valueEntries.map(([key]) => key).join(",")},${e.map(([key]) => key).join(",")}) VALUES($1,$2,$3,${valueEntries.map((_, index) => `$${index + 4}`).join(",")},${e.map((_, index) => `$${index + valueEntries.length + 4}`).join(",")})`,
+          `INSERT INTO inv_custom_field_value(organization_id,custom_field_id,record_id,${valueEntries.map(([key]) => key).join(",")},${e.map(([key]) => key).join(",")}) VALUES($1,$2,$3,${valueEntries.map((_, index) => `$${index + 4}`).join(",")},${e.map((_, index) => `$${index + valueEntries.length + 4}`).join(",")})`,
           [
             organizationId,
             field.customFieldId,
@@ -246,27 +339,43 @@ export class StockRepo {
     stamp: Record<string, unknown>,
   ) {
     const e = Object.entries(stamp);
+    const sequence = await this.db.query(
+      "SELECT nextval(pg_get_serial_sequence('inventory_reservation','id')) AS id",
+    );
+    const reservationId = Number(sequence.rows[0].id);
+    const code = `INV-RSV-${reservationId}`;
+    await this.db.query(
+      `INSERT INTO inventory_reservation(id,organization_id,code,reference,reserved_at,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,now(),${e.map((_, i) => `$${i + 5}`).join(",")})`,
+      [
+        reservationId,
+        organizationId,
+        code,
+        input.reference,
+        ...e.map(([, v]) => v),
+      ],
+    );
     for (const line of input.lines)
       await this.db.query(
-        `INSERT INTO inventory_reservation(organization_id,item_id,warehouse_id,quantity,reference,status,reserved_at,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,'ACTIVE',now(),${e.map((_, i) => `$${i + 6}`).join(",")})`,
+        `INSERT INTO inventory_reservation_line(organization_id,inventory_reservation_id,item_id,warehouse_id,quantity_change,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
         [
           organizationId,
+          reservationId,
           input.itemId,
           line.warehouseId,
           line.quantity,
-          input.reference,
           ...e.map(([, v]) => v),
         ],
       );
+    return reservationId;
   }
   async counts(organizationId: number): Promise<StockCountRow[]> {
     const { rows } = await this.db.query(
-      `SELECT count.id::int,count.count_no,warehouse.name warehouse,count.count_date::text,count.status,count(line.id)::int items,count(line.id) FILTER(WHERE line.counted_quantity IS NOT NULL AND line.counted_quantity<>line.expected_quantity)::int adjustments FROM stock_count count JOIN warehouse ON warehouse.organization_id=count.organization_id AND warehouse.id=count.warehouse_id LEFT JOIN stock_count_line line ON line.organization_id=count.organization_id AND line.stock_count_id=count.id WHERE count.organization_id=$1 GROUP BY count.id,warehouse.name ORDER BY count.count_date DESC,count.id DESC`,
+      `SELECT count.id::int,count.code,warehouse.name warehouse,count.count_date::text,count.status,count(line.id)::int items,count(line.id) FILTER(WHERE line.counted_quantity IS NOT NULL AND line.counted_quantity<>line.expected_quantity)::int adjustments FROM stock_count count JOIN warehouse ON warehouse.organization_id=count.organization_id AND warehouse.id=count.warehouse_id LEFT JOIN stock_count_line line ON line.organization_id=count.organization_id AND line.stock_count_id=count.id WHERE count.organization_id=$1 GROUP BY count.id,warehouse.name ORDER BY count.count_date DESC,count.id DESC`,
       [organizationId],
     );
     return rows.map((r: Record<string, unknown>) => ({
       id: Number(r.id),
-      countNo: String(r.count_no),
+      code: String(r.code),
       warehouse: String(r.warehouse),
       countDate: String(r.count_date),
       items: Number(r.items),
@@ -290,7 +399,7 @@ export class StockRepo {
     );
     return {
       id: Number(row.id),
-      countNo: String(row.count_no),
+      code: String(row.code),
       warehouseId: Number(row.warehouse_id),
       warehouse: String(row.warehouse),
       countDate: String(row.count_date_text),
@@ -312,25 +421,25 @@ export class StockRepo {
       audit: audit(row),
     };
   }
-  async nextCountNo(organizationId: number) {
+  async nextCountCode(organizationId: number) {
     const r = await this.db.query(
-      "SELECT COALESCE(MAX((substring(count_no from '[0-9]+$'))::int),0)+1 value FROM stock_count WHERE organization_id=$1",
+      "SELECT COALESCE(MAX((substring(code from '[0-9]+$'))::int),0)+1 value FROM stock_count WHERE organization_id=$1",
       [organizationId],
     );
-    return `COUNT-${String(r.rows[0].value).padStart(6, "0")}`;
+    return `INV-STCOUNT-${String(r.rows[0].value).padStart(6, "0")}`;
   }
   async createCount(
     organizationId: number,
     input: StockCountRequest,
     stamp: Record<string, unknown>,
   ) {
-    const no = await this.nextCountNo(organizationId);
+    const code = await this.nextCountCode(organizationId);
     const e = Object.entries(stamp);
     const r = await this.db.query(
-      `INSERT INTO stock_count(organization_id,count_no,warehouse_id,count_date,status,notes,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4::date,'DRAFT',$5,${e.map((_, i) => `$${i + 6}`).join(",")}) RETURNING id::int`,
+      `INSERT INTO stock_count(organization_id,code,warehouse_id,count_date,status,notes,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4::date,'DRAFT',$5,${e.map((_, i) => `$${i + 6}`).join(",")}) RETURNING id::int`,
       [
         organizationId,
-        no,
+        code,
         input.warehouseId,
         input.countDate,
         input.notes ?? "",
@@ -398,7 +507,7 @@ export class StockRepo {
         organizationId,
         "ADJUSTMENT",
         new Date().toISOString(),
-        count.countNo,
+        undefined,
         "Stocktake adjustment",
         changes.map((line) => ({
           itemId: line.itemId,
@@ -406,6 +515,10 @@ export class StockRepo {
           quantity: line.variance!,
         })),
         stamp,
+        [],
+        {
+          source: { businessObject: "STOCK_COUNT", id },
+        },
       );
     const e = Object.entries(stamp);
     await this.db.query(

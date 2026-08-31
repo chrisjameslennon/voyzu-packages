@@ -56,6 +56,37 @@ export const inventoryReportCss = `
   background: #f9fafb;
 }
 
+.inventoryReportDetailRow td {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #94a3b8;
+  background: #fafafa;
+}
+
+.inventoryReportDetailLines {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px 18px;
+}
+
+.inventoryReportDetailLine {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 7px;
+  align-items: baseline;
+}
+
+.inventoryReportDetailLine span {
+  color: #64748b;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.inventoryReportDetailLine strong {
+  font-weight: 400;
+}
+
 .inventoryReportTable .inventoryReportNumeric {
   text-align: right;
   white-space: nowrap;
@@ -110,6 +141,10 @@ export const inventoryReportStyles = {
   numeric: "inventoryReportNumeric",
   code: "inventoryReportCode",
   status: "inventoryReportStatus",
+  inactiveRow: "inventoryReportInactiveRow",
+  detailRow: "inventoryReportDetailRow",
+  detailLines: "inventoryReportDetailLines",
+  detailLine: "inventoryReportDetailLine",
   empty: "inventoryReportEmpty",
   footer: "inventoryReportFooter",
 } as const;

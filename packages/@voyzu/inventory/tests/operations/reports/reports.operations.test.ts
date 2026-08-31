@@ -54,8 +54,8 @@ test("report command exposes every inventory report", async () => {
     "stock-on-hand",
     "stock-availability",
     "stock-activity",
+    "stock-reservation-activity",
     "stock-transfers",
-    "stock-reservations",
     "stocktake-variance",
     "quantity-adjustments",
   ];

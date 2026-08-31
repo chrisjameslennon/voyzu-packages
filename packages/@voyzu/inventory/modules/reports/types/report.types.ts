@@ -6,8 +6,8 @@ export const InventoryReportKeyDto = Type.Union([
   Type.Literal("stock-on-hand"),
   Type.Literal("stock-availability"),
   Type.Literal("stock-activity"),
+  Type.Literal("stock-reservation-activity"),
   Type.Literal("stock-transfers"),
-  Type.Literal("stock-reservations"),
   Type.Literal("stocktake-variance"),
   Type.Literal("quantity-adjustments"),
 ]);
@@ -16,7 +16,16 @@ export const InventoryReportDto = StrictObject({
   title: Type.String(),
   headers: Type.Array(Type.String()),
   rows: Type.Array(
-    StrictObject({ id: Type.String(), cells: Type.Array(Type.String()) }),
+    StrictObject({
+      id: Type.String(),
+      cells: Type.Array(Type.String()),
+      inactive: Type.Optional(Type.Boolean()),
+      details: Type.Optional(
+        Type.Array(
+          StrictObject({ label: Type.String(), value: Type.String() }),
+        ),
+      ),
+    }),
   ),
 });
 export type InventoryReport = Static<typeof InventoryReportDto>;

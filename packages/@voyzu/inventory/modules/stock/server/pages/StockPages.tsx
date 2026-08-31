@@ -7,6 +7,7 @@ import {
 } from "../../../configuration/server/lib/configuration.service";
 import {
   StockActivityView,
+  StockTransactionDetailView,
   StockCountEditor,
   StockCountsView,
   StockOperationView,
@@ -14,6 +15,7 @@ import {
 } from "../../client";
 import {
   getStockCount,
+  getStockActivityDetail,
   getStockOptions,
   listStockActivity,
   listStockCounts,
@@ -44,6 +46,13 @@ export async function StockActivityPage() {
       rows={organization ? await listStockActivity(organization.id) : []}
     />
   );
+}
+export async function StockTransactionDetailPage({ code }: { code?: string }) {
+  const organization = await getSelectedOrganization();
+  if (!organization || !code) notFound();
+  const record = await getStockActivityDetail(organization.id, code);
+  if (!record) notFound();
+  return <StockTransactionDetailView record={record} />;
 }
 export async function StockCountsPage() {
   const organization = await getSelectedOrganization();

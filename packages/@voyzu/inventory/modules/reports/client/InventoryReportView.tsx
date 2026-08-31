@@ -1,5 +1,12 @@
 "use client";
-import { Breadcrumbs, Button } from "@voyzu/ui-components";
+import { useMemo, useState } from "react";
+import {
+  Breadcrumbs,
+  Button,
+  Checkbox,
+  DropdownMenu,
+  type DropdownMenuItem,
+} from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type {
@@ -7,22 +14,84 @@ import type {
   InventoryReportKey,
 } from "../types/report.types";
 import { InventoryReportTemplate } from "./InventoryReportTemplate";
+import localStyles from "./inventory-report.module.css";
 export function InventoryReportView({
   report,
   reportKey,
   generatedAt,
   printable = false,
+  initialShowInactive = false,
+  initialShowCustomFields = true,
 }: {
   report: InventoryReport;
   reportKey: InventoryReportKey;
   generatedAt: string;
   printable?: boolean;
+  initialShowInactive?: boolean;
+  initialShowCustomFields?: boolean;
 }) {
-  const printablePath = `/inventory/reports/${reportKey}/printable`;
-  const pdf = (mode: "pdf" | "pdf-view") =>
-    `/api/capability/${mode}?${new URLSearchParams({ path: printablePath, filename: `inventory-${reportKey}`, orientation: "landscape" })}`;
+  const hasItemOptions = reportKey === "items";
+  const [showInactive, setShowInactive] = useState(initialShowInactive);
+  const [showCustomFields, setShowCustomFields] = useState(
+    initialShowCustomFields,
+  );
+  const reportParams = () => {
+    const params = new URLSearchParams();
+    if (hasItemOptions) {
+      params.set("showInactive", String(showInactive));
+      params.set("showCustomFields", String(showCustomFields));
+    }
+    return params;
+  };
+  const printablePath = () => {
+    const params = reportParams();
+    const query = params.toString();
+    return `/inventory/reports/${reportKey}/printable${query ? `?${query}` : ""}`;
+  };
+  const pdf = (mode: "pdf" | "pdf-view") => {
+    const params = new URLSearchParams({
+      path: `/inventory/reports/${reportKey}/printable`,
+      filename: `inventory-${reportKey}`,
+      orientation: "landscape",
+    });
+    if (hasItemOptions) {
+      params.set("showInactive", String(showInactive));
+      params.set("showCustomFields", String(showCustomFields));
+    }
+    return `/api/capability/${mode}?${params}`;
+  };
+  const optionItems: DropdownMenuItem[] = useMemo(
+    () => [
+      {
+        value: "show-custom-fields",
+        label: (
+          <span className={localStyles.checkboxOption}>
+            <Checkbox
+              checked={showCustomFields}
+              onChange={() => undefined}
+              tabIndex={-1}
+            />
+            <span>Show custom fields</span>
+          </span>
+        ),
+        onSelect: () => setShowCustomFields((current) => !current),
+      },
+    ],
+    [showCustomFields],
+  );
+  const visibleReport = useMemo(
+    () => ({
+      ...report,
+      rows: report.rows
+        .filter((row) => showInactive || !row.inactive)
+        .map((row) =>
+          showCustomFields ? row : { ...row, details: undefined },
+        ),
+    }),
+    [report, showCustomFields, showInactive],
+  );
   const document = (
-    <InventoryReportTemplate report={report} generatedAt={generatedAt} />
+    <InventoryReportTemplate report={visibleReport} generatedAt={generatedAt} />
   );
   if (printable) return document;
   return (
@@ -38,13 +107,36 @@ export function InventoryReportView({
             {report.title}
           </h1>
         </div>
+        {hasItemOptions ? (
+          <div className={`${layout.slotToolbarLeft} ${localStyles.toolbarLeft}`}>
+            <label className={localStyles.inlineCheckboxOption}>
+              <Checkbox
+                checked={showInactive}
+                onChange={() => setShowInactive((current) => !current)}
+              />
+              <span>Show inactive</span>
+            </label>
+          </div>
+        ) : null}
         <div className={layout.slotToolbarRight}>
+          {hasItemOptions ? (
+            <DropdownMenu
+              trigger={
+                <Button variant="plain" icon="tune">
+                  Options
+                </Button>
+              }
+              items={optionItems}
+              alignment="right"
+              closeOnSelect={false}
+            />
+          ) : null}
           <Button
             variant="secondary"
             icon="open_in_new"
             title="Printable Page"
             onClick={() =>
-              window.open(printablePath, "_blank", "noopener,noreferrer")
+              window.open(printablePath(), "_blank", "noopener,noreferrer")
             }
           />
           <Button

@@ -5,8 +5,8 @@ type PageName =
   | "StockOnHandReportPage"
   | "StockAvailabilityReportPage"
   | "StockActivityReportPage"
+  | "StockReservationActivityReportPage"
   | "StockTransfersReportPage"
-  | "StockReservationsReportPage"
   | "StocktakeVarianceReportPage"
   | "QuantityAdjustmentsReportPage";
 const load = (name: PageName) => () =>
@@ -106,18 +106,18 @@ export const pageRoutes = {
     "Stock Transfers",
     "StockTransfersReportPage",
   ),
-  reservations: report(
-    "stock-reservations",
-    "stock-reservations",
-    "Stock Reservations",
-    "StockReservationsReportPage",
+  reservationActivity: report(
+    "stock-reservation-activity",
+    "stock-reservation-activity",
+    "Stock Reservation Activity",
+    "StockReservationActivityReportPage",
     "Stock",
   ),
-  reservationsPrintable: printable(
-    "stock-reservations",
-    "stock-reservations",
-    "Stock Reservations",
-    "StockReservationsReportPage",
+  reservationActivityPrintable: printable(
+    "stock-reservation-activity",
+    "stock-reservation-activity",
+    "Stock Reservation Activity",
+    "StockReservationActivityReportPage",
   ),
   variance: report(
     "stocktake-variance",

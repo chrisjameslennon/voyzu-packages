@@ -71,7 +71,7 @@ export function StockOperationView({
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [saving, setSaving] = useState(false);
-  const [confirmIssue, setConfirmIssue] = useState(false);
+  const [confirmMovement, setConfirmMovement] = useState(false);
   const [customValues, setCustomValues] = useState<
     Record<number, string | string[] | boolean>
   >({});
@@ -151,7 +151,7 @@ export function StockOperationView({
     setWarehouseId(String(requestedWarehouseId));
     setToWarehouseId(String(requestedWarehouseId));
   }, [kind, positions]);
-  const movementColumns: EditableGridColumn<Line>[] = [
+  const receiveMovementColumns: EditableGridColumn<Line>[] = [
     {
       key: "itemId",
       label: "Item",
@@ -159,12 +159,13 @@ export function StockOperationView({
       width: 260,
       options: items.map((i) => ({
         value: String(i.id),
-        label: `${i.code} — ${i.name}`,
+        label: i.name,
+        code: i.code,
       })),
     },
     {
       key: "quantity",
-      label: kind === "receive" ? "Quantity Received" : "Quantity Issued",
+      label: "Quantity",
       type: "number",
       width: 160,
     },
@@ -240,7 +241,7 @@ export function StockOperationView({
       width: 140,
     },
   ];
-  const createIssueLine = (selectedWarehouseId: string): Line => ({
+  const createMovementLine = (selectedWarehouseId: string): Line => ({
     id: Date.now() + Math.random(),
     itemId: "",
     sku: "",
@@ -321,6 +322,13 @@ export function StockOperationView({
       !lines.some((l) => l.itemId && Number(l.quantity) > 0)
     ) {
       setError("Add at least one item and quantity");
+      return false;
+    }
+    if (
+      kind === "reserve" &&
+      !lines.some((line) => Number(line.quantity) > 0)
+    ) {
+      setError("Enter a quantity for at least one warehouse");
       return false;
     }
     if (kind === "adjust") {
@@ -440,30 +448,44 @@ export function StockOperationView({
     }
   };
   const requestSubmit = () => {
-    if (kind !== "issue") {
-      void submit();
-      return;
-    }
     if (!validate()) return;
     setError("");
-    setConfirmIssue(true);
+    setConfirmMovement(true);
   };
   const title = titles[kind][0];
   const selectedItem = items.find((i) => i.id === Number(itemId));
-  const issueLines = lines.filter(
+  const confirmLines = lines.filter(
     (line) => line.itemId && Number(line.quantity) > 0,
   );
-  const issueLineCount = issueLines.length;
-  const issueWarehouse = warehouses.find(
+  const confirmUnitCount = confirmLines.reduce(
+    (total, line) => total + Number(line.quantity),
+    0,
+  );
+  const confirmWarehouse = warehouses.find(
     (warehouse) => warehouse.id === Number(warehouseId),
   );
-  const issueDate = date
+  const confirmToWarehouse = warehouses.find(
+    (warehouse) => warehouse.id === Number(toWarehouseId),
+  );
+  const confirmReserveLines = lines.filter(
+    (line) => Number(line.quantity) > 0,
+  );
+  const confirmReserveUnitCount = confirmReserveLines.reduce(
+    (total, line) => total + Number(line.quantity),
+    0,
+  );
+  const confirmDate = date
     ? new Date(`${date}T00:00:00`).toLocaleDateString("en-NZ", {
         day: "numeric",
         month: "long",
         year: "numeric",
       })
     : "—";
+  const confirmReference = reference.trim();
+  const confirmReferenceDisplay =
+    confirmReference.length > 40
+      ? `${confirmReference.slice(0, 39)}…`
+      : (confirmReference || "—");
   const customFieldControls = customFields.map((field) => (
     <div className={styles.field} key={field.id}>
       <label className={typography.fieldLabel}>
@@ -536,6 +558,7 @@ export function StockOperationView({
   return (
     <div
       className={`${layout.detailView} ${
+        kind === "receive" ||
         kind === "issue" ||
         kind === "transfer" ||
         kind === "reserve" ||
@@ -573,7 +596,8 @@ export function StockOperationView({
             </p>
           </div>
         </div>
-        {kind === "issue" ||
+        {kind === "receive" ||
+        kind === "issue" ||
         kind === "transfer" ||
         kind === "reserve" ||
         kind === "adjust" ? (
@@ -591,13 +615,15 @@ export function StockOperationView({
                 onClick={requestSubmit}
               >
                 {saving
-                  ? kind === "transfer"
-                    ? "Transferring..."
-                    : kind === "reserve"
-                      ? "Reserving..."
-                      : kind === "adjust"
-                        ? "Adjusting..."
-                        : "Issuing..."
+                  ? kind === "receive"
+                    ? "Receiving..."
+                    : kind === "transfer"
+                      ? "Transferring..."
+                      : kind === "reserve"
+                        ? "Reserving..."
+                        : kind === "adjust"
+                          ? "Adjusting..."
+                          : "Issuing..."
                   : titles[kind][0]}
               </Button>
             </div>
@@ -611,7 +637,8 @@ export function StockOperationView({
           />
         </div>
       </header>
-      {kind === "issue" ||
+      {kind === "receive" ||
+      kind === "issue" ||
       kind === "transfer" ||
       kind === "reserve" ||
       kind === "adjust" ? (
@@ -620,11 +647,13 @@ export function StockOperationView({
             <div className={styles.documentPanelLabel}>
               {kind === "transfer"
                 ? "Transfer document"
-                : kind === "reserve"
-                  ? "Reservation document"
-                  : kind === "adjust"
-                    ? "Adjustment document"
-                    : "Issue document"}
+                : kind === "receive"
+                  ? "Receipt document"
+                  : kind === "reserve"
+                    ? "Reservation document"
+                    : kind === "adjust"
+                      ? "Adjustment document"
+                      : "Issue document"}
             </div>
             <div className={styles.documentPanelFields}>
               {kind !== "reserve" ? (
@@ -648,7 +677,8 @@ export function StockOperationView({
               </div>
             </div>
           </div>
-          {(kind === "issue" || kind === "adjust") && customFields.length ? (
+          {(kind === "receive" || kind === "issue" || kind === "adjust") &&
+          customFields.length ? (
             <div className={detailStyles.card}>
               <h2 className={typography.sectionHeading}>Custom Fields</h2>
               <div className={styles.railCustomFields}>
@@ -660,9 +690,11 @@ export function StockOperationView({
       ) : null}
       <main className={`${layout.mainSection} ${styles.stack}`}>
           <>
-            {kind === "issue" ? (
+            {kind === "issue" || kind === "receive" ? (
               <section className={detailStyles.card}>
-                <h2 className={typography.sectionHeading}>Issue Details</h2>
+                <h2 className={typography.sectionHeading}>
+                  {kind === "issue" ? "Issue Details" : "Receipt Details"}
+                </h2>
                 <div className={styles.issueWarehouseField}>
                   <label className={typography.fieldLabel}>Warehouse</label>
                   <SearchableSelect
@@ -674,30 +706,40 @@ export function StockOperationView({
                       setWarehouseId(value);
                       setItemId("");
                       setQuantity("");
-                      setLines(value ? [createIssueLine(value)] : []);
-                      }}
-                    options={issueWarehouses.map((warehouse) => ({
+                      setLines(value ? [createMovementLine(value)] : []);
+                    }}
+                    options={(
+                      kind === "issue" ? issueWarehouses : warehouses
+                    ).map((warehouse) => ({
                       value: String(warehouse.id),
                       label: warehouse.name,
                       code: warehouse.code,
                     }))}
-                    placeholder="Select a warehouse with available stock"
+                    placeholder={
+                      kind === "issue"
+                        ? "Select a warehouse with available stock"
+                        : "Select a warehouse"
+                    }
                   />
                 </div>
                 <div className={styles.issueItemsSection}>
                   <h2 className={typography.sectionHeading}>Items</h2>
                   {warehouseId ? (
                     <EditableGrid
-                      key={`issue-${warehouseId}`}
-                      columns={issueMovementColumns}
+                      key={`${kind}-${warehouseId}`}
+                      columns={
+                        kind === "issue"
+                          ? issueMovementColumns
+                          : receiveMovementColumns
+                      }
                       initialRows={lines}
                       allowAddRows
                       allowDeleteRows
-                      createRow={() => createIssueLine(warehouseId)}
+                      createRow={() => createMovementLine(warehouseId)}
                       onRowsChange={setLines}
                       addRowLabel="Add Item"
                       emptyText="No items have been added"
-                      ariaLabel="Issue stock items"
+                      ariaLabel={`${kind} stock items`}
                     />
                   ) : (
                     <p className={styles.issueItemsHint}>
@@ -784,6 +826,7 @@ export function StockOperationView({
                   {selectedItem ? (
                     <EditableGrid
                       key={itemId}
+                      className={styles.gridWithoutHeaderIcons}
                       columns={reserveColumns}
                       initialRows={positionRows}
                       onRowsChange={setLines}
@@ -880,70 +923,11 @@ export function StockOperationView({
                   </div>
                 ) : null}
               </section>
-            ) : (
-              <section className={detailStyles.card}>
-                <h2 className={typography.sectionHeading}>Receipt Details</h2>
-                <div className={styles.fields}>
-                  <div className={styles.field}>
-                    <label className={typography.fieldLabel}>Date</label>
-                    <Input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className={typography.fieldLabel}>Warehouse</label>
-                    <SearchableSelect
-                      value={warehouseId}
-                      onChange={setWarehouseId}
-                      options={warehouses.map((w) => ({
-                        value: String(w.id),
-                        label: w.name,
-                        code: w.code,
-                      }))}
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className={typography.fieldLabel}>
-                      Reference (optional)
-                    </label>
-                    <Input
-                      value={reference}
-                      onChange={(e) => setReference(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </section>
-            )}
-            {kind === "receive" ? (
-              <section className={detailStyles.card}>
-                <h2 className={typography.sectionHeading}>Items</h2>
-                <EditableGrid
-                  columns={movementColumns}
-                  initialRows={lines}
-                  allowAddRows
-                  allowDeleteRows
-                  createRow={() => ({
-                    id: Date.now() + Math.random(),
-                    itemId: "",
-                    sku: "",
-                    itemName: "",
-                    onHand: 0,
-                    reserved: 0,
-                    available: 0,
-                    quantity: "" as const,
-                    quantityChange: "" as const,
-                    warehouseId: "",
-                    warehouse: "",
-                  })}
-                  onRowsChange={setLines}
-                  addRowLabel="Add Item"
-                  ariaLabel={`${kind} stock items`}
-                />
-              </section>
             ) : null}
-            {customFields.length && kind !== "issue" && kind !== "adjust" ? (
+            {customFields.length &&
+            kind !== "receive" &&
+            kind !== "issue" &&
+            kind !== "adjust" ? (
               <section className={detailStyles.card}>
                 <h2 className={typography.sectionHeading}>Custom Fields</h2>
                 <div className={styles.customFields}>
@@ -952,48 +936,69 @@ export function StockOperationView({
               </section>
             ) : null}
           </>
-        {kind === "receive" ? <div className={styles.actions}>
-          <Button
-            variant="cancel"
-            onClick={() => router.push("/inventory/stock")}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            disabled={saving}
-            onClick={() => void submit()}
-          >
-            {saving ? "Completing..." : titles[kind][0]}
-          </Button>
-        </div> : null}
       </main>
       <ConfirmDialog
-        isOpen={confirmIssue}
-        title="Confirm Issue Stock"
-        confirmLabel="Issue Stock"
+        isOpen={confirmMovement}
+        title={`Confirm ${titles[kind][0]}`}
+        confirmLabel={titles[kind][0]}
         confirmVariant="primary"
-        onClose={() => setConfirmIssue(false)}
+        onClose={() => setConfirmMovement(false)}
         onConfirm={() => {
-          setConfirmIssue(false);
+          setConfirmMovement(false);
           void submit();
         }}
         message={
           <div className={styles.issueConfirmDocument}>
             <div className={styles.issueConfirmBox}>
               <p className={styles.issueConfirmSummary}>
-                Issue <strong>{issueLineCount}</strong>{" "}
-                {issueLineCount === 1 ? "item" : "items"} from{" "}
-                <strong>{issueWarehouse?.name ?? "the selected warehouse"}</strong>.
+                {kind === "transfer" ? (
+                  <>
+                    Transfer <strong>{quantity}</strong> units of{" "}
+                    <strong>{selectedItem?.name ?? "the selected item"}</strong>{" "}
+                    from <strong>{confirmWarehouse?.name}</strong> to{" "}
+                    <strong>{confirmToWarehouse?.name}</strong>.
+                  </>
+                ) : kind === "reserve" ? (
+                  <>
+                    Reserve <strong>{confirmReserveUnitCount}</strong> units of{" "}
+                    <strong>{selectedItem?.name ?? "the selected item"}</strong>
+                    {confirmReserveLines.length > 1
+                      ? ` across ${confirmReserveLines.length} warehouses`
+                      : ""}
+                    .
+                  </>
+                ) : kind === "adjust" ? (
+                  <>
+                    Adjust{" "}
+                    <strong>{selectedItem?.name ?? "the selected item"}</strong>{" "}
+                    in <strong>{confirmWarehouse?.name}</strong> from{" "}
+                    <strong>{adjustmentPosition?.onHand}</strong> to{" "}
+                    <strong>{quantity}</strong> units.
+                  </>
+                ) : (
+                  <>
+                    {kind === "receive" ? "Receive" : "Issue"}{" "}
+                    <strong>{confirmUnitCount}</strong> units{" "}
+                    {kind === "receive" ? "into" : "from"}{" "}
+                    <strong>
+                      {confirmWarehouse?.name ?? "the selected warehouse"}
+                    </strong>
+                    .
+                  </>
+                )}
               </p>
               <dl className={styles.issueConfirmMetadata}>
-                <div>
-                  <dt>Date</dt>
-                  <dd>{issueDate}</dd>
-                </div>
+                {kind !== "reserve" ? (
+                  <div>
+                    <dt>Date</dt>
+                    <dd>{confirmDate}</dd>
+                  </div>
+                ) : null}
                 <div>
                   <dt>Reference</dt>
-                  <dd>{reference.trim() || "—"}</dd>
+                  <dd title={confirmReference || undefined}>
+                    {confirmReferenceDisplay}
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -1001,23 +1006,56 @@ export function StockOperationView({
               <div className={styles.issueConfirmItemsScroll}>
                 <table className={styles.issueConfirmItemsTable}>
                   <thead>
-                    <tr>
-                      <th>Item</th>
-                      <th>Quantity</th>
-                    </tr>
+                    {kind === "reserve" ? (
+                      <tr>
+                        <th>Warehouse</th>
+                        <th>Quantity</th>
+                      </tr>
+                    ) : kind === "adjust" ? (
+                      <tr>
+                        <th>Item</th>
+                        <th>Recorded</th>
+                        <th>Revised</th>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                      </tr>
+                    )}
                   </thead>
                   <tbody>
-                    {issueLines.map((line) => {
-                      const item = items.find(
-                        (candidate) => candidate.id === Number(line.itemId),
-                      );
-                      return (
+                    {kind === "reserve" ? (
+                      confirmReserveLines.map((line) => (
                         <tr key={line.id}>
-                          <td>{item?.name ?? line.itemName}</td>
+                          <td>{line.warehouse}</td>
                           <td>{line.quantity}</td>
                         </tr>
-                      );
-                    })}
+                      ))
+                    ) : kind === "transfer" ? (
+                      <tr>
+                        <td>{selectedItem?.name}</td>
+                        <td>{quantity}</td>
+                      </tr>
+                    ) : kind === "adjust" ? (
+                      <tr>
+                        <td>{selectedItem?.name}</td>
+                        <td>{adjustmentPosition?.onHand}</td>
+                        <td>{quantity}</td>
+                      </tr>
+                    ) : (
+                      confirmLines.map((line) => {
+                        const item = items.find(
+                          (candidate) => candidate.id === Number(line.itemId),
+                        );
+                        return (
+                          <tr key={line.id}>
+                            <td>{item?.name ?? line.itemName}</td>
+                            <td>{line.quantity}</td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>

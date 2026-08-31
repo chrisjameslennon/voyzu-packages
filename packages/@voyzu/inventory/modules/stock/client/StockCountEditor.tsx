@@ -9,6 +9,7 @@ import {
   ConfirmDialog,
   DatePicker,
   EditableGrid,
+  Input,
   SearchableSelect,
   Toast,
   ValidationAlert,
@@ -62,10 +63,10 @@ export function StockCountEditor({
       variance: l.variance ?? "—",
     })) ?? [],
   );
-  const [review, setReview] = useState(false);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [confirm, setConfirm] = useState(false);
+  const [confirmComplete, setConfirmComplete] = useState(false);
   const [saving, setSaving] = useState(false);
   const calculated = rows.map((row) => {
     const expectedQuantity = record
@@ -230,10 +231,9 @@ export function StockCountEditor({
     );
     if (!response) return;
     setRecord((await response.json()) as StockCountDetail);
-    setReview(false);
     setToast("Stocktake completed");
   };
-  const reviewStocktake = () => {
+  const requestComplete = () => {
     setError("");
     if (!warehouseId) {
       setError("Warehouse is required");
@@ -251,7 +251,7 @@ export function StockCountEditor({
       setError("Enter an actual quantity for at least one item");
       return;
     }
-    setReview(true);
+    setConfirmComplete(true);
   };
   const remove = async () => {
     if (!record) return;
@@ -263,9 +263,17 @@ export function StockCountEditor({
     router.refresh();
   };
   const readOnly = record?.status === "COMPLETED";
-  const title = review
-    ? "Review Stocktake"
-    : (record?.countNo ?? "New Stocktake");
+  const title = record?.code ?? "New Stocktake";
+  const selectedWarehouse = warehouses.find(
+    (warehouse) => warehouse.id === Number(warehouseId),
+  );
+  const confirmCountDate = countDate
+    ? new Date(`${countDate}T00:00:00`).toLocaleDateString("en-NZ", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "—";
   if (!record || !readOnly)
     return (
       <div
@@ -280,14 +288,10 @@ export function StockCountEditor({
               <h1
                 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}
               >
-                {review
-                  ? "Review Stocktake"
-                  : (record?.countNo ?? "New Stocktake")}
+                {record?.code ?? "New Stocktake"}
               </h1>
               <p className={typography.headingByline}>
-                {review
-                  ? "Review the quantity adjustments before submitting the stocktake."
-                  : "Record the actual stock quantities held in a warehouse."}
+                Record the actual stock quantities held in a warehouse.
               </p>
             </div>
           </div>
@@ -299,48 +303,21 @@ export function StockCountEditor({
               >
                 Cancel
               </Button>
-              {review ? (
-                <>
-                  <Button
-                    variant="cancel"
-                    icon="arrow_back"
-                    onClick={() => setReview(false)}
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    variant="primary"
-                    disabled={saving}
-                    onClick={() => void complete()}
-                  >
-                    {saving ? "Submitting..." : "Submit Stocktake"}
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="secondary"
-                    icon="save"
-                    disabled={saving}
-                    onClick={() => void save("DRAFT")}
-                  >
-                    Save as Draft
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    disabled={saving}
-                    onClick={reviewStocktake}
-                  >
-                    Review Stocktake
-                    <span
-                      className="material-symbols-outlined"
-                      aria-hidden="true"
-                    >
-                      arrow_forward
-                    </span>
-                  </Button>
-                </>
-              )}
+              <Button
+                variant="secondary"
+                icon="save"
+                disabled={saving}
+                onClick={() => void save("DRAFT")}
+              >
+                Save as Draft
+              </Button>
+              <Button
+                variant="primary"
+                disabled={saving}
+                onClick={requestComplete}
+              >
+                Submit Stocktake
+              </Button>
             </div>
           </div>
           <div className={layout.slotAlert}>
@@ -359,14 +336,11 @@ export function StockCountEditor({
             <div className={styles.documentPanelFields}>
               <div className={styles.field}>
                 <label className={typography.fieldLabel}>Count Date</label>
-                <fieldset
-                  className={styles.datePickerFieldset}
-                  disabled={review}
-                >
+                <fieldset className={styles.datePickerFieldset}>
                   <DatePicker
                     value={countDate}
                     onChange={setCountDate}
-                    clearable={!review}
+                    clearable
                     hasError={error === "Count Date is required"}
                   />
                 </fieldset>
@@ -376,7 +350,6 @@ export function StockCountEditor({
                 <textarea
                   className={`${styles.textarea} ${styles.stocktakeNotes}`}
                   value={notes}
-                  disabled={review}
                   onChange={(event) => setNotes(event.target.value)}
                 />
               </div>
@@ -386,6 +359,12 @@ export function StockCountEditor({
         <main className={`${layout.mainSection} ${styles.stack}`}>
           <section className={detailStyles.card}>
             <h2 className={typography.sectionHeading}>Stocktake Details</h2>
+            {record ? (
+              <div className={styles.issueWarehouseField}>
+                <label className={typography.fieldLabel}>Code</label>
+                <Input value={record.code} disabled />
+              </div>
+            ) : null}
             <div className={styles.issueWarehouseField}>
               <label className={typography.fieldLabel}>Warehouse</label>
               <SearchableSelect
@@ -395,7 +374,7 @@ export function StockCountEditor({
                   setRows(value ? warehouseRows(value) : []);
                   if (value && error === "Warehouse is required") setError("");
                 }}
-                disabled={review || !!record}
+                disabled={!!record}
                 hasError={error === "Warehouse is required"}
                 options={warehouses.map((warehouse) => ({
                   value: String(warehouse.id),
@@ -407,22 +386,16 @@ export function StockCountEditor({
             </div>
             <div className={styles.issueItemsSection}>
               <h2 className={typography.sectionHeading}>
-                {review ? "Adjustments" : "Items"}
+                Items
               </h2>
               {warehouseId ? (
                 <EditableGrid
-                  key={`stocktake-${warehouseId}-${review}`}
+                  key={`stocktake-${warehouseId}`}
                   className={styles.stocktakeGrid}
-                  columns={columns.map((column) =>
-                    review ? { ...column, readOnly: true } : column,
-                  )}
-                  initialRows={review ? changes : calculated}
-                  onRowsChange={review ? undefined : setRows}
-                  emptyText={
-                    review
-                      ? "No quantity adjustments"
-                      : "This warehouse has no stocked items"
-                  }
+                  columns={columns}
+                  initialRows={calculated}
+                  onRowsChange={setRows}
+                  emptyText="This warehouse has no stocked items"
                   ariaLabel="Stocktake quantities"
                 />
               ) : (
@@ -433,6 +406,63 @@ export function StockCountEditor({
             </div>
           </section>
         </main>
+        <ConfirmDialog
+          isOpen={confirmComplete}
+          title="Confirm Stocktake"
+          confirmLabel="Submit Stocktake"
+          confirmVariant="primary"
+          onClose={() => setConfirmComplete(false)}
+          onConfirm={() => {
+            setConfirmComplete(false);
+            void complete();
+          }}
+          message={
+            <div className={styles.issueConfirmDocument}>
+              <div className={styles.issueConfirmBox}>
+                <p className={styles.issueConfirmSummary}>
+                  Complete the stocktake for{" "}
+                  <strong>
+                    {selectedWarehouse?.name ?? "the selected warehouse"}
+                  </strong>{" "}
+                  with <strong>{changes.length}</strong>{" "}
+                  {changes.length === 1 ? "adjustment" : "adjustments"}.
+                </p>
+                <dl className={styles.issueConfirmMetadata}>
+                  <div>
+                    <dt>Count Date</dt>
+                    <dd>{confirmCountDate}</dd>
+                  </div>
+                </dl>
+              </div>
+              <div
+                className={`${styles.issueConfirmBox} ${styles.issueConfirmItems}`}
+              >
+                <div className={styles.issueConfirmItemsScroll}>
+                  <table className={styles.issueConfirmItemsTable}>
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Recorded</th>
+                        <th>Counted</th>
+                        <th>Variance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {changes.map((row) => (
+                        <tr key={row.id}>
+                          <td>{row.itemName}</td>
+                          <td>{row.expectedQuantity}</td>
+                          <td>{row.countedQuantity}</td>
+                          <td>{row.variance}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          }
+        />
         <Toast
           isVisible={!!toast}
           message={toast}
@@ -445,6 +475,10 @@ export function StockCountEditor({
       <section className={detailStyles.card}>
         <h2 className={typography.sectionHeading}>Stocktake Details</h2>
         <div className={styles.fields}>
+          <div className={styles.field}>
+            <label className={typography.fieldLabel}>Code</label>
+            <Input value={record.code} disabled />
+          </div>
           <div className={styles.field}>
             <label className={typography.fieldLabel}>Warehouse</label>
             <SearchableSelect
@@ -488,69 +522,15 @@ export function StockCountEditor({
         </div>
       </section>
       <section className={detailStyles.card}>
-        {review ? (
-          <p className={styles.reviewWarning}>
-            Completing this stocktake adjusts stock quantities for the variances
-            shown below.
-          </p>
-        ) : null}
         <EditableGrid
-          key={`${warehouseId}-${review}-${readOnly}`}
+          key={`${warehouseId}-${readOnly}`}
           className={styles.stocktakeGrid}
-          columns={columns.map((column) =>
-            review ? { ...column, readOnly: true } : column,
-          )}
-          initialRows={review ? changes : calculated}
+          columns={columns.map((column) => ({ ...column, readOnly: true }))}
+          initialRows={calculated}
           onRowsChange={setRows}
           ariaLabel="Stocktake quantities"
         />
       </section>
-      {!readOnly ? (
-        <div className={styles.actions}>
-          <Button
-            variant="cancel"
-            onClick={() => router.push("/inventory/stock-counts")}
-          >
-            Cancel
-          </Button>
-          {review ? (
-            <Button
-              variant="cancel"
-              icon="arrow_back"
-              onClick={() => setReview(false)}
-            >
-              Back
-            </Button>
-          ) : null}
-          {!review ? (
-            <Button
-              variant="secondary"
-              icon="save"
-              onClick={() => void save("DRAFT")}
-            >
-              Save as Draft
-            </Button>
-          ) : null}
-          <Button
-            variant={review ? "primary" : "secondary"}
-            onClick={() => (review ? void complete() : reviewStocktake())}
-          >
-            {review ? (
-              "Submit Stocktake"
-            ) : (
-              <>
-                Review Stocktake
-                <span
-                  className="material-symbols-outlined"
-                  aria-hidden="true"
-                >
-                  arrow_forward
-                </span>
-              </>
-            )}
-          </Button>
-        </div>
-      ) : null}
     </main>
   );
   const header = (
@@ -629,7 +609,7 @@ export function StockCountEditor({
       <ConfirmDialog
         isOpen={confirm}
         title="Delete Stocktake"
-        message={`Delete ${record.countNo}?`}
+        message={`Delete ${record.code}?`}
         confirmLabel="Delete"
         confirmVariant="danger"
         onClose={() => setConfirm(false)}

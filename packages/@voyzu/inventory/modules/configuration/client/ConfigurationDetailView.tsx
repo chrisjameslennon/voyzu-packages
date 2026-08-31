@@ -204,9 +204,15 @@ export function ConfigurationDetailView({
     setDeletingOption(null);
     setToast("Option removed");
   };
+  const auditEntityType = {
+    category: "item_category",
+    warehouse: "warehouse",
+    "custom-field": "inv_custom_field",
+    "option-list": "inv_option_list",
+  }[kind];
   const auditFilter = record.audit.updated.mutationId
     ? `mutationId=${encodeURIComponent(record.audit.updated.mutationId)}`
-    : `entityType=${kind.replace("-", "_")}&entityId=${record.id}`;
+    : `entityType=${auditEntityType}&entityId=${record.id}`;
   const optionActions = (option: OptionRow): DropdownMenuItem[] => [
     { value: "edit", label: "Edit", icon: "edit", onSelect: () => openOptionEditor(option) },
     option.status === "ACTIVE"

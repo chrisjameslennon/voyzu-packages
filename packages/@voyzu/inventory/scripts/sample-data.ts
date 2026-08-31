@@ -14,21 +14,22 @@ import {
 import {
   listInventoryStock,
   receiveInventoryStock,
+  reserveInventoryStock,
 } from "../modules/stock/operations";
 
 const categories = [
   {
-    code: "RAW",
+    code: "INV-RAW",
     name: "Raw Materials",
     description: "Materials consumed when producing or assembling goods.",
   },
   {
-    code: "FINISHED",
+    code: "INV-FINISHED",
     name: "Finished Goods",
     description: "Completed products ready for sale or distribution.",
   },
   {
-    code: "PACKAGING",
+    code: "INV-PACKAGING",
     name: "Packaging",
     description: "Boxes, labels, and other packing materials.",
   },
@@ -36,19 +37,19 @@ const categories = [
 
 const warehouses = [
   {
-    code: "MAIN",
+    code: "INV-MAIN",
     name: "Main Warehouse",
     city: "Auckland",
     countryCode: "NZ",
   },
   {
-    code: "SOUTH",
+    code: "INV-SOUTH",
     name: "South Island Warehouse",
     city: "Christchurch",
     countryCode: "NZ",
   },
   {
-    code: "RETURNS",
+    code: "INV-RETURNS",
     name: "Returns Warehouse",
     city: "Auckland",
     countryCode: "NZ",
@@ -72,39 +73,39 @@ const items = [
   {
     sku: "SAMPLE-BEANS",
     name: "Premium Coffee Beans",
-    categoryCode: "RAW",
+    categoryCode: "INV-RAW",
     unit: "kg" as const,
   },
   {
     sku: "SAMPLE-MUG",
     name: "Ceramic Coffee Mug",
-    categoryCode: "FINISHED",
+    categoryCode: "INV-FINISHED",
     unit: "each" as const,
   },
   {
     sku: "SAMPLE-BOX",
     name: "Gift Shipping Box",
-    categoryCode: "PACKAGING",
+    categoryCode: "INV-PACKAGING",
     unit: "box" as const,
   },
   {
     sku: "SAMPLE-GIFT-SET",
     name: "Coffee Gift Set",
-    categoryCode: "FINISHED",
+    categoryCode: "INV-FINISHED",
     unit: "each" as const,
   },
 ] as const;
 
 const stockTargets = [
-  { sku: "SAMPLE-BEANS", warehouseCode: "MAIN", quantity: 80 },
-  { sku: "SAMPLE-BEANS", warehouseCode: "SOUTH", quantity: 35 },
-  { sku: "SAMPLE-MUG", warehouseCode: "MAIN", quantity: 120 },
-  { sku: "SAMPLE-MUG", warehouseCode: "SOUTH", quantity: 40 },
-  { sku: "SAMPLE-BOX", warehouseCode: "MAIN", quantity: 200 },
-  { sku: "SAMPLE-GIFT-SET", warehouseCode: "MAIN", quantity: 24 },
+  { sku: "SAMPLE-BEANS", warehouseCode: "INV-MAIN", quantity: 80 },
+  { sku: "SAMPLE-BEANS", warehouseCode: "INV-SOUTH", quantity: 35 },
+  { sku: "SAMPLE-MUG", warehouseCode: "INV-MAIN", quantity: 120 },
+  { sku: "SAMPLE-MUG", warehouseCode: "INV-SOUTH", quantity: 40 },
+  { sku: "SAMPLE-BOX", warehouseCode: "INV-MAIN", quantity: 200 },
+  { sku: "SAMPLE-GIFT-SET", warehouseCode: "INV-MAIN", quantity: 24 },
   {
     sku: "SAMPLE-GIFT-SET",
-    warehouseCode: "RETURNS",
+    warehouseCode: "INV-RETURNS",
     quantity: 2,
   },
 ] as const;
@@ -248,8 +249,26 @@ async function seedOrganization(organization: Organization): Promise<void> {
       date: receiptDate,
       warehouseId,
       reference: "SAMPLE-DATA",
-      notes: "Inventory package sample data",
       lines: [{ itemId, quantity }],
+    });
+  }
+
+  const existingReservation = await getDb().query(
+    `SELECT 1
+       FROM inventory_reservation
+      WHERE organization_id = $1
+        AND reference = 'SAMPLE-RESERVATION'
+      LIMIT 1`,
+    [organization.id],
+  );
+  if (!existingReservation.rows.length) {
+    await reserveInventoryStock(organization.id, {
+      itemId: itemIds.get("SAMPLE-BEANS")!,
+      reference: "SAMPLE-RESERVATION",
+      lines: [
+        { warehouseId: warehouseIds.get("INV-MAIN")!, quantity: 5 },
+        { warehouseId: warehouseIds.get("INV-SOUTH")!, quantity: 3 },
+      ],
     });
   }
 

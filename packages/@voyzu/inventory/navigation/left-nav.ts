@@ -84,16 +84,8 @@ export const inventoryLeftNav = [
             routeId: reportRoutes.availability.id,
           },
           {
-            label: "Stock Activity",
-            routeId: reportRoutes.activity.id,
-          },
-          {
             label: "Stock Transfers",
             routeId: reportRoutes.transfers.id,
-          },
-          {
-            label: "Stock Reservations",
-            routeId: reportRoutes.reservations.id,
           },
           {
             label: "Stocktake Variance",
@@ -102,6 +94,20 @@ export const inventoryLeftNav = [
           {
             label: "Quantity Adjustments",
             routeId: reportRoutes.adjustments.id,
+          },
+        ],
+      },
+      {
+        label: "Stock Activity",
+        icon: "history",
+        children: [
+          {
+            label: "Stock Activity",
+            routeId: reportRoutes.activity.id,
+          },
+          {
+            label: "Stock Reservation Activity",
+            routeId: reportRoutes.reservationActivity.id,
           },
         ],
       },

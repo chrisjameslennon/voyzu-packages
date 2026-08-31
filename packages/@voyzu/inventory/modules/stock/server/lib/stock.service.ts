@@ -31,6 +31,21 @@ export const listStockPositions = (organizationId: number) =>
   new StockRepo(getDb()).positions(organizationId);
 export const listStockActivity = (organizationId: number) =>
   new StockRepo(getDb()).activity(organizationId);
+export const getStockActivityDetail = async (
+  organizationId: number,
+  code: string,
+) => {
+  const record = await new StockRepo(getDb()).activityDetail(
+    organizationId,
+    code,
+  );
+  return record
+    ? withAuditActors(record, {
+        creation_user_id: record.audit.created.userId,
+        updated_user_id: record.audit.updated.userId,
+      })
+    : null;
+};
 export const getStockOptions = (organizationId: number) =>
   new StockRepo(getDb()).options(organizationId);
 export const listStockCounts = (organizationId: number) =>

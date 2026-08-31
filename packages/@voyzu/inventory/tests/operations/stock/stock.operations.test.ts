@@ -128,6 +128,8 @@ test("stock commands expose movements, reservations, and positions", async () =>
   assert.ok(activity.some(({ type }) => type === "ISSUE"));
   assert.ok(activity.some(({ type }) => type === "TRANSFER"));
   assert.ok(activity.some(({ type }) => type === "ADJUSTMENT"));
+  assert.ok(activity.every(({ type }) => type !== "RESERVATION"));
+  assert.ok(activity.every(({ code }) => code.startsWith("INV-")));
 });
 
 test("stock count commands expose draft, save, completion, and deletion", async () => {

@@ -1,9 +1,10 @@
-DROP TABLE IF EXISTS custom_field_value;
-DROP TABLE IF EXISTS custom_field;
-DROP TABLE IF EXISTS option_list_value;
-DROP TABLE IF EXISTS option_list;
+DROP TABLE IF EXISTS inv_custom_field_value;
+DROP TABLE IF EXISTS inv_custom_field;
+DROP TABLE IF EXISTS inv_option_list_value;
+DROP TABLE IF EXISTS inv_option_list;
 DROP TABLE IF EXISTS stock_count_line;
 DROP TABLE IF EXISTS stock_count;
+DROP TABLE IF EXISTS inventory_reservation_line;
 DROP TABLE IF EXISTS inventory_reservation;
 DROP TABLE IF EXISTS inventory_transaction_line;
 DROP TABLE IF EXISTS inventory_transaction;

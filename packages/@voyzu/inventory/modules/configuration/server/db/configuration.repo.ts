@@ -7,12 +7,19 @@ import type {
   ConfigurationRow,
 } from "../../types/configuration.types";
 
+const inventoryCode = (value: string | undefined) => {
+  const normalized = value?.trim().toUpperCase();
+  return normalized && !normalized.startsWith("INV-")
+    ? `INV-${normalized}`
+    : normalized;
+};
+
 const tableFor = (kind: ConfigurationKind) =>
   ({
     category: "item_category",
     warehouse: "warehouse",
-    "custom-field": "custom_field",
-    "option-list": "option_list",
+    "custom-field": "inv_custom_field",
+    "option-list": "inv_option_list",
   })[kind];
 const isoDate = (value: unknown) => new Date(String(value)).toISOString();
 const normalizeAudit = (row: Record<string, unknown>) => ({
@@ -45,9 +52,9 @@ export class ConfigurationRepo {
       kind === "category"
         ? "LEFT JOIN item i ON i.organization_id = source.organization_id AND i.item_category_id = source.id"
         : kind === "option-list"
-          ? "LEFT JOIN option_list_value v ON v.organization_id = source.organization_id AND v.option_list_id = source.id"
+          ? "LEFT JOIN inv_option_list_value v ON v.organization_id = source.organization_id AND v.option_list_id = source.id"
           : kind === "custom-field"
-            ? "LEFT JOIN custom_field_value v ON v.organization_id = source.organization_id AND v.custom_field_id = source.id"
+            ? "LEFT JOIN inv_custom_field_value v ON v.organization_id = source.organization_id AND v.custom_field_id = source.id"
             : "";
     const secondary =
       kind === "warehouse"
@@ -92,7 +99,7 @@ export class ConfigurationRepo {
     ) {
       const listId = kind === "option-list" ? id : Number(row.option_list_id);
       const result = await this.db.query(
-        `SELECT value.id::int, value.value, value.status, count(field_value.id)::int AS used_by FROM option_list_value value LEFT JOIN custom_field_value field_value ON field_value.organization_id = value.organization_id AND field_value.option_list_value_id = value.id WHERE value.organization_id = $1 AND value.option_list_id = $2 GROUP BY value.id ORDER BY value.sort_order, value.value`,
+        `SELECT value.id::int, value.value, value.status, count(field_value.id)::int AS used_by FROM inv_option_list_value value LEFT JOIN inv_custom_field_value field_value ON field_value.organization_id = value.organization_id AND field_value.option_list_value_id = value.id WHERE value.organization_id = $1 AND value.option_list_id = $2 GROUP BY value.id ORDER BY value.sort_order, value.value`,
         [organizationId, listId],
       );
       options = result.rows.map((value: Record<string, unknown>) => ({
@@ -102,7 +109,7 @@ export class ConfigurationRepo {
         usedBy: Number(value.used_by),
       }));
       const fields = await this.db.query(
-        "SELECT id::int, name, applies_to, data_type FROM custom_field WHERE organization_id = $1 AND option_list_id = $2 ORDER BY name",
+        "SELECT id::int, name, applies_to, data_type FROM inv_custom_field WHERE organization_id = $1 AND option_list_id = $2 ORDER BY name",
         [organizationId, listId],
       );
       usedBy = fields.rows.map((field: Record<string, unknown>) => ({
@@ -113,7 +120,7 @@ export class ConfigurationRepo {
       }));
       if (kind === "custom-field") {
         const linkedList = await this.db.query(
-          "SELECT is_shared FROM option_list WHERE organization_id=$1 AND id=$2",
+          "SELECT is_shared FROM inv_option_list WHERE organization_id=$1 AND id=$2",
           [organizationId, listId],
         );
         linkedOptionListIsShared = Boolean(linkedList.rows[0]?.is_shared);
@@ -123,10 +130,10 @@ export class ConfigurationRepo {
       kind === "category"
         ? "SELECT EXISTS(SELECT 1 FROM item WHERE organization_id=$1 AND item_category_id=$2) value"
         : kind === "warehouse"
-          ? "SELECT (EXISTS(SELECT 1 FROM inventory_transaction_line WHERE organization_id=$1 AND warehouse_id=$2) OR EXISTS(SELECT 1 FROM inventory_reservation WHERE organization_id=$1 AND warehouse_id=$2) OR EXISTS(SELECT 1 FROM stock_count WHERE organization_id=$1 AND warehouse_id=$2 AND deletion_date IS NULL)) value"
+          ? "SELECT (EXISTS(SELECT 1 FROM inventory_transaction_line WHERE organization_id=$1 AND warehouse_id=$2) OR EXISTS(SELECT 1 FROM inventory_reservation_line WHERE organization_id=$1 AND warehouse_id=$2) OR EXISTS(SELECT 1 FROM stock_count WHERE organization_id=$1 AND warehouse_id=$2 AND deletion_date IS NULL)) value"
           : kind === "option-list"
-            ? "SELECT EXISTS(SELECT 1 FROM custom_field WHERE organization_id=$1 AND option_list_id=$2) value"
-            : "SELECT EXISTS(SELECT 1 FROM custom_field_value WHERE organization_id=$1 AND custom_field_id=$2) value";
+            ? "SELECT EXISTS(SELECT 1 FROM inv_custom_field WHERE organization_id=$1 AND option_list_id=$2) value"
+            : "SELECT EXISTS(SELECT 1 FROM inv_custom_field_value WHERE organization_id=$1 AND custom_field_id=$2) value";
     const used = await this.db.query(inUseQuery, [organizationId, id]);
     return {
       id: Number(row.id),
@@ -165,14 +172,14 @@ export class ConfigurationRepo {
     const values: Record<string, unknown> =
       kind === "category"
         ? {
-            code: input.code?.trim().toUpperCase(),
+            code: inventoryCode(input.code),
             name: input.name.trim(),
             description: input.description?.trim() ?? "",
             status: "ACTIVE",
           }
         : kind === "warehouse"
           ? {
-              code: input.code?.trim().toUpperCase(),
+              code: inventoryCode(input.code),
               name: input.name.trim(),
               address_line_1: input.addressLine1 ?? "",
               address_line_2: input.addressLine2 ?? "",
@@ -223,7 +230,7 @@ export class ConfigurationRepo {
       if (value !== undefined && map[key])
         row[map[key]!] =
           key === "code" && typeof value === "string"
-            ? value.trim().toUpperCase()
+            ? inventoryCode(value)
             : typeof value === "string"
               ? value.trim()
               : value;
@@ -262,7 +269,7 @@ export class ConfigurationRepo {
   ) {
     const entries = Object.entries(audit);
     await this.db.query(
-      `INSERT INTO option_list_value (organization_id, option_list_id, value, sort_order, status, ${entries.map(([key]) => key).join(",")}) VALUES ($1,$2,$3,(SELECT COALESCE(MAX(sort_order),0)+1 FROM option_list_value WHERE organization_id=$1 AND option_list_id=$2),'ACTIVE',${entries.map((_, index) => `$${index + 4}`).join(",")})`,
+      `INSERT INTO inv_option_list_value (organization_id, option_list_id, value, sort_order, status, ${entries.map(([key]) => key).join(",")}) VALUES ($1,$2,$3,(SELECT COALESCE(MAX(sort_order),0)+1 FROM inv_option_list_value WHERE organization_id=$1 AND option_list_id=$2),'ACTIVE',${entries.map((_, index) => `$${index + 4}`).join(",")})`,
       [
         organizationId,
         listId,
@@ -283,7 +290,7 @@ export class ConfigurationRepo {
     if (input.status !== undefined) row.status = input.status;
     const entries = Object.entries(row);
     await this.db.query(
-      `UPDATE option_list_value SET ${entries.map(([key], index) => `${key}=$${index + 4}`).join(",")} WHERE organization_id=$1 AND option_list_id=$2 AND id=$3`,
+      `UPDATE inv_option_list_value SET ${entries.map(([key], index) => `${key}=$${index + 4}`).join(",")} WHERE organization_id=$1 AND option_list_id=$2 AND id=$3`,
       [organizationId, listId, optionId, ...entries.map(([, value]) => value)],
     );
   }
@@ -294,7 +301,7 @@ export class ConfigurationRepo {
     audit: Record<string, unknown>,
   ) {
     await this.db.query(
-      "DELETE FROM custom_field_value WHERE organization_id=$1 AND option_list_value_id=$2",
+      "DELETE FROM inv_custom_field_value WHERE organization_id=$1 AND option_list_value_id=$2",
       [organizationId, optionId],
     );
     await this.patchOption(
@@ -305,7 +312,7 @@ export class ConfigurationRepo {
       audit,
     );
     await this.db.query(
-      "DELETE FROM option_list_value WHERE organization_id=$1 AND option_list_id=$2 AND id=$3",
+      "DELETE FROM inv_option_list_value WHERE organization_id=$1 AND option_list_id=$2 AND id=$3",
       [organizationId, listId, optionId],
     );
   }
