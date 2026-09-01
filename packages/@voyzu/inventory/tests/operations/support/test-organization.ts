@@ -13,7 +13,6 @@ async function purgeInventoryData(organizationId: number): Promise<void> {
   for (const table of [
     "inv_custom_field_value",
     "inv_option_list_value",
-    "item_component",
     "inventory_reservation_line",
     "inventory_reservation",
     "stock_count_line",

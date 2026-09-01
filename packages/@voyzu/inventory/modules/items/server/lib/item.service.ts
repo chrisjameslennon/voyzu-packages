@@ -11,13 +11,14 @@ const normalizeSku = (sku: string) => sku.trim().toUpperCase();
 const normalizeSkus = (skus: string[]) => [...new Set(skus.map(normalizeSku).filter(Boolean))];
 
 async function toResponse(repo: ItemRepo, row: ItemRow): Promise<ItemResponseDto> {
-  const [components, customFields] = await Promise.all([repo.listComponents(row.organization_id, row.id), repo.listCustomFields(row.organization_id, row.id)]);
+  const customFields = await repo.listCustomFields(row.organization_id, row.id);
   const dto: ItemResponseDto = {
     id: row.id, sku: row.sku, name: row.name, description: row.description,
     category: row.item_category_id === null ? null : { id: row.item_category_id, code: row.category_code ?? "", name: row.category_name ?? "" },
-    unit: row.unit, itemType: row.item_type, quantityTracked: row.quantity_tracked,
+    unit: row.unit, quantityTracked: row.quantity_tracked,
+    dimensionUnit: row.dimension_unit, dimensionHeight: row.dimension_height, dimensionWidth: row.dimension_width, dimensionDepth: row.dimension_depth,
+    weightUnit: row.weight_unit, weight: row.weight,
     status: row.status, inUse: row.in_use,
-    components: components.map((component) => ({ itemId: component.component_item_id, sku: component.sku, name: component.name, quantity: component.quantity, unit: component.unit })),
     customFields,
     audit: {
       created: { date: row.creation_date, actorType: row.creation_actor_type, userId: row.creation_user_id, mutationId: row.creation_mutation_id },
@@ -51,7 +52,7 @@ export async function createItem(organizationId: number, input: ItemCreateReques
       if (input.sku && input.reservedId) throw new BusinessRuleError("Use either a manual SKU or a reserved automatic SKU");
       if (input.quantityTracked && input.unit === null) throw new BusinessRuleError("Unit is required when quantity tracking is enabled");
       const repo = new ItemRepo(db); const values = withCreationAudit({ name: input.name.trim(), description: "", item_category_id: input.categoryId,
-        unit: input.quantityTracked ? input.unit : null, item_type: "SINGLE_ITEM", quantity_tracked: input.quantityTracked,
+        unit: input.quantityTracked ? input.unit : null, quantity_tracked: input.quantityTracked,
         status: "ACTIVE" }, await createCreationAuditStamp());
       const row = input.sku
         ? await repo.insert(organizationId, { sku: normalizeSku(input.sku), ...values })
@@ -71,20 +72,6 @@ export async function patchItem(organizationId: number, sku: string, input: Item
       const targetQuantityTracked = input.quantityTracked ?? current.quantity_tracked;
       const targetUnit = targetQuantityTracked ? (input.unit === undefined ? current.unit : input.unit) : null;
       if (targetQuantityTracked && targetUnit === null) throw new BusinessRuleError("Unit is required when quantity tracking is enabled");
-      const targetType = input.itemType ?? current.item_type; const components = input.components;
-      if (targetType === "SINGLE_ITEM" && components?.length) throw new BusinessRuleError("A single item cannot have assembly components");
-      if (targetType === "ASSEMBLY") {
-        const componentCount = components?.length ?? (await repo.listComponents(organizationId, current.id)).length;
-        if (componentCount < 2) throw new BusinessRuleError("An assembly must contain at least two components");
-      }
-      if (components) {
-        const ids = components.map(({ itemId }) => itemId);
-        if (new Set(ids).size !== ids.length) throw new BusinessRuleError("An assembly component can only be added once");
-        if (ids.includes(current.id)) throw new BusinessRuleError("An item cannot contain itself");
-        const componentRows = await repo.getItemsByIds(organizationId, ids);
-        if (componentRows.length !== ids.length) throw new NotFoundError("One or more assembly components were not found");
-        if (componentRows.some(({ item_type }) => item_type === "ASSEMBLY")) throw new BusinessRuleError("Assemblies cannot contain other assemblies");
-      }
       const customFieldDefinitions = await repo.listCustomFields(organizationId, current.id);
       if (input.customFields) {
         const supplied = new Map(input.customFields.map((field) => [field.customFieldId, field.value]));
@@ -97,8 +84,9 @@ export async function patchItem(organizationId: number, sku: string, input: Item
       }
       const audit = await createUpdateAuditStamp();
       const changed = await repo.patch(organizationId, sku, withUpdateAudit({ name: input.name?.trim(), description: input.description?.trim(), item_category_id: input.categoryId,
-        unit: targetUnit, item_type: input.itemType, quantity_tracked: input.quantityTracked }, audit));
-      if (components) await repo.replaceComponents(organizationId, current.id, targetType === "ASSEMBLY" ? components : [], audit);
+        unit: targetUnit, quantity_tracked: input.quantityTracked,
+        dimension_unit: input.dimensionUnit, dimension_height: input.dimensionHeight, dimension_width: input.dimensionWidth, dimension_depth: input.dimensionDepth,
+        weight_unit: input.weightUnit, weight: input.weight }, audit));
       if (input.customFields) await repo.replaceCustomFieldValues(organizationId, current.id, input.customFields, customFieldDefinitions, audit);
       return toResponse(repo, (await repo.get(organizationId, changed.sku)) ?? changed);
     });

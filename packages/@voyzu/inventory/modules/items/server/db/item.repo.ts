@@ -2,8 +2,8 @@ import { DataError } from "@voyzu/capability/errors";
 import type { DbExecutor } from "@voyzu/capability/db";
 import type { ItemListRow, ItemStatus } from "../../types/item-list.types";
 import type { OperationalItemDto } from "../../types/operational-item.types";
-import type { ItemCategoryOptionDto, ItemComponentInputDto, ItemCustomFieldDto, ItemCustomFieldInputDto } from "../../types/item.types";
-import type { ItemComponentRow, ItemRow } from "./item.row.types";
+import type { ItemCategoryOptionDto, ItemCustomFieldDto, ItemCustomFieldInputDto } from "../../types/item.types";
+import type { ItemRow } from "./item.row.types";
 
 const SELECT_ITEM = `SELECT item.*, item_category.code AS category_code, item_category.name AS category_name,
   EXISTS (SELECT 1 FROM inventory_transaction_line line WHERE line.organization_id = item.organization_id AND line.item_id = item.id) AS in_use
@@ -14,6 +14,10 @@ const isoDate = (value: unknown) => new Date(String(value)).toISOString();
 function normalizeItem(row: Record<string, unknown>): ItemRow {
   return { ...row, id: Number(row.id), organization_id: Number(row.organization_id),
     item_category_id: row.item_category_id == null ? null : Number(row.item_category_id),
+    dimension_height: row.dimension_height == null ? null : Number(row.dimension_height),
+    dimension_width: row.dimension_width == null ? null : Number(row.dimension_width),
+    dimension_depth: row.dimension_depth == null ? null : Number(row.dimension_depth),
+    weight: row.weight == null ? null : Number(row.weight),
     in_use: Boolean(row.in_use),
     creation_date: isoDate(row.creation_date),
     updated_date: isoDate(row.updated_date) } as ItemRow;
@@ -25,7 +29,7 @@ export class ItemRepo {
   async list(organizationId: number): Promise<ItemListRow[]> {
     const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 ORDER BY item.sku`, [organizationId]);
     return rows.map((row: Record<string, unknown>) => ({ id: Number(row.id), sku: String(row.sku), name: String(row.name),
-      category: row.category_name === null ? null : String(row.category_name), itemType: row.item_type as ItemListRow["itemType"],
+      category: row.category_name === null ? null : String(row.category_name),
       unit: row.unit == null ? null : String(row.unit) as ItemListRow["unit"], quantityTracked: Boolean(row.quantity_tracked), status: row.status as ItemListRow["status"] }));
   }
 
@@ -82,7 +86,7 @@ export class ItemRepo {
   }
 
   async patch(organizationId: number, sku: string, row: Record<string, unknown>): Promise<ItemRow> {
-    const mutable = new Set(["name", "description", "item_category_id", "unit", "item_type", "quantity_tracked", "status", "updated_date", "updated_actor_type", "updated_user_id", "updated_mutation_id"]);
+    const mutable = new Set(["name", "description", "item_category_id", "unit", "dimension_unit", "dimension_height", "dimension_width", "dimension_depth", "weight_unit", "weight", "quantity_tracked", "status", "updated_date", "updated_actor_type", "updated_user_id", "updated_mutation_id"]);
     const entries = Object.entries(row).filter(([, value]) => value !== undefined); const values: unknown[] = [];
     const sets = entries.map(([column, value]) => { if (!mutable.has(column)) throw new DataError(`Unsupported mutable item column ${column}`); values.push(value);
       const cast = column === "updated_actor_type" ? "::actor_type" : column === "updated_date" ? "::timestamptz" : column === "updated_mutation_id" ? "::uuid" : "";
@@ -109,19 +113,6 @@ export class ItemRepo {
       "UPDATE item SET item_category_id = $3, updated_date = $4::timestamptz, updated_actor_type = $5::actor_type, updated_user_id = $6, updated_mutation_id = $7::uuid WHERE organization_id = $1 AND sku = ANY($2::text[])",
       [organizationId, skus, categoryId, audit.timestamp, audit.actorType, audit.userId, audit.mutationId],
     );
-  }
-
-  async listComponents(organizationId: number, itemId: number): Promise<ItemComponentRow[]> {
-    const { rows } = await this.db.query(`SELECT component.id AS component_item_id, component.sku, component.name, link.quantity, component.unit, component.item_type
-      FROM item_component link JOIN item component ON component.organization_id = link.organization_id AND component.id = link.component_item_id
-      WHERE link.organization_id = $1 AND link.item_id = $2 ORDER BY component.sku`, [organizationId, itemId]);
-    return rows.map((row: Record<string, unknown>) => ({ component_item_id: Number(row.component_item_id), sku: String(row.sku), name: String(row.name), quantity: Number(row.quantity), unit: row.unit == null ? null : String(row.unit) as ItemComponentRow["unit"], item_type: row.item_type as ItemComponentRow["item_type"] }));
-  }
-
-  async replaceComponents(organizationId: number, itemId: number, components: ItemComponentInputDto[], audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {
-    await this.db.query("DELETE FROM item_component WHERE organization_id = $1 AND item_id = $2", [organizationId, itemId]);
-    for (const component of components) await this.db.query(`INSERT INTO item_component (organization_id, item_id, component_item_id, quantity, creation_date, creation_actor_type, creation_user_id, creation_mutation_id, updated_date, updated_actor_type, updated_user_id, updated_mutation_id)
-      VALUES ($1, $2, $3, $4, $5::timestamptz, $6::actor_type, $7, $8::uuid, $5::timestamptz, $6::actor_type, $7, $8::uuid)`, [organizationId, itemId, component.itemId, component.quantity, audit.timestamp, audit.actorType, audit.userId, audit.mutationId]);
   }
 
   async listCustomFields(organizationId: number, itemId: number): Promise<ItemCustomFieldDto[]> {
@@ -164,10 +155,6 @@ export class ItemRepo {
           VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9::timestamptz, $10::actor_type, $11, $12::uuid, $9::timestamptz, $10::actor_type, $11, $12::uuid)`, [organizationId, field.customFieldId, itemId, columns.text_value, columns.number_value, columns.date_value, columns.boolean_value, columns.option_list_value_id, audit.timestamp, audit.actorType, audit.userId, audit.mutationId]);
       }
     }
-  }
-
-  async getItemsByIds(organizationId: number, ids: number[]): Promise<ItemRow[]> {
-    if (!ids.length) return []; const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 AND item.id = ANY($2::bigint[])`, [organizationId, ids]); return rows.map(normalizeItem);
   }
 
   async transition(organizationId: number, skus: string[], status: ItemStatus, audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {

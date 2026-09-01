@@ -6,14 +6,17 @@ import { Unit } from "../../core/types";
 const PositiveId = Type.Integer({ minimum: 1 });
 const ItemSku = Type.String({ pattern: "^[A-Z0-9][A-Z0-9_-]*$" });
 const NonBlankText = Type.String({ pattern: "\\S" });
+const OptionalMeasurement = Type.Optional(Type.Union([Type.Number({ exclusiveMinimum: 0 }), Type.Null()]));
 
-export const ItemTypeDto = Type.Union([Type.Literal("SINGLE_ITEM"), Type.Literal("ASSEMBLY")]);
+export const DimensionUnitDto = Type.Union([Type.Literal("mm"), Type.Literal("cm"), Type.Literal("m"), Type.Literal("in"), Type.Literal("ft")]);
+export type DimensionUnit = Static<typeof DimensionUnitDto>;
+export const DIMENSION_UNIT_VALUES: readonly DimensionUnit[] = ["mm", "cm", "m", "in", "ft"];
+export const WeightUnitDto = Type.Union([Type.Literal("mg"), Type.Literal("g"), Type.Literal("kg"), Type.Literal("oz"), Type.Literal("lb")]);
+export type WeightUnit = Static<typeof WeightUnitDto>;
+export const WEIGHT_UNIT_VALUES: readonly WeightUnit[] = ["mg", "g", "kg", "oz", "lb"];
+
 export const ItemCategoryOptionDto = StrictObject({ id: PositiveId, code: Type.String(), name: NonBlankText });
 export type ItemCategoryOptionDto = Static<typeof ItemCategoryOptionDto>;
-export const ItemComponentDto = StrictObject({ itemId: PositiveId, sku: ItemSku, name: NonBlankText, quantity: Type.Number({ exclusiveMinimum: 0 }), unit: Type.Union([Unit, Type.Null()]) });
-export type ItemComponentDto = Static<typeof ItemComponentDto>;
-export const ItemComponentInputDto = StrictObject({ itemId: PositiveId, quantity: Type.Integer({ minimum: 1 }) });
-export type ItemComponentInputDto = Static<typeof ItemComponentInputDto>;
 export const ItemCustomFieldValueDto = Type.Union([Type.String(), Type.Number(), Type.Boolean(), Type.Array(PositiveId), Type.Null()]);
 export const ItemCustomFieldDto = StrictObject({
   id: PositiveId, name: NonBlankText,
@@ -35,20 +38,25 @@ export const ItemPatchRequestDto = StrictObject({
   name: Type.Optional(NonBlankText), description: Type.Optional(Type.String()),
   categoryId: Type.Optional(Type.Union([PositiveId, Type.Null()])), unit: Type.Optional(Type.Union([Unit, Type.Null()])),
   quantityTracked: Type.Optional(Type.Boolean()),
-  itemType: Type.Optional(ItemTypeDto), components: Type.Optional(Type.Array(ItemComponentInputDto)),
+  dimensionUnit: Type.Optional(Type.Union([DimensionUnitDto, Type.Null()])),
+  dimensionHeight: OptionalMeasurement, dimensionWidth: OptionalMeasurement, dimensionDepth: OptionalMeasurement,
+  weightUnit: Type.Optional(Type.Union([WeightUnitDto, Type.Null()])), weight: OptionalMeasurement,
   customFields: Type.Optional(Type.Array(ItemCustomFieldInputDto)),
 });
 export type ItemPatchRequestDto = Static<typeof ItemPatchRequestDto>;
 export const ItemResponseDto = StrictObject({
   id: PositiveId, sku: ItemSku, name: NonBlankText, description: Type.String(),
   category: Type.Union([ItemCategoryOptionDto, Type.Null()]), unit: Type.Union([Unit, Type.Null()]),
-  itemType: ItemTypeDto, quantityTracked: Type.Boolean(),
-  status: Status, inUse: Type.Boolean(), components: Type.Array(ItemComponentDto), customFields: Type.Array(ItemCustomFieldDto), audit: AuditMetadataDto,
+  quantityTracked: Type.Boolean(),
+  dimensionUnit: Type.Union([DimensionUnitDto, Type.Null()]),
+  dimensionHeight: Type.Union([Type.Number(), Type.Null()]), dimensionWidth: Type.Union([Type.Number(), Type.Null()]), dimensionDepth: Type.Union([Type.Number(), Type.Null()]),
+  weightUnit: Type.Union([WeightUnitDto, Type.Null()]), weight: Type.Union([Type.Number(), Type.Null()]),
+  status: Status, inUse: Type.Boolean(), customFields: Type.Array(ItemCustomFieldDto), audit: AuditMetadataDto,
 });
 export type ItemResponseDto = Static<typeof ItemResponseDto>;
 export const ItemListRowDto = StrictObject({
   id: PositiveId, sku: ItemSku, name: NonBlankText, category: Type.Union([Type.String(), Type.Null()]),
-  itemType: ItemTypeDto, unit: Type.Union([Unit, Type.Null()]), quantityTracked: Type.Boolean(),
+  unit: Type.Union([Unit, Type.Null()]), quantityTracked: Type.Boolean(),
   status: Status,
 });
 export type ItemListRowDto = Static<typeof ItemListRowDto>;

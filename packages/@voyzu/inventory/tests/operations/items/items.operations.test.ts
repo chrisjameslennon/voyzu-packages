@@ -102,7 +102,7 @@ test("item commands expose create, read, patch, and delete", async () => {
   assert.equal(await getInventoryItem(organizationId, created.sku), null);
 });
 
-test("item commands expose assembly, batch, and operational projections", async () => {
+test("item commands expose batch and operational projections", async () => {
   const organizationId = organization!.id;
   const component = await createInventoryItem(organizationId, {
     sku: "TEST-COMPONENT",
@@ -111,28 +111,20 @@ test("item commands expose assembly, batch, and operational projections", async 
     categoryId,
     quantityTracked: true,
   });
-  const assembly = await createInventoryItem(organizationId, {
-    sku: "TEST-ASSEMBLY",
-    name: "Test assembly",
+  const second = await createInventoryItem(organizationId, {
+    sku: "TEST-SECOND",
+    name: "Second test item",
     unit: "each",
     categoryId,
     quantityTracked: true,
   });
-  const changed = await patchInventoryItem(organizationId, assembly.sku, {
-    itemType: "ASSEMBLY",
-    components: [{ itemId: component.id, quantity: 2 }],
-  });
-  assert.equal(changed.itemType, "ASSEMBLY");
-  assert.equal(changed.components[0]?.itemId, component.id);
-  assert.equal(changed.components[0]?.quantity, 2);
-
-  assert.equal((await getOperationalInventoryItems(organizationId, [component.sku, assembly.sku])).length, 2);
+  assert.equal((await getOperationalInventoryItems(organizationId, [component.sku, second.sku])).length, 2);
 
   assert.ok(
     (
       await deactivateInventoryItems(organizationId, [
         component.sku,
-        assembly.sku,
+        second.sku,
       ])
     ).every(({ status }) => status === "INACTIVE"),
   );
@@ -140,12 +132,12 @@ test("item commands expose assembly, batch, and operational projections", async 
     (
       await activateInventoryItems(organizationId, [
         component.sku,
-        assembly.sku,
+        second.sku,
       ])
     ).every(({ status }) => status === "ACTIVE"),
   );
 
-  await deleteInventoryItem(organizationId, assembly.sku);
+  await deleteInventoryItem(organizationId, second.sku);
   await deleteInventoryItems(organizationId, [component.sku]);
   assert.equal(
     (await listInventoryItems(organizationId)).filter(({ sku }) =>
@@ -155,7 +147,7 @@ test("item commands expose assembly, batch, and operational projections", async 
   );
 });
 
-test("item commands enforce quantity and assembly rules", async () => {
+test("item commands enforce quantity rules", async () => {
   const organizationId = organization!.id;
   await assert.rejects(
     createInventoryItem(organizationId, {
@@ -166,19 +158,5 @@ test("item commands enforce quantity and assembly rules", async () => {
       quantityTracked: true,
     }),
     /unit is required/i,
-  );
-
-  const item = await createInventoryItem(organizationId, {
-    sku: "TEST-SINGLE",
-    name: "Single item",
-    unit: "each",
-    categoryId,
-    quantityTracked: true,
-  });
-  await assert.rejects(
-    patchInventoryItem(organizationId, item.sku, {
-      components: [{ itemId: item.id, quantity: 1 }],
-    }),
-    /single item cannot have assembly components/i,
   );
 });

@@ -206,8 +206,6 @@ async function seedOrganization(organization: Organization): Promise<void> {
         categoryId,
         unit: item.unit,
         quantityTracked: true,
-        itemType: "SINGLE_ITEM",
-        components: [],
       });
       itemIds.set(item.sku, changed.id);
       continue;
@@ -221,15 +219,6 @@ async function seedOrganization(organization: Organization): Promise<void> {
     });
     itemIds.set(item.sku, created.id);
   }
-
-  await patchInventoryItem(organization.id, "SAMPLE-GIFT-SET", {
-    itemType: "ASSEMBLY",
-    components: [
-      { itemId: itemIds.get("SAMPLE-BEANS")!, quantity: 1 },
-      { itemId: itemIds.get("SAMPLE-MUG")!, quantity: 1 },
-      { itemId: itemIds.get("SAMPLE-BOX")!, quantity: 1 },
-    ],
-  });
 
   const positions = await listInventoryStock(organization.id);
   const current = new Map(
