@@ -24,6 +24,7 @@ const STOCK_ACTIVITY_REPORT_KEYS: InventoryReportKey[] = [
   "stock-receipts",
   "stock-transfers",
   "quantity-adjustments",
+  "financial-activity",
 ];
 
 const toIso = (date: Date) =>

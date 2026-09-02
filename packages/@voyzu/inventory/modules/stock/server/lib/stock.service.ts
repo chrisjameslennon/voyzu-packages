@@ -20,16 +20,17 @@ import { StockRepo } from "../db/stock.repo";
 import { ConfigurationRepo } from "../../../configuration/server/db/configuration.repo";
 import {
   Adjust,
-  MoveAvailableStock,
-  OtherReasonRequiresNotes,
+  CompleteStockCount,
+  CreateStockCount,
+  DeleteStockCount,
+  Issue,
+  Receive,
+  Reserve,
+  SaveStockCount,
   Transfer,
 } from "../../domain/operation-policy";
 
-function validateReasonNotes(
-  lines: Array<{ reasonCode: string | null | undefined }>,
-  notes: string | null | undefined,
-) {
-  const blockers = OtherReasonRequiresNotes(lines, notes);
+function enforce(blockers: Array<{ message: string }>) {
   if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
 }
 const enrichStockCountAudit = (record: StockCountDetail) =>
@@ -64,7 +65,7 @@ export const getStockCount = async (organizationId: number, id: number) => {
   const record = await new StockRepo(getDb()).count(organizationId, id);
   return record ? enrichStockCountAudit(record) : null;
 };
-async function validateAvailable(
+async function availabilityRequirements(
   repo: StockRepo,
   organizationId: number,
   requirements: Array<{
@@ -72,30 +73,22 @@ async function validateAvailable(
     warehouseId: number;
     quantity: number;
   }>,
-) {
+): Promise<Array<{ available: number; requested: number }>> {
   const positions = await repo.positions(organizationId);
-  const blockers = MoveAvailableStock(
-    requirements.map((requirement) => {
-      const position = positions.find(
-        (p) =>
-          p.itemId === requirement.itemId &&
-          p.warehouseId === requirement.warehouseId,
-      );
-      return {
-        available: position?.available ?? 0,
-        requested: requirement.quantity,
-      };
-    }),
-  );
-  if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
+  return requirements.map((requirement) => {
+    const position = positions.find(
+      (p) => p.itemId === requirement.itemId && p.warehouseId === requirement.warehouseId,
+    );
+    return { available: position?.available ?? 0, requested: requirement.quantity };
+  });
 }
 export async function receiveStock(
   organizationId: number,
   input: ReceiptRequest,
 ) {
   return withTransaction(async (db) => {
-    validateReasonNotes(input.lines, input.notes);
-    await validateMovementCustomFields(db, organizationId, "RECEIPT", input);
+    const missingCustomFields = await missingMovementCustomFields(db, organizationId, "RECEIPT", input);
+    enforce(Receive(input.lines, input.notes, missingCustomFields));
     return new StockRepo(db).movement(
       organizationId,
       "RECEIPT",
@@ -109,18 +102,14 @@ export async function issueStock(
   input: IssueRequest,
 ) {
   return withTransaction(async (db) => {
-    validateReasonNotes(input.lines, input.notes);
     const repo = new StockRepo(db);
-    await validateMovementCustomFields(db, organizationId, "ISSUE", input);
-    await validateAvailable(
-      repo,
-      organizationId,
-      input.lines.map((line) => ({
+    const missingCustomFields = await missingMovementCustomFields(db, organizationId, "ISSUE", input);
+    const availability = await availabilityRequirements(repo, organizationId, input.lines.map((line) => ({
         itemId: line.itemId,
         warehouseId: input.warehouseId,
         quantity: line.quantity,
-      })),
-    );
+      })));
+    enforce(Issue(availability, input.lines, input.notes, missingCustomFields));
     return repo.movement(
       organizationId,
       "ISSUE",
@@ -130,12 +119,12 @@ export async function issueStock(
   });
 }
 
-async function validateMovementCustomFields(
+async function missingMovementCustomFields(
   db: DbExecutor,
   organizationId: number,
   appliesTo: "RECEIPT" | "ISSUE",
   input: ReceiptRequest | IssueRequest,
-) {
+): Promise<string[]> {
   const repo = new ConfigurationRepo(db);
   const rows = await repo.list(organizationId, "custom-field");
   const definitions = (
@@ -160,26 +149,22 @@ async function validateMovementCustomFields(
       (Array.isArray(value) && value.length === 0)
     );
   });
-  if (missing.length)
-    throw new BusinessRuleError(
-      `Complete required custom fields: ${missing.map((field) => field!.name).join(", ")}`,
-    );
+  return missing.map((field) => field!.name);
 }
 export async function transferStock(
   organizationId: number,
   input: TransferRequest,
 ) {
-  const blockers = Transfer(input.fromWarehouseId, input.toWarehouseId);
-  if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
   return withTransaction(async (db) => {
     const repo = new StockRepo(db);
-    await validateAvailable(repo, organizationId, [
+    const availability = await availabilityRequirements(repo, organizationId, [
       {
         itemId: input.itemId,
         warehouseId: input.fromWarehouseId,
         quantity: input.quantity,
       },
     ]);
+    enforce(Transfer(input.fromWarehouseId, input.toWarehouseId, availability));
     return repo.transfer(
       organizationId,
       input,
@@ -192,9 +177,8 @@ export async function reserveStock(
   input: ReservationRequest,
 ) {
   return withTransaction(async (db) => {
-    validateReasonNotes(input.lines, input.notes);
     const repo = new StockRepo(db);
-    await validateAvailable(
+    const availability = await availabilityRequirements(
       repo,
       organizationId,
       input.lines.map((line) => ({
@@ -203,6 +187,7 @@ export async function reserveStock(
         quantity: line.quantity,
       })),
     );
+    enforce(Reserve(availability, input.lines, input.notes));
     await repo.reserve(
       organizationId,
       input,
@@ -214,9 +199,7 @@ export async function adjustStock(
   organizationId: number,
   input: AdjustmentRequest,
 ) {
-  const blockers = Adjust(input.lines);
-  if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
-  validateReasonNotes(input.lines, input.notes);
+  enforce(Adjust(input.lines, input.notes));
   return withTransaction(async (db) =>
     new StockRepo(db).adjust(
       organizationId,
@@ -230,7 +213,7 @@ export async function createStockCount(
   input: StockCountRequest,
 ) {
   return withTransaction(async (db) => {
-    validateReasonNotes(input.lines, input.notes);
+    enforce(CreateStockCount(input.lines, input.notes));
     const repo = new StockRepo(db);
     const id = await repo.createCount(
       organizationId,
@@ -247,12 +230,10 @@ export async function saveStockCount(
   status: "DRAFT" | "IN_PROGRESS",
 ) {
   return withTransaction(async (db) => {
-    validateReasonNotes(input.lines, input.notes);
     const repo = new StockRepo(db);
     const current = await repo.count(organizationId, id);
     if (!current) throw new NotFoundError("Stocktake was not found");
-    if (current.status === "COMPLETED")
-      throw new BusinessRuleError("A completed stocktake cannot be changed");
+    enforce(SaveStockCount(current.status, input.lines, input.notes));
     await repo.saveCount(
       organizationId,
       id,
@@ -268,9 +249,7 @@ export async function completeStockCount(organizationId: number, id: number) {
     const repo = new StockRepo(db);
     const current = await repo.count(organizationId, id);
     if (!current) throw new NotFoundError("Stocktake was not found");
-    if (current.status === "COMPLETED")
-      throw new BusinessRuleError("This stocktake is already complete");
-    validateReasonNotes(current.lines, current.notes);
+    enforce(CompleteStockCount(current.status, current.lines, current.notes));
     await repo.completeCount(
       organizationId,
       id,
@@ -284,8 +263,7 @@ export async function deleteStockCount(organizationId: number, id: number) {
     const repo = new StockRepo(db);
     const current = await repo.count(organizationId, id);
     if (!current) throw new NotFoundError("Stocktake was not found");
-    if (current.status === "COMPLETED")
-      throw new BusinessRuleError("A completed stocktake cannot be deleted");
+    enforce(DeleteStockCount(current.status));
     await repo.deleteCount(
       organizationId,
       id,

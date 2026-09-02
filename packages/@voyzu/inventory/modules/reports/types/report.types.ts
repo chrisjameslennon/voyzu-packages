@@ -12,6 +12,7 @@ export const InventoryReportKeyDto = Type.Union([
   Type.Literal("stock-transfers"),
   Type.Literal("stocktake-variance"),
   Type.Literal("quantity-adjustments"),
+  Type.Literal("financial-activity"),
 ]);
 export type InventoryReportKey = Static<typeof InventoryReportKeyDto>;
 export const InventoryReportDto = StrictObject({

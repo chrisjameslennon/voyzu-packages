@@ -29,7 +29,7 @@ import type {
   StockPosition,
 } from "../types/stock.types";
 import { STOCK_ADJUSTMENT_REASONS } from "../../core/types";
-import { OtherReasonRequiresNotes } from "../domain/operation-policy";
+import { CompleteStockCount, CreateStockCount, SaveStockCount } from "../domain/operation-policy";
 import styles from "./stock.module.css";
 type Row = {
   id: number;
@@ -202,7 +202,9 @@ export function StockCountEditor({
       setError("Select a reason for every stock count line");
       return;
     }
-    const reasonBlockers = OtherReasonRequiresNotes(rows, notes);
+    const reasonBlockers = record
+      ? SaveStockCount(record.status, rows, notes)
+      : CreateStockCount(rows, notes);
     if (reasonBlockers.length) {
       setError(reasonBlockers[0]!.message);
       return;
@@ -267,7 +269,7 @@ export function StockCountEditor({
       setError("Select a reason for every stock count line");
       return;
     }
-    const reasonBlockers = OtherReasonRequiresNotes(rows, notes);
+    const reasonBlockers = CompleteStockCount(record?.status ?? "IN_PROGRESS", rows, notes);
     if (reasonBlockers.length) {
       setError(reasonBlockers[0]!.message);
       return;

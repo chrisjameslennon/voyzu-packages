@@ -34,6 +34,7 @@ import type {
 import { InventoryListActions } from "../../../client/InventoryListActions";
 import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
 import styles from "./configuration.module.css";
+import { Deactivate, DeleteWarehouse } from "../domain/operation-policy";
 type Meta = {
   title: string;
   singular: string;
@@ -152,6 +153,11 @@ export function ConfigurationListView({
           { key: "description", label: "Description" },
           { key: "count", label: "Items", align: "right" as const },
         ]
+        : kind === "warehouse"
+          ? [
+            { key: "secondary", label: "Location" },
+            { key: "unitsOnHand", label: "Units on hand", align: "right" as const },
+          ]
         : kind === "custom-field"
           ? [
             { key: "dataType", label: "Type", render: (row: ConfigurationRow) => dataTypeLabel(row.dataType) },
@@ -160,7 +166,7 @@ export function ConfigurationListView({
           ]
         : kind === "option-list"
           ? [{ key: "count", label: "Options", align: "right" as const }]
-          : [{ key: "secondary", label: "Location" }]),
+          : []),
     {
       key: "status",
       label: "Status",
@@ -185,6 +191,11 @@ export function ConfigurationListView({
           { key: "description", label: "Description" },
           { key: "count", label: "Items" },
         ]
+      : kind === "warehouse"
+        ? [
+            { key: "secondary", label: "Location" },
+            { key: "unitsOnHand", label: "Units on hand" },
+          ]
       : kind === "custom-field"
         ? [
             { key: "dataType", label: "Type" },
@@ -193,7 +204,7 @@ export function ConfigurationListView({
           ]
         : kind === "option-list"
           ? [{ key: "count", label: "Options" }]
-          : [{ key: "secondary", label: "Location" }]),
+          : []),
     { key: "status", label: "Status" },
   ];
   const reset = () => {
@@ -242,6 +253,16 @@ export function ConfigurationListView({
     }
   };
   const transition = async (status: "ACTIVE" | "INACTIVE" | "DELETED") => {
+    if (status === "INACTIVE") {
+      const blockers = Deactivate(kind, selectedRows.map((row) => ({
+        name: row.name,
+        inUse: row.count > 0,
+      })));
+      if (blockers.length) {
+        setError(blockers[0]!.message);
+        return;
+      }
+    }
     const ids = [...selected];
     const response = await fetch(
       `/api/inventory/configuration/${kind}/transition`,
@@ -272,13 +293,18 @@ export function ConfigurationListView({
   const selectedRows = rows.filter((row) => selected.has(row.id));
   const requestDelete = () => {
     setError("");
-    const usedCategories = kind === "category"
-      ? selectedRows.filter(({ count }) => count > 0)
+    const categoryBlockers = kind === "category"
+      ? Deactivate(kind, selectedRows.map((row) => ({ name: row.name, inUse: row.count > 0 })))
       : [];
-    if (usedCategories.length) {
-      setError(
-        `Item categories containing items cannot be deleted. This applies whether the items are active or inactive. [${usedCategories.map(({ name }) => name).join(", ")}]`,
-      );
+    if (categoryBlockers.length) {
+      setError(categoryBlockers[0]!.message);
+      return;
+    }
+    const warehouseBlockers = kind === "warehouse"
+      ? DeleteWarehouse(selectedRows)
+      : [];
+    if (warehouseBlockers.length) {
+      setError(warehouseBlockers[0]!.message);
       return;
     }
     setConfirm(true);

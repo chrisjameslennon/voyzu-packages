@@ -72,11 +72,45 @@ export class ConfigurationRepo {
             ? "count(v.id)"
             : "0";
     const shared = kind === "option-list" ? "AND source.is_shared = true" : "";
+    const unitsOnHand = kind === "warehouse"
+      ? "COALESCE((SELECT sum(line.quantity_change)::float8 FROM inventory_transaction_line line WHERE line.organization_id=source.organization_id AND line.warehouse_id=source.id),0)::float8"
+      : "0::float8";
+    const hasUnitsOnHand = kind === "warehouse"
+      ? "EXISTS(SELECT 1 FROM inventory_transaction_line line WHERE line.organization_id=source.organization_id AND line.warehouse_id=source.id GROUP BY line.item_id HAVING sum(line.quantity_change)>0)"
+      : "false";
     const { rows } = await this.db.query(
-      `SELECT source.id::int, ${kind === "category" || kind === "warehouse" ? "source.code" : "NULL::text AS code"}, source.name, ${description} AS description, ${secondary} AS secondary, ${dataType} AS "dataType", ${appliesTo} AS "appliesTo", ${count}::int AS count, source.status FROM ${table} source ${joins} WHERE source.organization_id = $1 ${shared} GROUP BY source.id ORDER BY source.name`,
+      `SELECT source.id::int, ${kind === "category" || kind === "warehouse" ? "source.code" : "NULL::text AS code"}, source.name, ${description} AS description, ${secondary} AS secondary, ${dataType} AS "dataType", ${appliesTo} AS "appliesTo", ${count}::int AS count, ${unitsOnHand} AS "unitsOnHand", ${hasUnitsOnHand} AS "hasUnitsOnHand", source.status FROM ${table} source ${joins} WHERE source.organization_id = $1 ${shared} GROUP BY source.id ORDER BY source.name`,
       [organizationId],
     );
     return rows as ConfigurationRow[];
+  }
+  async stockedWarehouses(
+    organizationId: number,
+    ids: number[],
+  ): Promise<Array<{ id: number; name: string; unitsOnHand: number }>> {
+    if (!ids.length) return [];
+    const { rows } = await this.db.query(
+      `WITH stocked_position AS (
+         SELECT organization_id,warehouse_id,item_id,sum(quantity_change)::float8 units_on_hand
+         FROM inventory_transaction_line
+         GROUP BY organization_id,warehouse_id,item_id
+         HAVING sum(quantity_change)>0
+       )
+       SELECT warehouse.id::int,warehouse.name,sum(position.units_on_hand)::float8 units_on_hand
+       FROM warehouse
+       JOIN stocked_position position
+         ON position.organization_id=warehouse.organization_id
+        AND position.warehouse_id=warehouse.id
+       WHERE warehouse.organization_id=$1 AND warehouse.id=ANY($2::bigint[])
+       GROUP BY warehouse.id,warehouse.name
+       ORDER BY warehouse.name`,
+      [organizationId, ids],
+    );
+    return (rows as Record<string, unknown>[]).map((row) => ({
+      id: Number(row.id),
+      name: String(row.name),
+      unitsOnHand: Number(row.units_on_hand),
+    }));
   }
   async get(
     organizationId: number,

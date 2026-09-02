@@ -10,7 +10,8 @@ type PageName =
   | "StockReceiptsReportPage"
   | "StockTransfersReportPage"
   | "StocktakeVarianceReportPage"
-  | "QuantityAdjustmentsReportPage";
+  | "QuantityAdjustmentsReportPage"
+  | "FinancialActivityReportPage";
 const load = (name: PageName) => () =>
   import("./server/pages/InventoryReportPages").then((m) => m[name]);
 const report = (
@@ -172,5 +173,18 @@ export const pageRoutes = {
     "quantity-adjustments",
     "Quantity Adjustments",
     "QuantityAdjustmentsReportPage",
+  ),
+  financialActivity: report(
+    "financial-activity",
+    "financial-activity",
+    "Financial Activity",
+    "FinancialActivityReportPage",
+    "Stock",
+  ),
+  financialActivityPrintable: printable(
+    "financial-activity",
+    "financial-activity",
+    "Financial Activity",
+    "FinancialActivityReportPage",
   ),
 } as const;

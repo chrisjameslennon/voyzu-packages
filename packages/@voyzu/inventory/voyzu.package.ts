@@ -3,6 +3,7 @@ import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 import { install } from "./install/manifest";
 import { coreModule } from "./modules/core/module";
 import { configurationModule } from "./modules/configuration/module";
+import { financialActivityModule } from "./modules/financial-activity/module";
 import { itemsModule } from "./modules/items/module";
 import { reportsModule } from "./modules/reports/module";
 import { sampleData } from "./scripts/sample-data";
@@ -16,6 +17,7 @@ export const inventoryPackage = {
     itemsModule,
     configurationModule,
     stockModule,
+    financialActivityModule,
     reportsModule,
   ],
   install,

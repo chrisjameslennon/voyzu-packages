@@ -39,6 +39,7 @@ import type { Unit } from "../../core/types";
 import { InventoryListActions } from "../../../client/InventoryListActions";
 import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
 import styles from "./items.module.css";
+import { Create as CreatePolicy, Delete } from "../domain/operation-policy";
 
 const SKU_PATTERN = /^[A-Z0-9][A-Z0-9_-]*$/;
 const UNIT_OPTIONS = UNIT_VALUES.map((unit) => ({ value: unit, label: unit }));
@@ -287,6 +288,16 @@ export function ItemsList({
         unit: quantityTracked && unit ? unit : null,
         quantityTracked,
       };
+      const blockers = CreatePolicy({
+        hasManualSku: Boolean(payload.sku),
+        hasReservedSku: Boolean(payload.reservedId),
+        quantityTracked: payload.quantityTracked,
+        unit: payload.unit,
+      });
+      if (blockers.length) {
+        setServerError(blockers[0]!.message);
+        return;
+      }
       const response = await fetch("/api/inventory/items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -364,10 +375,11 @@ export function ItemsList({
       return;
     }
     const impacts = (await response.json()) as ItemDeletionImpactDto[];
-    if (impacts.length) {
-      setServerError(
-        "The stock must be issued or written off before the item can be deleted",
-      );
+    const blockers = Delete(selected.map(({ sku }) => ({
+      hasUnitsOnHand: impacts.some((impact) => impact.sku === sku),
+    })));
+    if (blockers.length) {
+      setServerError(blockers[0]!.message);
       return;
     }
     setShowDelete(true);

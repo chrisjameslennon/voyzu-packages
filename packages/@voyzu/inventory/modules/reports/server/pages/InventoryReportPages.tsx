@@ -75,3 +75,4 @@ export const StockReceiptsReportPage = (p?: ReportPageProps) => page("stock-rece
 export const StockTransfersReportPage = (p?: ReportPageProps) => page("stock-transfers", p);
 export const StocktakeVarianceReportPage = (p?: ReportPageProps) => page("stocktake-variance", p);
 export const QuantityAdjustmentsReportPage = (p?: ReportPageProps) => page("quantity-adjustments", p);
+export const FinancialActivityReportPage = (p?: ReportPageProps) => page("financial-activity", p);

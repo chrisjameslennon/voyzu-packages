@@ -37,6 +37,7 @@ import {
 import { UNIT_VALUES } from "../../core/types";
 import type { Unit } from "../../core/types";
 import styles from "./items.module.css";
+import { Delete, Update } from "../domain/operation-policy";
 
 const UNIT_OPTIONS = UNIT_VALUES.map((unit) => ({ value: unit, label: unit }));
 const DIMENSION_UNIT_OPTIONS = DIMENSION_UNIT_VALUES.map((unit) => ({
@@ -133,10 +134,13 @@ export function ItemDetail({
         field.status === "ACTIVE" &&
         isEmptyCustomValue(customValues[field.id]),
     );
-    if (missingCustomFields.length) {
-      setError(
-        `Complete required custom field${missingCustomFields.length === 1 ? "" : "s"}: ${missingCustomFields.map(({ name: fieldName }) => fieldName).join(", ")}`,
-      );
+    const blockers = Update({
+      quantityTracked,
+      unit: quantityTracked && unit ? unit : null,
+      missingRequiredCustomFields: missingCustomFields.map(({ name: fieldName }) => fieldName),
+    });
+    if (blockers.length) {
+      setError(blockers[0]!.message);
       return;
     }
     setSaving(true);
@@ -206,8 +210,9 @@ export function ItemDetail({
     );
     if (!response) return;
     const impacts = (await response.json()) as ItemDeletionImpactDto[];
-    if (impacts.length) {
-      setError("The stock must be issued or written off before the item can be deleted");
+    const blockers = Delete([{ hasUnitsOnHand: impacts.length > 0 }]);
+    if (blockers.length) {
+      setError(blockers[0]!.message);
       return;
     }
     setShowDelete(true);

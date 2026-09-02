@@ -6,6 +6,11 @@ import type { OperationalItemDto } from "../../types/operational-item.types";
 import type { ItemCategoryOptionDto, ItemCreateRequestDto, ItemDeletionImpactDto, ItemPatchRequestDto, ItemResponseDto } from "../../types/item.types";
 import { ItemRepo } from "../db/item.repo";
 import type { ItemRow } from "../db/item.row.types";
+import { Activate, ChangeCategory, Create, Deactivate, Delete, ReserveSku, Update } from "../../domain/operation-policy";
+
+const enforce = (blockers: Array<{ message: string }>) => {
+  if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
+};
 
 const normalizeSku = (sku: string) => sku.trim().toUpperCase();
 const normalizeSkus = (skus: string[]) => [...new Set(skus.map(normalizeSku).filter(Boolean))];
@@ -43,14 +48,16 @@ async function requireItems(repo: ItemRepo, organizationId: number, skus: string
 
 export async function listItems(organizationId: number): Promise<ItemListRow[]> { return new ItemRepo(getDb()).list(organizationId); }
 export async function listItemCategories(organizationId: number): Promise<ItemCategoryOptionDto[]> { return new ItemRepo(getDb()).listCategories(organizationId); }
-export async function reserveItemSku(): Promise<{ id: number; sku: string }> { return new ItemRepo(getDb()).reserveAutoSku(); }
+export async function reserveItemSku(): Promise<{ id: number; sku: string }> {
+  enforce(ReserveSku());
+  return new ItemRepo(getDb()).reserveAutoSku();
+}
 export async function getItem(organizationId: number, sku: string): Promise<ItemResponseDto | null> { const repo = new ItemRepo(getDb()); const row = await repo.get(organizationId, normalizeSku(sku)); return row ? toResponse(repo, row) : null; }
 
 export async function createItem(organizationId: number, input: ItemCreateRequestDto): Promise<ItemResponseDto> {
   try {
     return await withTransaction(async (db) => {
-      if (input.sku && input.reservedId) throw new BusinessRuleError("Use either a manual SKU or a reserved automatic SKU");
-      if (input.quantityTracked && input.unit === null) throw new BusinessRuleError("Unit is required when quantity tracking is enabled");
+      enforce(Create({ hasManualSku: Boolean(input.sku), hasReservedSku: Boolean(input.reservedId), quantityTracked: input.quantityTracked, unit: input.unit }));
       const repo = new ItemRepo(db); const values = withCreationAudit({ name: input.name.trim(), description: "", item_category_id: input.categoryId,
         unit: input.quantityTracked ? input.unit : null, quantity_tracked: input.quantityTracked,
         status: "ACTIVE" }, await createCreationAuditStamp());
@@ -71,8 +78,8 @@ export async function patchItem(organizationId: number, sku: string, input: Item
       if (!current) throw new NotFoundError(`Item ${sku} was not found`);
       const targetQuantityTracked = input.quantityTracked ?? current.quantity_tracked;
       const targetUnit = targetQuantityTracked ? (input.unit === undefined ? current.unit : input.unit) : null;
-      if (targetQuantityTracked && targetUnit === null) throw new BusinessRuleError("Unit is required when quantity tracking is enabled");
       const customFieldDefinitions = await repo.listCustomFields(organizationId, current.id);
+      let missingRequiredCustomFields: string[] = [];
       if (input.customFields) {
         const supplied = new Map(input.customFields.map((field) => [field.customFieldId, field.value]));
         const missingRequired = customFieldDefinitions.filter((field) => {
@@ -80,8 +87,9 @@ export async function patchItem(organizationId: number, sku: string, input: Item
           const value = supplied.has(field.id) ? supplied.get(field.id) : field.value;
           return value === null || value === "" || (Array.isArray(value) && value.length === 0);
         });
-        if (missingRequired.length) throw new BusinessRuleError(`Complete required custom field${missingRequired.length === 1 ? "" : "s"}: ${missingRequired.map(({ name }) => name).join(", ")}`);
+        missingRequiredCustomFields = missingRequired.map(({ name }) => name);
       }
+      enforce(Update({ quantityTracked: targetQuantityTracked, unit: targetUnit, missingRequiredCustomFields }));
       const audit = await createUpdateAuditStamp();
       const changed = await repo.patch(organizationId, sku, withUpdateAudit({ name: input.name?.trim(), description: input.description?.trim(), item_category_id: input.categoryId,
         unit: targetUnit, quantity_tracked: input.quantityTracked,
@@ -95,6 +103,7 @@ export async function patchItem(organizationId: number, sku: string, input: Item
 
 async function transitionItems(organizationId: number, skus: string[], status: ItemStatus): Promise<ItemResponseDto[]> {
   return withTransaction(async (db) => { const repo = new ItemRepo(db); const normalized = normalizeSkus(skus); await requireItems(repo, organizationId, normalized);
+    enforce(status === "ACTIVE" ? Activate() : Deactivate());
     await repo.transition(organizationId, normalized, status, await createUpdateAuditStamp());
     return Promise.all((await requireItems(repo, organizationId, normalized)).map((row) => toResponse(repo, row))); });
 }
@@ -107,7 +116,7 @@ export async function changeItemsCategory(organizationId: number, skus: string[]
   return withTransaction(async (db) => {
     const repo = new ItemRepo(db); const normalized = normalizeSkus(skus);
     await requireItems(repo, organizationId, normalized);
-    if (!await repo.categoryExists(organizationId, categoryId)) throw new BusinessRuleError("Select an active item category");
+    enforce(ChangeCategory({ proposedCategoryAvailable: await repo.categoryExists(organizationId, categoryId) }));
     await repo.changeCategory(organizationId, normalized, categoryId, await createUpdateAuditStamp());
     return Promise.all((await requireItems(repo, organizationId, normalized)).map((row) => toResponse(repo, row)));
   });
@@ -116,7 +125,9 @@ export async function changeItemsCategory(organizationId: number, skus: string[]
 export async function deleteItems(organizationId: number, skus: string[]): Promise<void> {
   await withTransaction(async (db) => { const repo = new ItemRepo(db); const normalized = normalizeSkus(skus); await requireItems(repo, organizationId, normalized);
     const stocked = await repo.deletionImpact(organizationId, normalized);
-    if (stocked.length) throw new BusinessRuleError("The stock must be issued or written off before the item can be deleted");
+    enforce(Delete(normalized.map((sku) => ({
+      hasUnitsOnHand: stocked.some((item) => item.sku === sku),
+    }))));
     await repo.delete(organizationId, normalized, await createUpdateAuditStamp()); });
 }
 export async function deleteItem(organizationId: number, sku: string) { return deleteItems(organizationId, [sku]); }

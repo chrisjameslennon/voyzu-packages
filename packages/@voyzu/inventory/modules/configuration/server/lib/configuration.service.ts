@@ -16,7 +16,20 @@ import type {
   ConfigurationDetail,
 } from "../../types/configuration.types";
 import { ConfigurationRepo } from "../db/configuration.repo";
-import { Delete } from "../../domain/operation-policy";
+import {
+  Activate,
+  AddOptionValue,
+  Create,
+  Deactivate,
+  Delete,
+  DeleteOptionValue,
+  DeleteWarehouse,
+  Update,
+  UpdateOptionValue,
+} from "../../domain/operation-policy";
+const enforce = (blockers: Array<{ message: string }>) => {
+  if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
+};
 const enrichAuditActors = (record: ConfigurationDetail) =>
   withAuditActors(record, {
     creation_user_id: record.audit.created.userId,
@@ -44,10 +57,7 @@ export async function createConfiguration(
   input: ConfigurationCreate,
 ) {
   return withTransaction(async (db) => {
-    if ((kind === "category" || kind === "warehouse") && !input.code)
-      throw new BusinessRuleError("Code is required");
-    if (kind === "custom-field" && (!input.dataType || !input.appliesTo))
-      throw new BusinessRuleError("Data type and Applies To are required");
+    enforce(Create({ kind, hasCode: Boolean(input.code), hasDataType: Boolean(input.dataType), hasAppliesTo: Boolean(input.appliesTo) }));
     const repo = new ConfigurationRepo(db);
     let createInput = input;
     if (
@@ -82,6 +92,7 @@ export async function patchConfiguration(
     const repo = new ConfigurationRepo(db);
     const current = await repo.get(organizationId, kind, id);
     if (!current) throw new NotFoundError("Record was not found");
+    enforce(Update());
     let patchInput = input;
     if (
       kind === "custom-field" &&
@@ -123,23 +134,28 @@ export async function transitionConfiguration(
         ids.map((id) => repo.get(organizationId, kind, id)),
       )
       : [];
-    if (kind === "category" && status !== "ACTIVE") {
-      const usedCategories = records.filter(
-        (record): record is NonNullable<typeof record> => Boolean(record?.inUse),
+    const existingRecords = records.filter(
+      (record): record is NonNullable<typeof record> => record !== null,
+    );
+    if (status === "ACTIVE") enforce(Activate());
+    if (status === "INACTIVE") enforce(Deactivate(kind, existingRecords));
+    if (kind === "category" && status === "DELETED")
+      enforce(Deactivate(kind, existingRecords));
+    if (kind === "warehouse" && status === "DELETED") {
+      const stockedWarehouses = await repo.stockedWarehouses(
+        organizationId,
+        ids,
       );
-      if (usedCategories.length) {
-        throw new BusinessRuleError(
-          `Item categories containing items cannot be deleted or made inactive. This applies whether the items are active or inactive. [${usedCategories.map(({ name }) => name).join(", ")}]`,
-        );
-      }
+      const blockers = DeleteWarehouse(
+        stockedWarehouses.map(({ name }) => ({
+          name,
+          hasUnitsOnHand: true,
+        })),
+      );
+      enforce(blockers);
     }
     if (status === "DELETED") {
-      const blockers = Delete(
-        records.filter(
-          (record): record is NonNullable<typeof record> => record !== null,
-        ),
-      );
-      if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
+      enforce(Delete(existingRecords));
     }
     await repo.transition(
       organizationId,
@@ -166,6 +182,7 @@ export async function addOptionValue(
     const repo = new ConfigurationRepo(db);
     const list = await repo.get(organizationId, "option-list", listId);
     if (!list) throw new NotFoundError("Option list was not found");
+    enforce(AddOptionValue());
     await repo.addOption(
       organizationId,
       listId,
@@ -187,6 +204,7 @@ export async function patchOptionValue(
     const repo = new ConfigurationRepo(db);
     if (!(await repo.get(organizationId, "option-list", listId)))
       throw new NotFoundError("Option list was not found");
+    enforce(UpdateOptionValue());
     await repo.patchOption(
       organizationId,
       listId,
@@ -208,6 +226,7 @@ export async function deleteOptionValue(
     const repo = new ConfigurationRepo(db);
     if (!(await repo.get(organizationId, "option-list", listId)))
       throw new NotFoundError("Option list was not found");
+    enforce(DeleteOptionValue());
     await repo.deleteOption(
       organizationId,
       listId,

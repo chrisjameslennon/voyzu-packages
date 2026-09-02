@@ -26,6 +26,7 @@ import type {
 } from "../types/stock.types";
 import { InventoryListActions } from "../../../client/InventoryListActions";
 import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
+import { DeleteStockCount } from "../domain/operation-policy";
 const date = (value: string) => new Date(value).toLocaleDateString("en-NZ");
 function Shell({
   title,
@@ -649,6 +650,17 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
     setConfirm(false);
     setToast("Stocktake deleted");
   };
+  const requestDelete = () => {
+    setError("");
+    const blockers = rows
+      .filter(({ id }) => selected.has(id))
+      .flatMap(({ status }) => DeleteStockCount(status));
+    if (blockers.length) {
+      setError(blockers[0]!.message);
+      return;
+    }
+    setConfirm(true);
+  };
   const actions = (
     <Button
       variant="primary"
@@ -683,7 +695,7 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
               icon="delete"
               disabled={!selected.size}
               title="Delete selected"
-              onClick={() => setConfirm(true)}
+              onClick={requestDelete}
             />
             <InventoryListActions
               rows={rows}

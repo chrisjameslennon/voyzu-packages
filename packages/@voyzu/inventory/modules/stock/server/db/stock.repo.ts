@@ -15,6 +15,7 @@ import type {
   TransferRequest,
 } from "../../types/stock.types";
 import type { StockReasonCode } from "../../../core/types";
+import type { FinancialMovementType } from "../../../financial-activity/types/financial-activity.types";
 const isoDate = (value: unknown) => new Date(String(value)).toISOString();
 const audit = (row: Record<string, unknown>) => ({
   created: {
@@ -224,9 +225,9 @@ export class StockRepo {
         ...e.map(([, v]) => v),
       ],
     );
-    for (const line of lines)
-      await this.db.query(
-        `INSERT INTO inventory_transaction_line(organization_id,inventory_transaction_id,item_id,item_code,item_name,warehouse_id,quantity_change,reason_code,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,(SELECT sku FROM item WHERE organization_id=$1 AND id=$3),(SELECT name FROM item WHERE organization_id=$1 AND id=$3),$4,$5,$6,${e.map((_, i) => `$${i + 7}`).join(",")})`,
+    for (const line of lines) {
+      const insertedLine = await this.db.query(
+        `INSERT INTO inventory_transaction_line(organization_id,inventory_transaction_id,item_id,item_code,item_name,warehouse_id,quantity_change,reason_code,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,(SELECT sku FROM item WHERE organization_id=$1 AND id=$3),(SELECT name FROM item WHERE organization_id=$1 AND id=$3),$4,$5,$6,${e.map((_, i) => `$${i + 7}`).join(",")}) RETURNING id::int`,
         [
           organizationId,
           transactionId,
@@ -237,6 +238,22 @@ export class StockRepo {
           ...e.map(([, v]) => v),
         ],
       );
+      if (type !== "TRANSFER") {
+        if (!line.reasonCode)
+          throw new Error(`A reason code is required for ${type.toLowerCase()} lines`);
+        const movementType = type as FinancialMovementType;
+        await this.db.query(
+          `INSERT INTO inventory_financial_activity(organization_id,inventory_transaction_line_id,movement_type,reason_code,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,${e.map((_, i) => `$${i + 5}`).join(",")})`,
+          [
+            organizationId,
+            Number(insertedLine.rows[0].id),
+            movementType,
+            line.reasonCode,
+            ...e.map(([, v]) => v),
+          ],
+        );
+      }
+    }
     for (const field of customFields) {
       const definition = await this.db.query(
         "SELECT data_type FROM inv_custom_field WHERE organization_id=$1 AND id=$2 AND status='ACTIVE'",

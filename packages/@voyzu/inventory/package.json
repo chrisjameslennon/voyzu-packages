@@ -76,6 +76,22 @@
       "types": "./modules/stock/operations.ts",
       "import": "./modules/stock/operations.ts"
     },
+    "./financial-activity/pages.routes": {
+      "types": "./modules/financial-activity/pages.routes.ts",
+      "import": "./modules/financial-activity/pages.routes.ts"
+    },
+    "./financial-activity/api.routes": {
+      "types": "./modules/financial-activity/api.routes.ts",
+      "import": "./modules/financial-activity/api.routes.ts"
+    },
+    "./financial-activity/operations": {
+      "types": "./modules/financial-activity/operations.ts",
+      "import": "./modules/financial-activity/operations.ts"
+    },
+    "./financial-activity/types": {
+      "types": "./modules/financial-activity/types/financial-activity.types.ts",
+      "import": "./modules/financial-activity/types/financial-activity.types.ts"
+    },
     "./reports/pages.routes": {
       "types": "./modules/reports/pages.routes.ts",
       "import": "./modules/reports/pages.routes.ts"

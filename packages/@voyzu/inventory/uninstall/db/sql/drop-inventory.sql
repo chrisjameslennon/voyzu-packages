@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS stock_count_line;
 DROP TABLE IF EXISTS stock_count;
 DROP TABLE IF EXISTS inventory_reservation_line;
 DROP TABLE IF EXISTS inventory_reservation;
+DROP TABLE IF EXISTS inventory_financial_activity;
 DROP TABLE IF EXISTS inventory_transaction_line;
 DROP TABLE IF EXISTS inventory_transaction;
 DROP TABLE IF EXISTS item_component;

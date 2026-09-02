@@ -20,6 +20,8 @@ export const ConfigurationRowDto = StrictObject({
   dataType: Type.Union([Type.String(), Type.Null()]),
   appliesTo: Type.Union([Type.String(), Type.Null()]),
   count: Type.Integer({ minimum: 0 }),
+  unitsOnHand: Type.Number(),
+  hasUnitsOnHand: Type.Boolean(),
   status: Status,
 });
 export type ConfigurationRow = Static<typeof ConfigurationRowDto>;

@@ -1,5 +1,6 @@
 import { pageRoutes } from "../modules/items/pages.routes";
 import { pageRoutes as configurationRoutes } from "../modules/configuration/pages.routes";
+import { pageRoutes as financialActivityRoutes } from "../modules/financial-activity/pages.routes";
 import { pageRoutes as reportRoutes } from "../modules/reports/pages.routes";
 import { pageRoutes as stockRoutes } from "../modules/stock/pages.routes";
 
@@ -51,6 +52,16 @@ export const inventoryLeftNav = [
         label: "Custom Field Option Lists",
         icon: "list_alt",
         routeId: configurationRoutes.optionLists.id,
+      },
+    ],
+  },
+  {
+    label: "Integration",
+    items: [
+      {
+        label: "Financial Activity",
+        icon: "account_balance",
+        routeId: financialActivityRoutes.list.id,
       },
     ],
   },
@@ -116,6 +127,10 @@ export const inventoryLeftNav = [
           {
             label: "Stock Activity",
             routeId: reportRoutes.activity.id,
+          },
+          {
+            label: "Financial Activity",
+            routeId: reportRoutes.financialActivity.id,
           },
         ],
       },

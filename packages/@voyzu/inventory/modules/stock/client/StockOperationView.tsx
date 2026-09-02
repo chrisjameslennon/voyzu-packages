@@ -19,7 +19,7 @@ import layout from "@voyzu/ui-layout/css-modules/document-entry.layout.module.cs
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type { ConfigurationDetail } from "../../configuration/types/configuration.types";
-import { OtherReasonRequiresNotes, Transfer } from "../domain/operation-policy";
+import { Adjust, Issue, Receive, Reserve, Transfer } from "../domain/operation-policy";
 import {
   STOCK_ADJUSTMENT_REASONS,
   STOCK_ISSUE_REASONS,
@@ -440,7 +440,13 @@ export function StockOperationView({
           kind === "reserve" ? Number(line.quantity) > 0 : Boolean(line.itemId) && Number(line.quantity) > 0,
         );
     if (kind !== "transfer") {
-      const blockers = OtherReasonRequiresNotes(reasonLines, notes);
+      const blockers = kind === "receive"
+        ? Receive(reasonLines, notes)
+        : kind === "issue"
+          ? Issue([], reasonLines, notes)
+          : kind === "reserve"
+            ? Reserve([], reasonLines, notes)
+            : Adjust([{ quantityChange: Number(lines[0]?.quantity ?? 0), reasonCode }], notes);
       if (blockers.length) {
         setError(blockers[0]!.message);
         return false;

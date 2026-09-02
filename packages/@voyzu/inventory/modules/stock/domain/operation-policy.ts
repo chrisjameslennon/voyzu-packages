@@ -20,31 +20,25 @@ export function MoveAvailableStock(
 export function Transfer(
   fromWarehouseId: number,
   toWarehouseId: number,
+  requirements: Array<{ available: number; requested: number }> = [],
 ): OperationBlocker[] {
-  return fromWarehouseId === toWarehouseId
-    ? [
-        {
-          code: "SAME_WAREHOUSE",
-          message: "From and To warehouses must be different",
-        },
-      ]
-    : [];
+  const blockers: OperationBlocker[] = [];
+  if (fromWarehouseId === toWarehouseId)
+    blockers.push({ code: "SAME_WAREHOUSE", message: "From and To warehouses must be different" });
+  return [...blockers, ...MoveAvailableStock(requirements)];
 }
 export function Adjust(
-  lines: Array<{ quantityChange: number }>,
+  lines: Array<{ quantityChange: number; reasonCode?: string | null }>,
+  notes?: string | null,
 ): OperationBlocker[] {
-  return lines.some((line) => line.quantityChange !== 0)
+  const blockers = lines.some((line) => line.quantityChange !== 0)
     ? []
-    : [
-        {
-          code: "NO_ADJUSTMENT",
-          message: "Enter at least one quantity adjustment",
-        },
-      ];
+    : [{ code: "NO_ADJUSTMENT", message: "Enter at least one quantity adjustment" }];
+  return [...blockers, ...OtherReasonRequiresNotes(lines, notes)];
 }
 
 export function OtherReasonRequiresNotes(
-  lines: Array<{ reasonCode: string | null | undefined }>,
+  lines: Array<{ reasonCode?: string | null }>,
   notes: string | null | undefined,
 ): OperationBlocker[] {
   return lines.some(
@@ -57,5 +51,75 @@ export function OtherReasonRequiresNotes(
           message: "Notes are required when a reason is Other",
         },
       ]
+    : [];
+}
+
+export function Receive(
+  lines: Array<{ reasonCode: string | null | undefined }>,
+  notes: string | null | undefined,
+  missingRequiredCustomFields: string[] = [],
+): OperationBlocker[] {
+  return [...OtherReasonRequiresNotes(lines, notes), ...RequiredCustomFields(missingRequiredCustomFields)];
+}
+
+export function Issue(
+  requirements: Array<{ available: number; requested: number }>,
+  lines: Array<{ reasonCode: string | null | undefined }>,
+  notes: string | null | undefined,
+  missingRequiredCustomFields: string[] = [],
+): OperationBlocker[] {
+  return [...OtherReasonRequiresNotes(lines, notes), ...RequiredCustomFields(missingRequiredCustomFields), ...MoveAvailableStock(requirements)];
+}
+
+function RequiredCustomFields(names: string[]): OperationBlocker[] {
+  return names.length
+    ? [{ code: "REQUIRED_CUSTOM_FIELDS_MISSING", message: `Complete required custom fields: ${names.join(", ")}` }]
+    : [];
+}
+
+export function Reserve(
+  requirements: Array<{ available: number; requested: number }>,
+  lines: Array<{ reasonCode: string | null | undefined }>,
+  notes: string | null | undefined,
+): OperationBlocker[] {
+  return [...OtherReasonRequiresNotes(lines, notes), ...MoveAvailableStock(requirements)];
+}
+
+export function CreateStockCount(
+  lines: Array<{ reasonCode: string | null | undefined }>,
+  notes: string | null | undefined,
+): OperationBlocker[] {
+  return OtherReasonRequiresNotes(lines, notes);
+}
+
+export function SaveStockCount(
+  currentStatus: string,
+  lines: Array<{ reasonCode: string | null | undefined }>,
+  notes: string | null | undefined,
+): OperationBlocker[] {
+  return [
+    ...(currentStatus === "COMPLETED"
+      ? [{ code: "STOCK_COUNT_COMPLETED", message: "A completed stocktake cannot be changed" }]
+      : []),
+    ...OtherReasonRequiresNotes(lines, notes),
+  ];
+}
+
+export function CompleteStockCount(
+  currentStatus: string,
+  lines: Array<{ reasonCode: string | null | undefined }>,
+  notes: string | null | undefined,
+): OperationBlocker[] {
+  return [
+    ...(currentStatus === "COMPLETED"
+      ? [{ code: "STOCK_COUNT_ALREADY_COMPLETED", message: "This stocktake is already complete" }]
+      : []),
+    ...OtherReasonRequiresNotes(lines, notes),
+  ];
+}
+
+export function DeleteStockCount(currentStatus: string): OperationBlocker[] {
+  return currentStatus === "COMPLETED"
+    ? [{ code: "STOCK_COUNT_COMPLETED", message: "A completed stocktake cannot be deleted" }]
     : [];
 }

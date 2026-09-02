@@ -34,6 +34,7 @@ import type {
   ConfigurationRow,
 } from "../types/configuration.types";
 import styles from "./configuration.module.css";
+import { Deactivate } from "../domain/operation-policy";
 type Meta = {
   title: string;
   singular: string;
@@ -118,6 +119,13 @@ export function ConfigurationDetailView({
     setToast(`${meta.singular} saved`);
   };
   const transition = async (status: "ACTIVE" | "INACTIVE" | "DELETED") => {
+    if (status === "INACTIVE") {
+      const blockers = Deactivate(kind, [{ name: record.name, inUse: record.inUse }]);
+      if (blockers.length) {
+        setError(blockers[0]!.message);
+        return;
+      }
+    }
     const response = await request(
       `/api/inventory/configuration/${kind}/transition`,
       {
@@ -138,10 +146,9 @@ export function ConfigurationDetailView({
   };
   const requestDelete = () => {
     setError("");
-    if (kind === "category" && record.inUse) {
-      setError(
-        `Item categories containing items cannot be deleted. This applies whether the items are active or inactive. [${record.name}]`,
-      );
+    const blockers = Deactivate(kind, [{ name: record.name, inUse: record.inUse }]);
+    if (blockers.length) {
+      setError(blockers[0]!.message);
       return;
     }
     setConfirm(true);

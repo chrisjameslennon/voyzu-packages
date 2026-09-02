@@ -153,6 +153,62 @@ export async function getInventoryReport(
       })),
     };
   }
+  if (key === "financial-activity") {
+    const result = await getDb().query(
+      `SELECT activity.id::int,
+              transaction.code,
+              transaction.transaction_date date,
+              activity.movement_type,
+              activity.reason_code,
+              activity.status,
+              line.item_code,
+              line.item_name,
+              warehouse.name warehouse,
+              line.quantity_change::float8 quantity_change
+       FROM inventory_financial_activity activity
+       JOIN inventory_transaction_line line
+         ON line.organization_id=activity.organization_id
+        AND line.id=activity.inventory_transaction_line_id
+       JOIN inventory_transaction transaction
+         ON transaction.organization_id=line.organization_id
+        AND transaction.id=line.inventory_transaction_id
+       JOIN warehouse
+         ON warehouse.organization_id=line.organization_id
+        AND warehouse.id=line.warehouse_id
+       WHERE activity.organization_id=$1
+       ORDER BY transaction.transaction_date DESC,activity.id DESC`,
+      [organizationId],
+    );
+    return {
+      title: "Financial Activity",
+      headers: [
+        "Code",
+        "Date",
+        "Movement",
+        "Reason Code",
+        "Item Code",
+        "Item Name",
+        "Warehouse",
+        "Quantity Change",
+        "Status",
+      ],
+      rows: result.rows.map((r: Record<string, unknown>) => ({
+        id: String(r.id),
+        date: new Date(String(r.date)).toISOString().slice(0, 10),
+        cells: [
+          String(r.code),
+          d(String(r.date)),
+          String(r.movement_type),
+          String(r.reason_code),
+          String(r.item_code),
+          String(r.item_name),
+          String(r.warehouse),
+          n(Number(r.quantity_change)),
+          String(r.status),
+        ],
+      })),
+    };
+  }
   const positions = await listStockPositions(organizationId);
   if (key === "stock-on-hand" || key === "stock-availability") {
     return {
