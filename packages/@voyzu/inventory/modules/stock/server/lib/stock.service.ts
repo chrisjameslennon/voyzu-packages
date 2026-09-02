@@ -82,14 +82,28 @@ async function availabilityRequirements(
     return { available: position?.available ?? 0, requested: requirement.quantity };
   });
 }
+async function warehouseStatuses(
+  repo: StockRepo,
+  organizationId: number,
+  warehouseIds: number[],
+) {
+  const statuses = await repo.warehouseStatuses(organizationId, warehouseIds);
+  for (const warehouseId of warehouseIds) {
+    if (!statuses.has(warehouseId))
+      throw new NotFoundError("Warehouse was not found");
+  }
+  return statuses;
+}
 export async function receiveStock(
   organizationId: number,
   input: ReceiptRequest,
 ) {
   return withTransaction(async (db) => {
+    const repo = new StockRepo(db);
     const missingCustomFields = await missingMovementCustomFields(db, organizationId, "RECEIPT", input);
-    enforce(Receive(input.lines, input.notes, missingCustomFields));
-    return new StockRepo(db).movement(
+    const statuses = await warehouseStatuses(repo, organizationId, [input.warehouseId]);
+    enforce(Receive(input.lines, input.notes, missingCustomFields, statuses.get(input.warehouseId)!));
+    return repo.movement(
       organizationId,
       "RECEIPT",
       input,
@@ -103,6 +117,7 @@ export async function issueStock(
 ) {
   return withTransaction(async (db) => {
     const repo = new StockRepo(db);
+    await warehouseStatuses(repo, organizationId, [input.warehouseId]);
     const missingCustomFields = await missingMovementCustomFields(db, organizationId, "ISSUE", input);
     const availability = await availabilityRequirements(repo, organizationId, input.lines.map((line) => ({
         itemId: line.itemId,
@@ -164,7 +179,16 @@ export async function transferStock(
         quantity: input.quantity,
       },
     ]);
-    enforce(Transfer(input.fromWarehouseId, input.toWarehouseId, availability));
+    const statuses = await warehouseStatuses(repo, organizationId, [
+      input.fromWarehouseId,
+      input.toWarehouseId,
+    ]);
+    enforce(Transfer(
+      input.fromWarehouseId,
+      input.toWarehouseId,
+      availability,
+      statuses.get(input.toWarehouseId)!,
+    ));
     return repo.transfer(
       organizationId,
       input,
@@ -187,7 +211,17 @@ export async function reserveStock(
         quantity: line.quantity,
       })),
     );
-    enforce(Reserve(availability, input.lines, input.notes));
+    const statuses = await warehouseStatuses(
+      repo,
+      organizationId,
+      input.lines.map((line) => line.warehouseId),
+    );
+    enforce(Reserve(
+      availability,
+      input.lines,
+      input.notes,
+      input.lines.map((line) => statuses.get(line.warehouseId)!),
+    ));
     await repo.reserve(
       organizationId,
       input,
@@ -199,22 +233,25 @@ export async function adjustStock(
   organizationId: number,
   input: AdjustmentRequest,
 ) {
-  enforce(Adjust(input.lines, input.notes));
-  return withTransaction(async (db) =>
-    new StockRepo(db).adjust(
+  return withTransaction(async (db) => {
+    const repo = new StockRepo(db);
+    const statuses = await warehouseStatuses(repo, organizationId, [input.warehouseId]);
+    enforce(Adjust(input.lines, input.notes, statuses.get(input.warehouseId)!));
+    return repo.adjust(
       organizationId,
       input,
       withCreationAudit({}, await createCreationAuditStamp()),
-    ),
-  );
+    );
+  });
 }
 export async function createStockCount(
   organizationId: number,
   input: StockCountRequest,
 ) {
   return withTransaction(async (db) => {
-    enforce(CreateStockCount(input.lines, input.notes));
     const repo = new StockRepo(db);
+    const statuses = await warehouseStatuses(repo, organizationId, [input.warehouseId]);
+    enforce(CreateStockCount(input.lines, input.notes, statuses.get(input.warehouseId)!));
     const id = await repo.createCount(
       organizationId,
       input,
@@ -233,7 +270,8 @@ export async function saveStockCount(
     const repo = new StockRepo(db);
     const current = await repo.count(organizationId, id);
     if (!current) throw new NotFoundError("Stocktake was not found");
-    enforce(SaveStockCount(current.status, input.lines, input.notes));
+    const statuses = await warehouseStatuses(repo, organizationId, [input.warehouseId]);
+    enforce(SaveStockCount(current.status, input.lines, input.notes, statuses.get(input.warehouseId)!));
     await repo.saveCount(
       organizationId,
       id,
@@ -249,7 +287,13 @@ export async function completeStockCount(organizationId: number, id: number) {
     const repo = new StockRepo(db);
     const current = await repo.count(organizationId, id);
     if (!current) throw new NotFoundError("Stocktake was not found");
-    enforce(CompleteStockCount(current.status, current.lines, current.notes));
+    const statuses = await warehouseStatuses(repo, organizationId, [current.warehouseId]);
+    enforce(CompleteStockCount(
+      current.status,
+      current.lines,
+      current.notes,
+      statuses.get(current.warehouseId)!,
+    ));
     await repo.completeCount(
       organizationId,
       id,

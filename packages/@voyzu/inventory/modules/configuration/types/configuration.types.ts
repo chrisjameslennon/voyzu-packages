@@ -41,6 +41,7 @@ export const ConfigurationDetailDto = StrictObject({
   dataType: Type.Union([Type.String(), Type.Null()]),
   appliesTo: Type.Union([Type.String(), Type.Null()]),
   required: Type.Boolean(),
+  showInFilter: Type.Boolean(),
   optionListId: Type.Union([Id, Type.Null()]),
   isShared: Type.Boolean(),
   options: Type.Array(
@@ -72,6 +73,7 @@ export const ConfigurationCreateDto = StrictObject({
   dataType: Type.Optional(Type.String()),
   appliesTo: Type.Optional(Type.String()),
   required: Type.Optional(Type.Boolean()),
+  showInFilter: Type.Optional(Type.Boolean()),
   optionListId: Type.Optional(Type.Union([Id, Type.Null()])),
   isShared: Type.Optional(Type.Boolean()),
 });

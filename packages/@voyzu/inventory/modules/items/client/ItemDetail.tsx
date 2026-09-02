@@ -11,7 +11,6 @@ import {
   ConfirmDialog,
   Input,
   SearchableSelect,
-  TabGroup,
   Toast,
   ValidationAlert,
   required,
@@ -38,6 +37,7 @@ import { UNIT_VALUES } from "../../core/types";
 import type { Unit } from "../../core/types";
 import styles from "./items.module.css";
 import { Delete, Update } from "../domain/operation-policy";
+import { isSelectSearchable } from "../../core/client/select-policy";
 
 const UNIT_OPTIONS = UNIT_VALUES.map((unit) => ({ value: unit, label: unit }));
 const DIMENSION_UNIT_OPTIONS = DIMENSION_UNIT_VALUES.map((unit) => ({
@@ -284,6 +284,7 @@ export function ItemDetail({
               value={categoryId}
               onChange={setCategoryId}
               clearable
+              searchable={isSelectSearchable(categories.length)}
               options={categories.map((category) => ({
                 value: String(category.id),
                 label: category.name,
@@ -381,33 +382,18 @@ export function ItemDetail({
               onChange={(event) => setWeight(event.target.value)}
             />
           </div>
+          <div className={detailStyles.fieldFull}>
+            <h3 className={typography.sectionHeading}>Custom Fields</h3>
+          </div>
+          {renderCustomFields()}
         </div>
       </section>
     </div>
   );
-  const customFields = (
-    <section className={detailStyles.card}>
-      <div className={detailStyles.cardHeader}>
-        <h2
-          className={`${typography.sectionHeading} ${detailStyles.cardHeaderTitle}`}
-        >
-          Custom Fields
-        </h2>
-        <Button
-          variant="secondary"
-          icon="save"
-          disabled={
-            saving ||
-            !current.customFields.some(({ status }) => status === "ACTIVE")
-          }
-          onClick={requestSave}
-        >
-          {saving ? "Saving..." : "Save"}
-        </Button>
-      </div>
-      {current.customFields.length ? (
-        <div className={detailStyles.formGrid}>
-          {current.customFields.map((field) => {
+  function renderCustomFields() {
+    return current.customFields.length ? (
+      <>
+        {current.customFields.map((field) => {
             const disabled = field.status !== "ACTIVE";
             const value = customValues[field.id];
             const label = `${field.name}${field.required ? " *" : ""}`;
@@ -433,6 +419,7 @@ export function ItemDetail({
                   <label className={typography.fieldLabel}>{label}</label>
                   <SearchableSelect
                     value={typeof value === "number" ? String(value) : ""}
+                    searchable={isSelectSearchable(field.options.length)}
                     onChange={(selected) =>
                       setCustomValues((values) => ({
                         ...values,
@@ -460,6 +447,7 @@ export function ItemDetail({
                   <SearchableSelect
                     multiple
                     value={Array.isArray(value) ? value.map(String) : []}
+                    searchable={isSelectSearchable(field.options.length)}
                     onChange={(selected) =>
                       setCustomValues((values) => ({
                         ...values,
@@ -515,15 +503,16 @@ export function ItemDetail({
                 />
               </div>
             );
-          })}
-        </div>
-      ) : (
+        })}
+      </>
+    ) : (
+      <div className={detailStyles.fieldFull}>
         <p className={typography.bodyText}>
           No item custom fields are configured for this organization.
         </p>
-      )}
-    </section>
-  );
+      </div>
+    );
+  }
 
   return (
     <div className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}>
@@ -637,17 +626,7 @@ export function ItemDetail({
         />
       </aside>
       <main className={layout.mainSection}>
-        <TabGroup
-          defaultKey="details"
-          tabs={[
-            { key: "details", label: "Details", content: details },
-            {
-              key: "custom-fields",
-              label: "Custom Fields",
-              content: customFields,
-            },
-          ]}
-        />
+        {details}
       </main>
       <ConfirmDialog
         isOpen={showDelete}

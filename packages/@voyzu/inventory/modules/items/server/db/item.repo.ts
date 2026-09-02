@@ -2,7 +2,7 @@ import { DataError } from "@voyzu/capability/errors";
 import type { DbExecutor } from "@voyzu/capability/db";
 import type { ItemListRow, ItemStatus } from "../../types/item-list.types";
 import type { OperationalItemDto } from "../../types/operational-item.types";
-import type { ItemCategoryOptionDto, ItemCustomFieldDto, ItemCustomFieldInputDto, ItemDeletionImpactDto } from "../../types/item.types";
+import type { ItemCategoryOptionDto, ItemCustomFieldDto, ItemCustomFieldInputDto, ItemDeletionImpactDto, ItemListCustomFieldDto } from "../../types/item.types";
 import type { ItemRow } from "./item.row.types";
 
 const SELECT_ITEM = `SELECT item.*, item_category.code AS category_code, item_category.name AS category_name,
@@ -29,9 +29,72 @@ export class ItemRepo {
 
   async list(organizationId: number): Promise<ItemListRow[]> {
     const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 ORDER BY item.sku`, [organizationId]);
+    const customFields = await this.listCustomFieldsForItems(
+      organizationId,
+      rows.map((row: Record<string, unknown>) => Number(row.id)),
+    );
     return rows.map((row: Record<string, unknown>) => ({ id: Number(row.id), sku: String(row.sku), name: String(row.name),
       category: row.category_name === null ? null : String(row.category_name),
-      unit: row.unit == null ? null : String(row.unit) as ItemListRow["unit"], quantityTracked: Boolean(row.quantity_tracked), unitsOnHand: Number(row.units_on_hand), status: row.status as ItemListRow["status"] }));
+      unit: row.unit == null ? null : String(row.unit) as ItemListRow["unit"], quantityTracked: Boolean(row.quantity_tracked), unitsOnHand: Number(row.units_on_hand),
+      customFields: customFields.get(Number(row.id)) ?? [], status: row.status as ItemListRow["status"] }));
+  }
+
+  private async listCustomFieldsForItems(
+    organizationId: number,
+    itemIds: number[],
+  ): Promise<Map<number, ItemListCustomFieldDto[]>> {
+    if (!itemIds.length) return new Map();
+    const [fields, options, values] = await Promise.all([
+      this.db.query(
+        "SELECT id::int,name,data_type,show_in_filter,status,option_list_id::int FROM inv_custom_field WHERE organization_id=$1 AND applies_to='ITEM' ORDER BY name",
+        [organizationId],
+      ),
+      this.db.query(
+        `SELECT value.option_list_id::int,value.value
+         FROM inv_option_list_value value
+         JOIN inv_option_list list ON list.organization_id=value.organization_id AND list.id=value.option_list_id
+         WHERE value.organization_id=$1 AND value.status='ACTIVE' AND list.status='ACTIVE'
+         ORDER BY value.sort_order,value.value`,
+        [organizationId],
+      ),
+      this.db.query(
+        `SELECT field_value.record_id::int,field_value.custom_field_id::int,
+                COALESCE(field_value.text_value,field_value.number_value::text,
+                  field_value.date_value::text,field_value.boolean_value::text,option_value.value) value
+         FROM inv_custom_field_value field_value
+         LEFT JOIN inv_option_list_value option_value
+           ON option_value.organization_id=field_value.organization_id
+          AND option_value.id=field_value.option_list_value_id
+         WHERE field_value.organization_id=$1 AND field_value.record_id=ANY($2::bigint[])
+         ORDER BY field_value.id`,
+        [organizationId, itemIds],
+      ),
+    ]);
+    const optionsByList = new Map<number, string[]>();
+    for (const row of options.rows as Record<string, unknown>[]) {
+      const listId = Number(row.option_list_id);
+      optionsByList.set(listId, [...(optionsByList.get(listId) ?? []), String(row.value)]);
+    }
+    const valuesByItemAndField = new Map<string, string[]>();
+    for (const row of values.rows as Record<string, unknown>[]) {
+      if (row.value == null) continue;
+      const key = `${Number(row.record_id)}:${Number(row.custom_field_id)}`;
+      valuesByItemAndField.set(key, [...(valuesByItemAndField.get(key) ?? []), String(row.value)]);
+    }
+    return new Map(itemIds.map((itemId) => [
+      itemId,
+      (fields.rows as Record<string, unknown>[]).map((field) => ({
+        id: Number(field.id),
+        name: String(field.name),
+        dataType: field.data_type as ItemListCustomFieldDto["dataType"],
+        showInFilter: Boolean(field.show_in_filter),
+        status: field.status as ItemListCustomFieldDto["status"],
+        values: valuesByItemAndField.get(`${itemId}:${Number(field.id)}`) ?? [],
+        options: field.option_list_id == null
+          ? []
+          : optionsByList.get(Number(field.option_list_id)) ?? [],
+      })),
+    ]));
   }
 
   async get(organizationId: number, sku: string): Promise<ItemRow | null> {
@@ -118,7 +181,7 @@ export class ItemRepo {
 
   async listCustomFields(organizationId: number, itemId: number): Promise<ItemCustomFieldDto[]> {
     const [{ rows: fieldRows }, { rows: optionRows }, { rows: valueRows }] = await Promise.all([
-      this.db.query("SELECT id::int, name, data_type, required, status, option_list_id::int FROM inv_custom_field WHERE organization_id = $1 AND applies_to = 'ITEM' ORDER BY name", [organizationId]),
+      this.db.query("SELECT id::int, name, data_type, required, show_in_filter, status, option_list_id::int FROM inv_custom_field WHERE organization_id = $1 AND applies_to = 'ITEM' ORDER BY name", [organizationId]),
       this.db.query("SELECT value.id::int, value.option_list_id::int, value.value FROM inv_option_list_value value JOIN inv_option_list list ON list.organization_id = value.organization_id AND list.id = value.option_list_id WHERE value.organization_id = $1 AND value.status = 'ACTIVE' AND list.status = 'ACTIVE' ORDER BY value.sort_order, value.value", [organizationId]),
       this.db.query("SELECT custom_field_id::int, text_value, number_value, date_value, boolean_value, option_list_value_id::int FROM inv_custom_field_value WHERE organization_id = $1 AND record_id = $2 ORDER BY id", [organizationId, itemId]),
     ]);
@@ -135,7 +198,7 @@ export class ItemRepo {
       else if (dataType === "BOOLEAN") value = values[0]?.boolean_value == null ? null : Boolean(values[0].boolean_value);
       else if (dataType === "OPTION") value = values[0]?.option_list_value_id == null ? null : Number(values[0].option_list_value_id);
       else value = values.map((entry) => Number(entry.option_list_value_id)).filter(Number.isFinite);
-      return { id: Number(row.id), name: String(row.name), dataType, required: Boolean(row.required), status: row.status as ItemCustomFieldDto["status"], options: row.option_list_id == null ? [] : optionsByList.get(Number(row.option_list_id)) ?? [], value };
+      return { id: Number(row.id), name: String(row.name), dataType, required: Boolean(row.required), showInFilter: Boolean(row.show_in_filter), status: row.status as ItemCustomFieldDto["status"], options: row.option_list_id == null ? [] : optionsByList.get(Number(row.option_list_id)) ?? [], value };
     });
   }
 

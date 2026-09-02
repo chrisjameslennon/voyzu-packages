@@ -20,6 +20,7 @@ import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type { ConfigurationDetail } from "../../configuration/types/configuration.types";
 import { Adjust, Issue, Receive, Reserve, Transfer } from "../domain/operation-policy";
+import { isSelectSearchable } from "../../core/client/select-policy";
 import {
   STOCK_ADJUSTMENT_REASONS,
   STOCK_ISSUE_REASONS,
@@ -86,6 +87,14 @@ export function StockOperationView({
   const [customValues, setCustomValues] = useState<
     Record<number, string | string[] | boolean>
   >({});
+  const activeWarehouses = useMemo(
+    () => warehouses.filter((warehouse) => warehouse.status !== "INACTIVE"),
+    [warehouses],
+  );
+  const warehouseLabel = (warehouse: StockOption) =>
+    warehouse.status === "INACTIVE"
+      ? `${warehouse.name} (Inactive)`
+      : warehouse.name;
   useEffect(() => {
     if (kind !== "issue") return;
     const params = new URLSearchParams(window.location.search);
@@ -130,7 +139,8 @@ export function StockOperationView({
     const requestedPosition = positions.find(
       (position) =>
         position.warehouseId === requestedWarehouseId &&
-        position.itemId === requestedItemId,
+        position.itemId === requestedItemId &&
+        position.warehouseStatus === "ACTIVE",
     );
     if (!requestedPosition) return;
     setItemId(String(requestedItemId));
@@ -169,6 +179,7 @@ export function StockOperationView({
       label: "Item",
       type: "select",
       width: 400,
+      searchable: isSelectSearchable(items.length),
       options: items.map((i) => ({
         value: String(i.id),
         label: i.name,
@@ -205,7 +216,7 @@ export function StockOperationView({
       positions
         .filter((p) =>
           kind === "reserve"
-            ? p.itemId === Number(itemId)
+            ? p.itemId === Number(itemId) && p.warehouseStatus === "ACTIVE"
             : p.warehouseId === Number(warehouseId),
         )
         .map((p) => ({
@@ -240,6 +251,13 @@ export function StockOperationView({
       label: "Item",
       type: "select",
       width: 400,
+      searchable: isSelectSearchable(
+        positions.filter(
+          (position) =>
+            position.warehouseId === Number(warehouseId) &&
+            position.available > 0,
+        ).length,
+      ),
       options: positions
         .filter(
           (position) =>
@@ -346,12 +364,15 @@ export function StockOperationView({
       options: STOCK_ISSUE_REASONS.map(({ code, label }) => ({ value: code, label })),
     },
   ];
-  const adjustmentWarehouses = warehouses.filter((warehouse) =>
+  const adjustmentWarehouses = activeWarehouses.filter((warehouse) =>
     positions.some(
       (position) =>
         position.itemId === Number(itemId) &&
         position.warehouseId === warehouse.id,
     ),
+  );
+  const adjustmentItems = items.filter((item) =>
+    positions.some((position) => position.itemId === item.id),
   );
   const adjustmentPosition = positions.find(
     (position) =>
@@ -377,7 +398,13 @@ export function StockOperationView({
       }
     }
     if (kind === "transfer") {
-      const blockers = Transfer(Number(warehouseId), Number(toWarehouseId));
+      const blockers = Transfer(
+        Number(warehouseId),
+        Number(toWarehouseId),
+        [],
+        warehouses.find((warehouse) => warehouse.id === Number(toWarehouseId))
+          ?.status ?? "ACTIVE",
+      );
       if (blockers.length) {
         setError(blockers[0]!.message);
         return false;
@@ -441,12 +468,28 @@ export function StockOperationView({
         );
     if (kind !== "transfer") {
       const blockers = kind === "receive"
-        ? Receive(reasonLines, notes)
+        ? Receive(
+            reasonLines,
+            notes,
+            [],
+            warehouses.find((warehouse) => warehouse.id === Number(warehouseId))
+              ?.status ?? "ACTIVE",
+          )
         : kind === "issue"
           ? Issue([], reasonLines, notes)
           : kind === "reserve"
-            ? Reserve([], reasonLines, notes)
-            : Adjust([{ quantityChange: Number(lines[0]?.quantity ?? 0), reasonCode }], notes);
+            ? Reserve(
+                [],
+                reasonLines,
+                notes,
+                reasonLines.map(() => "ACTIVE"),
+              )
+            : Adjust(
+                [{ quantityChange: Number(lines[0]?.quantity ?? 0), reasonCode }],
+                notes,
+                warehouses.find((warehouse) => warehouse.id === Number(warehouseId))
+                  ?.status ?? "ACTIVE",
+              );
       if (blockers.length) {
         setError(blockers[0]!.message);
         return false;
@@ -620,6 +663,7 @@ export function StockOperationView({
       ) : field.dataType === "MULTIPLE_OPTIONS" ? (
         <SearchableSelect
           multiple
+          searchable={isSelectSearchable(field.options.length)}
           hasError={
             showCustomFieldErrors &&
             field.required &&
@@ -645,6 +689,7 @@ export function StockOperationView({
       ) : field.dataType === "OPTION" ? (
         <SearchableSelect
           value={String(customValues[field.id] ?? "")}
+          searchable={isSelectSearchable(field.options.length)}
           hasError={
             showCustomFieldErrors &&
             field.required &&
@@ -837,6 +882,9 @@ export function StockOperationView({
                   <label className={typography.fieldLabel}>Warehouse</label>
                   <SearchableSelect
                     value={warehouseId}
+                    searchable={isSelectSearchable(
+                      (kind === "issue" ? issueWarehouses : activeWarehouses).length,
+                    )}
                     hasError={
                       error === "Complete all required fields" && !warehouseId
                     }
@@ -847,10 +895,10 @@ export function StockOperationView({
                       setLines(value ? [createMovementLine(value)] : []);
                     }}
                     options={(
-                      kind === "issue" ? issueWarehouses : warehouses
+                      kind === "issue" ? issueWarehouses : activeWarehouses
                     ).map((warehouse) => ({
                       value: String(warehouse.id),
-                      label: warehouse.name,
+                      label: warehouseLabel(warehouse),
                       code: warehouse.code,
                     }))}
                     placeholder={
@@ -905,6 +953,7 @@ export function StockOperationView({
                     <span>units of</span>
                     <SearchableSelect
                       value={itemId}
+                      searchable={isSelectSearchable(items.length)}
                       hasError={
                         error === "Complete all required fields" && !itemId
                       }
@@ -922,6 +971,7 @@ export function StockOperationView({
                     <span>from</span>
                     <SearchableSelect
                       value={warehouseId}
+                      searchable={isSelectSearchable(warehouses.length)}
                       hasError={
                         error === "Complete all required fields" &&
                         !warehouseId
@@ -929,7 +979,7 @@ export function StockOperationView({
                       onChange={setWarehouseId}
                       options={warehouses.map((warehouse) => ({
                         value: String(warehouse.id),
-                        label: warehouse.name,
+                        label: warehouseLabel(warehouse),
                         code: warehouse.code,
                       }))}
                       ariaLabel="From warehouse"
@@ -944,6 +994,7 @@ export function StockOperationView({
                     <span>to</span>
                     <SearchableSelect
                       value={toWarehouseId}
+                      searchable={isSelectSearchable(activeWarehouses.length)}
                       hasError={
                         error === "Complete all required fields" &&
                         !toWarehouseId ||
@@ -952,7 +1003,7 @@ export function StockOperationView({
                           warehouseId === toWarehouseId)
                       }
                       onChange={setToWarehouseId}
-                      options={warehouses.map((warehouse) => ({
+                      options={activeWarehouses.map((warehouse) => ({
                         value: String(warehouse.id),
                         label: warehouse.name,
                         code: warehouse.code,
@@ -971,6 +1022,7 @@ export function StockOperationView({
                     <label className={typography.fieldLabel}>Item</label>
                     <SearchableSelect
                       value={itemId}
+                      searchable={isSelectSearchable(items.length)}
                       hasError={
                         error === "Complete all required fields" && !itemId
                       }
@@ -1010,6 +1062,7 @@ export function StockOperationView({
                     <label className={typography.fieldLabel}>Item</label>
                     <SearchableSelect
                       value={itemId}
+                      searchable={isSelectSearchable(adjustmentItems.length)}
                       hasError={
                         (error === "Complete all required fields" && !itemId) ||
                         error ===
@@ -1021,13 +1074,7 @@ export function StockOperationView({
                         setQuantity("");
                         setReasonCode("");
                       }}
-                      options={items
-                        .filter((item) =>
-                          positions.some(
-                            (position) => position.itemId === item.id,
-                          ),
-                        )
-                        .map((item) => ({
+                      options={adjustmentItems.map((item) => ({
                           value: String(item.id),
                           label: item.name,
                           code: item.code,
@@ -1039,6 +1086,7 @@ export function StockOperationView({
                     <label className={typography.fieldLabel}>Warehouse</label>
                     <SearchableSelect
                       value={warehouseId}
+                      searchable={isSelectSearchable(adjustmentWarehouses.length)}
                       hasError={
                         (error === "Complete all required fields" &&
                           !warehouseId) ||

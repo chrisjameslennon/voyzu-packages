@@ -34,7 +34,12 @@ import type {
 import { InventoryListActions } from "../../../client/InventoryListActions";
 import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
 import styles from "./configuration.module.css";
-import { Deactivate, DeleteWarehouse } from "../domain/operation-policy";
+import {
+  Create,
+  Deactivate,
+  DeleteWarehouse,
+} from "../domain/operation-policy";
+import { isSelectSearchable } from "../../core/client/select-policy";
 type Meta = {
   title: string;
   singular: string;
@@ -43,7 +48,7 @@ type Meta = {
   href: string;
 };
 const dataTypeLabel = (value: string | null) =>
-  value === "BOOLEAN" ? "Checkbox" : value?.replaceAll("_", " ") ?? "—";
+  value === "BOOLEAN" ? "CHECKBOX" : (value?.replaceAll("_", " ") ?? "—");
 export function ConfigurationListView({
   kind,
   meta,
@@ -76,10 +81,16 @@ export function ConfigurationListView({
   const [dataType, setDataType] = useState("TEXT");
   const [appliesTo, setAppliesTo] = useState("ITEM");
   const [requiredField, setRequiredField] = useState(false);
+  const [showInFilter, setShowInFilter] = useState(false);
   const [optionListId, setOptionListId] = useState("");
-  const [optionSource, setOptionSource] = useState<"SHARED" | "CREATE">("SHARED");
+  const [optionSource, setOptionSource] = useState<"SHARED" | "CREATE">(
+    "SHARED",
+  );
   useEffect(() => setRows(initialRows), [initialRows]);
-  const hasOptionValues = dataType === "OPTION" || dataType === "MULTIPLE_OPTIONS";
+  const hasOptionValues =
+    dataType === "OPTION" || dataType === "MULTIPLE_OPTIONS";
+  const canShowInFilter =
+    appliesTo === "ITEM" && (dataType === "BOOLEAN" || hasOptionValues);
   const validation = useFormValidation(() => ({
     name: { label: "name", value: name, rules: [required()] },
     code: {
@@ -91,7 +102,8 @@ export function ConfigurationListView({
     optionList: {
       label: "shared options list",
       value: optionListId,
-      enabled: kind === "custom-field" && hasOptionValues && optionSource === "SHARED",
+      enabled:
+        kind === "custom-field" && hasOptionValues && optionSource === "SHARED",
       rules: [required()],
     },
   }));
@@ -153,20 +165,37 @@ export function ConfigurationListView({
           { key: "description", label: "Description" },
           { key: "count", label: "Items", align: "right" as const },
         ]
-        : kind === "warehouse"
-          ? [
+      : kind === "warehouse"
+        ? [
             { key: "secondary", label: "Location" },
-            { key: "unitsOnHand", label: "Units on hand", align: "right" as const },
+            {
+              key: "unitsOnHand",
+              label: "Units on hand",
+              align: "right" as const,
+            },
           ]
         : kind === "custom-field"
           ? [
-            { key: "dataType", label: "Type", render: (row: ConfigurationRow) => dataTypeLabel(row.dataType) },
-            { key: "appliesTo", label: "Applies To", render: (row: ConfigurationRow) => row.appliesTo?.replaceAll("_", " ") ?? "—" },
-            { key: "count", label: "Recorded Values", align: "right" as const },
-          ]
-        : kind === "option-list"
-          ? [{ key: "count", label: "Options", align: "right" as const }]
-          : []),
+              {
+                key: "dataType",
+                label: "Type",
+                render: (row: ConfigurationRow) => dataTypeLabel(row.dataType),
+              },
+              {
+                key: "appliesTo",
+                label: "Applies To",
+                render: (row: ConfigurationRow) =>
+                  row.appliesTo?.replaceAll("_", " ") ?? "—",
+              },
+              {
+                key: "count",
+                label: "Recorded Values",
+                align: "right" as const,
+              },
+            ]
+          : kind === "option-list"
+            ? [{ key: "count", label: "Options", align: "right" as const }]
+            : []),
     {
       key: "status",
       label: "Status",
@@ -184,7 +213,10 @@ export function ConfigurationListView({
   ];
   const exportColumns = [
     ...(kind === "category" || kind === "warehouse"
-      ? [{ key: "code", label: "Code" }, { key: "name", label: "Name" }]
+      ? [
+          { key: "code", label: "Code" },
+          { key: "name", label: "Name" },
+        ]
       : [{ key: "name", label: "Name" }]),
     ...(kind === "category"
       ? [
@@ -196,15 +228,15 @@ export function ConfigurationListView({
             { key: "secondary", label: "Location" },
             { key: "unitsOnHand", label: "Units on hand" },
           ]
-      : kind === "custom-field"
-        ? [
-            { key: "dataType", label: "Type" },
-            { key: "appliesTo", label: "Applies To" },
-            { key: "count", label: "Recorded Values" },
-          ]
-        : kind === "option-list"
-          ? [{ key: "count", label: "Options" }]
-          : []),
+        : kind === "custom-field"
+          ? [
+              { key: "dataType", label: "Type" },
+              { key: "appliesTo", label: "Applies To" },
+              { key: "count", label: "Recorded Values" },
+            ]
+          : kind === "option-list"
+            ? [{ key: "count", label: "Options" }]
+            : []),
     { key: "status", label: "Status" },
   ];
   const reset = () => {
@@ -214,6 +246,7 @@ export function ConfigurationListView({
     setDataType("TEXT");
     setAppliesTo("ITEM");
     setRequiredField(false);
+    setShowInFilter(false);
     setOptionListId("");
     setOptionSource("SHARED");
     setError("");
@@ -221,6 +254,27 @@ export function ConfigurationListView({
   };
   const create = async () => {
     if (!validation.attempt()) return;
+    const blockers = Create({
+      kind,
+      name,
+      hasCode: Boolean(code),
+      hasDataType: Boolean(dataType),
+      hasAppliesTo: Boolean(appliesTo),
+      dataType,
+      appliesTo,
+      showInFilter: canShowInFilter && showInFilter,
+      nameAlreadyExists:
+        kind === "custom-field" &&
+        rows.some(
+          (row) =>
+            row.appliesTo === appliesTo &&
+            row.name.trim().toLowerCase() === name.trim().toLowerCase(),
+        ),
+    });
+    if (blockers.length) {
+      setError(blockers[0]!.message);
+      return;
+    }
     setSaving(true);
     setError("");
     try {
@@ -231,7 +285,11 @@ export function ConfigurationListView({
         dataType,
         appliesTo,
         required: requiredField,
-        optionListId: hasOptionValues && optionSource === "SHARED" && optionListId ? Number(optionListId) : null,
+        showInFilter: canShowInFilter && showInFilter,
+        optionListId:
+          hasOptionValues && optionSource === "SHARED" && optionListId
+            ? Number(optionListId)
+            : null,
         isShared: optionSource === "SHARED",
       };
       const response = await fetch(`/api/inventory/configuration/${kind}`, {
@@ -254,10 +312,13 @@ export function ConfigurationListView({
   };
   const transition = async (status: "ACTIVE" | "INACTIVE" | "DELETED") => {
     if (status === "INACTIVE") {
-      const blockers = Deactivate(kind, selectedRows.map((row) => ({
-        name: row.name,
-        inUse: row.count > 0,
-      })));
+      const blockers = Deactivate(
+        kind,
+        selectedRows.map((row) => ({
+          name: row.name,
+          inUse: row.count > 0,
+        })),
+      );
       if (blockers.length) {
         setError(blockers[0]!.message);
         return;
@@ -293,16 +354,22 @@ export function ConfigurationListView({
   const selectedRows = rows.filter((row) => selected.has(row.id));
   const requestDelete = () => {
     setError("");
-    const categoryBlockers = kind === "category"
-      ? Deactivate(kind, selectedRows.map((row) => ({ name: row.name, inUse: row.count > 0 })))
-      : [];
+    const categoryBlockers =
+      kind === "category"
+        ? Deactivate(
+            kind,
+            selectedRows.map((row) => ({
+              name: row.name,
+              inUse: row.count > 0,
+            })),
+          )
+        : [];
     if (categoryBlockers.length) {
       setError(categoryBlockers[0]!.message);
       return;
     }
-    const warehouseBlockers = kind === "warehouse"
-      ? DeleteWarehouse(selectedRows)
-      : [];
+    const warehouseBlockers =
+      kind === "warehouse" ? DeleteWarehouse(selectedRows) : [];
     if (warehouseBlockers.length) {
       setError(warehouseBlockers[0]!.message);
       return;
@@ -413,7 +480,15 @@ export function ConfigurationListView({
                       <SearchableSelect
                         searchable={false}
                         value={dataType}
-                        onChange={setDataType}
+                        onChange={(value) => {
+                          setDataType(value);
+                          if (
+                            !["BOOLEAN", "OPTION", "MULTIPLE_OPTIONS"].includes(
+                              value,
+                            )
+                          )
+                            setShowInFilter(false);
+                        }}
                         options={[
                           "TEXT",
                           "NUMBER",
@@ -434,31 +509,84 @@ export function ConfigurationListView({
                       <SearchableSelect
                         searchable={false}
                         value={appliesTo}
-                        onChange={setAppliesTo}
+                        onChange={(value) => {
+                          setAppliesTo(value);
+                          if (value !== "ITEM") setShowInFilter(false);
+                        }}
                         options={["ITEM", "RECEIPT", "ISSUE"].map((value) => ({
                           value,
                           label: value,
                         }))}
                       />
                     </div>
-                    <label className={styles.toolbar}>
+                    <label className={styles.optionChoice}>
                       <Checkbox
                         checked={requiredField}
                         onChange={setRequiredField}
                       />
                       Required
                     </label>
+                    {canShowInFilter ? (
+                      <label className={styles.optionChoice}>
+                        <Checkbox
+                          checked={showInFilter}
+                          onChange={setShowInFilter}
+                        />
+                        Show in Filter
+                      </label>
+                    ) : null}
                     {hasOptionValues ? (
                       <div className={styles.customFieldOptionsSection}>
                         <div className={styles.field}>
-                          <label className={typography.fieldLabel}>Options</label>
-                          <RadioGroup name="custom-field-option-source" value={optionSource} onChange={(value) => { const source = value as "SHARED" | "CREATE"; setOptionSource(source); if (source === "CREATE") setOptionListId(""); }} options={[{ value: "SHARED", label: "Use shared list" }, { value: "CREATE", label: "Create options" }]} />
+                          <label className={typography.fieldLabel}>
+                            Options
+                          </label>
+                          <div className={styles.optionChoices}>
+                            <RadioGroup
+                              name="custom-field-option-source"
+                              value={optionSource}
+                              onChange={(value) => {
+                                const source = value as "SHARED" | "CREATE";
+                                setOptionSource(source);
+                                if (source === "CREATE") setOptionListId("");
+                              }}
+                              options={[
+                                {
+                                  value: "SHARED",
+                                  label: "Use shared options list",
+                                },
+                                {
+                                  value: "CREATE",
+                                  label: "Create options for this field",
+                                },
+                              ]}
+                            />
+                          </div>
                         </div>
-                        <div className={styles.field}>
-                          <label className={typography.fieldLabel}>Shared Options List</label>
-                          <SearchableSelect value={optionListId} onChange={setOptionListId} hasError={validation.hasError("optionList")} clearable disabled={optionSource === "CREATE"} options={optionLists.map((list) => ({ value: String(list.id), label: list.name }))} />
-                          {optionSource === "CREATE" ? <p className={styles.hint}>Create options on the next screen.</p> : null}
-                        </div>
+                        {optionSource === "SHARED" ? (
+                          <div className={styles.field}>
+                            <label className={typography.fieldLabel}>
+                              Shared Options List
+                            </label>
+                            <SearchableSelect
+                              value={optionListId}
+                              onChange={setOptionListId}
+                              hasError={validation.hasError("optionList")}
+                              clearable
+                              searchable={isSelectSearchable(
+                                optionLists.length,
+                              )}
+                              options={optionLists.map((list) => ({
+                                value: String(list.id),
+                                label: list.name,
+                              }))}
+                            />
+                          </div>
+                        ) : (
+                          <p className={typography.bodyText}>
+                            Create options on the next screen.
+                          </p>
+                        )}
                       </div>
                     ) : null}
                   </>

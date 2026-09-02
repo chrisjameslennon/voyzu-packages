@@ -18,7 +18,7 @@ async function organizationId() {
   return organization.id;
 }
 
-export async function handleList() { try { return ok(await listItems(await organizationId())); } catch (error) { return errorResponse(error); } }
+export async function handleList(request: NextRequest) { try { return ok(await listItems(await organizationId(), request.nextUrl.searchParams.get("q") ?? undefined)); } catch (error) { return errorResponse(error); } }
 export async function handleOptions() { try { return ok({ categories: await listItemCategories(await organizationId()) }); } catch (error) { return errorResponse(error); } }
 export async function handleReserveSku() { try { await organizationId(); return ok(await reserveItemSku()); } catch (error) { return errorResponse(error); } }
 export async function handleGet(_request: NextRequest, { params }: RouteContext) { try { const { sku } = await params; const item = await getItem(await organizationId(), sku); return item ? ok(item) : notFoundError(`Item ${sku} was not found`); } catch (error) { return errorResponse(error); } }

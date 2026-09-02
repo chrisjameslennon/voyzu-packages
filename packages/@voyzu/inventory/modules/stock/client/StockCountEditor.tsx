@@ -30,6 +30,7 @@ import type {
 } from "../types/stock.types";
 import { STOCK_ADJUSTMENT_REASONS } from "../../core/types";
 import { CompleteStockCount, CreateStockCount, SaveStockCount } from "../domain/operation-policy";
+import { isSelectSearchable } from "../../core/client/select-policy";
 import styles from "./stock.module.css";
 type Row = {
   id: number;
@@ -72,6 +73,13 @@ export function StockCountEditor({
   const [confirm, setConfirm] = useState(false);
   const [confirmComplete, setConfirmComplete] = useState(false);
   const [saving, setSaving] = useState(false);
+  const selectableWarehouses = warehouses.filter(
+    (warehouse) =>
+      warehouse.status !== "INACTIVE" || warehouse.id === initial?.warehouseId,
+  );
+  const selectedWarehouseStatus =
+    warehouses.find((warehouse) => warehouse.id === Number(warehouseId))
+      ?.status ?? "ACTIVE";
   const calculated = rows.map((row) => {
     const expectedQuantity = record
       ? row.expectedQuantity
@@ -203,8 +211,8 @@ export function StockCountEditor({
       return;
     }
     const reasonBlockers = record
-      ? SaveStockCount(record.status, rows, notes)
-      : CreateStockCount(rows, notes);
+      ? SaveStockCount(record.status, rows, notes, selectedWarehouseStatus)
+      : CreateStockCount(rows, notes, selectedWarehouseStatus);
     if (reasonBlockers.length) {
       setError(reasonBlockers[0]!.message);
       return;
@@ -269,7 +277,12 @@ export function StockCountEditor({
       setError("Select a reason for every stock count line");
       return;
     }
-    const reasonBlockers = CompleteStockCount(record?.status ?? "IN_PROGRESS", rows, notes);
+    const reasonBlockers = CompleteStockCount(
+      record?.status ?? "IN_PROGRESS",
+      rows,
+      notes,
+      selectedWarehouseStatus,
+    );
     if (reasonBlockers.length) {
       setError(reasonBlockers[0]!.message);
       return;
@@ -394,6 +407,7 @@ export function StockCountEditor({
               <label className={typography.fieldLabel}>Warehouse</label>
               <SearchableSelect
                 value={warehouseId}
+                searchable={isSelectSearchable(selectableWarehouses.length)}
                 onChange={(value) => {
                   setWarehouseId(value);
                   setRows(value ? warehouseRows(value) : []);
@@ -401,7 +415,7 @@ export function StockCountEditor({
                 }}
                 disabled={!!record}
                 hasError={error === "Warehouse is required"}
-                options={warehouses.map((warehouse) => ({
+                options={selectableWarehouses.map((warehouse) => ({
                   value: String(warehouse.id),
                   label: warehouse.name,
                   code: warehouse.code,
@@ -513,12 +527,13 @@ export function StockCountEditor({
             <label className={typography.fieldLabel}>Warehouse</label>
             <SearchableSelect
               value={warehouseId}
+              searchable={isSelectSearchable(selectableWarehouses.length)}
               onChange={(value) => {
                 setWarehouseId(value);
                 setRows([]);
               }}
               disabled={readOnly || !!record}
-              options={warehouses.map((w) => ({
+              options={selectableWarehouses.map((w) => ({
                 value: String(w.id),
                 label: w.name,
                 code: w.code,

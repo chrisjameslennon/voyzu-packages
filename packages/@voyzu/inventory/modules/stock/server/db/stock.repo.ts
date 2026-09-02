@@ -44,7 +44,7 @@ export class StockRepo {
         [organizationId],
       ),
       this.db.query(
-        "SELECT id::int, code, name FROM warehouse WHERE organization_id=$1 AND status='ACTIVE' ORDER BY name",
+        "SELECT id::int, code, name, status FROM warehouse WHERE organization_id=$1 ORDER BY name",
         [organizationId],
       ),
     ]);
@@ -53,9 +53,26 @@ export class StockRepo {
       warehouses: warehouses.rows as StockOption[],
     };
   }
+  async warehouseStatuses(
+    organizationId: number,
+    warehouseIds: number[],
+  ): Promise<Map<number, "ACTIVE" | "INACTIVE">> {
+    const uniqueIds = [...new Set(warehouseIds)];
+    if (!uniqueIds.length) return new Map();
+    const { rows } = await this.db.query(
+      "SELECT id::int, status FROM warehouse WHERE organization_id=$1 AND id=ANY($2::bigint[])",
+      [organizationId, uniqueIds],
+    );
+    return new Map(
+      rows.map((row: Record<string, unknown>) => [
+        Number(row.id),
+        row.status as "ACTIVE" | "INACTIVE",
+      ]),
+    );
+  }
   async positions(organizationId: number): Promise<StockPosition[]> {
     const { rows } = await this.db.query(
-      `WITH movement AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 on_hand FROM inventory_transaction_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), reservation AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 reserved FROM inventory_reservation_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), pairs AS (SELECT item_id,warehouse_id FROM movement UNION SELECT item_id,warehouse_id FROM reservation) SELECT pairs.item_id::int,pairs.warehouse_id::int,item.sku,item.name item_name,item.status item_status,item.quantity_tracked,item.unit,warehouse.name warehouse_name,coalesce(movement.on_hand,0)::float8 on_hand,coalesce(reservation.reserved,0)::float8 reserved FROM pairs JOIN item ON item.organization_id=$1 AND item.id=pairs.item_id JOIN warehouse ON warehouse.organization_id=$1 AND warehouse.id=pairs.warehouse_id LEFT JOIN movement USING(item_id,warehouse_id) LEFT JOIN reservation USING(item_id,warehouse_id) ORDER BY item.sku,warehouse.name`,
+      `WITH movement AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 on_hand FROM inventory_transaction_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), reservation AS (SELECT item_id,warehouse_id,sum(quantity_change)::float8 reserved FROM inventory_reservation_line WHERE organization_id=$1 GROUP BY item_id,warehouse_id), pairs AS (SELECT item_id,warehouse_id FROM movement UNION SELECT item_id,warehouse_id FROM reservation) SELECT pairs.item_id::int,pairs.warehouse_id::int,item.sku,item.name item_name,item.status item_status,item.quantity_tracked,item.unit,warehouse.name warehouse_name,warehouse.status warehouse_status,coalesce(movement.on_hand,0)::float8 on_hand,coalesce(reservation.reserved,0)::float8 reserved FROM pairs JOIN item ON item.organization_id=$1 AND item.id=pairs.item_id JOIN warehouse ON warehouse.organization_id=$1 AND warehouse.id=pairs.warehouse_id LEFT JOIN movement USING(item_id,warehouse_id) LEFT JOIN reservation USING(item_id,warehouse_id) ORDER BY item.sku,warehouse.name`,
       [organizationId],
     );
     return rows.map((row: Record<string, unknown>) => ({
@@ -68,6 +85,7 @@ export class StockRepo {
       unit: row.unit == null ? null : String(row.unit),
       warehouseId: Number(row.warehouse_id),
       warehouseName: String(row.warehouse_name),
+      warehouseStatus: row.warehouse_status as StockPosition["warehouseStatus"],
       onHand: Number(row.on_hand),
       reserved: Number(row.reserved),
       available: Number(row.on_hand) - Number(row.reserved),

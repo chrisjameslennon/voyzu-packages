@@ -1,5 +1,7 @@
 export type ItemStatus = "ACTIVE" | "INACTIVE";
 
+import type { ItemListCustomFieldDto } from "./item.types";
+
 export interface ItemListRow {
   id: number;
   sku: string;
@@ -8,6 +10,7 @@ export interface ItemListRow {
   unit: Unit | null;
   quantityTracked: boolean;
   unitsOnHand: number;
+  customFields: ItemListCustomFieldDto[];
   status: ItemStatus;
 }
 import type { Unit } from "../../core/types";

@@ -43,6 +43,25 @@ const normalizeAudit = (row: Record<string, unknown>) => ({
 
 export class ConfigurationRepo {
   constructor(private readonly db: DbExecutor) {}
+  async customFieldNameExists(
+    organizationId: number,
+    name: string,
+    appliesTo: string,
+    excludeId?: number,
+  ): Promise<boolean> {
+    const { rows } = await this.db.query(
+      `SELECT EXISTS(
+         SELECT 1
+         FROM inv_custom_field
+         WHERE organization_id=$1
+           AND applies_to=$2
+           AND lower(btrim(name::text))=lower(btrim($3::text))
+           AND ($4::bigint IS NULL OR id<>$4)
+       ) value`,
+      [organizationId, appliesTo, name, excludeId ?? null],
+    );
+    return Boolean(rows[0]?.value);
+  }
   async list(
     organizationId: number,
     kind: ConfigurationKind,
@@ -58,10 +77,12 @@ export class ConfigurationRepo {
             : "";
     const secondary =
       kind === "warehouse"
-          ? "concat_ws(', ', nullif(source.city, ''), nullif(source.country_code, ''))"
-          : "''";
-    const dataType = kind === "custom-field" ? "source.data_type" : "NULL::text";
-    const appliesTo = kind === "custom-field" ? "source.applies_to" : "NULL::text";
+        ? "concat_ws(', ', nullif(source.city, ''), nullif(source.country_code, ''))"
+        : "''";
+    const dataType =
+      kind === "custom-field" ? "source.data_type" : "NULL::text";
+    const appliesTo =
+      kind === "custom-field" ? "source.applies_to" : "NULL::text";
     const description = kind === "category" ? "source.description" : "''";
     const count =
       kind === "category"
@@ -72,12 +93,14 @@ export class ConfigurationRepo {
             ? "count(v.id)"
             : "0";
     const shared = kind === "option-list" ? "AND source.is_shared = true" : "";
-    const unitsOnHand = kind === "warehouse"
-      ? "COALESCE((SELECT sum(line.quantity_change)::float8 FROM inventory_transaction_line line WHERE line.organization_id=source.organization_id AND line.warehouse_id=source.id),0)::float8"
-      : "0::float8";
-    const hasUnitsOnHand = kind === "warehouse"
-      ? "EXISTS(SELECT 1 FROM inventory_transaction_line line WHERE line.organization_id=source.organization_id AND line.warehouse_id=source.id GROUP BY line.item_id HAVING sum(line.quantity_change)>0)"
-      : "false";
+    const unitsOnHand =
+      kind === "warehouse"
+        ? "COALESCE((SELECT sum(line.quantity_change)::float8 FROM inventory_transaction_line line WHERE line.organization_id=source.organization_id AND line.warehouse_id=source.id),0)::float8"
+        : "0::float8";
+    const hasUnitsOnHand =
+      kind === "warehouse"
+        ? "EXISTS(SELECT 1 FROM inventory_transaction_line line WHERE line.organization_id=source.organization_id AND line.warehouse_id=source.id GROUP BY line.item_id HAVING sum(line.quantity_change)>0)"
+        : "false";
     const { rows } = await this.db.query(
       `SELECT source.id::int, ${kind === "category" || kind === "warehouse" ? "source.code" : "NULL::text AS code"}, source.name, ${description} AS description, ${secondary} AS secondary, ${dataType} AS "dataType", ${appliesTo} AS "appliesTo", ${count}::int AS count, ${unitsOnHand} AS "unitsOnHand", ${hasUnitsOnHand} AS "hasUnitsOnHand", source.status FROM ${table} source ${joins} WHERE source.organization_id = $1 ${shared} GROUP BY source.id ORDER BY source.name`,
       [organizationId],
@@ -185,6 +208,7 @@ export class ConfigurationRepo {
       dataType: row.data_type == null ? null : String(row.data_type),
       appliesTo: row.applies_to == null ? null : String(row.applies_to),
       required: Boolean(row.required),
+      showInFilter: Boolean(row.show_in_filter),
       optionListId:
         row.option_list_id == null ? null : Number(row.option_list_id),
       isShared:
@@ -234,6 +258,7 @@ export class ConfigurationRepo {
                 data_type: input.dataType,
                 applies_to: input.appliesTo,
                 required: input.required ?? false,
+                show_in_filter: input.showInFilter ?? false,
                 option_list_id: input.optionListId ?? null,
                 status: "ACTIVE",
               };
@@ -254,8 +279,24 @@ export class ConfigurationRepo {
   ): Promise<void> {
     const maps: Record<ConfigurationKind, Record<string, string>> = {
       category: { code: "code", name: "name", description: "description" },
-      warehouse: { code: "code", name: "name", addressLine1: "address_line_1", addressLine2: "address_line_2", city: "city", region: "region", postcode: "postcode", countryCode: "country_code" },
-      "custom-field": { name: "name", dataType: "data_type", appliesTo: "applies_to", required: "required", optionListId: "option_list_id" },
+      warehouse: {
+        code: "code",
+        name: "name",
+        addressLine1: "address_line_1",
+        addressLine2: "address_line_2",
+        city: "city",
+        region: "region",
+        postcode: "postcode",
+        countryCode: "country_code",
+      },
+      "custom-field": {
+        name: "name",
+        dataType: "data_type",
+        appliesTo: "applies_to",
+        required: "required",
+        showInFilter: "show_in_filter",
+        optionListId: "option_list_id",
+      },
       "option-list": { name: "name", isShared: "is_shared" },
     };
     const map = maps[kind];

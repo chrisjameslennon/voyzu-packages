@@ -16,6 +16,7 @@ export const StockPositionDto = StrictObject({
   unit: Type.Union([Type.String(), Type.Null()]),
   warehouseId: Id,
   warehouseName: Text,
+  warehouseStatus: Status,
   onHand: Type.Number(),
   reserved: Type.Number({ minimum: 0 }),
   available: Type.Number(),
@@ -63,6 +64,7 @@ export const StockOptionDto = StrictObject({
   code: Text,
   name: Text,
   unit: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  status: Type.Optional(Status),
 });
 export type StockOption = Static<typeof StockOptionDto>;
 export const ReceiptLineDto = StrictObject({

@@ -21,7 +21,7 @@ export const ItemCustomFieldValueDto = Type.Union([Type.String(), Type.Number(),
 export const ItemCustomFieldDto = StrictObject({
   id: PositiveId, name: NonBlankText,
   dataType: Type.Union([Type.Literal("TEXT"), Type.Literal("NUMBER"), Type.Literal("DATE"), Type.Literal("BOOLEAN"), Type.Literal("OPTION"), Type.Literal("MULTIPLE_OPTIONS")]),
-  required: Type.Boolean(), status: Status,
+  required: Type.Boolean(), showInFilter: Type.Boolean(), status: Status,
   options: Type.Array(StrictObject({ id: PositiveId, value: NonBlankText })), value: ItemCustomFieldValueDto,
 });
 export type ItemCustomFieldDto = Static<typeof ItemCustomFieldDto>;
@@ -54,10 +54,24 @@ export const ItemResponseDto = StrictObject({
   status: Status, inUse: Type.Boolean(), customFields: Type.Array(ItemCustomFieldDto), audit: AuditMetadataDto,
 });
 export type ItemResponseDto = Static<typeof ItemResponseDto>;
+export const ItemListCustomFieldDto = StrictObject({
+  id: PositiveId,
+  name: NonBlankText,
+  dataType: Type.Union([
+    Type.Literal("TEXT"), Type.Literal("NUMBER"), Type.Literal("DATE"),
+    Type.Literal("BOOLEAN"), Type.Literal("OPTION"), Type.Literal("MULTIPLE_OPTIONS"),
+  ]),
+  showInFilter: Type.Boolean(),
+  status: Status,
+  values: Type.Array(Type.String()),
+  options: Type.Array(Type.String()),
+});
+export type ItemListCustomFieldDto = Static<typeof ItemListCustomFieldDto>;
 export const ItemListRowDto = StrictObject({
   id: PositiveId, sku: ItemSku, name: NonBlankText, category: Type.Union([Type.String(), Type.Null()]),
   unit: Type.Union([Unit, Type.Null()]), quantityTracked: Type.Boolean(),
   unitsOnHand: Type.Number(),
+  customFields: Type.Array(ItemListCustomFieldDto),
   status: Status,
 });
 export type ItemListRowDto = Static<typeof ItemListRowDto>;

@@ -35,6 +35,7 @@ import type {
 } from "../types/configuration.types";
 import styles from "./configuration.module.css";
 import { Deactivate } from "../domain/operation-policy";
+import { isSelectSearchable } from "../../core/client/select-policy";
 type Meta = {
   title: string;
   singular: string;
@@ -66,6 +67,7 @@ export function ConfigurationDetailView({
   const [postcode, setPostcode] = useState(record.postcode);
   const [countryCode, setCountryCode] = useState(record.countryCode ?? "");
   const [requiredField, setRequiredField] = useState(record.required);
+  const [showInFilter, setShowInFilter] = useState(record.showInFilter);
   const [optionListId, setOptionListId] = useState(
     record.optionListId ? String(record.optionListId) : "",
   );
@@ -104,7 +106,7 @@ export function ConfigurationDetailView({
       : kind === "warehouse"
         ? { name, addressLine1, addressLine2, city, region, postcode, countryCode: countryCode || null }
         : kind === "custom-field"
-          ? { name, required: requiredField, optionListId: optionListId ? Number(optionListId) : null }
+          ? { name, required: requiredField, showInFilter, optionListId: optionListId ? Number(optionListId) : null }
           : { name };
     const response = await request(
       `/api/inventory/configuration/${kind}/${record.id}`,
@@ -446,7 +448,7 @@ export function ConfigurationDetailView({
                   <Input
                     value={
                       record.dataType === "BOOLEAN"
-                        ? "Checkbox"
+                        ? "CHECKBOX"
                         : (record.dataType ?? "").replaceAll("_", " ")
                     }
                     disabled
@@ -456,13 +458,25 @@ export function ConfigurationDetailView({
                   <label className={typography.fieldLabel}>Applies To</label>
                   <Input value={record.appliesTo ?? ""} disabled />
                 </div>
-                <label className={styles.toolbar}>
+                <label className={styles.optionChoice}>
                   <Checkbox
                     checked={requiredField}
                     onChange={setRequiredField}
                   />
                   Required
                 </label>
+                {record.appliesTo === "ITEM" &&
+                (record.dataType === "BOOLEAN" ||
+                  record.dataType === "OPTION" ||
+                  record.dataType === "MULTIPLE_OPTIONS") ? (
+                  <label className={styles.optionChoice}>
+                    <Checkbox
+                      checked={showInFilter}
+                      onChange={setShowInFilter}
+                    />
+                    Show in Filter
+                  </label>
+                ) : null}
                 {record.dataType === "OPTION" ||
                 record.dataType === "MULTIPLE_OPTIONS" ? (
                   <div className={styles.field}>
@@ -473,6 +487,7 @@ export function ConfigurationDetailView({
                       clearable
                       value={record.isShared ? optionListId : ""}
                       onChange={setOptionListId}
+                      searchable={isSelectSearchable(optionLists.length)}
                       options={optionLists.map((list) => ({
                         value: String(list.id),
                         label: list.name,

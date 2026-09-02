@@ -40,6 +40,8 @@ import { InventoryListActions } from "../../../client/InventoryListActions";
 import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
 import styles from "./items.module.css";
 import { Create as CreatePolicy, Delete } from "../domain/operation-policy";
+import { customFieldDisplayValues, ItemMatchesSearch } from "../domain/item-list-policy";
+import { isSelectSearchable } from "../../core/client/select-policy";
 
 const SKU_PATTERN = /^[A-Z0-9][A-Z0-9_-]*$/;
 const UNIT_OPTIONS = UNIT_VALUES.map((unit) => ({ value: unit, label: unit }));
@@ -156,6 +158,17 @@ export function ItemsList({
     setToast(message);
   }, []);
   useEffect(() => setRows(items), [items]);
+  const customFilterFields = useMemo(() => {
+    const fields = new Map<number, ItemListRow["customFields"][number]>();
+    for (const item of rows)
+      for (const field of item.customFields)
+        if (
+          field.status === "ACTIVE" &&
+          field.showInFilter &&
+          ["BOOLEAN", "OPTION", "MULTIPLE_OPTIONS"].includes(field.dataType)
+        ) fields.set(field.id, field);
+    return [...fields.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [rows]);
   const filterTabs = useMemo<FilterTab[]>(
     () => [
       {
@@ -194,8 +207,14 @@ export function ItemsList({
         type: "checkbox",
         options: ["ACTIVE", "INACTIVE"],
       },
+      ...customFilterFields.map((field) => ({
+        key: `customField:${field.id}`,
+        label: field.name,
+        type: "checkbox" as const,
+        options: field.dataType === "BOOLEAN" ? ["Yes", "No"] : field.options,
+      })),
     ],
-    [rows],
+    [customFilterFields, rows],
   );
   const visibleRows = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -205,19 +224,25 @@ export function ItemsList({
     const status = filters.status as string[] | undefined;
     return rows.filter((item) => {
       const displayTracked = item.quantityTracked ? "Yes" : "No";
+      const matchesCustomFilters = customFilterFields.every((definition) => {
+        const selected = filters[`customField:${definition.id}`] as string[] | undefined;
+        if (!selected?.length) return true;
+        const field = item.customFields.find(({ id }) => id === definition.id);
+        return field
+          ? customFieldDisplayValues(field).some((value) => selected.includes(value))
+          : false;
+      });
       return (
-        (!query ||
-          [item.sku, item.name, item.category ?? "", item.unit ?? ""].some(
-            (value) => value.toLowerCase().includes(query),
-          )) &&
+        (!query || ItemMatchesSearch(item, query)) &&
         (!category?.length ||
           (item.category !== null && category.includes(item.category))) &&
         (!units?.length || (item.unit !== null && units.includes(item.unit))) &&
         (!tracked?.length || tracked.includes(displayTracked)) &&
-        (!status?.length || status.includes(item.status))
+        (!status?.length || status.includes(item.status)) &&
+        matchesCustomFilters
       );
     });
-  }, [filters, rows, search]);
+  }, [customFilterFields, filters, rows, search]);
   const selected = rows.filter(({ id }) => selectedIds.has(id));
   const allSelected =
     visibleRows.length > 0 &&
@@ -321,6 +346,7 @@ export function ItemsList({
             unit: item.unit,
             quantityTracked: item.quantityTracked,
             unitsOnHand: 0,
+            customFields: [],
             status: item.status,
           },
         ].sort((a, b) => a.sku.localeCompare(b.sku)),
@@ -576,6 +602,7 @@ export function ItemsList({
                     value={categoryId}
                     onChange={setCategoryId}
                     hasError={validation.hasError("categoryId")}
+                    searchable={isSelectSearchable(categories.length)}
                     options={categories.map((category) => ({
                       value: String(category.id),
                       label: category.name,
@@ -667,6 +694,7 @@ export function ItemsList({
                     serverError === "Select an item category" &&
                     !changeCategoryId
                   }
+                  searchable={isSelectSearchable(categories.length)}
                   options={categories.map((category) => ({
                     value: String(category.id),
                     label: category.name,

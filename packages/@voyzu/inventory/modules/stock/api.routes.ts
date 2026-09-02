@@ -74,7 +74,7 @@ export const apiDefinitions = {
     loadHandler: () => load().then((m) => m.handleOptions),
     summary: "Get stock operation options",
     description:
-      "Returns active quantity-tracked items and warehouses for stock workflows.",
+      "Returns active quantity-tracked items and warehouses, including warehouse status, for stock workflows.",
     tags: ["Inventory Stock"],
     responses: {
       "200": {

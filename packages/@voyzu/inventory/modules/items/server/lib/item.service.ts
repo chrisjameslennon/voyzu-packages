@@ -7,6 +7,7 @@ import type { ItemCategoryOptionDto, ItemCreateRequestDto, ItemDeletionImpactDto
 import { ItemRepo } from "../db/item.repo";
 import type { ItemRow } from "../db/item.row.types";
 import { Activate, ChangeCategory, Create, Deactivate, Delete, ReserveSku, Update } from "../../domain/operation-policy";
+import { ItemMatchesSearch } from "../../domain/item-list-policy";
 
 const enforce = (blockers: Array<{ message: string }>) => {
   if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
@@ -46,7 +47,10 @@ async function requireItems(repo: ItemRepo, organizationId: number, skus: string
   return rows as ItemRow[];
 }
 
-export async function listItems(organizationId: number): Promise<ItemListRow[]> { return new ItemRepo(getDb()).list(organizationId); }
+export async function listItems(organizationId: number, search?: string): Promise<ItemListRow[]> {
+  const items = await new ItemRepo(getDb()).list(organizationId);
+  return search ? items.filter((item) => ItemMatchesSearch(item, search)) : items;
+}
 export async function listItemCategories(organizationId: number): Promise<ItemCategoryOptionDto[]> { return new ItemRepo(getDb()).listCategories(organizationId); }
 export async function reserveItemSku(): Promise<{ id: number; sku: string }> {
   enforce(ReserveSku());

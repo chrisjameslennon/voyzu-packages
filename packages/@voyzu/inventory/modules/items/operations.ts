@@ -5,7 +5,7 @@ import { OperationalItemDto } from "./types/operational-item.types";
 import { ItemCategoryChangeRequestDto, ItemCategoryOptionDto, ItemCodeListRequestDto, ItemCreateRequestDto, ItemDeletionImpactDto, ItemListRowDto, ItemPatchRequestDto, ItemResponseDto, ItemSkuReservationDto } from "./types/item.types";
 
 const loadService = () => import("./server/lib/item.service");
-export const listInventoryItems = operation.defineLazy({ parameters: Type.Tuple([Type.Number()]), result: Type.Array(ItemListRowDto) }, () => loadService().then((module) => module.listItems));
+export const listInventoryItems = operation.defineLazy({ parameters: Type.Tuple([Type.Number(), Type.Optional(Type.String())]), result: Type.Array(ItemListRowDto) }, () => loadService().then((module) => module.listItems));
 export const listInventoryItemCategories = operation.defineLazy({ parameters: Type.Tuple([Type.Number()]), result: Type.Array(ItemCategoryOptionDto) }, () => loadService().then((module) => module.listItemCategories));
 export const reserveInventoryItemSku = operation.defineLazy({ parameters: Type.Tuple([]), result: ItemSkuReservationDto }, () => loadService().then((module) => module.reserveItemSku));
 export const getInventoryItem = operation.defineLazy({ parameters: Type.Tuple([Type.Number(), Type.String()]), result: Type.Union([ItemResponseDto, Type.Null()]) }, () => loadService().then((module) => module.getItem));
