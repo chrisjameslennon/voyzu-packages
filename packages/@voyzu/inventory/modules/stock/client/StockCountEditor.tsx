@@ -20,6 +20,7 @@ import {
   detailLinkWithBackContext,
 } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
+import entryLayout from "@voyzu/ui-layout/css-modules/document-entry.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type {
@@ -27,6 +28,8 @@ import type {
   StockOption,
   StockPosition,
 } from "../types/stock.types";
+import { STOCK_ADJUSTMENT_REASONS } from "../../core/types";
+import { OtherReasonRequiresNotes } from "../domain/operation-policy";
 import styles from "./stock.module.css";
 type Row = {
   id: number;
@@ -36,6 +39,7 @@ type Row = {
   expectedQuantity: number;
   countedQuantity: number | "";
   variance: number | string;
+  reasonCode: string;
 };
 export function StockCountEditor({
   record: initial,
@@ -95,33 +99,42 @@ export function StockCountEditor({
       label: "Item Name",
       type: "text",
       readOnly: true,
-      width: 260,
+      width: 230,
     },
     {
       key: "expectedQuantity",
       label: "On Hand",
       type: "number",
       readOnly: true,
-      width: 110,
+      width: 112,
     },
     {
       key: "countedQuantity",
       label: "Actual Quantity",
       type: "number",
       readOnly: record?.status === "COMPLETED",
-      width: 150,
+      width: 112,
     },
     {
       key: "variance",
       label: "Variance",
       type: "text",
       readOnly: true,
-      width: 100,
+      width: 112,
       valueClassName: styles.varianceValue,
       calculate: (row) =>
         row.countedQuantity === ""
           ? "—"
           : Number(row.countedQuantity) - row.expectedQuantity,
+    },
+    {
+      key: "reasonCode",
+      label: "Reason",
+      type: "select",
+      readOnly: record?.status === "COMPLETED",
+      width: 160,
+      searchable: false,
+      options: STOCK_ADJUSTMENT_REASONS.map(({ code, label }) => ({ value: code, label })),
     },
   ];
   const warehouseRows = (selectedWarehouseId: string): Row[] =>
@@ -138,6 +151,7 @@ export function StockCountEditor({
         expectedQuantity: position.onHand,
         countedQuantity: "",
         variance: "—",
+        reasonCode: "STOCK_VARIANCE",
       }));
   const payload = () => ({
     warehouseId: Number(warehouseId),
@@ -147,6 +161,7 @@ export function StockCountEditor({
       itemId: Number(row.itemId),
       countedQuantity:
         row.countedQuantity === "" ? null : Number(row.countedQuantity),
+      reasonCode: row.reasonCode,
     })),
   });
   const request = async (path: string, init: RequestInit) => {
@@ -181,6 +196,15 @@ export function StockCountEditor({
       .map((row) => Number(row.itemId));
     if (new Set(selectedItemIds).size !== selectedItemIds.length) {
       setError("Each item can only be added once");
+      return;
+    }
+    if (rows.some((row) => !row.reasonCode)) {
+      setError("Select a reason for every stock count line");
+      return;
+    }
+    const reasonBlockers = OtherReasonRequiresNotes(rows, notes);
+    if (reasonBlockers.length) {
+      setError(reasonBlockers[0]!.message);
       return;
     }
     setSaving(true);
@@ -239,6 +263,15 @@ export function StockCountEditor({
       setError("The selected warehouse has no stocked items");
       return;
     }
+    if (rows.some((row) => !row.reasonCode)) {
+      setError("Select a reason for every stock count line");
+      return;
+    }
+    const reasonBlockers = OtherReasonRequiresNotes(rows, notes);
+    if (reasonBlockers.length) {
+      setError(reasonBlockers[0]!.message);
+      return;
+    }
     setConfirmComplete(true);
   };
   const remove = async () => {
@@ -265,13 +298,13 @@ export function StockCountEditor({
   if (!record || !readOnly)
     return (
       <div
-        className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}
+        className={entryLayout.documentEntryView}
       >
-        <header className={layout.detailHeader}>
-          <div className={layout.slotBreadcrumb}>
+        <header className={entryLayout.documentEntryHeader}>
+          <div className={entryLayout.slotBreadcrumb}>
             <Breadcrumbs />
           </div>
-          <div className={layout.slotTitle}>
+          <div className={entryLayout.slotTitle}>
             <div className={styles.titleTextBlock}>
               <h1
                 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}
@@ -283,7 +316,7 @@ export function StockCountEditor({
               </p>
             </div>
           </div>
-          <div className={layout.slotActions}>
+          <div className={entryLayout.slotActions}>
             <div className={detailStyles.headerActions}>
               <Button
                 variant="cancel"
@@ -308,7 +341,7 @@ export function StockCountEditor({
               </Button>
             </div>
           </div>
-          <div className={layout.slotAlert}>
+          <div className={entryLayout.slotAlert}>
             <ValidationAlert
               errors={error ? [error] : []}
               visible={!!error}
@@ -316,7 +349,7 @@ export function StockCountEditor({
             />
           </div>
         </header>
-        <aside className={layout.statusSection}>
+        <aside className={entryLayout.slotDocument}>
           <div className={styles.documentPanel}>
             <div className={styles.documentPanelLabel}>
               Stocktake document
@@ -334,7 +367,9 @@ export function StockCountEditor({
                 </fieldset>
               </div>
               <div className={styles.field}>
-                <label className={typography.fieldLabel}>Notes</label>
+                <label className={typography.fieldLabel}>
+                  Notes{error === "Notes are required when a reason is Other" ? " *" : ""}
+                </label>
                 <textarea
                   className={`${styles.textarea} ${styles.stocktakeNotes}`}
                   value={notes}
@@ -344,7 +379,7 @@ export function StockCountEditor({
             </div>
           </div>
         </aside>
-        <main className={`${layout.mainSection} ${styles.stack}`}>
+        <main className={`${entryLayout.slotMain} ${styles.stack}`}>
           <section className={detailStyles.card}>
             <h2 className={typography.sectionHeading}>Stocktake Details</h2>
             {record ? (
@@ -388,6 +423,7 @@ export function StockCountEditor({
                   onRowsChange={setRows}
                   emptyText="This warehouse has no stocked items"
                   ariaLabel="Stocktake quantities"
+                  mobileLayout="cards"
                 />
               ) : (
                 <p className={styles.issueItemsHint}>
@@ -399,6 +435,7 @@ export function StockCountEditor({
         </main>
         <ConfirmDialog
           isOpen={confirmComplete}
+          size="wide"
           title="Confirm Stocktake"
           confirmLabel="Submit Stocktake"
           confirmVariant="primary"

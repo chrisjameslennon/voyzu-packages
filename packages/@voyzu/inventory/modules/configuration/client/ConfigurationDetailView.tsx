@@ -136,6 +136,16 @@ export function ConfigurationDetailView({
     setRecord(changed[0]!);
     setToast(`${meta.singular} ${status.toLowerCase()}`);
   };
+  const requestDelete = () => {
+    setError("");
+    if (kind === "category" && record.inUse) {
+      setError(
+        `Item categories containing items cannot be deleted. This applies whether the items are active or inactive. [${record.name}]`,
+      );
+      return;
+    }
+    setConfirm(true);
+  };
   const optionListTargetId =
     kind === "option-list" ? record.id : record.optionListId;
   const applyOptionListResponse = (changed: ConfigurationDetail) => {
@@ -277,8 +287,8 @@ export function ConfigurationDetailView({
             <Button
               variant="danger"
               icon="delete"
-              disabled={record.inUse}
-              onClick={() => setConfirm(true)}
+              disabled={record.inUse && kind !== "category"}
+              onClick={requestDelete}
             />
           </div>
         </div>
@@ -427,7 +437,11 @@ export function ConfigurationDetailView({
                 <div className={styles.field}>
                   <label className={typography.fieldLabel}>Data Type</label>
                   <Input
-                    value={(record.dataType ?? "").replaceAll("_", " ")}
+                    value={
+                      record.dataType === "BOOLEAN"
+                        ? "Checkbox"
+                        : (record.dataType ?? "").replaceAll("_", " ")
+                    }
                     disabled
                   />
                 </div>

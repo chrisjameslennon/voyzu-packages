@@ -15,11 +15,16 @@ import {
   type EditableGridColumn,
   type EditableGridHandle,
 } from "@voyzu/ui-components";
-import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
+import layout from "@voyzu/ui-layout/css-modules/document-entry.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type { ConfigurationDetail } from "../../configuration/types/configuration.types";
-import { Transfer } from "../domain/operation-policy";
+import { OtherReasonRequiresNotes, Transfer } from "../domain/operation-policy";
+import {
+  STOCK_ADJUSTMENT_REASONS,
+  STOCK_ISSUE_REASONS,
+  STOCK_RECEIPT_REASONS,
+} from "../../core/types";
 import type { StockOption, StockPosition } from "../types/stock.types";
 import styles from "./stock.module.css";
 type Kind = "receive" | "issue" | "transfer" | "reserve" | "adjust";
@@ -35,6 +40,7 @@ type Line = {
   quantityChange: number | "";
   warehouseId: string;
   warehouse: string;
+  reasonCode: string;
 };
 const titles = {
   receive: ["Receive Stock", "Record stock received into a warehouse."],
@@ -68,6 +74,8 @@ export function StockOperationView({
   const [toWarehouseId, setToWarehouseId] = useState("");
   const [itemId, setItemId] = useState("");
   const [reference, setReference] = useState("");
+  const [notes, setNotes] = useState("");
+  const [reasonCode, setReasonCode] = useState("");
   const [quantity, setQuantity] = useState("");
   const [lines, setLines] = useState<Line[]>([]);
   const movementGridRef = useRef<EditableGridHandle<Line>>(null);
@@ -109,6 +117,7 @@ export function StockOperationView({
         quantityChange: "",
         warehouseId: String(position.warehouseId),
         warehouse: position.warehouseName,
+        reasonCode: "",
       })),
     );
   }, [kind, positions]);
@@ -159,7 +168,7 @@ export function StockOperationView({
       key: "itemId",
       label: "Item",
       type: "select",
-      width: 260,
+      width: 400,
       options: items.map((i) => ({
         value: String(i.id),
         label: i.name,
@@ -171,7 +180,7 @@ export function StockOperationView({
       key: "quantity",
       label: "Quantity",
       type: "number",
-      width: 160,
+      width: 112,
       rules: [
         required(),
         {
@@ -180,6 +189,15 @@ export function StockOperationView({
           message: "Quantity must be greater than zero",
         },
       ],
+    },
+    {
+      key: "reasonCode",
+      label: "Reason",
+      type: "select",
+      width: 220,
+      searchable: false,
+      options: STOCK_RECEIPT_REASONS.map(({ code, label }) => ({ value: code, label })),
+      rules: [required()],
     },
   ];
   const positionRows = useMemo(
@@ -202,6 +220,7 @@ export function StockOperationView({
           quantityChange: "" as const,
           warehouseId: String(p.warehouseId),
           warehouse: p.warehouseName,
+          reasonCode: "",
         })),
     [positions, itemId, warehouseId, kind],
   );
@@ -220,7 +239,7 @@ export function StockOperationView({
       key: "itemId",
       label: "Item",
       type: "select",
-      width: 320,
+      width: 400,
       options: positions
         .filter(
           (position) =>
@@ -239,7 +258,7 @@ export function StockOperationView({
       label: "Available",
       type: "number",
       readOnly: true,
-      width: 120,
+      width: 112,
       calculate: (line) =>
         positions.find(
           (position) =>
@@ -251,7 +270,7 @@ export function StockOperationView({
       key: "quantity",
       label: "Quantity",
       type: "number",
-      width: 140,
+      width: 112,
       rules: [
         required(),
         {
@@ -260,6 +279,15 @@ export function StockOperationView({
           message: "Quantity must be greater than zero",
         },
       ],
+    },
+    {
+      key: "reasonCode",
+      label: "Reason",
+      type: "select",
+      width: 220,
+      searchable: false,
+      options: STOCK_ISSUE_REASONS.map(({ code, label }) => ({ value: code, label })),
+      rules: [required()],
     },
   ];
   const createMovementLine = (selectedWarehouseId: string): Line => ({
@@ -277,6 +305,7 @@ export function StockOperationView({
       warehouses.find(
         (warehouse) => warehouse.id === Number(selectedWarehouseId),
       )?.name ?? "",
+    reasonCode: "",
   });
   const reserveColumns: EditableGridColumn<Line>[] = [
     {
@@ -291,23 +320,31 @@ export function StockOperationView({
       label: "On Hand",
       type: "number",
       readOnly: true,
-      width: 100,
+      width: 112,
     },
     {
       key: "reserved",
       label: "Currently Reserved",
       type: "number",
       readOnly: true,
-      width: 150,
+      width: 136,
     },
     {
       key: "available",
       label: "Available",
       type: "number",
       readOnly: true,
-      width: 100,
+      width: 112,
     },
-    { key: "quantity", label: "Reserve", type: "number", width: 110 },
+    { key: "quantity", label: "Reserve", type: "number", width: 112 },
+    {
+      key: "reasonCode",
+      label: "Reason",
+      type: "select",
+      width: 220,
+      searchable: false,
+      options: STOCK_ISSUE_REASONS.map(({ code, label }) => ({ value: code, label })),
+    },
   ];
   const adjustmentWarehouses = warehouses.filter((warehouse) =>
     positions.some(
@@ -327,7 +364,7 @@ export function StockOperationView({
       (kind !== "reserve" && !warehouseId) ||
       (kind === "transfer" && (!itemId || !toWarehouseId || !quantity)) ||
       (kind === "reserve" && !itemId) ||
-      (kind === "adjust" && (!itemId || quantity === ""))
+      (kind === "adjust" && (!itemId || quantity === "" || !reasonCode))
     ) {
       setError("Complete all required fields");
       return false;
@@ -360,6 +397,13 @@ export function StockOperationView({
       setError("Enter a quantity for at least one warehouse");
       return false;
     }
+    if (
+      kind === "reserve" &&
+      lines.some((line) => Number(line.quantity) > 0 && !line.reasonCode)
+    ) {
+      setError("Select a reason for every reserved stock line");
+      return false;
+    }
     if (kind === "adjust") {
       if (!adjustmentPosition) {
         setError("Select an item and warehouse with recorded stock");
@@ -389,6 +433,18 @@ export function StockOperationView({
         `Complete required custom field${missingCustomFields.length === 1 ? "" : "s"}: ${missingCustomFields.map(({ name }) => name).join(", ")}`,
       );
       return false;
+    }
+    const reasonLines = kind === "adjust"
+      ? [{ reasonCode }]
+      : lines.filter((line) =>
+          kind === "reserve" ? Number(line.quantity) > 0 : Boolean(line.itemId) && Number(line.quantity) > 0,
+        );
+    if (kind !== "transfer") {
+      const blockers = OtherReasonRequiresNotes(reasonLines, notes);
+      if (blockers.length) {
+        setError(blockers[0]!.message);
+        return false;
+      }
     }
     return true;
   };
@@ -429,11 +485,13 @@ export function StockOperationView({
           date,
           warehouseId: Number(warehouseId),
           reference: optionalReference,
+          notes: notes.trim() || undefined,
           lines: lines
             .filter((l) => l.itemId && Number(l.quantity) > 0)
             .map((l) => ({
               itemId: Number(l.itemId),
               quantity: Number(l.quantity),
+              reasonCode: l.reasonCode,
             })),
           customFields: customFieldPayload,
         };
@@ -450,11 +508,13 @@ export function StockOperationView({
         body = {
           itemId: Number(itemId),
           reference: optionalReference,
+          notes: notes.trim() || undefined,
           lines: lines
             .filter((l) => Number(l.quantity) > 0)
             .map((l) => ({
               warehouseId: Number(l.warehouseId),
               quantity: Number(l.quantity),
+              reasonCode: l.reasonCode,
             })),
         };
       else
@@ -462,11 +522,13 @@ export function StockOperationView({
           date,
           warehouseId: Number(warehouseId),
           reference: optionalReference,
+          notes: notes.trim() || undefined,
           lines: [
             {
               itemId: Number(itemId),
               quantityChange:
                 Number(quantity) - (adjustmentPosition?.onHand ?? 0),
+              reasonCode,
             },
           ],
         };
@@ -620,17 +682,9 @@ export function StockOperationView({
   ));
   return (
     <div
-      className={`${layout.detailView} ${
-        kind === "receive" ||
-        kind === "issue" ||
-        kind === "transfer" ||
-        kind === "reserve" ||
-        kind === "adjust"
-          ? layout.detailViewWithStatusRail
-          : ""
-      }`}
+      className={layout.documentEntryView}
     >
-      <header className={layout.detailHeader}>
+      <header className={layout.documentEntryHeader}>
         <div className={layout.slotBreadcrumb}>
           <Breadcrumbs />
         </div>
@@ -705,7 +759,7 @@ export function StockOperationView({
       kind === "transfer" ||
       kind === "reserve" ||
       kind === "adjust" ? (
-        <aside className={layout.statusSection}>
+        <aside className={layout.slotDocument}>
           <div className={styles.documentPanel}>
             <div className={styles.documentPanelLabel}>
               {kind === "transfer"
@@ -741,6 +795,18 @@ export function StockOperationView({
                   onChange={(event) => setReference(event.target.value)}
                 />
               </div>
+              {kind !== "transfer" ? (
+                <div className={styles.field}>
+                  <label className={typography.fieldLabel}>
+                    Notes{error === "Notes are required when a reason is Other" ? " *" : " (optional)"}
+                  </label>
+                  <textarea
+                    className={styles.textarea}
+                    value={notes}
+                    onChange={(event) => setNotes(event.target.value)}
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
           {(kind === "receive" || kind === "issue" || kind === "adjust") &&
@@ -754,7 +820,7 @@ export function StockOperationView({
           ) : null}
         </aside>
       ) : null}
-      <main className={`${layout.mainSection} ${styles.stack}`}>
+      <main className={`${layout.slotMain} ${styles.stack}`}>
           <>
             {kind === "issue" || kind === "receive" ? (
               <section className={detailStyles.card}>
@@ -807,6 +873,7 @@ export function StockOperationView({
                       addRowLabel="Add Item"
                       emptyText="No items have been added"
                       ariaLabel={`${kind} stock items`}
+                      mobileLayout="cards"
                     />
                   ) : (
                     <p className={styles.issueItemsHint}>
@@ -918,6 +985,7 @@ export function StockOperationView({
                       initialRows={positionRows}
                       onRowsChange={setLines}
                       ariaLabel="Reserve item by warehouse"
+                      mobileLayout="cards"
                     />
                   ) : (
                     <p className={styles.issueItemsHint}>
@@ -945,6 +1013,7 @@ export function StockOperationView({
                         setItemId(value);
                         setWarehouseId("");
                         setQuantity("");
+                        setReasonCode("");
                       }}
                       options={items
                         .filter((item) =>
@@ -1026,6 +1095,17 @@ export function StockOperationView({
                         onChange={(event) => setQuantity(event.target.value)}
                       />
                     </div>
+                    <div className={styles.revisedQuantityField}>
+                      <label className={typography.fieldLabel}>Reason</label>
+                      <SearchableSelect
+                        value={reasonCode}
+                        hasError={error === "Complete all required fields" && !reasonCode}
+                        onChange={setReasonCode}
+                        options={STOCK_ADJUSTMENT_REASONS.map(({ code, label }) => ({ value: code, label }))}
+                        searchable={false}
+                        placeholder="Select a reason"
+                      />
+                    </div>
                   </div>
                 ) : null}
               </section>
@@ -1045,6 +1125,7 @@ export function StockOperationView({
       </main>
       <ConfirmDialog
         isOpen={confirmMovement}
+        size="wide"
         title={`Confirm ${titles[kind][0]}`}
         confirmLabel={titles[kind][0]}
         confirmVariant="primary"

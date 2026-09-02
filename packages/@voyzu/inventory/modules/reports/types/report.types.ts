@@ -21,6 +21,7 @@ export const InventoryReportDto = StrictObject({
     StrictObject({
       id: Type.String(),
       cells: Type.Array(Type.String()),
+      date: Type.Optional(Type.String()),
       inactive: Type.Optional(Type.Boolean()),
       details: Type.Optional(
         Type.Array(

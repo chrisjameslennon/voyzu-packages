@@ -118,10 +118,22 @@ export async function transitionConfiguration(
 ) {
   return withTransaction(async (db) => {
     const repo = new ConfigurationRepo(db);
-    if (status === "DELETED") {
-      const records = await Promise.all(
+    const records = status === "DELETED" || (kind === "category" && status === "INACTIVE")
+      ? await Promise.all(
         ids.map((id) => repo.get(organizationId, kind, id)),
+      )
+      : [];
+    if (kind === "category" && status !== "ACTIVE") {
+      const usedCategories = records.filter(
+        (record): record is NonNullable<typeof record> => Boolean(record?.inUse),
       );
+      if (usedCategories.length) {
+        throw new BusinessRuleError(
+          `Item categories containing items cannot be deleted or made inactive. This applies whether the items are active or inactive. [${usedCategories.map(({ name }) => name).join(", ")}]`,
+        );
+      }
+    }
+    if (status === "DELETED") {
       const blockers = Delete(
         records.filter(
           (record): record is NonNullable<typeof record> => record !== null,

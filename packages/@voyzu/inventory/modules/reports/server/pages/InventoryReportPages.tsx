@@ -3,6 +3,10 @@ import { InventoryReportView } from "../../client";
 import type { InventoryReportKey } from "../../types/report.types";
 import { getSelectedOrganization } from "../../../common/server/organization-context";
 import { getInventoryReport } from "../lib/report.service";
+
+const toIso = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
 async function page(
   key: InventoryReportKey,
   {
@@ -16,6 +20,16 @@ async function page(
 ) {
   const organization = await getSelectedOrganization();
   const generatedAt = new Date().toISOString();
+  const today = new Date();
+  const defaultToDate = toIso(today);
+  const defaultFromDate = toIso(
+    new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90),
+  );
+  const initialRangePreset =
+    surface?.searchParams?.rangePreset ??
+    (surface?.searchParams?.fromDate || surface?.searchParams?.toDate
+      ? "custom"
+      : "previous-90-days");
   const report = organization
     ? await getInventoryReport(organization.id, key)
     : { title: key, headers: [], rows: [] };
@@ -30,6 +44,15 @@ async function page(
         surface?.searchParams?.showCustomFields === undefined
           ? true
           : surface.searchParams.showCustomFields === "true"
+      }
+      initialRangePreset={initialRangePreset}
+      initialFromDate={
+        surface?.searchParams?.fromDate ??
+        (initialRangePreset === "all-dates" ? "" : defaultFromDate)
+      }
+      initialToDate={
+        surface?.searchParams?.toDate ??
+        (initialRangePreset === "all-dates" ? "" : defaultToDate)
       }
     />
   );

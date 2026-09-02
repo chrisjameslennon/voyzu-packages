@@ -238,7 +238,7 @@ async function seedOrganization(organization: Organization): Promise<void> {
       date: receiptDate,
       warehouseId,
       reference: "SAMPLE-DATA",
-      lines: [{ itemId, quantity }],
+      lines: [{ itemId, quantity, reasonCode: "OPENING_STOCK" }],
     });
   }
 
@@ -255,8 +255,8 @@ async function seedOrganization(organization: Organization): Promise<void> {
       itemId: itemIds.get("SAMPLE-BEANS")!,
       reference: "SAMPLE-RESERVATION",
       lines: [
-        { warehouseId: warehouseIds.get("INV-MAIN")!, quantity: 5 },
-        { warehouseId: warehouseIds.get("INV-SOUTH")!, quantity: 3 },
+        { warehouseId: warehouseIds.get("INV-MAIN")!, quantity: 5, reasonCode: "SALE" },
+        { warehouseId: warehouseIds.get("INV-SOUTH")!, quantity: 3, reasonCode: "SALE" },
       ],
     });
   }

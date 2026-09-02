@@ -84,7 +84,7 @@ async function seedLargeOrganization(
       const currentQuantity =
         onHandByPosition.get(`${item.id}:${warehouse.id}`) ?? 0;
       const quantity = targetQuantity - currentQuantity;
-      return quantity > 0 ? [{ itemId: item.id, quantity }] : [];
+      return quantity > 0 ? [{ itemId: item.id, quantity, reasonCode: "OPENING_STOCK" as const }] : [];
     });
     if (!lines.length) continue;
     await receiveInventoryStock(organization.id, {

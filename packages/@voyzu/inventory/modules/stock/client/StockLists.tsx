@@ -390,6 +390,15 @@ export function StockPositionsView({
         emptyTitle="No stock"
         emptyText="Receive stock to create the first stock position"
         emptyFilterText="No stock positions match the current filters"
+        mobileRender={(row) => (
+          <div>
+            <strong>{row.itemName}</strong>
+            <div>{row.sku} · {row.warehouseName}</div>
+            <div>
+              On hand {row.onHand} · Reserved {row.reserved} · Available {row.available}
+            </div>
+          </div>
+        )}
       />
     </Shell>
   );

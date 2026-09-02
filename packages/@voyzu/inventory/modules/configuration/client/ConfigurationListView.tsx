@@ -41,6 +41,8 @@ type Meta = {
   icon: string;
   href: string;
 };
+const dataTypeLabel = (value: string | null) =>
+  value === "BOOLEAN" ? "Checkbox" : value?.replaceAll("_", " ") ?? "—";
 export function ConfigurationListView({
   kind,
   meta,
@@ -152,7 +154,7 @@ export function ConfigurationListView({
         ]
         : kind === "custom-field"
           ? [
-            { key: "dataType", label: "Type", render: (row: ConfigurationRow) => row.dataType?.replaceAll("_", " ") ?? "—" },
+            { key: "dataType", label: "Type", render: (row: ConfigurationRow) => dataTypeLabel(row.dataType) },
             { key: "appliesTo", label: "Applies To", render: (row: ConfigurationRow) => row.appliesTo?.replaceAll("_", " ") ?? "—" },
             { key: "count", label: "Recorded Values", align: "right" as const },
           ]
@@ -268,6 +270,19 @@ export function ConfigurationListView({
     setToast(`${ids.length} record${ids.length === 1 ? "" : "s"} updated`);
   };
   const selectedRows = rows.filter((row) => selected.has(row.id));
+  const requestDelete = () => {
+    setError("");
+    const usedCategories = kind === "category"
+      ? selectedRows.filter(({ count }) => count > 0)
+      : [];
+    if (usedCategories.length) {
+      setError(
+        `Item categories containing items cannot be deleted. This applies whether the items are active or inactive. [${usedCategories.map(({ name }) => name).join(", ")}]`,
+      );
+      return;
+    }
+    setConfirm(true);
+  };
   const all =
     visible.length > 0 && visible.every((row) => selected.has(row.id));
   return (
@@ -382,7 +397,7 @@ export function ConfigurationListView({
                           "MULTIPLE_OPTIONS",
                         ].map((value) => ({
                           value,
-                          label: value.replaceAll("_", " "),
+                          label: dataTypeLabel(value),
                         }))}
                       />
                     </div>
@@ -503,7 +518,7 @@ export function ConfigurationListView({
               variant="secondary-destructive"
               icon="delete"
               disabled={!selected.size}
-              onClick={() => setConfirm(true)}
+              onClick={requestDelete}
             />
             <InventoryListActions
               rows={rows}
@@ -513,7 +528,7 @@ export function ConfigurationListView({
               columns={exportColumns}
               toExportRow={(row) => ({
                 ...row,
-                dataType: row.dataType?.replaceAll("_", " ") ?? null,
+                dataType: row.dataType ? dataTypeLabel(row.dataType) : null,
                 appliesTo: row.appliesTo?.replaceAll("_", " ") ?? null,
               })}
             />
@@ -585,7 +600,7 @@ export function ConfigurationListView({
       <ConfirmDialog
         isOpen={confirm}
         title={`Delete ${meta.title}`}
-        message="Permanently delete the selected records? In-use records cannot be deleted."
+        message="Permanently delete the selected records?"
         confirmLabel="Delete"
         confirmVariant="danger"
         onClose={() => setConfirm(false)}

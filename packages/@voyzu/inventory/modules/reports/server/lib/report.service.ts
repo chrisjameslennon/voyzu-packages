@@ -45,18 +45,19 @@ function customFieldValue(
   return selected.length ? selected.join(", ") : "—";
 }
 
-async function itemCustomFields(
+async function recordCustomFields(
   organizationId: number,
-  itemIds: number[],
+  appliesTo: "ITEM" | "RECEIPT" | "ISSUE",
+  recordIds: number[],
 ): Promise<Map<number, Array<{ label: string; value: string }>>> {
   const db = getDb();
   const [{ rows: definitionRows }, { rows: valueRows }] = await Promise.all([
     db.query(
       `SELECT id::int, name, data_type
        FROM inv_custom_field
-       WHERE organization_id = $1 AND applies_to = 'ITEM' AND status = 'ACTIVE'
+       WHERE organization_id = $1 AND applies_to = $2 AND status = 'ACTIVE'
        ORDER BY name`,
-      [organizationId],
+      [organizationId, appliesTo],
     ),
     db.query(
       `SELECT field_value.record_id::int, field_value.custom_field_id::int,
@@ -70,10 +71,11 @@ async function itemCustomFields(
          ON option_value.organization_id = field_value.organization_id
         AND option_value.id = field_value.option_list_value_id
        WHERE field_value.organization_id = $1
-         AND field.applies_to = 'ITEM'
+         AND field.applies_to = $2
          AND field.status = 'ACTIVE'
+         AND field_value.record_id = ANY($3::bigint[])
        ORDER BY field_value.record_id, field.name, field_value.id`,
-      [organizationId],
+      [organizationId, appliesTo, recordIds],
     ),
   ]);
   const definitions = (definitionRows as Record<string, unknown>[]).map(
@@ -91,13 +93,13 @@ async function itemCustomFields(
     valuesByItemAndField.set(key, values);
   }
   return new Map(
-    itemIds.map((itemId) => [
-      itemId,
+    recordIds.map((recordId) => [
+      recordId,
       definitions.map((definition) => ({
         label: definition.name,
         value: customFieldValue(
           definition,
-          valuesByItemAndField.get(`${itemId}:${definition.id}`) ?? [],
+          valuesByItemAndField.get(`${recordId}:${definition.id}`) ?? [],
         ),
       })),
     ]),
@@ -109,8 +111,9 @@ export async function getInventoryReport(
 ): Promise<InventoryReport> {
   if (key === "items") {
     const rows = await listItems(organizationId);
-    const customFields = await itemCustomFields(
+    const customFields = await recordCustomFields(
       organizationId,
+      "ITEM",
       rows.map(({ id }) => id),
     );
     return {
@@ -196,6 +199,7 @@ export async function getInventoryReport(
       ],
       rows: result.rows.map((r: Record<string, unknown>) => ({
         id: String(r.id),
+        date: new Date(String(r.reserved_at)).toISOString().slice(0, 10),
         cells: [
           d(String(r.reserved_at)),
           String(r.code),
@@ -237,6 +241,7 @@ export async function getInventoryReport(
   }
   const activityResult = await getDb().query(
     `SELECT line.id,
+            transaction.id::int transaction_id,
             transaction.code,
             transaction.transaction_date date,
             transaction.transaction_type type,
@@ -272,6 +277,14 @@ export async function getInventoryReport(
           : key === "quantity-adjustments"
             ? activity.filter((r) => r.type === "ADJUSTMENT")
             : activity;
+  const transactionCustomFields =
+    key === "stock-issuances" || key === "stock-receipts"
+      ? await recordCustomFields(
+          organizationId,
+          key === "stock-issuances" ? "ISSUE" : "RECEIPT",
+          [...new Set(filtered.map((row) => Number(row.transaction_id)))],
+        )
+      : null;
   return {
     title:
       key === "stock-issuances"
@@ -297,6 +310,9 @@ export async function getInventoryReport(
     ],
     rows: filtered.map((r) => ({
       id: String(r.id),
+      date: new Date(String(r.date)).toISOString().slice(0, 10),
+      details:
+        transactionCustomFields?.get(Number(r.transaction_id)) ?? undefined,
       cells: [
         String(r.code),
         d(String(r.date)),

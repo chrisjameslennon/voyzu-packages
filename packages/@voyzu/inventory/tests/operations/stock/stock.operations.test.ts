@@ -76,20 +76,20 @@ test("stock commands expose movements, reservations, and positions", async () =>
       date: commandDate,
       warehouseId: warehouseOneId,
       reference: "TEST-RECEIPT",
-      lines: [{ itemId, quantity: 10 }],
+      lines: [{ itemId, quantity: 10, reasonCode: "PURCHASE" }],
     })) > 0,
   );
   await reserveInventoryStock(organizationId, {
     itemId,
     reference: "TEST-RESERVATION",
-    lines: [{ warehouseId: warehouseOneId, quantity: 2 }],
+    lines: [{ warehouseId: warehouseOneId, quantity: 2, reasonCode: "SALE" }],
   });
   assert.ok(
     (await issueInventoryStock(organizationId, {
       date: commandDate,
       warehouseId: warehouseOneId,
       reference: "TEST-ISSUE",
-      lines: [{ itemId, quantity: 3 }],
+      lines: [{ itemId, quantity: 3, reasonCode: "SALE" }],
     })) > 0,
   );
   assert.ok(
@@ -107,7 +107,7 @@ test("stock commands expose movements, reservations, and positions", async () =>
       date: commandDate,
       warehouseId: warehouseTwoId,
       reference: "TEST-ADJUSTMENT",
-      lines: [{ itemId, quantityChange: 1 }],
+      lines: [{ itemId, quantityChange: 1, reasonCode: "STOCK_VARIANCE" }],
     })) > 0,
   );
 
@@ -138,7 +138,7 @@ test("stock count commands expose draft, save, completion, and deletion", async 
     warehouseId: warehouseOneId,
     countDate: commandDate,
     notes: "Command test count",
-    lines: [{ itemId, countedQuantity: 4 }],
+    lines: [{ itemId, countedQuantity: 4, reasonCode: "STOCK_VARIANCE" }],
   });
   assert.equal(draft.status, "DRAFT");
   assert.equal(
@@ -153,7 +153,7 @@ test("stock count commands expose draft, save, completion, and deletion", async 
       warehouseId: warehouseOneId,
       countDate: commandDate,
       notes: "Count in progress",
-      lines: [{ itemId, countedQuantity: 4 }],
+      lines: [{ itemId, countedQuantity: 4, reasonCode: "STOCK_VARIANCE" }],
     },
     "IN_PROGRESS",
   );
@@ -188,7 +188,7 @@ test("stock commands reject movements beyond available stock", async () => {
       date: commandDate,
       warehouseId: warehouseTwoId,
       reference: "TEST-OVER-ISSUE",
-      lines: [{ itemId, quantity: 1000 }],
+      lines: [{ itemId, quantity: 1000, reasonCode: "SALE" }],
     }),
     /available/i,
   );

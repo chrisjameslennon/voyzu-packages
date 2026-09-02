@@ -3,7 +3,7 @@ import { businessRuleError, conflictError, created, noContent, notFoundError, ok
 import { BusinessRuleError, ConflictError, NotFoundError } from "@voyzu/capability/errors";
 import type { ItemCategoryChangeRequestDto, ItemCodeListRequestDto, ItemCreateRequestDto, ItemPatchRequestDto } from "../../types/item.types";
 import { getSelectedOrganization } from "../../../common/server/organization-context";
-import { activateItem, activateItems, changeItemsCategory, createItem, deactivateItem, deactivateItems, deleteItem, deleteItems, getItem, listItemCategories, listItems, patchItem, reserveItemSku } from "../lib/item.service";
+import { activateItem, activateItems, changeItemsCategory, createItem, deactivateItem, deactivateItems, deleteItem, deleteItems, getItem, getItemDeletionImpact, listItemCategories, listItems, patchItem, reserveItemSku } from "../lib/item.service";
 
 type RouteContext = { params: Promise<{ sku: string }> };
 function errorResponse(error: unknown) {
@@ -31,3 +31,4 @@ export async function handleBatchActivate(request: NextRequest) { try { const { 
 export async function handleBatchDeactivate(request: NextRequest) { try { const { skus } = await parseBody<ItemCodeListRequestDto>(request); return ok(await deactivateItems(await organizationId(), skus)); } catch (error) { return errorResponse(error); } }
 export async function handleBatchChangeCategory(request: NextRequest) { try { const { skus, categoryId } = await parseBody<ItemCategoryChangeRequestDto>(request); return ok(await changeItemsCategory(await organizationId(), skus, categoryId)); } catch (error) { return errorResponse(error); } }
 export async function handleBatchDelete(request: NextRequest) { try { const { skus } = await parseBody<ItemCodeListRequestDto>(request); await deleteItems(await organizationId(), skus); return noContent(); } catch (error) { return errorResponse(error); } }
+export async function handleDeletionImpact(request: NextRequest) { try { const { skus } = await parseBody<ItemCodeListRequestDto>(request); return ok(await getItemDeletionImpact(await organizationId(), skus)); } catch (error) { return errorResponse(error); } }

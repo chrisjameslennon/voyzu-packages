@@ -42,3 +42,20 @@ export function Adjust(
         },
       ];
 }
+
+export function OtherReasonRequiresNotes(
+  lines: Array<{ reasonCode: string | null | undefined }>,
+  notes: string | null | undefined,
+): OperationBlocker[] {
+  return lines.some(
+    ({ reasonCode }) =>
+      reasonCode === "OTHER" || reasonCode === "WRITE_OFF_OTHER",
+  ) && !notes?.trim()
+    ? [
+        {
+          code: "OTHER_REASON_REQUIRES_NOTES",
+          message: "Notes are required when a reason is Other",
+        },
+      ]
+    : [];
+}

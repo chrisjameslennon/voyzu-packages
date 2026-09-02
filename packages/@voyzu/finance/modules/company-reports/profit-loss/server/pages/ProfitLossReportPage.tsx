@@ -9,6 +9,7 @@ import {
 } from "@voyzu/erp-core/organization-switcher/server";
 import { listFinancialYears } from "@voyzu/finance/financial-years/server";
 import { listPeriods } from "@voyzu/finance/financial-years/server";
+import { resolveCompanySettingsScope } from "@voyzu/finance/common/server";
 
 import { ProfitLossReport } from "../../client";
 import { ProfitLossReportTemplate } from "../../templates/ProfitLossReportTemplate";
@@ -44,9 +45,14 @@ export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
   const cookieStore = await cookies();
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || parseSelectedOrganizationId(cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value);
+  const selectedOrganizationId = parseSelectedOrganizationId(
+    cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value,
+  );
   const companies = await listOrganizations();
-  const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
+  const company = companies.find((item) => item.id === queryCompanyId)
+    ?? companies.find((item) => item.id === selectedOrganizationId)
+    ?? companies[0]
+    ?? null;
   const fallbackFromDate = previous90DaysStartIso();
   const fallbackToDate = todayIso();
 
@@ -65,8 +71,10 @@ export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
     );
   }
 
+  const companyId = (await resolveCompanySettingsScope(company.id)).companyId;
+
   const today = todayIso();
-  const allYears = await listFinancialYears(company.id);
+  const allYears = await listFinancialYears(companyId);
   const yearsWithPostings = allYears.filter((year) => year.hasPostings);
   const currentYear = yearsWithPostings.find((year) => year.startDate <= today && today <= year.endDate);
   const selectedYear = currentYear
@@ -79,7 +87,7 @@ export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
   const fromDate = query.fromDate ?? defaultRange.fromDate;
   const toDate = query.toDate ?? defaultRange.toDate;
   const periods = selectedYear ? await listPeriods(selectedYear.id) : [];
-  const initialData = await getProfitLoss(company.id, fromDate, toDate);
+  const initialData = await getProfitLoss(companyId, fromDate, toDate);
 
   if (surface?.unframed) {
     return (
@@ -104,7 +112,7 @@ export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
       initialFinancialYears={yearsWithPostings}
       initialPeriods={periods}
       initialSelectedYearCode={selectedYear?.code ?? ""}
-      selectedCompanyId={company.id}
+      selectedCompanyId={companyId}
     />
   );
 }

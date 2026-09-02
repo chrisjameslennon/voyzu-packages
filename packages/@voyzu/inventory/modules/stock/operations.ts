@@ -3,7 +3,8 @@ import { operation } from "@voyzu/capability/operations";
 import Type from "typebox";
 import {
   AdjustmentRequestDto,
-  MovementRequestDto,
+  IssueRequestDto,
+  ReceiptRequestDto,
   ReservationRequestDto,
   StockActivityDto,
   StockCountDetailDto,
@@ -40,14 +41,14 @@ export const getInventoryStockOptions = operation.defineLazy(
 );
 export const receiveInventoryStock = operation.defineLazy(
   {
-    parameters: Type.Tuple([Type.Number(), MovementRequestDto]),
+    parameters: Type.Tuple([Type.Number(), ReceiptRequestDto]),
     result: Type.Number(),
   },
   () => load().then((m) => m.receiveStock),
 );
 export const issueInventoryStock = operation.defineLazy(
   {
-    parameters: Type.Tuple([Type.Number(), MovementRequestDto]),
+    parameters: Type.Tuple([Type.Number(), IssueRequestDto]),
     result: Type.Number(),
   },
   () => load().then((m) => m.issueStock),

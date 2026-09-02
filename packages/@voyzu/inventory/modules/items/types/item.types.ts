@@ -57,9 +57,12 @@ export type ItemResponseDto = Static<typeof ItemResponseDto>;
 export const ItemListRowDto = StrictObject({
   id: PositiveId, sku: ItemSku, name: NonBlankText, category: Type.Union([Type.String(), Type.Null()]),
   unit: Type.Union([Unit, Type.Null()]), quantityTracked: Type.Boolean(),
+  unitsOnHand: Type.Number(),
   status: Status,
 });
 export type ItemListRowDto = Static<typeof ItemListRowDto>;
+export const ItemDeletionImpactDto = StrictObject({ itemId: PositiveId, sku: ItemSku, name: NonBlankText, unitsOnHand: Type.Number({ exclusiveMinimum: 0 }) });
+export type ItemDeletionImpactDto = Static<typeof ItemDeletionImpactDto>;
 export const ItemCodeListRequestDto = StrictObject({ skus: Type.Array(ItemSku, { minItems: 1 }) });
 export type ItemCodeListRequestDto = Static<typeof ItemCodeListRequestDto>;
 export const ItemCategoryChangeRequestDto = StrictObject({

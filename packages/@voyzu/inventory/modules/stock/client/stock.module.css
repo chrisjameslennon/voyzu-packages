@@ -175,6 +175,13 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+.issueConfirmItemsTable th:first-child {
+  width: 55%;
+}
+.issueConfirmItemsTable th:not(:first-child),
+.issueConfirmItemsTable td:not(:first-child) {
+  white-space: nowrap;
+}
 .issueConfirmItemsTable th:last-child,
 .issueConfirmItemsTable td:last-child {
   text-align: right;

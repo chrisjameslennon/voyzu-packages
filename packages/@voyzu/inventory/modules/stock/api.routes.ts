@@ -7,7 +7,8 @@ import {
 } from "@voyzu/types";
 import {
   AdjustmentRequestDto,
-  MovementRequestDto,
+  IssueRequestDto,
+  ReceiptRequestDto,
   ReservationRequestDto,
   StockActivityDto,
   StockCountDetailDto,
@@ -94,7 +95,7 @@ export const apiDefinitions = {
     description:
       "Records positive inventory ledger movements for stock received into a warehouse.",
     tags: ["Inventory Stock"],
-    request: { contentType: "application/json", body: MovementRequestDto },
+    request: { contentType: "application/json", body: ReceiptRequestDto },
     responses: {
       "201": { description: "Transaction id", body: Type.Number() },
       ...errors,
@@ -108,7 +109,7 @@ export const apiDefinitions = {
     description:
       "Records inventory ledger movements for stock issued from a warehouse.",
     tags: ["Inventory Stock"],
-    request: { contentType: "application/json", body: MovementRequestDto },
+    request: { contentType: "application/json", body: IssueRequestDto },
     responses: {
       "201": { description: "Transaction id", body: Type.Number() },
       ...errors,

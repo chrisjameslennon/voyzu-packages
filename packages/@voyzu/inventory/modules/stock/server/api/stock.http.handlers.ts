@@ -12,7 +12,8 @@ import {
 import { getSelectedOrganization } from "../../../common/server/organization-context";
 import type {
   AdjustmentRequest,
-  MovementRequest,
+  IssueRequest,
+  ReceiptRequest,
   ReservationRequest,
   StockCountRequest,
   TransferRequest,
@@ -69,7 +70,7 @@ export const handleOptions = async () => {
 export async function handleReceive(r: NextRequest) {
   try {
     return created(
-      await receiveStock(await org(), await parseBody<MovementRequest>(r)),
+      await receiveStock(await org(), await parseBody<ReceiptRequest>(r)),
     );
   } catch (e) {
     return fail(e);
@@ -78,7 +79,7 @@ export async function handleReceive(r: NextRequest) {
 export async function handleIssue(r: NextRequest) {
   try {
     return created(
-      await issueStock(await org(), await parseBody<MovementRequest>(r)),
+      await issueStock(await org(), await parseBody<IssueRequest>(r)),
     );
   } catch (e) {
     return fail(e);

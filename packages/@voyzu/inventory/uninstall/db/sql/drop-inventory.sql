@@ -12,3 +12,4 @@ DROP TABLE IF EXISTS item_component;
 DROP TABLE IF EXISTS item;
 DROP TABLE IF EXISTS item_category;
 DROP TABLE IF EXISTS warehouse;
+DROP TYPE IF EXISTS inventory_reason_code;

@@ -1,7 +1,8 @@
 import type { DbExecutor } from "@voyzu/capability/db";
 import type {
   AdjustmentRequest,
-  MovementRequest,
+  IssueRequest,
+  ReceiptRequest,
   ReservationRequest,
   StockActivity,
   StockCountDetail,
@@ -13,6 +14,7 @@ import type {
   StockActivityDetail,
   TransferRequest,
 } from "../../types/stock.types";
+import type { StockReasonCode } from "../../../core/types";
 const isoDate = (value: unknown) => new Date(String(value)).toISOString();
 const audit = (row: Record<string, unknown>) => ({
   created: {
@@ -140,9 +142,8 @@ export class StockRepo {
     const row = rows[0] as Record<string, unknown> | undefined;
     if (!row) return null;
     const lines = await this.db.query(
-      `SELECT line.id::int,line.item_id::int,item.sku,item.name item_name,line.warehouse_id::int,warehouse.name warehouse,line.quantity_change::float8
+      `SELECT line.id::int,line.item_id::int,line.item_code sku,line.item_name,line.warehouse_id::int,warehouse.name warehouse,line.quantity_change::float8,line.reason_code
        FROM inventory_transaction_line line
-       JOIN item ON item.organization_id=line.organization_id AND item.id=line.item_id
        JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id
        WHERE line.organization_id=$1 AND line.inventory_transaction_id=$2
        ORDER BY line.id`,
@@ -173,6 +174,7 @@ export class StockRepo {
         warehouseId: Number(line.warehouse_id),
         warehouse: String(line.warehouse),
         quantityChange: Number(line.quantity_change),
+        reasonCode: line.reason_code == null ? null : line.reason_code as StockReasonCode,
       })),
       audit: audit(row),
     };
@@ -187,11 +189,12 @@ export class StockRepo {
       itemId: number;
       warehouseId: number;
       quantity: number;
+      reasonCode?: StockReasonCode;
     }>,
     stamp: Record<string, unknown>,
     customFields: StockCustomFieldInput[] = [],
     options: {
-      source?: { type: "ITEM_DELETION" | "STOCK_COUNT"; id: number };
+      source?: { type: "STOCK_COUNT"; id: number };
     } = {},
   ) {
     const e = Object.entries(stamp);
@@ -223,13 +226,14 @@ export class StockRepo {
     );
     for (const line of lines)
       await this.db.query(
-        `INSERT INTO inventory_transaction_line(organization_id,inventory_transaction_id,item_id,item_code,item_name,warehouse_id,quantity_change,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,(SELECT sku FROM item WHERE organization_id=$1 AND id=$3),(SELECT name FROM item WHERE organization_id=$1 AND id=$3),$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
+        `INSERT INTO inventory_transaction_line(organization_id,inventory_transaction_id,item_id,item_code,item_name,warehouse_id,quantity_change,reason_code,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,(SELECT sku FROM item WHERE organization_id=$1 AND id=$3),(SELECT name FROM item WHERE organization_id=$1 AND id=$3),$4,$5,$6,${e.map((_, i) => `$${i + 7}`).join(",")})`,
         [
           organizationId,
           transactionId,
           line.itemId,
           line.warehouseId,
           line.quantity,
+          line.reasonCode ?? null,
           ...e.map(([, v]) => v),
         ],
       );
@@ -270,7 +274,7 @@ export class StockRepo {
   async movement(
     organizationId: number,
     type: "RECEIPT" | "ISSUE",
-    input: MovementRequest,
+    input: ReceiptRequest | IssueRequest,
     stamp: Record<string, unknown>,
   ) {
     return this.insertTransaction(
@@ -278,11 +282,12 @@ export class StockRepo {
       type,
       input.date,
       input.reference,
-      undefined,
+      input.notes,
       input.lines.map((line) => ({
         itemId: line.itemId,
         warehouseId: input.warehouseId,
         quantity: type === "ISSUE" ? -line.quantity : line.quantity,
+        reasonCode: line.reasonCode,
       })),
       stamp,
       input.customFields ?? [],
@@ -324,13 +329,14 @@ export class StockRepo {
       "ADJUSTMENT",
       input.date,
       input.reference,
-      undefined,
+      input.notes,
       input.lines
         .filter((line) => line.quantityChange !== 0)
         .map((line) => ({
           itemId: line.itemId,
           warehouseId: input.warehouseId,
           quantity: line.quantityChange,
+          reasonCode: line.reasonCode,
         })),
       stamp,
     );
@@ -347,24 +353,26 @@ export class StockRepo {
     const reservationId = Number(sequence.rows[0].id);
     const code = `INV-RSV-${reservationId}`;
     await this.db.query(
-      `INSERT INTO inventory_reservation(id,organization_id,code,source_type,reference,reserved_at,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,'DIRECT',$4,now(),${e.map((_, i) => `$${i + 5}`).join(",")})`,
+      `INSERT INTO inventory_reservation(id,organization_id,code,source_type,reference,notes,reserved_at,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,'DIRECT',$4,$5,now(),${e.map((_, i) => `$${i + 6}`).join(",")})`,
       [
         reservationId,
         organizationId,
         code,
         input.reference,
+        input.notes ?? "",
         ...e.map(([, v]) => v),
       ],
     );
     for (const line of input.lines)
       await this.db.query(
-        `INSERT INTO inventory_reservation_line(organization_id,inventory_reservation_id,item_id,item_code,item_name,warehouse_id,quantity_change,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,(SELECT sku FROM item WHERE organization_id=$1 AND id=$3),(SELECT name FROM item WHERE organization_id=$1 AND id=$3),$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
+        `INSERT INTO inventory_reservation_line(organization_id,inventory_reservation_id,item_id,item_code,item_name,warehouse_id,quantity_change,reason_code,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,(SELECT sku FROM item WHERE organization_id=$1 AND id=$3),(SELECT name FROM item WHERE organization_id=$1 AND id=$3),$4,$5,$6,${e.map((_, i) => `$${i + 7}`).join(",")})`,
         [
           organizationId,
           reservationId,
           input.itemId,
           line.warehouseId,
           line.quantity,
+          line.reasonCode,
           ...e.map(([, v]) => v),
         ],
       );
@@ -396,7 +404,7 @@ export class StockRepo {
     const row = rows[0] as Record<string, unknown> | undefined;
     if (!row) return null;
     const lines = await this.db.query(
-      `SELECT line.id::int,line.item_id::int,item.sku,item.name item_name,line.expected_quantity::float8,line.counted_quantity::float8 FROM stock_count_line line JOIN item ON item.organization_id=line.organization_id AND item.id=line.item_id WHERE line.organization_id=$1 AND line.stock_count_id=$2 ORDER BY item.sku`,
+      `SELECT line.id::int,line.item_id::int,item.sku,item.name item_name,line.expected_quantity::float8,line.counted_quantity::float8,line.reason_code FROM stock_count_line line JOIN item ON item.organization_id=line.organization_id AND item.id=line.item_id WHERE line.organization_id=$1 AND line.stock_count_id=$2 ORDER BY item.sku`,
       [organizationId, id],
     );
     return {
@@ -419,6 +427,7 @@ export class StockRepo {
           line.counted_quantity == null
             ? null
             : Number(line.counted_quantity) - Number(line.expected_quantity),
+        reasonCode: line.reason_code as StockCountDetail["lines"][number]["reasonCode"],
       })),
       audit: audit(row),
     };
@@ -457,13 +466,14 @@ export class StockRepo {
     );
     for (const line of input.lines) {
       await this.db.query(
-        `INSERT INTO stock_count_line(organization_id,stock_count_id,item_id,expected_quantity,counted_quantity,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,${e.map((_, i) => `$${i + 6}`).join(",")})`,
+        `INSERT INTO stock_count_line(organization_id,stock_count_id,item_id,expected_quantity,counted_quantity,reason_code,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,$6,${e.map((_, i) => `$${i + 7}`).join(",")})`,
         [
           organizationId,
           id,
           line.itemId,
           byItem.get(line.itemId) ?? 0,
           line.countedQuantity,
+          line.reasonCode,
           ...e.map(([, v]) => v),
         ],
       );
@@ -492,8 +502,8 @@ export class StockRepo {
     );
     for (const line of input.lines)
       await this.db.query(
-        "UPDATE stock_count_line SET counted_quantity=$4 WHERE organization_id=$1 AND stock_count_id=$2 AND item_id=$3",
-        [organizationId, id, line.itemId, line.countedQuantity],
+        "UPDATE stock_count_line SET counted_quantity=$4,reason_code=$5 WHERE organization_id=$1 AND stock_count_id=$2 AND item_id=$3",
+        [organizationId, id, line.itemId, line.countedQuantity, line.reasonCode],
       );
   }
   async completeCount(
@@ -510,11 +520,12 @@ export class StockRepo {
         "ADJUSTMENT",
         new Date().toISOString(),
         undefined,
-        "Stocktake adjustment",
+        count.notes || "Stocktake adjustment",
         changes.map((line) => ({
           itemId: line.itemId,
           warehouseId: count.warehouseId,
           quantity: line.variance!,
+          reasonCode: line.reasonCode,
         })),
         stamp,
         [],

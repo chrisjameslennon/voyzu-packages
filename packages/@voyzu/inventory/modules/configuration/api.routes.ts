@@ -119,7 +119,7 @@ export const apiDefinitions = {
     loadHandler: () => load().then((m) => m.handleTransition),
     summary: "Change inventory configuration status",
     description:
-      "Activates, deactivates, or deletes selected inventory configuration records.",
+      "Activates, deactivates, or deletes selected inventory configuration records. Item categories containing items cannot be deactivated or deleted.",
     tags: ["Inventory Configuration"],
     request: {
       path: kindPath,

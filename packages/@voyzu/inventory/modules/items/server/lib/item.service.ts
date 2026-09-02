@@ -3,7 +3,7 @@ import { BusinessRuleError, ConflictError, DataError, NotFoundError } from "@voy
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/audit/stamps";
 import type { ItemListRow, ItemStatus } from "../../types/item-list.types";
 import type { OperationalItemDto } from "../../types/operational-item.types";
-import type { ItemCategoryOptionDto, ItemCreateRequestDto, ItemPatchRequestDto, ItemResponseDto } from "../../types/item.types";
+import type { ItemCategoryOptionDto, ItemCreateRequestDto, ItemDeletionImpactDto, ItemPatchRequestDto, ItemResponseDto } from "../../types/item.types";
 import { ItemRepo } from "../db/item.repo";
 import type { ItemRow } from "../db/item.row.types";
 
@@ -114,9 +114,14 @@ export async function changeItemsCategory(organizationId: number, skus: string[]
 }
 
 export async function deleteItems(organizationId: number, skus: string[]): Promise<void> {
-  await withTransaction(async (db) => { const repo = new ItemRepo(db); const normalized = normalizeSkus(skus); const rows = await requireItems(repo, organizationId, normalized);
-    const inUse = rows.filter(({ in_use }) => in_use); if (inUse.length) throw new BusinessRuleError(`In-use item ${inUse.map(({ sku }) => sku).join(", ")} cannot be deleted`);
+  await withTransaction(async (db) => { const repo = new ItemRepo(db); const normalized = normalizeSkus(skus); await requireItems(repo, organizationId, normalized);
+    const stocked = await repo.deletionImpact(organizationId, normalized);
+    if (stocked.length) throw new BusinessRuleError("The stock must be issued or written off before the item can be deleted");
     await repo.delete(organizationId, normalized, await createUpdateAuditStamp()); });
 }
 export async function deleteItem(organizationId: number, sku: string) { return deleteItems(organizationId, [sku]); }
+export async function getItemDeletionImpact(organizationId: number, skus: string[]): Promise<ItemDeletionImpactDto[]> {
+  const repo = new ItemRepo(getDb()); const normalized = normalizeSkus(skus); await requireItems(repo, organizationId, normalized);
+  return repo.deletionImpact(organizationId, normalized);
+}
 export async function getOperationalItems(organizationId: number, skus: string[]): Promise<OperationalItemDto[]> { return new ItemRepo(getDb()).listOperationalItems(organizationId, skus); }

@@ -2,11 +2,12 @@ import { DataError } from "@voyzu/capability/errors";
 import type { DbExecutor } from "@voyzu/capability/db";
 import type { ItemListRow, ItemStatus } from "../../types/item-list.types";
 import type { OperationalItemDto } from "../../types/operational-item.types";
-import type { ItemCategoryOptionDto, ItemCustomFieldDto, ItemCustomFieldInputDto } from "../../types/item.types";
+import type { ItemCategoryOptionDto, ItemCustomFieldDto, ItemCustomFieldInputDto, ItemDeletionImpactDto } from "../../types/item.types";
 import type { ItemRow } from "./item.row.types";
 
 const SELECT_ITEM = `SELECT item.*, item_category.code AS category_code, item_category.name AS category_name,
-  EXISTS (SELECT 1 FROM inventory_transaction_line line WHERE line.organization_id = item.organization_id AND line.item_id = item.id) AS in_use
+  EXISTS (SELECT 1 FROM inventory_transaction_line line WHERE line.organization_id = item.organization_id AND line.item_id = item.id) AS in_use,
+  COALESCE((SELECT sum(line.quantity_change)::float8 FROM inventory_transaction_line line WHERE line.organization_id = item.organization_id AND line.item_id = item.id), 0)::float8 AS units_on_hand
   FROM item LEFT JOIN item_category ON item_category.organization_id = item.organization_id AND item_category.id = item.item_category_id`;
 
 const isoDate = (value: unknown) => new Date(String(value)).toISOString();
@@ -30,7 +31,7 @@ export class ItemRepo {
     const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 ORDER BY item.sku`, [organizationId]);
     return rows.map((row: Record<string, unknown>) => ({ id: Number(row.id), sku: String(row.sku), name: String(row.name),
       category: row.category_name === null ? null : String(row.category_name),
-      unit: row.unit == null ? null : String(row.unit) as ItemListRow["unit"], quantityTracked: Boolean(row.quantity_tracked), status: row.status as ItemListRow["status"] }));
+      unit: row.unit == null ? null : String(row.unit) as ItemListRow["unit"], quantityTracked: Boolean(row.quantity_tracked), unitsOnHand: Number(row.units_on_hand), status: row.status as ItemListRow["status"] }));
   }
 
   async get(organizationId: number, sku: string): Promise<ItemRow | null> {
@@ -164,6 +165,31 @@ export class ItemRepo {
   async delete(organizationId: number, skus: string[], audit: { timestamp: string; actorType: string; userId: string | null; mutationId: string }): Promise<void> {
     await this.db.query("UPDATE item SET deletion_date = $3::timestamptz, deletion_actor_type = $4::actor_type, deletion_user_id = $5, deletion_mutation_id = $6::uuid WHERE organization_id = $1 AND sku = ANY($2::text[])", [organizationId, skus, audit.timestamp, audit.actorType, audit.userId, audit.mutationId]);
     await this.db.query("DELETE FROM item WHERE organization_id = $1 AND sku = ANY($2::text[])", [organizationId, skus]);
+  }
+
+  async deletionImpact(organizationId: number, skus: string[]): Promise<ItemDeletionImpactDto[]> {
+    if (!skus.length) return [];
+    const { rows } = await this.db.query(
+      `WITH stocked_position AS (
+         SELECT organization_id,item_id,warehouse_id,sum(quantity_change)::float8 units_on_hand
+         FROM inventory_transaction_line
+         GROUP BY organization_id,item_id,warehouse_id
+         HAVING sum(quantity_change)>0
+       )
+       SELECT item.id::int item_id,item.sku,item.name,sum(position.units_on_hand)::float8 units_on_hand
+       FROM item
+       JOIN stocked_position position ON position.organization_id=item.organization_id AND position.item_id=item.id
+       WHERE item.organization_id=$1 AND item.sku=ANY($2::text[])
+       GROUP BY item.id,item.sku,item.name
+       ORDER BY item.sku`,
+      [organizationId, skus],
+    );
+    return (rows as Record<string, unknown>[]).map((row) => ({
+      itemId: Number(row.item_id),
+      sku: String(row.sku),
+      name: String(row.name),
+      unitsOnHand: Number(row.units_on_hand),
+    }));
   }
 
   async listOperationalItems(organizationId: number, skus: string[]): Promise<OperationalItemDto[]> {

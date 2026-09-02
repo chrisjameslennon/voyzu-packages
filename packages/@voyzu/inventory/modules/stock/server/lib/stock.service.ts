@@ -9,7 +9,8 @@ import {
 } from "@voyzu/audit/stamps";
 import type {
   AdjustmentRequest,
-  MovementRequest,
+  IssueRequest,
+  ReceiptRequest,
   ReservationRequest,
   StockCountRequest,
   StockCountDetail,
@@ -20,8 +21,17 @@ import { ConfigurationRepo } from "../../../configuration/server/db/configuratio
 import {
   Adjust,
   MoveAvailableStock,
+  OtherReasonRequiresNotes,
   Transfer,
 } from "../../domain/operation-policy";
+
+function validateReasonNotes(
+  lines: Array<{ reasonCode: string | null | undefined }>,
+  notes: string | null | undefined,
+) {
+  const blockers = OtherReasonRequiresNotes(lines, notes);
+  if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
+}
 const enrichStockCountAudit = (record: StockCountDetail) =>
   withAuditActors(record, {
     creation_user_id: record.audit.created.userId,
@@ -81,9 +91,10 @@ async function validateAvailable(
 }
 export async function receiveStock(
   organizationId: number,
-  input: MovementRequest,
+  input: ReceiptRequest,
 ) {
   return withTransaction(async (db) => {
+    validateReasonNotes(input.lines, input.notes);
     await validateMovementCustomFields(db, organizationId, "RECEIPT", input);
     return new StockRepo(db).movement(
       organizationId,
@@ -95,9 +106,10 @@ export async function receiveStock(
 }
 export async function issueStock(
   organizationId: number,
-  input: MovementRequest,
+  input: IssueRequest,
 ) {
   return withTransaction(async (db) => {
+    validateReasonNotes(input.lines, input.notes);
     const repo = new StockRepo(db);
     await validateMovementCustomFields(db, organizationId, "ISSUE", input);
     await validateAvailable(
@@ -122,7 +134,7 @@ async function validateMovementCustomFields(
   db: DbExecutor,
   organizationId: number,
   appliesTo: "RECEIPT" | "ISSUE",
-  input: MovementRequest,
+  input: ReceiptRequest | IssueRequest,
 ) {
   const repo = new ConfigurationRepo(db);
   const rows = await repo.list(organizationId, "custom-field");
@@ -180,6 +192,7 @@ export async function reserveStock(
   input: ReservationRequest,
 ) {
   return withTransaction(async (db) => {
+    validateReasonNotes(input.lines, input.notes);
     const repo = new StockRepo(db);
     await validateAvailable(
       repo,
@@ -203,6 +216,7 @@ export async function adjustStock(
 ) {
   const blockers = Adjust(input.lines);
   if (blockers.length) throw new BusinessRuleError(blockers[0]!.message);
+  validateReasonNotes(input.lines, input.notes);
   return withTransaction(async (db) =>
     new StockRepo(db).adjust(
       organizationId,
@@ -216,6 +230,7 @@ export async function createStockCount(
   input: StockCountRequest,
 ) {
   return withTransaction(async (db) => {
+    validateReasonNotes(input.lines, input.notes);
     const repo = new StockRepo(db);
     const id = await repo.createCount(
       organizationId,
@@ -232,6 +247,7 @@ export async function saveStockCount(
   status: "DRAFT" | "IN_PROGRESS",
 ) {
   return withTransaction(async (db) => {
+    validateReasonNotes(input.lines, input.notes);
     const repo = new StockRepo(db);
     const current = await repo.count(organizationId, id);
     if (!current) throw new NotFoundError("Stocktake was not found");
@@ -254,6 +270,7 @@ export async function completeStockCount(organizationId: number, id: number) {
     if (!current) throw new NotFoundError("Stocktake was not found");
     if (current.status === "COMPLETED")
       throw new BusinessRuleError("This stocktake is already complete");
+    validateReasonNotes(current.lines, current.notes);
     await repo.completeCount(
       organizationId,
       id,

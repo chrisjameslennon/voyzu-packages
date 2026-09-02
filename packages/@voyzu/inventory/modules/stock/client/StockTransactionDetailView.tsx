@@ -21,6 +21,16 @@ import type {
   StockTransactionLine,
 } from "../types/stock.types";
 import styles from "./stock.module.css";
+import {
+  STOCK_ADJUSTMENT_REASONS,
+  STOCK_ISSUE_REASONS,
+  STOCK_RECEIPT_REASONS,
+} from "../../core/types";
+
+const reasonLabels = new Map<string, string>(
+  [...STOCK_ADJUSTMENT_REASONS, ...STOCK_ISSUE_REASONS, ...STOCK_RECEIPT_REASONS]
+    .map(({ code, label }) => [code, label]),
+);
 
 const columns: EditableGridColumn<StockTransactionLine>[] = [
   {
@@ -35,7 +45,7 @@ const columns: EditableGridColumn<StockTransactionLine>[] = [
     label: "Item Name",
     type: "text",
     readOnly: true,
-    width: 260,
+    width: 288,
   },
   {
     key: "warehouse",
@@ -50,8 +60,16 @@ const columns: EditableGridColumn<StockTransactionLine>[] = [
     type: "number",
     readOnly: true,
     align: "right",
-    width: 140,
+    width: 112,
     format: (value) => `${Number(value) > 0 ? "+" : ""}${value}`,
+  },
+  {
+    key: "reasonCode",
+    label: "Reason",
+    type: "text",
+    readOnly: true,
+    width: 220,
+    format: (value) => value == null ? "—" : (reasonLabels.get(String(value)) ?? String(value)),
   },
 ];
 
