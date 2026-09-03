@@ -293,6 +293,7 @@ export function InventoryReportView({
               <DatePicker
                 value={fromDate}
                 onChange={customFromDate}
+                placeholder={reportDates.length ? undefined : "Any date"}
                 clearable={false}
               />
             </div>
@@ -301,6 +302,7 @@ export function InventoryReportView({
               <DatePicker
                 value={toDate}
                 onChange={customToDate}
+                placeholder={reportDates.length ? undefined : "Any date"}
                 clearable={false}
               />
             </div>

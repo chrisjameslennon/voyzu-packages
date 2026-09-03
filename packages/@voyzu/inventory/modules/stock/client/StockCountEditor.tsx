@@ -60,6 +60,7 @@ export function StockCountEditor({
   const [countDate, setCountDate] = useState(
     initial?.countDate ?? new Date().toISOString().slice(0, 10),
   );
+  const [reference, setReference] = useState(initial?.reference ?? "");
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [rows, setRows] = useState<Row[]>(
     initial?.lines.map((l) => ({
@@ -164,6 +165,7 @@ export function StockCountEditor({
   const payload = () => ({
     warehouseId: Number(warehouseId),
     countDate,
+    reference: reference.trim() || undefined,
     notes,
     lines: calculated.filter((row) => row.itemId).map((row) => ({
       itemId: Number(row.itemId),
@@ -383,7 +385,17 @@ export function StockCountEditor({
               </div>
               <div className={styles.field}>
                 <label className={typography.fieldLabel}>
-                  Notes{error === "Notes are required when a reason is Other" ? " *" : ""}
+                  Reference (optional)
+                </label>
+                <Input
+                  value={reference}
+                  onChange={(event) => setReference(event.target.value)}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={typography.fieldLabel}>
+                  Notes (optional)
+                  {error === "Notes are required when a reason is Other" ? " *" : ""}
                 </label>
                 <textarea
                   className={`${styles.textarea} ${styles.stocktakeNotes}`}
@@ -476,6 +488,10 @@ export function StockCountEditor({
                     <dt>Count Date</dt>
                     <dd>{confirmCountDate}</dd>
                   </div>
+                  <div>
+                    <dt>Reference</dt>
+                    <dd>{reference.trim() || "—"}</dd>
+                  </div>
                 </dl>
               </div>
               <div
@@ -554,8 +570,12 @@ export function StockCountEditor({
               />
             </fieldset>
           </div>
+          <div className={styles.field}>
+            <label className={typography.fieldLabel}>Reference (optional)</label>
+            <Input value={reference} disabled />
+          </div>
           <div className={`${styles.field} ${styles.wide}`}>
-            <label className={typography.fieldLabel}>Notes</label>
+            <label className={typography.fieldLabel}>Notes (optional)</label>
             <textarea
               className={`${styles.textarea} ${styles.completedStocktakeNotes}`}
               rows={2}

@@ -310,6 +310,7 @@ CREATE TABLE stock_count (
     warehouse_id             BIGINT NOT NULL,
     count_date               DATE NOT NULL,
     status                   TEXT NOT NULL DEFAULT 'DRAFT',
+    reference                TEXT NOT NULL DEFAULT '',
     notes                    TEXT NOT NULL DEFAULT '',
     completed_at             TIMESTAMPTZ,
 
@@ -514,7 +515,7 @@ CREATE TRIGGER item_category_audit_trigger BEFORE INSERT OR UPDATE OR DELETE ON 
 FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn('@voyzu/inventory');
 
 CREATE TRIGGER item_audit_trigger BEFORE INSERT OR UPDATE OR DELETE ON item
-FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn('@voyzu/inventory');
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn('@voyzu/inventory', 'sku');
 
 CREATE TRIGGER warehouse_audit_trigger BEFORE INSERT OR UPDATE OR DELETE ON warehouse
 FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn('@voyzu/inventory');

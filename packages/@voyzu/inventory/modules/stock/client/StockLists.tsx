@@ -584,7 +584,7 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
     (r) =>
       (!selectedStatuses?.length || selectedStatuses.includes(r.status)) &&
       (!search ||
-        [r.code, r.warehouse, r.status].some((v) =>
+        [r.code, r.reference, r.warehouse, r.status].some((v) =>
           v.toLowerCase().includes(search.toLowerCase()),
         )),
   );
@@ -607,6 +607,11 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
       key: "code",
       label: "Code",
       render: (r) => <span className={listStyles.codeCell}>{r.code}</span>,
+    },
+    {
+      key: "reference",
+      label: "Reference",
+      render: (r) => r.reference || "—",
     },
     { key: "warehouse", label: "Warehouse" },
     { key: "countDate", label: "Count Date", render: (r) => date(r.countDate) },
@@ -704,6 +709,7 @@ export function StockCountsView({ rows: initial }: { rows: StockCountRow[] }) {
               filename="inventory_stock_counts"
               columns={[
                 { key: "code", label: "Code" },
+                { key: "reference", label: "Reference" },
                 { key: "warehouse", label: "Warehouse" },
                 { key: "countDate", label: "Count Date" },
                 { key: "items", label: "Items" },

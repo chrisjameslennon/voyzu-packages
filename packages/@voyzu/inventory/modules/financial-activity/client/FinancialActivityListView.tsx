@@ -49,7 +49,7 @@ export function FinancialActivityListView({ rows }: { rows: FinancialActivitySum
     { key: "movementType", label: "Movement", width: "11%", render: (row) => label(row.movementType) },
     { key: "reasonCode", label: "Reason", width: "15%", render: (row) => label(row.reasonCode) },
     { key: "itemCode", label: "Item", width: "12%" },
-    { key: "warehouseName", label: "Warehouse", width: "15%" },
+    { key: "itemName", label: "Item Name", width: "15%" },
     { key: "quantityChange", label: "Quantity", width: "10%", align: "right" },
     { key: "status", label: "Status", width: "9rem", align: "center", render: (row) => <Badge variant="soft" size="x-small" color={row.status === "PROCESSED" ? "success" : "neutral"}>{label(row.status)}</Badge> },
   ];
@@ -126,7 +126,7 @@ export function FinancialActivityListView({ rows }: { rows: FinancialActivitySum
           emptyTitle="No financial activity"
           emptyText="Receipts, issues, and adjustments will appear here"
           emptyFilterText="No financial activity matches the current filters"
-          mobileRender={(row) => <div><strong>{row.transactionCode}</strong><div>{row.itemCode} · {row.itemName}</div><div>{label(row.movementType)} · {row.quantityChange} · {row.warehouseName} · {label(row.status)}</div></div>}
+          mobileRender={(row) => <div><strong>{row.transactionCode}</strong><div>{row.itemCode} · {row.itemName}</div><div>{label(row.movementType)} · {row.quantityChange} · {label(row.status)}</div></div>}
         />
       </div></div>
     </div>

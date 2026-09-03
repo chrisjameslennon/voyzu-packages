@@ -155,6 +155,7 @@ export const StockCountRowDto = StrictObject({
   code: Text,
   warehouse: Text,
   countDate: Text,
+  reference: Type.String(),
   items: Type.Integer({ minimum: 0 }),
   adjustments: Type.Integer({ minimum: 0 }),
   status: Type.Union([
@@ -170,6 +171,7 @@ export const StockCountDetailDto = StrictObject({
   warehouseId: Id,
   warehouse: Text,
   countDate: Text,
+  reference: Type.String(),
   notes: Type.String(),
   status: Type.Union([
     Type.Literal("DRAFT"),
@@ -183,6 +185,7 @@ export type StockCountDetail = Static<typeof StockCountDetailDto>;
 export const StockCountRequestDto = StrictObject({
   warehouseId: Id,
   countDate: DateText,
+  reference: Type.Optional(Type.String()),
   notes: Type.Optional(Type.String()),
   lines: Type.Array(
     StrictObject({

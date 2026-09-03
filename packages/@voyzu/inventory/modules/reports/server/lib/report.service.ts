@@ -276,6 +276,7 @@ export async function getInventoryReport(
       title: "Stocktake Variance",
       headers: [
         "Code",
+        "Reference",
         "Warehouse",
         "Count Date",
         "Items",
@@ -286,6 +287,7 @@ export async function getInventoryReport(
         id: String(r.id),
         cells: [
           r.code,
+          r.reference || "—",
           r.warehouse,
           d(r.countDate),
           n(r.items),

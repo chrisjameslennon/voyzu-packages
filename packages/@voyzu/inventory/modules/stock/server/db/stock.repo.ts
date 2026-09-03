@@ -415,7 +415,7 @@ export class StockRepo {
   }
   async counts(organizationId: number): Promise<StockCountRow[]> {
     const { rows } = await this.db.query(
-      `SELECT count.id::int,count.code,warehouse.name warehouse,count.count_date::text,count.status,count(line.id)::int items,count(line.id) FILTER(WHERE line.counted_quantity IS NOT NULL AND line.counted_quantity<>line.expected_quantity)::int adjustments FROM stock_count count JOIN warehouse ON warehouse.organization_id=count.organization_id AND warehouse.id=count.warehouse_id LEFT JOIN stock_count_line line ON line.organization_id=count.organization_id AND line.stock_count_id=count.id WHERE count.organization_id=$1 GROUP BY count.id,warehouse.name ORDER BY count.count_date DESC,count.id DESC`,
+      `SELECT count.id::int,count.code,warehouse.name warehouse,count.count_date::text,count.reference,count.status,count(line.id)::int items,count(line.id) FILTER(WHERE line.counted_quantity IS NOT NULL AND line.counted_quantity<>line.expected_quantity)::int adjustments FROM stock_count count JOIN warehouse ON warehouse.organization_id=count.organization_id AND warehouse.id=count.warehouse_id LEFT JOIN stock_count_line line ON line.organization_id=count.organization_id AND line.stock_count_id=count.id WHERE count.organization_id=$1 GROUP BY count.id,warehouse.name ORDER BY count.count_date DESC,count.id DESC`,
       [organizationId],
     );
     return rows.map((r: Record<string, unknown>) => ({
@@ -423,6 +423,7 @@ export class StockRepo {
       code: String(r.code),
       warehouse: String(r.warehouse),
       countDate: String(r.count_date),
+      reference: String(r.reference ?? ""),
       items: Number(r.items),
       adjustments: Number(r.adjustments),
       status: r.status as StockCountRow["status"],
@@ -448,6 +449,7 @@ export class StockRepo {
       warehouseId: Number(row.warehouse_id),
       warehouse: String(row.warehouse),
       countDate: String(row.count_date_text),
+      reference: String(row.reference ?? ""),
       notes: String(row.notes),
       status: row.status as StockCountDetail["status"],
       lines: lines.rows.map((line: Record<string, unknown>) => ({
@@ -482,12 +484,13 @@ export class StockRepo {
     const code = await this.nextCountCode(organizationId);
     const e = Object.entries(stamp);
     const r = await this.db.query(
-      `INSERT INTO stock_count(organization_id,code,warehouse_id,count_date,status,notes,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4::date,'DRAFT',$5,${e.map((_, i) => `$${i + 6}`).join(",")}) RETURNING id::int`,
+      `INSERT INTO stock_count(organization_id,code,warehouse_id,count_date,status,reference,notes,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4::date,'DRAFT',$5,$6,${e.map((_, i) => `$${i + 7}`).join(",")}) RETURNING id::int`,
       [
         organizationId,
         code,
         input.warehouseId,
         input.countDate,
+        input.reference?.trim() ?? "",
         input.notes ?? "",
         ...e.map(([, v]) => v),
       ],
@@ -524,12 +527,13 @@ export class StockRepo {
   ) {
     const e = Object.entries(stamp);
     await this.db.query(
-      `UPDATE stock_count SET warehouse_id=$3,count_date=$4::date,notes=$5,status=$6,${e.map(([k], i) => `${k}=$${i + 7}`).join(",")} WHERE organization_id=$1 AND id=$2 AND status!='COMPLETED'`,
+      `UPDATE stock_count SET warehouse_id=$3,count_date=$4::date,reference=$5,notes=$6,status=$7,${e.map(([k], i) => `${k}=$${i + 8}`).join(",")} WHERE organization_id=$1 AND id=$2 AND status!='COMPLETED'`,
       [
         organizationId,
         id,
         input.warehouseId,
         input.countDate,
+        input.reference?.trim() ?? "",
         input.notes ?? "",
         status,
         ...e.map(([, v]) => v),
@@ -554,7 +558,7 @@ export class StockRepo {
         organizationId,
         "ADJUSTMENT",
         new Date().toISOString(),
-        undefined,
+        count.reference || undefined,
         count.notes || "Stocktake adjustment",
         changes.map((line) => ({
           itemId: line.itemId,
