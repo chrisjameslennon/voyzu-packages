@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+import { commands } from "../../../modules/organization-access/commands";
+
+test("organization access exports callable commands", () => {
+  assert.deepEqual(
+    Object.keys(commands).sort(),
+    ["listOrganizationAccess", "listOrganizationIdsForUser", "replaceUserOrganizationAccess"].sort(),
+  );
+  for (const [name, command] of Object.entries(commands)) {
+    assert.equal(typeof command, "function", `organizationAccess.${name} must be callable`);
+  }
+});

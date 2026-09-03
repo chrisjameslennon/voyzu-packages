@@ -28,9 +28,9 @@
       "types": "./modules/ice-creams/module.ts",
       "import": "./modules/ice-creams/module.ts"
     },
-    "./ice-creams/operations": {
-      "types": "./modules/ice-creams/operations.ts",
-      "import": "./modules/ice-creams/operations.ts"
+    "./ice-creams/commands": {
+      "types": "./modules/ice-creams/commands.ts",
+      "import": "./modules/ice-creams/commands.ts"
     },
     "./ice-creams/pages.routes": {
       "types": "./modules/ice-creams/pages.routes.ts",
@@ -44,9 +44,9 @@
       "types": "./modules/reports/module.ts",
       "import": "./modules/reports/module.ts"
     },
-    "./reports/operations": {
-      "types": "./modules/reports/operations.ts",
-      "import": "./modules/reports/operations.ts"
+    "./reports/commands": {
+      "types": "./modules/reports/commands.ts",
+      "import": "./modules/reports/commands.ts"
     },
     "./reports/pages.routes": {
       "types": "./modules/reports/pages.routes.ts",

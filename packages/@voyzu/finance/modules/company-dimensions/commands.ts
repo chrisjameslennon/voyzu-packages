@@ -1,0 +1,116 @@
+import "server-only";
+import { command as platformCommand } from "@voyzu/capability/commands";
+import Type from "typebox";
+import { DimensionBatchPatchRequestDto, DimensionBatchUpdateRequestDto, DimensionCreateRequestDto, DimensionPatchRequestDto, DimensionResponseDto, DimensionUpdateRequestDto, DimensionValueCreateRequestDto, DimensionValuePatchRequestDto, DimensionValueResponseDto } from "@voyzu/finance/types/modules/dimensions";
+import { Filter, ListOptions } from "@voyzu/types/params";
+
+
+
+export const createDimension = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([DimensionCreateRequestDto]), Type.Tuple([DimensionCreateRequestDto, Type.Number()])]), result: DimensionResponseDto },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.createDimension),
+);
+export const getDimension = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Union([DimensionResponseDto, Type.Null()]) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.getDimension),
+);
+export const updateDimension = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), DimensionUpdateRequestDto]), Type.Tuple([Type.String(), DimensionUpdateRequestDto, Type.Number()])]), result: DimensionResponseDto },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.updateDimension),
+);
+export const patchDimension = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), DimensionPatchRequestDto]), Type.Tuple([Type.String(), DimensionPatchRequestDto, Type.Number()])]), result: DimensionResponseDto },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.patchDimension),
+);
+export const deleteDimension = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.deleteDimension),
+);
+export const listDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([]), Type.Tuple([Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.listDimensions),
+);
+export const filterDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Filter)]), Type.Tuple([Type.Array(Filter), ListOptions]), Type.Tuple([Type.Array(Filter), ListOptions, Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.filterDimensions),
+);
+export const searchDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), ListOptions]), Type.Tuple([Type.String(), ListOptions, Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.searchDimensions),
+);
+export const batchCreateDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(DimensionCreateRequestDto)]), Type.Tuple([Type.Array(DimensionCreateRequestDto), Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.batchCreateDimensions),
+);
+export const batchGetDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.batchGetDimensions),
+);
+export const batchUpdateDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(DimensionBatchUpdateRequestDto)]), Type.Tuple([Type.Array(DimensionBatchUpdateRequestDto), Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.batchUpdateDimensions),
+);
+export const batchPatchDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(DimensionBatchPatchRequestDto)]), Type.Tuple([Type.Array(DimensionBatchPatchRequestDto), Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.batchPatchDimensions),
+);
+export const batchDeleteDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.batchDeleteDimensions),
+);
+export const activateDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.activateDimensions),
+);
+export const activateDimension = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: DimensionResponseDto },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.activateDimension),
+);
+export const deactivateDimensions = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Array(Type.String())]), Type.Tuple([Type.Array(Type.String()), Type.Number()])]), result: Type.Array(DimensionResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.deactivateDimensions),
+);
+export const deactivateDimension = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: DimensionResponseDto },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.deactivateDimension),
+);
+export const createDimensionValue = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String(), DimensionValueCreateRequestDto]), Type.Tuple([Type.String(), DimensionValueCreateRequestDto, Type.Number()])]), result: DimensionValueResponseDto },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.createDimensionValue),
+);
+export const listDimensionValues = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.String()]), Type.Tuple([Type.String(), Type.Number()])]), result: Type.Array(DimensionValueResponseDto) },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.listDimensionValues),
+);
+export const patchDimensionValue = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Number(), DimensionValuePatchRequestDto]), Type.Tuple([Type.Number(), DimensionValuePatchRequestDto, Type.Number()])]), result: DimensionValueResponseDto },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.patchDimensionValue),
+);
+export const deleteDimensionValue = platformCommand.defineLazy(
+  { parameters: Type.Union([Type.Tuple([Type.Number()]), Type.Tuple([Type.Number(), Type.Number()])]), result: Type.Undefined() },
+  () => import("../common/dimensions/server/lib/dimension.service").then((module) => module.deleteDimensionValue),
+);
+
+export const commands = {
+  createDimensionCompanyDimensions: createDimension,
+  getDimensionCompanyDimensions: getDimension,
+  updateDimensionCompanyDimensions: updateDimension,
+  patchDimensionCompanyDimensions: patchDimension,
+  deleteDimensionCompanyDimensions: deleteDimension,
+  listDimensionsCompanyDimensions: listDimensions,
+  filterDimensionsCompanyDimensions: filterDimensions,
+  searchDimensionsCompanyDimensions: searchDimensions,
+  batchCreateDimensionsCompanyDimensions: batchCreateDimensions,
+  batchGetDimensionsCompanyDimensions: batchGetDimensions,
+  batchUpdateDimensionsCompanyDimensions: batchUpdateDimensions,
+  batchPatchDimensionsCompanyDimensions: batchPatchDimensions,
+  batchDeleteDimensionsCompanyDimensions: batchDeleteDimensions,
+  activateDimensionsCompanyDimensions: activateDimensions,
+  activateDimensionCompanyDimensions: activateDimension,
+  deactivateDimensionsCompanyDimensions: deactivateDimensions,
+  deactivateDimensionCompanyDimensions: deactivateDimension,
+  createDimensionValueCompanyDimensions: createDimensionValue,
+  listDimensionValuesCompanyDimensions: listDimensionValues,
+  patchDimensionValueCompanyDimensions: patchDimensionValue,
+  deleteDimensionValueCompanyDimensions: deleteDimensionValue,
+} as const;

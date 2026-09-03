@@ -28,9 +28,9 @@
       "types": "./types/index.ts",
       "import": "./types/index.ts"
     },
-    "./ugly/operations": {
-      "types": "./modules/ugly/operations.ts",
-      "import": "./modules/ugly/operations.ts"
+    "./ugly/commands": {
+      "types": "./modules/ugly/commands.ts",
+      "import": "./modules/ugly/commands.ts"
     },
     "./ugly/pages.routes": {
       "types": "./modules/ugly/pages.routes.ts",

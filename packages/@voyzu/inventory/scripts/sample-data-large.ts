@@ -1,14 +1,14 @@
 import { getDb } from "@voyzu/capability/db";
 
-import { listInventoryConfiguration } from "../modules/configuration/operations";
+import { listInventoryConfiguration } from "../modules/configuration/commands";
 import {
   createInventoryItem,
   listInventoryItems,
-} from "../modules/items/operations";
+} from "../modules/items/commands";
 import {
   listInventoryStock,
   receiveInventoryStock,
-} from "../modules/stock/operations";
+} from "../modules/stock/commands";
 import { sampleData } from "./sample-data";
 
 const ITEM_COUNT = 100;

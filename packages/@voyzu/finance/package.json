@@ -31,16 +31,16 @@
       "import": "./navigation/left-nav-header.tsx"
     },
     "./finance-companies": "./modules/finance-companies/module.ts",
-    "./finance-companies/operations": {
-      "types": "./modules/finance-companies/operations.ts",
-      "import": "./modules/finance-companies/operations.ts"
+    "./finance-companies/commands": {
+      "types": "./modules/finance-companies/commands.ts",
+      "import": "./modules/finance-companies/commands.ts"
     },
     "./finance-companies/client": "./modules/finance-companies/client/index.ts",
     "./finance-companies/server": "./modules/finance-companies/server/index.ts",
     "./country-tax-settings": "./modules/country-tax-settings/module.ts",
-    "./country-tax-settings/operations": {
-      "types": "./modules/country-tax-settings/operations.ts",
-      "import": "./modules/country-tax-settings/operations.ts"
+    "./country-tax-settings/commands": {
+      "types": "./modules/country-tax-settings/commands.ts",
+      "import": "./modules/country-tax-settings/commands.ts"
     },
     "./country-tax-settings/client": "./modules/country-tax-settings/client/index.ts",
     "./country-tax-settings/server": "./modules/country-tax-settings/server/index.ts",
@@ -569,157 +569,157 @@
       "types": "./modules/tax/server/index.ts",
       "import": "./modules/tax/server/index.ts"
     },
-    "./company-ap-control-accounts/operations": {
-      "types": "./modules/company-ap-control-accounts/operations.ts",
-      "import": "./modules/company-ap-control-accounts/operations.ts"
+    "./company-ap-control-accounts/commands": {
+      "types": "./modules/company-ap-control-accounts/commands.ts",
+      "import": "./modules/company-ap-control-accounts/commands.ts"
     },
-    "./company-ar-control-accounts/operations": {
-      "types": "./modules/company-ar-control-accounts/operations.ts",
-      "import": "./modules/company-ar-control-accounts/operations.ts"
+    "./company-ar-control-accounts/commands": {
+      "types": "./modules/company-ar-control-accounts/commands.ts",
+      "import": "./modules/company-ar-control-accounts/commands.ts"
     },
-    "./company-bank-cash-accounts/operations": {
-      "types": "./modules/company-bank-cash-accounts/operations.ts",
-      "import": "./modules/company-bank-cash-accounts/operations.ts"
+    "./company-bank-cash-accounts/commands": {
+      "types": "./modules/company-bank-cash-accounts/commands.ts",
+      "import": "./modules/company-bank-cash-accounts/commands.ts"
     },
-    "./company-dimensions/operations": {
-      "types": "./modules/company-dimensions/operations.ts",
-      "import": "./modules/company-dimensions/operations.ts"
+    "./company-dimensions/commands": {
+      "types": "./modules/company-dimensions/commands.ts",
+      "import": "./modules/company-dimensions/commands.ts"
     },
-    "./company-financial-document-defaults/operations": {
-      "types": "./modules/company-financial-document-defaults/operations.ts",
-      "import": "./modules/company-financial-document-defaults/operations.ts"
+    "./company-financial-document-defaults/commands": {
+      "types": "./modules/company-financial-document-defaults/commands.ts",
+      "import": "./modules/company-financial-document-defaults/commands.ts"
     },
-    "./company-financial-document-types/operations": {
-      "types": "./modules/company-financial-document-types/operations.ts",
-      "import": "./modules/company-financial-document-types/operations.ts"
+    "./company-financial-document-types/commands": {
+      "types": "./modules/company-financial-document-types/commands.ts",
+      "import": "./modules/company-financial-document-types/commands.ts"
     },
-    "./company-gl-account-categories/operations": {
-      "types": "./modules/company-gl-account-categories/operations.ts",
-      "import": "./modules/company-gl-account-categories/operations.ts"
+    "./company-gl-account-categories/commands": {
+      "types": "./modules/company-gl-account-categories/commands.ts",
+      "import": "./modules/company-gl-account-categories/commands.ts"
     },
-    "./company-gl-accounts/operations": {
-      "types": "./modules/company-gl-accounts/operations.ts",
-      "import": "./modules/company-gl-accounts/operations.ts"
+    "./company-gl-accounts/commands": {
+      "types": "./modules/company-gl-accounts/commands.ts",
+      "import": "./modules/company-gl-accounts/commands.ts"
     },
-    "./company-inventory-control-accounts/operations": {
-      "types": "./modules/company-inventory-control-accounts/operations.ts",
-      "import": "./modules/company-inventory-control-accounts/operations.ts"
+    "./company-inventory-control-accounts/commands": {
+      "types": "./modules/company-inventory-control-accounts/commands.ts",
+      "import": "./modules/company-inventory-control-accounts/commands.ts"
     },
-    "./company-inventory-item-posting-profiles/operations": {
-      "types": "./modules/company-inventory-item-posting-profiles/operations.ts",
-      "import": "./modules/company-inventory-item-posting-profiles/operations.ts"
+    "./company-inventory-item-posting-profiles/commands": {
+      "types": "./modules/company-inventory-item-posting-profiles/commands.ts",
+      "import": "./modules/company-inventory-item-posting-profiles/commands.ts"
     },
-    "./company-inventory-item-posting-profile-assignments/operations": {
-      "types": "./modules/company-inventory-item-posting-profile-assignments/operations.ts",
-      "import": "./modules/company-inventory-item-posting-profile-assignments/operations.ts"
+    "./company-inventory-item-posting-profile-assignments/commands": {
+      "types": "./modules/company-inventory-item-posting-profile-assignments/commands.ts",
+      "import": "./modules/company-inventory-item-posting-profile-assignments/commands.ts"
     },
-    "./company-tax-control-accounts/operations": {
-      "types": "./modules/company-tax-control-accounts/operations.ts",
-      "import": "./modules/company-tax-control-accounts/operations.ts"
+    "./company-tax-control-accounts/commands": {
+      "types": "./modules/company-tax-control-accounts/commands.ts",
+      "import": "./modules/company-tax-control-accounts/commands.ts"
     },
-    "./organization-ap-control-accounts/operations": {
-      "types": "./modules/organization-ap-control-accounts/operations.ts",
-      "import": "./modules/organization-ap-control-accounts/operations.ts"
+    "./organization-ap-control-accounts/commands": {
+      "types": "./modules/organization-ap-control-accounts/commands.ts",
+      "import": "./modules/organization-ap-control-accounts/commands.ts"
     },
-    "./organization-ar-control-accounts/operations": {
-      "types": "./modules/organization-ar-control-accounts/operations.ts",
-      "import": "./modules/organization-ar-control-accounts/operations.ts"
+    "./organization-ar-control-accounts/commands": {
+      "types": "./modules/organization-ar-control-accounts/commands.ts",
+      "import": "./modules/organization-ar-control-accounts/commands.ts"
     },
-    "./organization-bank-cash-accounts/operations": {
-      "types": "./modules/organization-bank-cash-accounts/operations.ts",
-      "import": "./modules/organization-bank-cash-accounts/operations.ts"
+    "./organization-bank-cash-accounts/commands": {
+      "types": "./modules/organization-bank-cash-accounts/commands.ts",
+      "import": "./modules/organization-bank-cash-accounts/commands.ts"
     },
-    "./organization-dimensions/operations": {
-      "types": "./modules/organization-dimensions/operations.ts",
-      "import": "./modules/organization-dimensions/operations.ts"
+    "./organization-dimensions/commands": {
+      "types": "./modules/organization-dimensions/commands.ts",
+      "import": "./modules/organization-dimensions/commands.ts"
     },
-    "./organization-financial-document-defaults/operations": {
-      "types": "./modules/organization-financial-document-defaults/operations.ts",
-      "import": "./modules/organization-financial-document-defaults/operations.ts"
+    "./organization-financial-document-defaults/commands": {
+      "types": "./modules/organization-financial-document-defaults/commands.ts",
+      "import": "./modules/organization-financial-document-defaults/commands.ts"
     },
-    "./organization-financial-document-types/operations": {
-      "types": "./modules/organization-financial-document-types/operations.ts",
-      "import": "./modules/organization-financial-document-types/operations.ts"
+    "./organization-financial-document-types/commands": {
+      "types": "./modules/organization-financial-document-types/commands.ts",
+      "import": "./modules/organization-financial-document-types/commands.ts"
     },
-    "./organization-gl-account-categories/operations": {
-      "types": "./modules/organization-gl-account-categories/operations.ts",
-      "import": "./modules/organization-gl-account-categories/operations.ts"
+    "./organization-gl-account-categories/commands": {
+      "types": "./modules/organization-gl-account-categories/commands.ts",
+      "import": "./modules/organization-gl-account-categories/commands.ts"
     },
-    "./organization-gl-accounts/operations": {
-      "types": "./modules/organization-gl-accounts/operations.ts",
-      "import": "./modules/organization-gl-accounts/operations.ts"
+    "./organization-gl-accounts/commands": {
+      "types": "./modules/organization-gl-accounts/commands.ts",
+      "import": "./modules/organization-gl-accounts/commands.ts"
     },
-    "./organization-inventory-control-accounts/operations": {
-      "types": "./modules/organization-inventory-control-accounts/operations.ts",
-      "import": "./modules/organization-inventory-control-accounts/operations.ts"
+    "./organization-inventory-control-accounts/commands": {
+      "types": "./modules/organization-inventory-control-accounts/commands.ts",
+      "import": "./modules/organization-inventory-control-accounts/commands.ts"
     },
-    "./organization-inventory-item-posting-profiles/operations": {
-      "types": "./modules/organization-inventory-item-posting-profiles/operations.ts",
-      "import": "./modules/organization-inventory-item-posting-profiles/operations.ts"
+    "./organization-inventory-item-posting-profiles/commands": {
+      "types": "./modules/organization-inventory-item-posting-profiles/commands.ts",
+      "import": "./modules/organization-inventory-item-posting-profiles/commands.ts"
     },
-    "./organization-tax-control-accounts/operations": {
-      "types": "./modules/organization-tax-control-accounts/operations.ts",
-      "import": "./modules/organization-tax-control-accounts/operations.ts"
+    "./organization-tax-control-accounts/commands": {
+      "types": "./modules/organization-tax-control-accounts/commands.ts",
+      "import": "./modules/organization-tax-control-accounts/commands.ts"
     },
-    "./ap-subledger-bills/operations": {
-      "types": "./modules/ap-subledger-bills/operations.ts",
-      "import": "./modules/ap-subledger-bills/operations.ts"
+    "./ap-subledger-bills/commands": {
+      "types": "./modules/ap-subledger-bills/commands.ts",
+      "import": "./modules/ap-subledger-bills/commands.ts"
     },
-    "./ap-subledger-counterparties/operations": {
-      "types": "./modules/ap-subledger-counterparties/operations.ts",
-      "import": "./modules/ap-subledger-counterparties/operations.ts"
+    "./ap-subledger-counterparties/commands": {
+      "types": "./modules/ap-subledger-counterparties/commands.ts",
+      "import": "./modules/ap-subledger-counterparties/commands.ts"
     },
-    "./ap-subledger-ledger-entries/operations": {
-      "types": "./modules/ap-subledger-ledger-entries/operations.ts",
-      "import": "./modules/ap-subledger-ledger-entries/operations.ts"
+    "./ap-subledger-ledger-entries/commands": {
+      "types": "./modules/ap-subledger-ledger-entries/commands.ts",
+      "import": "./modules/ap-subledger-ledger-entries/commands.ts"
     },
-    "./ap-subledger-statements/operations": {
-      "types": "./modules/ap-subledger-statements/operations.ts",
-      "import": "./modules/ap-subledger-statements/operations.ts"
+    "./ap-subledger-statements/commands": {
+      "types": "./modules/ap-subledger-statements/commands.ts",
+      "import": "./modules/ap-subledger-statements/commands.ts"
     },
-    "./ar-subledger-counterparties/operations": {
-      "types": "./modules/ar-subledger-counterparties/operations.ts",
-      "import": "./modules/ar-subledger-counterparties/operations.ts"
+    "./ar-subledger-counterparties/commands": {
+      "types": "./modules/ar-subledger-counterparties/commands.ts",
+      "import": "./modules/ar-subledger-counterparties/commands.ts"
     },
-    "./ar-subledger-invoices/operations": {
-      "types": "./modules/ar-subledger-invoices/operations.ts",
-      "import": "./modules/ar-subledger-invoices/operations.ts"
+    "./ar-subledger-invoices/commands": {
+      "types": "./modules/ar-subledger-invoices/commands.ts",
+      "import": "./modules/ar-subledger-invoices/commands.ts"
     },
-    "./ar-subledger-ledger-entries/operations": {
-      "types": "./modules/ar-subledger-ledger-entries/operations.ts",
-      "import": "./modules/ar-subledger-ledger-entries/operations.ts"
+    "./ar-subledger-ledger-entries/commands": {
+      "types": "./modules/ar-subledger-ledger-entries/commands.ts",
+      "import": "./modules/ar-subledger-ledger-entries/commands.ts"
     },
-    "./ar-subledger-statements/operations": {
-      "types": "./modules/ar-subledger-statements/operations.ts",
-      "import": "./modules/ar-subledger-statements/operations.ts"
+    "./ar-subledger-statements/commands": {
+      "types": "./modules/ar-subledger-statements/commands.ts",
+      "import": "./modules/ar-subledger-statements/commands.ts"
     },
-    "./company-reports/operations": {
-      "types": "./modules/company-reports/operations.ts",
-      "import": "./modules/company-reports/operations.ts"
+    "./company-reports/commands": {
+      "types": "./modules/company-reports/commands.ts",
+      "import": "./modules/company-reports/commands.ts"
     },
-    "./financial-document-processing-engine/operations": {
-      "types": "./modules/financial-document-processing-engine/operations.ts",
-      "import": "./modules/financial-document-processing-engine/operations.ts"
+    "./financial-document-processing-engine/commands": {
+      "types": "./modules/financial-document-processing-engine/commands.ts",
+      "import": "./modules/financial-document-processing-engine/commands.ts"
     },
-    "./financial-years/operations": {
-      "types": "./modules/financial-years/operations.ts",
-      "import": "./modules/financial-years/operations.ts"
+    "./financial-years/commands": {
+      "types": "./modules/financial-years/commands.ts",
+      "import": "./modules/financial-years/commands.ts"
     },
-    "./inventory-ledger/operations": {
-      "types": "./modules/inventory-ledger/operations.ts",
-      "import": "./modules/inventory-ledger/operations.ts"
+    "./inventory-ledger/commands": {
+      "types": "./modules/inventory-ledger/commands.ts",
+      "import": "./modules/inventory-ledger/commands.ts"
     },
-    "./journals/operations": {
-      "types": "./modules/journals/operations.ts",
-      "import": "./modules/journals/operations.ts"
+    "./journals/commands": {
+      "types": "./modules/journals/commands.ts",
+      "import": "./modules/journals/commands.ts"
     },
-    "./tax/operations": {
-      "types": "./modules/tax/operations.ts",
-      "import": "./modules/tax/operations.ts"
+    "./tax/commands": {
+      "types": "./modules/tax/commands.ts",
+      "import": "./modules/tax/commands.ts"
     },
-    "./tax-ledger/operations": {
-      "types": "./modules/tax-ledger/operations.ts",
-      "import": "./modules/tax-ledger/operations.ts"
+    "./tax-ledger/commands": {
+      "types": "./modules/tax-ledger/commands.ts",
+      "import": "./modules/tax-ledger/commands.ts"
     },
     "./navigation": {
       "types": "./navigation/index.ts",

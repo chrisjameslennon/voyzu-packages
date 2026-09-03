@@ -1,6 +1,6 @@
 import "server-only";
 
-import { operation } from "@voyzu/capability/operations";
+import { command } from "@voyzu/capability/commands";
 import { getDb } from "@voyzu/capability/db";
 
 export interface OperationalInventoryItem {
@@ -18,7 +18,7 @@ export async function getOperationalInventoryItems(
   skus: string[],
 ): Promise<OperationalInventoryItem[]> {
   if (skus.length === 0) return [];
-  const result = await operation.callOptional("@voyzu/inventory.getOperationalInventoryItems", organizationId, skus);
+  const result = await command.callOptional("@voyzu/inventory.getOperationalInventoryItems", organizationId, skus);
   if (!Array.isArray(result)) return [];
   const items = result as Omit<OperationalInventoryItem, "itemPostingProfileId">[];
   const { rows } = await getDb().query(
@@ -45,7 +45,7 @@ export async function getItemPostingProfileUsages(
   );
   const results: Array<{ itemPostingProfileId: number; sku: string }> = [];
   for (const organizationId of [...new Set(rows.map((row: Record<string, unknown>) => Number(row.organization_id)))]) {
-    const inventory = await operation.callOptional("@voyzu/inventory.listInventoryItems", organizationId);
+    const inventory = await command.callOptional("@voyzu/inventory.listInventoryItems", organizationId);
     if (!Array.isArray(inventory)) continue;
     const skuById = new Map((inventory as Array<{ id: number; sku: string }>).map((item) => [item.id, item.sku]));
     for (const row of rows as Record<string, unknown>[]) {

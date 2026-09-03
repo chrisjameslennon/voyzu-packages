@@ -1,6 +1,6 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
-import { operation as platformOperation } from "@voyzu/capability/operations";
+import { command as platformCommand } from "@voyzu/capability/commands";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/erp-core/common/server";
 import type {
   OrganizationBatchPatchRequestDto,
@@ -87,7 +87,7 @@ export async function deleteOrganization(code: string): Promise<void> {
     const row = await repo.get(normalized);
     if (!row) throw new NotFoundError(`Organization ${normalized} not found`);
     const organization = await enrichRow(row);
-    await platformOperation.callOptional(
+    await platformCommand.callOptional(
       "@voyzu/finance.deleteFinanceCompanyForErpOrganization",
       organization.id,
       db,
@@ -169,7 +169,7 @@ export async function batchDeleteOrganizations(codes: string[]): Promise<void> {
     const missing = normalized.filter((code) => !found.has(code));
     if (missing.length) throw new NotFoundError(`Organization ${missing.join(", ")} not found`);
     for (const organization of await enrichRows(rows)) {
-      await platformOperation.callOptional(
+      await platformCommand.callOptional(
         "@voyzu/finance.deleteFinanceCompanyForErpOrganization",
         organization.id,
         db,

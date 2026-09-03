@@ -1,6 +1,6 @@
 import "server-only";
 import { getDb } from "@voyzu/capability/db";
-import { operation } from "@voyzu/capability/operations";
+import { command } from "@voyzu/capability/commands";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import type { AssignPostingProfileRequest, PostingAssignments } from "../../types";
 
@@ -14,7 +14,7 @@ async function organizationId(companyId: number): Promise<number> {
 
 export async function listPostingProfileAssignments(companyId: number): Promise<PostingAssignments> {
   const orgId = await organizationId(companyId);
-  const inventory = await operation.callOptional("@voyzu/inventory.listInventoryItems", orgId);
+  const inventory = await command.callOptional("@voyzu/inventory.listInventoryItems", orgId);
   const items = Array.isArray(inventory) ? inventory as InventoryItem[] : [];
   const { rows: profileRows } = await getDb().query("SELECT id::int, code, name, status FROM item_posting_profile WHERE finance_organization_id = $1 ORDER BY code", [companyId]);
   const profiles = profileRows.map((row: Record<string, unknown>) => ({ id: Number(row.id), code: String(row.code), name: String(row.name), status: row.status === "INACTIVE" ? "INACTIVE" as const : "ACTIVE" as const }));

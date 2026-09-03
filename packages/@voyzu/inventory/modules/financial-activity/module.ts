@@ -1,11 +1,11 @@
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 import { apiDefinitions } from "./api.routes";
-import { operations } from "./operations";
+import { commands } from "./commands";
 import { pageRoutes } from "./pages.routes";
 
 export const financialActivityModule = {
   apiDefinitions,
-  operations,
+  commands,
   pageRoutes,
 } as const satisfies VoyzuPackageModuleDefinition;
 export default financialActivityModule;

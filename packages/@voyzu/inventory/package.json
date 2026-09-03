@@ -48,9 +48,9 @@
       "types": "./modules/items/api.routes.ts",
       "import": "./modules/items/api.routes.ts"
     },
-    "./items/operations": {
-      "types": "./modules/items/operations.ts",
-      "import": "./modules/items/operations.ts"
+    "./items/commands": {
+      "types": "./modules/items/commands.ts",
+      "import": "./modules/items/commands.ts"
     },
     "./configuration/pages.routes": {
       "types": "./modules/configuration/pages.routes.ts",
@@ -60,9 +60,9 @@
       "types": "./modules/configuration/api.routes.ts",
       "import": "./modules/configuration/api.routes.ts"
     },
-    "./configuration/operations": {
-      "types": "./modules/configuration/operations.ts",
-      "import": "./modules/configuration/operations.ts"
+    "./configuration/commands": {
+      "types": "./modules/configuration/commands.ts",
+      "import": "./modules/configuration/commands.ts"
     },
     "./stock/pages.routes": {
       "types": "./modules/stock/pages.routes.ts",
@@ -72,9 +72,9 @@
       "types": "./modules/stock/api.routes.ts",
       "import": "./modules/stock/api.routes.ts"
     },
-    "./stock/operations": {
-      "types": "./modules/stock/operations.ts",
-      "import": "./modules/stock/operations.ts"
+    "./stock/commands": {
+      "types": "./modules/stock/commands.ts",
+      "import": "./modules/stock/commands.ts"
     },
     "./financial-activity/pages.routes": {
       "types": "./modules/financial-activity/pages.routes.ts",
@@ -84,9 +84,9 @@
       "types": "./modules/financial-activity/api.routes.ts",
       "import": "./modules/financial-activity/api.routes.ts"
     },
-    "./financial-activity/operations": {
-      "types": "./modules/financial-activity/operations.ts",
-      "import": "./modules/financial-activity/operations.ts"
+    "./financial-activity/commands": {
+      "types": "./modules/financial-activity/commands.ts",
+      "import": "./modules/financial-activity/commands.ts"
     },
     "./financial-activity/types": {
       "types": "./modules/financial-activity/types/financial-activity.types.ts",
@@ -100,9 +100,9 @@
       "types": "./modules/reports/api.routes.ts",
       "import": "./modules/reports/api.routes.ts"
     },
-    "./reports/operations": {
-      "types": "./modules/reports/operations.ts",
-      "import": "./modules/reports/operations.ts"
+    "./reports/commands": {
+      "types": "./modules/reports/commands.ts",
+      "import": "./modules/reports/commands.ts"
     }
   },
   "peerDependencies": {

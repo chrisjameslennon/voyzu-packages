@@ -5,17 +5,17 @@ import {
   createInventoryConfiguration,
   getInventoryConfiguration,
   listInventoryConfiguration,
-} from "../modules/configuration/operations";
+} from "../modules/configuration/commands";
 import {
   createInventoryItem,
   listInventoryItems,
   patchInventoryItem,
-} from "../modules/items/operations";
+} from "../modules/items/commands";
 import {
   listInventoryStock,
   receiveInventoryStock,
   reserveInventoryStock,
-} from "../modules/stock/operations";
+} from "../modules/stock/commands";
 
 const categories = [
   {
