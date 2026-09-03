@@ -3,8 +3,12 @@ import { getDb } from "@voyzu/capability/db";
 import {
   addInventoryOptionValue,
   createInventoryConfiguration,
+  deleteInventoryOptionValue,
   getInventoryConfiguration,
   listInventoryConfiguration,
+  patchInventoryConfiguration,
+  patchInventoryOptionValue,
+  transitionInventoryConfiguration,
 } from "../modules/configuration/commands";
 import {
   createInventoryItem,
@@ -56,16 +60,49 @@ const warehouses = [
   },
 ] as const;
 
-const customOptionLists = [
+type SampleOptionList = {
+  name: string;
+  legacyNames: readonly string[];
+  description: string;
+  values: readonly { value: string; legacyValues: readonly string[] }[];
+};
+
+const customOptionLists: readonly SampleOptionList[] = [
   {
-    name: "Quality Inspection",
+    name: "Quality Inspection Result",
+    legacyNames: ["Quality Inspection"],
     description: "Quality inspection outcomes for inventory items.",
-    values: ["Passed", "Failed", "Pending"],
+    values: [
+      { value: "Pass", legacyValues: ["Passed"] },
+      { value: "Fail", legacyValues: ["Failed"] },
+      { value: "Pending", legacyValues: [] },
+    ],
   },
   {
     name: "Size",
+    legacyNames: [],
     description: "Standard clothing and product sizes.",
-    values: ["XS", "S", "M", "L", "XL", "XXL"],
+    values: ["XS", "S", "M", "L", "XL"].map((value) => ({
+      value,
+      legacyValues: [],
+    })),
+  },
+] as const;
+
+const customFields: readonly {
+  name: string;
+  legacyNames: readonly string[];
+  optionListName: string;
+}[] = [
+  {
+    name: "Quality Inspection Result",
+    legacyNames: ["Quality Inspection"],
+    optionListName: "Quality Inspection Result",
+  },
+  {
+    name: "Size",
+    legacyNames: [],
+    optionListName: "Size",
   },
 ] as const;
 
@@ -112,16 +149,20 @@ const stockTargets = [
 
 type Organization = { id: number; code: string; name: string };
 
-async function organizations(code?: string): Promise<Organization[]> {
+async function sampleOrganization(): Promise<Organization> {
   const result = await getDb().query<Organization>(
     `SELECT id::int, code, name
        FROM organization
       WHERE status = 'ACTIVE'
-        AND ($1::text IS NULL OR code = upper($1))
-      ORDER BY code`,
-    [code?.trim() || null],
+        AND code = 'TESTCO'`,
   );
-  return result.rows;
+  const organization = result.rows[0];
+  if (!organization) {
+    throw new Error(
+      "Active organization TESTCO was not found. Run @voyzu/erp-core:sampleData first.",
+    );
+  }
+  return organization;
 }
 
 async function seedOrganization(organization: Organization): Promise<void> {
@@ -133,13 +174,21 @@ async function seedOrganization(organization: Organization): Promise<void> {
     categoryRows.filter(({ code }) => code).map(({ code, id }) => [code!, id]),
   );
   for (const category of categories) {
-    if (categoryIds.has(category.code)) continue;
-    const created = await createInventoryConfiguration(
-      organization.id,
-      "category",
-      category,
-    );
-    categoryIds.set(category.code, created.id);
+    const existing = categoryRows.find(({ code }) => code === category.code);
+    if (existing) {
+      await patchInventoryConfiguration(organization.id, "category", existing.id, category);
+      if (existing.status !== "ACTIVE") {
+        await transitionInventoryConfiguration(organization.id, "category", [existing.id], "ACTIVE");
+      }
+      categoryIds.set(category.code, existing.id);
+    } else {
+      const created = await createInventoryConfiguration(
+        organization.id,
+        "category",
+        category,
+      );
+      categoryIds.set(category.code, created.id);
+    }
   }
 
   const warehouseRows = await listInventoryConfiguration(
@@ -150,25 +199,43 @@ async function seedOrganization(organization: Organization): Promise<void> {
     warehouseRows.filter(({ code }) => code).map(({ code, id }) => [code!, id]),
   );
   for (const warehouse of warehouses) {
-    if (warehouseIds.has(warehouse.code)) continue;
-    const created = await createInventoryConfiguration(
-      organization.id,
-      "warehouse",
-      warehouse,
-    );
-    warehouseIds.set(warehouse.code, created.id);
+    const existing = warehouseRows.find(({ code }) => code === warehouse.code);
+    if (existing) {
+      await patchInventoryConfiguration(organization.id, "warehouse", existing.id, warehouse);
+      if (existing.status !== "ACTIVE") {
+        await transitionInventoryConfiguration(organization.id, "warehouse", [existing.id], "ACTIVE");
+      }
+      warehouseIds.set(warehouse.code, existing.id);
+    } else {
+      const created = await createInventoryConfiguration(
+        organization.id,
+        "warehouse",
+        warehouse,
+      );
+      warehouseIds.set(warehouse.code, created.id);
+    }
   }
 
   const optionListRows = await listInventoryConfiguration(
     organization.id,
     "option-list",
   );
-  const optionListIds = new Map(
-    optionListRows.map(({ name, id }) => [name, id]),
-  );
+  const optionListIds = new Map<string, number>();
   for (const optionList of customOptionLists) {
-    let optionListId = optionListIds.get(optionList.name);
-    if (!optionListId) {
+    const existingList = optionListRows.find(
+      ({ name }) => name === optionList.name || optionList.legacyNames.includes(name),
+    );
+    let optionListId: number;
+    if (existingList) {
+      optionListId = existingList.id;
+      await patchInventoryConfiguration(organization.id, "option-list", optionListId, {
+        name: optionList.name,
+        isShared: true,
+      });
+      if (existingList.status !== "ACTIVE") {
+        await transitionInventoryConfiguration(organization.id, "option-list", [optionListId], "ACTIVE");
+      }
+    } else {
       const created = await createInventoryConfiguration(
         organization.id,
         "option-list",
@@ -179,22 +246,68 @@ async function seedOrganization(organization: Organization): Promise<void> {
         },
       );
       optionListId = created.id;
-      optionListIds.set(optionList.name, optionListId);
     }
+    optionListIds.set(optionList.name, optionListId);
     const detail = await getInventoryConfiguration(
       organization.id,
       "option-list",
       optionListId,
     );
-    const existingValues = new Set(detail?.options.map(({ value }) => value));
-    for (const value of optionList.values) {
-      if (existingValues.has(value)) continue;
-      await addInventoryOptionValue(organization.id, optionListId, { value });
+    const existingValues = detail?.options ?? [];
+    const retainedIds = new Set<number>();
+    for (const option of optionList.values) {
+      const existingValue = existingValues.find(
+        ({ value }) => value === option.value || option.legacyValues.includes(value),
+      );
+      if (existingValue) {
+        retainedIds.add(existingValue.id);
+        await patchInventoryOptionValue(organization.id, optionListId, existingValue.id, {
+          value: option.value,
+          status: "ACTIVE",
+        });
+      } else {
+        await addInventoryOptionValue(organization.id, optionListId, {
+          value: option.value,
+        });
+      }
+    }
+    for (const existingValue of existingValues) {
+      if (!retainedIds.has(existingValue.id)) {
+        await deleteInventoryOptionValue(organization.id, optionListId, existingValue.id);
+      }
+    }
+  }
+
+  const customFieldRows = await listInventoryConfiguration(
+    organization.id,
+    "custom-field",
+  );
+  for (const customField of customFields) {
+    const input = {
+      name: customField.name,
+      dataType: "OPTION",
+      appliesTo: "ITEM",
+      required: false,
+      showInFilter: true,
+      optionListId: optionListIds.get(customField.optionListName)!,
+    };
+    const existing = customFieldRows.find(
+      ({ name, appliesTo }) =>
+        appliesTo === "ITEM"
+        && (name === customField.name || customField.legacyNames.includes(name)),
+    );
+    if (existing) {
+      await patchInventoryConfiguration(organization.id, "custom-field", existing.id, input);
+      if (existing.status !== "ACTIVE") {
+        await transitionInventoryConfiguration(organization.id, "custom-field", [existing.id], "ACTIVE");
+      }
+    } else {
+      await createInventoryConfiguration(organization.id, "custom-field", input);
     }
   }
 
   const existingItems = new Map(
-    (await listInventoryItems(organization.id)).map((item) => [item.sku, item]),
+    (await listInventoryItems(organization.id, "")).map((item) => [item.sku, item]),
   );
   const itemIds = new Map<string, number>();
   for (const item of items) {
@@ -262,25 +375,16 @@ async function seedOrganization(organization: Organization): Promise<void> {
   }
 
   console.log(
-    `Inventory sample data ready for ${organization.code} (${organization.name}): ${categories.length} categories, ${warehouses.length} warehouses, ${customOptionLists.length} custom option lists, ${items.length} items.`,
+    `Inventory sample data ready for ${organization.code} (${organization.name}): ${categories.length} categories, ${warehouses.length} warehouses, ${customOptionLists.length} custom option lists, ${customFields.length} custom fields, ${items.length} items.`,
   );
 }
 
 /**
- * Creates repeatable Inventory demonstration data.
- * Pass an organization code to target one organization; without one, all active
- * organizations are seeded.
+ * Creates repeatable Inventory demonstration data for the shared TESTCO
+ * organization owned by ERP Core.
  */
-export async function sampleData(organizationCode?: string): Promise<void> {
-  const targets = await organizations(organizationCode);
-  if (!targets.length) {
-    throw new Error(
-      organizationCode
-        ? `Active organization ${organizationCode.toUpperCase()} was not found.`
-        : "No active organizations are available for Inventory sample data.",
-    );
-  }
-  for (const organization of targets) await seedOrganization(organization);
+export async function sampleData(): Promise<void> {
+  await seedOrganization(await sampleOrganization());
 }
 
 export default sampleData;

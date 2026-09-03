@@ -92,7 +92,7 @@ const RECEIPTS: ReceiptSeed[] = [
 ];
 
 function allocationAmount(amount: number, targetDocumentId: string, config: SampleCompanyConfig): number {
-  if (config.companyCode !== "SAMP-CA") return amount;
+  if (config.countryCode !== "CA") return amount;
   if (targetDocumentId === "SAMP-INV-001") return standardGross(6500, config);
   if (targetDocumentId === "SAMP-INV-004") return standardGross(1250, config);
   return amount;

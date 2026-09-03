@@ -4,6 +4,7 @@ import { organizationsModule } from "./modules/organizations/module";
 import { organizationSwitcherModule } from "./modules/organization-switcher/module";
 import { organizationAccessModule } from "./modules/organization-access/module";
 import { organizationReportsModule } from "./modules/organization-reports/module";
+import { sampleData } from "./scripts/sample-data";
 
 export const organizationModules = [
   organizationsModule,
@@ -28,7 +29,10 @@ export const erpCorePackage = {
     seedSql: [
       "./install/db/seed/home-page.seed.sql"
     ]
-  }
+  },
+  scripts: {
+    sampleData,
+  },
 } as const satisfies VoyzuPackageDefinition;
 
 export default erpCorePackage;

@@ -12,7 +12,7 @@ export interface SampleCompanyConfig {
 
 export const SAMPLE_POSTING_COMPANIES: SampleCompanyConfig[] = [
   {
-    companyCode: "SAMP-NZ",
+    companyCode: "TESTCO",
     countryCode: "NZ",
     stateOrProvinceCode: null,
     currencyCode: "NZD",
@@ -22,21 +22,10 @@ export const SAMPLE_POSTING_COMPANIES: SampleCompanyConfig[] = [
     taxAuthorityCode: "IRD",
     bankTxPrefix: "ASB",
   },
-  {
-    companyCode: "SAMP-CA",
-    countryCode: "CA",
-    stateOrProvinceCode: "BC",
-    currencyCode: "CAD",
-    standardTaxRule: "CA_BC_STANDARD",
-    zeroRatedTaxRule: "CA_ZERO_RATED",
-    exemptTaxRule: "CA_EXEMPT",
-    taxAuthorityCode: "CA_CRA",
-    bankTxPrefix: "RBC",
-  },
 ];
 
 export function standardGross(netAmount: number, config: SampleCompanyConfig): number {
-  const rate = config.companyCode === "SAMP-CA" ? 1.12 : 1.15;
+  const rate = config.countryCode === "CA" ? 1.12 : 1.15;
   return Number((netAmount * rate).toFixed(2));
 }
 
@@ -48,7 +37,7 @@ export function localizeTaxRule(taxRule: string, config: SampleCompanyConfig): s
 }
 
 export function localizeCounterpartyName(name: string, config: SampleCompanyConfig): string {
-  if (config.companyCode !== "SAMP-CA") return name;
+  if (config.countryCode !== "CA") return name;
   return name
     .replaceAll("NZ", "Canada")
     .replaceAll("Kiwi", "Maple")

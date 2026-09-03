@@ -15,7 +15,7 @@ import {
   processInventoryReceipt,
 } from "@voyzu/finance/financial-document-processing-engine/server";
 
-const COMPANY_CODE = "SAMP-NZ";
+const COMPANY_CODE = "TESTCO";
 const INVENTORY_ITEM_BILL_ID = "SAMP-BILL-ITEM-001";
 const INVENTORY_ITEM_INVOICE_ID = "SAMP-INV-ITEM-001";
 const STANDALONE_RECEIPT_ID = "SAMP-INV-DIR-REC";

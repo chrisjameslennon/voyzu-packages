@@ -15,16 +15,20 @@ const ITEM_COUNT = 100;
 
 type Organization = { id: number; code: string; name: string };
 
-async function organizations(code?: string): Promise<Organization[]> {
+async function sampleOrganization(): Promise<Organization> {
   const result = await getDb().query<Organization>(
     `SELECT id::int, code, name
        FROM organization
       WHERE status = 'ACTIVE'
-        AND ($1::text IS NULL OR code = upper($1))
-      ORDER BY code`,
-    [code?.trim() || null],
+        AND code = 'TESTCO'`,
   );
-  return result.rows;
+  const organization = result.rows[0];
+  if (!organization) {
+    throw new Error(
+      "Active organization TESTCO was not found. Run @voyzu/erp-core:sampleData first.",
+    );
+  }
+  return organization;
 }
 
 async function seedLargeOrganization(
@@ -45,7 +49,7 @@ async function seedLargeOrganization(
   }
 
   const existingItems = new Map(
-    (await listInventoryItems(organization.id)).map((item) => [item.sku, item]),
+    (await listInventoryItems(organization.id, "")).map((item) => [item.sku, item]),
   );
   const largeItems: { id: number; sku: string }[] = [];
 
@@ -101,14 +105,11 @@ async function seedLargeOrganization(
 }
 
 /**
- * Adds a repeatable large Inventory dataset. Pass an organization code to
- * target one organization; without one, all active organizations are seeded.
+ * Adds a repeatable large Inventory dataset for the shared TESTCO organization.
  */
 export async function sampleDataLarge(): Promise<void> {
-  const organizationCode = process.argv[2];
-  await sampleData(organizationCode);
-  const targets = await organizations(organizationCode);
-  for (const organization of targets) await seedLargeOrganization(organization);
+  await sampleData();
+  await seedLargeOrganization(await sampleOrganization());
 }
 
 export default sampleDataLarge;
