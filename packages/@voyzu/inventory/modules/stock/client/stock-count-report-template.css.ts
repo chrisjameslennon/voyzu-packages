@@ -43,6 +43,7 @@ export const stockCountReportCss = `
 .table th:last-child, .table td:last-child { padding-right: 0; }
 .number { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .code { font-weight: 700; overflow-wrap: anywhere; }
+.documentLink { color: #0057d9; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
 .muted { color: var(--text-muted); }
 .variance { font-weight: 700; }
 .notes { margin: 0; white-space: pre-wrap; }
@@ -57,6 +58,7 @@ export const stockCountReportStyles = {
   code: "code",
   documentTypeLine: "documentTypeLine",
   documentDateLine: "documentDateLine",
+  documentLink: "documentLink",
   grid12: "grid12",
   label: "label",
   line: "line",

@@ -48,6 +48,14 @@ export const pageRoutes = {
     ],
     auth,
   },
+  activityDetailPrintable: {
+    id: "voyzu.inventory.stock-activity.page.detail.printable",
+    path: "/inventory/stock-activity/[code]/printable",
+    loadPage: load("StockTransactionDetailPage"),
+    pageTitle: "Stock Activity",
+    unframed: true,
+    auth,
+  },
   counts: {
     id: "voyzu.inventory.stock-counts.page.list",
     path: "/inventory/stock-counts",

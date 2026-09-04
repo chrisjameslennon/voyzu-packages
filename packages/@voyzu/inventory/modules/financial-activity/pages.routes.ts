@@ -19,4 +19,12 @@ export const pageRoutes = {
     ],
     auth,
   },
+  detailPrintable: {
+    id: "voyzu.inventory.financial-activity.page.detail.printable",
+    path: "/inventory/financial-activity/[id]/printable",
+    loadPage: () => import("./server/pages/FinancialActivityPages").then((module) => module.FinancialActivityDetailPage),
+    pageTitle: "Financial Activity",
+    unframed: true,
+    auth,
+  },
 } as const;

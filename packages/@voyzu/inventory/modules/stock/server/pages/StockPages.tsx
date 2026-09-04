@@ -8,6 +8,7 @@ import {
 import {
   StockActivityView,
   StockTransactionDetailView,
+  StockTransactionReportTemplate,
   StockCountEditor,
   StockCountReportTemplate,
   StockCountsView,
@@ -48,12 +49,33 @@ export async function StockActivityPage() {
     />
   );
 }
-export async function StockTransactionDetailPage({ code }: { code?: string }) {
+export async function StockTransactionDetailPage({
+  code,
+  surface,
+}: {
+  code?: string;
+  surface?: { unframed?: boolean };
+}) {
   const organization = await getSelectedOrganization();
   if (!organization || !code) notFound();
   const record = await getStockActivityDetail(organization.id, code);
   if (!record) notFound();
-  return <StockTransactionDetailView record={record} />;
+  if (surface?.unframed) {
+    return (
+      <StockTransactionReportTemplate
+        record={record}
+        organization={organization}
+        generatedAt={new Date().toLocaleString(undefined, {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      />
+    );
+  }
+  return <StockTransactionDetailView record={record} organization={organization} />;
 }
 export async function StockCountsPage() {
   const organization = await getSelectedOrganization();

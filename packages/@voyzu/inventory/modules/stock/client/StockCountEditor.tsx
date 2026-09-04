@@ -1,6 +1,6 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AuditPanel } from "@voyzu/audit/client";
 import {
   Badge,
@@ -84,8 +84,9 @@ export function StockCountEditor({
   const [toast, setToast] = useState("");
   const [confirmComplete, setConfirmComplete] = useState(false);
   const [saving, setSaving] = useState(false);
-  const generatedAt = useMemo(
-    () =>
+  const [generatedAt, setGeneratedAt] = useState("");
+  useEffect(() => {
+    setGeneratedAt(
       new Date().toLocaleString(undefined, {
         day: "2-digit",
         month: "short",
@@ -93,8 +94,8 @@ export function StockCountEditor({
         hour: "2-digit",
         minute: "2-digit",
       }),
-    [],
-  );
+    );
+  }, []);
   const selectableWarehouses = warehouses.filter(
     (warehouse) =>
       warehouse.status !== "INACTIVE" || warehouse.id === initial?.warehouseId,
@@ -279,8 +280,9 @@ export function StockCountEditor({
       { method: "POST" },
     );
     if (!response) return;
-    setRecord((await response.json()) as StockCountDetail);
-    setToast("Stocktake completed");
+    const completed = (await response.json()) as StockCountDetail;
+    router.replace(`/inventory/stock-counts/${completed.id}`);
+    router.refresh();
   };
   const requestComplete = () => {
     setError("");

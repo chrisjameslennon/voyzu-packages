@@ -9,6 +9,8 @@ import {
   FinancialActivityDetailView,
   FinancialActivityListView,
 } from "../../client";
+import { StockTransactionReportTemplate } from "../../../stock/client";
+import { getStockActivityDetail } from "../../../stock/server/lib/stock.service";
 
 export async function FinancialActivityListPage() {
   const organization = await getSelectedOrganization();
@@ -19,10 +21,42 @@ export async function FinancialActivityListPage() {
   );
 }
 
-export async function FinancialActivityDetailPage({ id }: { id?: string }) {
+export async function FinancialActivityDetailPage({
+  id,
+  surface,
+}: {
+  id?: string;
+  surface?: { unframed?: boolean };
+}) {
   const organization = await getSelectedOrganization();
   if (!organization || !id) notFound();
-  const record = await getFinancialActivity(organization.id, Number(id));
+  const financialActivity = await getFinancialActivity(organization.id, Number(id));
+  if (!financialActivity) notFound();
+  const record = await getStockActivityDetail(
+    organization.id,
+    financialActivity.transactionCode,
+  );
   if (!record) notFound();
-  return <FinancialActivityDetailView record={record} />;
+  if (surface?.unframed) {
+    return (
+      <StockTransactionReportTemplate
+        record={record}
+        organization={organization}
+        generatedAt={new Date().toLocaleString(undefined, {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      />
+    );
+  }
+  return (
+    <FinancialActivityDetailView
+      record={record}
+      organization={organization}
+      financialActivityId={financialActivity.id}
+    />
+  );
 }

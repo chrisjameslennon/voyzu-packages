@@ -35,7 +35,7 @@ export function StockCountReportTemplate({
       <header className={styles.reportHeader}>
         <div className={`${styles.reportHeaderLine} ${styles.reportHeaderLineStrong} ${styles.documentTypeLine}`}>Stock Count</div>
         <div className={styles.reportCompanyName}>{record.code}</div>
-        <div className={`${styles.reportHeaderLine} ${styles.documentDateLine}`}>
+        <div className={`${styles.reportHeaderLine} ${styles.documentDateLine}`} suppressHydrationWarning>
           {formatDate(record.countDate)}
         </div>
       </header>
@@ -66,7 +66,7 @@ export function StockCountReportTemplate({
           </div>
           <div className={styles.metaSlot}>
             <p className={styles.label}>Count Date</p>
-            <p className={styles.metaValue}>{formatDate(record.countDate)}</p>
+            <p className={styles.metaValue} suppressHydrationWarning>{formatDate(record.countDate)}</p>
           </div>
           <div className={styles.metaSlot}>
             <p className={styles.label}>Status</p>
@@ -110,7 +110,7 @@ export function StockCountReportTemplate({
         ) : null}
       </section>
 
-      <footer className={styles.reportFooter}>Generated {generatedAt}</footer>
+      <footer className={styles.reportFooter} suppressHydrationWarning>Generated {generatedAt}</footer>
     </div>
   );
 }

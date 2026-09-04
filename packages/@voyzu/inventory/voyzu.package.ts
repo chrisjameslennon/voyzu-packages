@@ -8,6 +8,7 @@ import { itemsModule } from "./modules/items/module";
 import { reportsModule } from "./modules/reports/module";
 import { sampleData } from "./scripts/sample-data";
 import { sampleDataLarge } from "./scripts/sample-data-large";
+import { teardownSampleData } from "./scripts/teardown-sample-data";
 import { stockModule } from "./modules/stock/module";
 import { uninstall } from "./uninstall/manifest";
 
@@ -25,6 +26,7 @@ export const inventoryPackage = {
   scripts: {
     sampleData,
     "sample-data-large": sampleDataLarge,
+    "teardown-sample-data": teardownSampleData,
   },
 } as const satisfies VoyzuPackageDefinition;
 
