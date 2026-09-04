@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 import { OrganizationAuditPanel as AuditPanel, getStatusSemanticColor } from "@voyzu/erp-core/common/client";
 import type { OrganizationResponseDto, OrganizationUpdateRequestDto } from "@voyzu/erp-core/types/modules/organizations";
-import { Badge, Breadcrumbs, Button, Input, SearchableSelect } from "@voyzu/ui-components";
+import { Badge, Breadcrumbs, Button, Input, SearchableSelect, TabGroup } from "@voyzu/ui-components";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import layoutStyles from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
@@ -17,10 +17,11 @@ interface OrganizationDetailProps {
   organization: OrganizationResponseDto;
   activeCountries: SelectOption[];
   activeCurrencies: SelectOption[];
+  extensionTabs?: Array<{ key: string; label: string; content: ReactNode }>;
   organizationOrganizationsHelpUrl?: string;
 }
 
-export function OrganizationDetail({ organization, activeCountries, activeCurrencies }: OrganizationDetailProps) {
+export function OrganizationDetail({ organization, activeCountries, activeCurrencies, extensionTabs = [] }: OrganizationDetailProps) {
   const router = useRouter();
   const [current, setCurrent] = useState(organization);
   const [code, setCode] = useState(organization.code);
@@ -113,17 +114,26 @@ export function OrganizationDetail({ organization, activeCountries, activeCurren
       </aside>
 
       <main className={layoutStyles.mainSection}>
-        <section className={detailStyles.card}>
-          <h2 className={typography.sectionHeading}>Organization Details</h2>
-          {error ? <p>{error}</p> : null}
-          <div className={detailStyles.formGrid}>
-            <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>Code</span><Input value={code} maxLength={14} onChange={(event) => setCode(event.target.value.toUpperCase())} /></label>
-            <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>Name</span><Input value={name} onChange={(event) => setName(event.target.value)} /></label>
-            <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>Country</span><SearchableSelect value={countryCode} onChange={setCountryCode} options={activeCountries} /></label>
-            <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>Base Currency</span><SearchableSelect value={baseCurrencyCode} onChange={setBaseCurrencyCode} options={activeCurrencies} /></label>
-          </div>
-          <div className={detailStyles.cardActions}><Button variant="primary" onClick={() => void save()} disabled={busy || !code || !name || !countryCode || !baseCurrencyCode}>Save</Button></div>
-        </section>
+        <TabGroup defaultKey="details" tabs={[
+          {
+            key: "details",
+            label: "Details",
+            content: (
+              <section className={detailStyles.card}>
+                <h2 className={typography.sectionHeading}>Organization Details</h2>
+                {error ? <p>{error}</p> : null}
+                <div className={detailStyles.formGrid}>
+                  <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>Code</span><Input value={code} maxLength={14} onChange={(event) => setCode(event.target.value.toUpperCase())} /></label>
+                  <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>Name</span><Input value={name} onChange={(event) => setName(event.target.value)} /></label>
+                  <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>Country</span><SearchableSelect value={countryCode} onChange={setCountryCode} options={activeCountries} /></label>
+                  <label className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>Base Currency</span><SearchableSelect value={baseCurrencyCode} onChange={setBaseCurrencyCode} options={activeCurrencies} /></label>
+                </div>
+                <div className={detailStyles.cardActions}><Button variant="primary" onClick={() => void save()} disabled={busy || !code || !name || !countryCode || !baseCurrencyCode}>Save</Button></div>
+              </section>
+            ),
+          },
+          ...extensionTabs,
+        ]} />
       </main>
     </div>
   );

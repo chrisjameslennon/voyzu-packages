@@ -37,6 +37,10 @@
       "import": "./modules/finance-companies/commands.ts"
     },
     "./finance-companies/client": "./modules/finance-companies/client/index.ts",
+    "./finance-companies/components": {
+      "types": "./modules/finance-companies/components.tsx",
+      "import": "./modules/finance-companies/components.tsx"
+    },
     "./finance-companies/server": "./modules/finance-companies/server/index.ts",
     "./country-tax-settings": "./modules/country-tax-settings/module.ts",
     "./country-tax-settings/commands": {

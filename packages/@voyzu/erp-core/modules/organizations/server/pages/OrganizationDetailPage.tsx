@@ -2,6 +2,7 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 import { resolveExternalUrl } from "@voyzu/ui-surface";
+import { ComponentSlot, component } from "@voyzu/ui-surface/server";
 
 import { getDb } from "@voyzu/capability/db";
 import { listCurrencies } from "@voyzu/localization/currencies/server";
@@ -38,9 +39,18 @@ export async function OrganizationDetailPage({ code, surface }: OrganizationDeta
 
   if (!organization) notFound();
 
+  const extensionTabs = component.has("organizations.detail.finance")
+    ? [{
+        key: "finance",
+        label: "Finance",
+        content: <ComponentSlot id="organizations.detail.finance" organizationCode={organization.code} />,
+      }]
+    : [];
+
   return (
     <OrganizationDetail
       organization={organization}
+      extensionTabs={extensionTabs}
       activeCountries={countries}
       activeCurrencies={currencies
         .filter((currency) => currency.status === "ACTIVE")
