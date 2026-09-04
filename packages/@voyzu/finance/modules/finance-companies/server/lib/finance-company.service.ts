@@ -122,21 +122,18 @@ async function provisionFinanceCompanyForErpOrganization(
 
 export function createFinanceCompanyForErpOrganization(
   organizationId: number,
-  db: DbExecutor,
 ): Promise<void> {
-  return provisionFinanceCompanyForErpOrganization(organizationId, db);
+  return provisionFinanceCompanyForErpOrganization(organizationId, getDb());
 }
 
 export function activateFinanceCompanyForErpOrganization(
   organizationId: number,
-  db: DbExecutor,
 ): Promise<void> {
-  return provisionFinanceCompanyForErpOrganization(organizationId, db);
+  return provisionFinanceCompanyForErpOrganization(organizationId, getDb());
 }
 
 export async function deactivateFinanceCompanyForErpOrganization(
   _organizationId: number,
-  _db: DbExecutor,
 ): Promise<void> {
   // Finance derives availability from the owning ERP organization's status.
 }
@@ -154,6 +151,6 @@ export async function updateFinanceCompany(code: string, input: FinanceCompanyUp
   });
 }
 
-export async function deleteFinanceCompanyForErpOrganization(organizationId: number, db: DbExecutor): Promise<void> {
-  await new FinanceCompanyRepo(db).deleteByOrganizationId(organizationId);
+export async function deleteFinanceCompanyForErpOrganization(organizationId: number): Promise<void> {
+  await new FinanceCompanyRepo(getDb()).deleteByOrganizationId(organizationId);
 }

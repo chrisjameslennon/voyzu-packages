@@ -27,7 +27,7 @@ export const resolveFinanceCompanySelectionForCurrentUser = platformCommand.defi
 );
 export const deleteFinanceCompanyForErpOrganization = platformCommand.defineLazy(
   {
-    parameters: Type.Tuple([Type.Number(), Type.Any()]),
+    parameters: Type.Tuple([Type.Number()]),
     result: Type.Undefined(),
   },
   () => import("./server/lib/finance-company.service").then((module) => module.deleteFinanceCompanyForErpOrganization),
@@ -38,7 +38,7 @@ const erpOrganizationLifecycleCommand = (serviceName:
   | "deactivateFinanceCompanyForErpOrganization"
 ) => platformCommand.defineLazy(
   {
-    parameters: Type.Tuple([Type.Number(), Type.Any()]),
+    parameters: Type.Tuple([Type.Number()]),
     result: Type.Undefined(),
   },
   () => import("./server/lib/finance-company.service").then((module) => module[serviceName]),

@@ -45,7 +45,6 @@ export async function createOrganization(input: OrganizationCreateRequestDto): P
       await platformCommand.callOptional(
         "@voyzu/finance.createFinanceCompanyForErpOrganization",
         organization.id,
-        db,
       );
       return organization;
     });
@@ -96,7 +95,6 @@ export async function deleteOrganization(code: string): Promise<void> {
     await platformCommand.callOptional(
       "@voyzu/finance.deleteFinanceCompanyForErpOrganization",
       organization.id,
-      db,
     );
     await repo.delete(normalized);
   });
@@ -126,7 +124,6 @@ export async function batchCreateOrganizations(inputs: OrganizationCreateRequest
         await platformCommand.callOptional(
           "@voyzu/finance.createFinanceCompanyForErpOrganization",
           organization.id,
-          db,
         );
         rows.push(row);
       }
@@ -185,7 +182,6 @@ export async function batchDeleteOrganizations(codes: string[]): Promise<void> {
       await platformCommand.callOptional(
         "@voyzu/finance.deleteFinanceCompanyForErpOrganization",
         organization.id,
-        db,
       );
     }
     await repo.batchDelete(normalized);
@@ -208,7 +204,7 @@ async function transitionStatus(codes: string[], status: "ACTIVE" | "INACTIVE"):
       ? "@voyzu/finance.activateFinanceCompanyForErpOrganization"
       : "@voyzu/finance.deactivateFinanceCompanyForErpOrganization";
     for (const organization of organizations) {
-      await platformCommand.callOptional(commandName, organization.id, db);
+      await platformCommand.callOptional(commandName, organization.id);
     }
     return organizations;
   });
