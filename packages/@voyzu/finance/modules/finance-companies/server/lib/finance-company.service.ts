@@ -94,6 +94,53 @@ export async function activateFinanceCompany(code: string): Promise<FinanceCompa
   });
 }
 
+async function provisionFinanceCompanyForErpOrganization(
+  organizationId: number,
+  db: DbExecutor,
+): Promise<void> {
+  const repo = new FinanceCompanyRepo(db);
+  const organization = await repo.getProvisioningContext(organizationId);
+  if (!organization) throw new NotFoundError(`Organization ${organizationId} not found`);
+  if (!organization.financial_period_start_month) {
+    throw new BusinessRuleError(`Finance country settings are not configured for organization ${organizationId}`);
+  }
+
+  const financeCompanyId = await repo.ensureFinanceOrganization(
+    organizationId,
+    organization.tax_filing_anchor_month,
+    organization.tax_filing_interval_months,
+  );
+  if (!financeCompanyId) {
+    throw new BusinessRuleError(`Unable to create financial entity for organization ${organizationId}`);
+  }
+  await repo.createFiscalCalendar(
+    financeCompanyId,
+    String(organization.financial_period_start_month),
+    await createCreationAuditStamp(),
+  );
+}
+
+export function createFinanceCompanyForErpOrganization(
+  organizationId: number,
+  db: DbExecutor,
+): Promise<void> {
+  return provisionFinanceCompanyForErpOrganization(organizationId, db);
+}
+
+export function activateFinanceCompanyForErpOrganization(
+  organizationId: number,
+  db: DbExecutor,
+): Promise<void> {
+  return provisionFinanceCompanyForErpOrganization(organizationId, db);
+}
+
+export async function deactivateFinanceCompanyForErpOrganization(
+  _organizationId: number,
+  _db: DbExecutor,
+): Promise<void> {
+  // Finance derives availability from the owning ERP organization's status.
+}
+
 export async function updateFinanceCompany(code: string, input: FinanceCompanyUpdateRequestDto): Promise<FinanceCompanyResponseDto> {
   return withTransaction(async (db) => {
     const repo = new FinanceCompanyRepo(db);

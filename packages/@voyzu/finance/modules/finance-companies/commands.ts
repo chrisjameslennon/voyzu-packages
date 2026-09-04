@@ -32,11 +32,35 @@ export const deleteFinanceCompanyForErpOrganization = platformCommand.defineLazy
   },
   () => import("./server/lib/finance-company.service").then((module) => module.deleteFinanceCompanyForErpOrganization),
 );
+const erpOrganizationLifecycleCommand = (serviceName:
+  | "createFinanceCompanyForErpOrganization"
+  | "activateFinanceCompanyForErpOrganization"
+  | "deactivateFinanceCompanyForErpOrganization"
+) => platformCommand.defineLazy(
+  {
+    parameters: Type.Tuple([Type.Number(), Type.Any()]),
+    result: Type.Undefined(),
+  },
+  () => import("./server/lib/finance-company.service").then((module) => module[serviceName]),
+);
+
+export const createFinanceCompanyForErpOrganization = erpOrganizationLifecycleCommand(
+  "createFinanceCompanyForErpOrganization",
+);
+export const activateFinanceCompanyForErpOrganization = erpOrganizationLifecycleCommand(
+  "activateFinanceCompanyForErpOrganization",
+);
+export const deactivateFinanceCompanyForErpOrganization = erpOrganizationLifecycleCommand(
+  "deactivateFinanceCompanyForErpOrganization",
+);
 
 export const commands = {
   activateFinanceCompany,
   updateFinanceCompany,
   listSelectableFinanceCompaniesForCurrentUser,
   resolveFinanceCompanySelectionForCurrentUser,
+  createFinanceCompanyForErpOrganization,
+  activateFinanceCompanyForErpOrganization,
+  deactivateFinanceCompanyForErpOrganization,
   deleteFinanceCompanyForErpOrganization,
 } as const;

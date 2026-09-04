@@ -34,6 +34,18 @@ export class FinanceCompanyRepo {
     return (rows[0] as Record<string, unknown> | undefined) ?? null;
   }
 
+  async getProvisioningContext(organizationId: number): Promise<Record<string, unknown> | null> {
+    const { rows } = await this.db.query(
+      `SELECT c.id::int, c.status, fc.financial_period_start_month,
+              fc.tax_filing_anchor_month::int, fc.tax_filing_interval_months::int
+       FROM organization c
+       LEFT JOIN finance_country fc ON fc.code = c.country_code
+       WHERE c.id = $1 AND c.status != 'DELETED'`,
+      [organizationId],
+    );
+    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  }
+
   async ensureFinanceOrganization(organizationId: number, anchorMonth: unknown, intervalMonths: unknown): Promise<number | null> {
     const inserted = await this.db.query(`INSERT INTO finance_organization (organization_id, tax_filing_anchor_month, tax_filing_interval_months) VALUES ($1, $2, $3) ON CONFLICT (organization_id) DO NOTHING RETURNING id::int`, [organizationId, anchorMonth, intervalMonths]);
     if (inserted.rows[0]?.id != null) return Number(inserted.rows[0].id);

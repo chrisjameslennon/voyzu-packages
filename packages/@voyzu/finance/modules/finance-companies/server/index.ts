@@ -1,5 +1,9 @@
 export {
   activateFinanceCompany,
+  activateFinanceCompanyForErpOrganization,
+  createFinanceCompanyForErpOrganization,
+  deactivateFinanceCompanyForErpOrganization,
+  deleteFinanceCompanyForErpOrganization,
   getFinanceCompany,
   listSelectableFinanceCompaniesForCurrentUser,
   resolveFinanceCompanySelectionForCurrentUser,

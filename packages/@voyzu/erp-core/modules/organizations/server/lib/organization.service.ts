@@ -41,7 +41,13 @@ export async function createOrganization(input: OrganizationCreateRequestDto): P
     return await withTransaction(async (db) => {
       const row = toInsertRow(input);
       const created = await new OrganizationRepo(db).insert(withCreationAudit(row, await createCreationAuditStamp()));
-      return enrichRow(created);
+      const organization = await enrichRow(created);
+      await platformCommand.callOptional(
+        "@voyzu/finance.createFinanceCompanyForErpOrganization",
+        organization.id,
+        db,
+      );
+      return organization;
     });
   } catch (error) {
     return translateWriteError(error);
@@ -115,7 +121,14 @@ export async function batchCreateOrganizations(inputs: OrganizationCreateRequest
       const audit = await createCreationAuditStamp();
       const rows: OrganizationRow[] = [];
       for (const input of inputs) {
-        rows.push(await repo.insert(withCreationAudit(toInsertRow(input), audit)));
+        const row = await repo.insert(withCreationAudit(toInsertRow(input), audit));
+        const organization = await enrichRow(row);
+        await platformCommand.callOptional(
+          "@voyzu/finance.createFinanceCompanyForErpOrganization",
+          organization.id,
+          db,
+        );
+        rows.push(row);
       }
       return enrichRows(rows);
     });
@@ -182,12 +195,23 @@ export async function batchDeleteOrganizations(codes: string[]): Promise<void> {
 async function transitionStatus(codes: string[], status: "ACTIVE" | "INACTIVE"): Promise<OrganizationResponseDto[]> {
   const normalized = normalizeCodes(codes);
   if (!normalized.length) throw new InputValidationError("At least one organization code is required");
-  const repo = new OrganizationRepo(getDb());
-  const existing = await repo.batchGet(normalized);
-  const found = new Set(existing.map((row) => row.code));
-  const missing = normalized.filter((code) => !found.has(code));
-  if (missing.length) throw new NotFoundError(`Organization ${missing.join(", ")} not found`);
-  return enrichRows(await repo.batchUpdateStatus(normalized, status, await createUpdateAuditStamp()));
+  return withTransaction(async (db) => {
+    const repo = new OrganizationRepo(db);
+    const existing = await repo.batchGet(normalized);
+    const found = new Set(existing.map((row) => row.code));
+    const missing = normalized.filter((code) => !found.has(code));
+    if (missing.length) throw new NotFoundError(`Organization ${missing.join(", ")} not found`);
+    const organizations = await enrichRows(
+      await repo.batchUpdateStatus(normalized, status, await createUpdateAuditStamp()),
+    );
+    const commandName = status === "ACTIVE"
+      ? "@voyzu/finance.activateFinanceCompanyForErpOrganization"
+      : "@voyzu/finance.deactivateFinanceCompanyForErpOrganization";
+    for (const organization of organizations) {
+      await platformCommand.callOptional(commandName, organization.id, db);
+    }
+    return organizations;
+  });
 }
 
 export function activateOrganizations(codes: string[]): Promise<OrganizationResponseDto[]> { return transitionStatus(codes, "ACTIVE"); }
