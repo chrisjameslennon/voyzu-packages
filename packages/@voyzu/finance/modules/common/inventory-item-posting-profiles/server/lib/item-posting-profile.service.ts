@@ -4,7 +4,7 @@ import { AssignGLAccount, ConfigurePostingAccounts, Deactivate, Delete } from "@
 import type { ItemPostingProfileBatchPatchRequestDto, ItemPostingProfileBatchUpdateRequestDto, ItemPostingProfileCreateRequestDto, ItemPostingProfilePatchRequestDto, ItemPostingProfileResponseDto, ItemPostingProfileUpdateRequestDto } from "@voyzu/finance/types/modules/inventory-item-posting-profiles";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 import { getItemPostingProfileUsages } from "../../../server/operational-inventory";
 
 import { ItemPostingProfileRepo } from "../db/item-posting-profile.repo";
@@ -29,9 +29,8 @@ function enrichRows(rows: ItemPostingProfileRow[]): Promise<ItemPostingProfileRe
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

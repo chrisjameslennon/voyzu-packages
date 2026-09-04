@@ -291,7 +291,7 @@ export function CompanyDimensionsListContent({
   const hasSearch = search.trim().length > 0;
 
   const createDimension = async (value: DimensionCreateRequestDto): Promise<string | undefined> => {
-    if (readOnly) return "Dimensions are read only while this company uses finance template settings";
+    if (readOnly) return "Dimensions are read only while this financial entity is archived";
     const response = await fetch(apiUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },

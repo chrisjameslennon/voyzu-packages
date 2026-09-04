@@ -15,7 +15,7 @@ interface CompanyGlAccountDetailPageProps {
 export async function CompanyGlAccountDetailPage({ code }: CompanyGlAccountDetailPageProps) {
   if (!code) notFound();
 
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const [account, categories, settingsState] = await Promise.all([
     getGlAccount(decodeURIComponent(code), scope.companyId),
     listGlAccountCategories(scope.companyId),
@@ -23,5 +23,5 @@ export async function CompanyGlAccountDetailPage({ code }: CompanyGlAccountDetai
   ]);
   if (!account) notFound();
 
-  return <CompanyGlAccountDetail account={account} categories={categories} readOnly={settingsState.readOnly} usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings} isArchived={settingsState.isArchived} />;
+  return <CompanyGlAccountDetail account={account} categories={categories} readOnly={settingsState.readOnly} isArchived={settingsState.isArchived} />;
 }

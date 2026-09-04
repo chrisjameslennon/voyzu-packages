@@ -11,7 +11,7 @@ import { getCompanySettingsUiState } from "../../../common/server/company-standa
 import { resolveServerSettingsScope } from "../../../common/server/settings-scope";
 
 export async function CompanyInventoryControlAccountsPage() {
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const [controlAccounts, settingsState] = await Promise.all([listInventoryControlAccountSettings(scope.companyId), getCompanySettingsUiState(scope.companyId)]);
   return (
     <div className={`${layoutStyles.listView} ${layoutStyles.compactMobilePadding}`}>
@@ -20,7 +20,7 @@ export async function CompanyInventoryControlAccountsPage() {
         <div className={layoutStyles.slotTitle}>
           <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>account_tree</span></div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Inventory Control Accounts</h1>
-          <div className={layoutStyles.slotTitleMeta}><CompanySettingsTitleBadges showFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings} showArchived={settingsState.isArchived} showReadOnly={settingsState.readOnly} /></div>
+          <div className={layoutStyles.slotTitleMeta}><CompanySettingsTitleBadges showArchived={settingsState.isArchived} showReadOnly={settingsState.readOnly} /></div>
           <div className={layoutStyles.slotTitleByline}><p className={typography.headingByline}>Inventory control accounts define the general ledger accounts used by inventory workflows.</p></div>
         </div>
       </header>

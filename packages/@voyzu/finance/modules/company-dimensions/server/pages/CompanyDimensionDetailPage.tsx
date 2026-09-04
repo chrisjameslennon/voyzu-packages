@@ -13,7 +13,7 @@ interface CompanyDimensionDetailPageProps {
 
 export async function CompanyDimensionDetailPage({ code }: CompanyDimensionDetailPageProps) {
   if (!code) notFound();
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [dimension, settingsUiState] = await Promise.all([
     getDimension(decodeURIComponent(code), scope.companyId),
@@ -28,7 +28,6 @@ export async function CompanyDimensionDetailPage({ code }: CompanyDimensionDetai
       auditPath="/settings/audit"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/dimensions`}
       readOnly={settingsUiState.readOnly}
-      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

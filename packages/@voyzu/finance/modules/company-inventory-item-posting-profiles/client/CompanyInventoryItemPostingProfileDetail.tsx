@@ -24,7 +24,6 @@ export function CompanyInventoryItemPostingProfileDetail({
   glAccounts,
   listPath = "/finance/inventory/item-posting-profiles",
   apiPath = "/api/inventory/item-posting-profiles",
-  showFinanceTemplateSettings = false,
   showArchived = false,
   readOnly = false,
 }: {
@@ -32,7 +31,6 @@ export function CompanyInventoryItemPostingProfileDetail({
   glAccounts: GlAccountResponseDto[];
   listPath?: string;
   apiPath?: string;
-  showFinanceTemplateSettings?: boolean;
   showArchived?: boolean;
   readOnly?: boolean;
 }) {
@@ -170,7 +168,6 @@ export function CompanyInventoryItemPostingProfileDetail({
           </div>
           <div className={layout.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showFinanceTemplateSettings={showFinanceTemplateSettings}
               showArchived={showArchived}
               showReadOnly={readOnly}
             />

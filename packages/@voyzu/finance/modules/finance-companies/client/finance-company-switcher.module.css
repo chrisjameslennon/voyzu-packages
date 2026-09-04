@@ -75,11 +75,6 @@
   box-shadow: none;
 }
 
-.dotTemplate {
-  background: var(--voyzu-color-info);
-  box-shadow: 0 0 8px var(--voyzu-color-info-border);
-}
-
 .name {
   min-width: 0;
   overflow: hidden;
@@ -126,31 +121,6 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-}
-
-.templateOption {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  margin: 0;
-  padding: 0.875rem 1rem;
-  border: 1px solid var(--voyzu-color-neutral-border);
-  border-radius: var(--voyzu-radius-control);
-  background: var(--voyzu-color-surface);
-  color: var(--voyzu-color-info-text);
-  font-family: var(--voyzu-font-family);
-  text-align: left;
-  cursor: pointer;
-}
-
-.templateOption:hover {
-  border-color: var(--voyzu-color-neutral-border);
-  background: var(--voyzu-color-neutral-bg);
-}
-
-.templateIcon {
-  font-size: 1.5rem;
 }
 
 .panelDivider {

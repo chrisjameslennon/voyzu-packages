@@ -14,7 +14,7 @@ interface CompanyArControlAccountDetailPageProps {
 
 export async function CompanyArControlAccountDetailPage({ code }: CompanyArControlAccountDetailPageProps) {
   if (!code) notFound();
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [account, settingsState, allGlAccounts] = await Promise.all([
     getControlAccountByLedger(decodeURIComponent(code), "ACCOUNTS_RECEIVABLE", scope.companyId),
@@ -32,7 +32,6 @@ export async function CompanyArControlAccountDetailPage({ code }: CompanyArContr
       listPath="/finance/settings/control-accounts/ar"
       auditPath="/settings/audit"
       readOnly={settingsState.readOnly}
-      usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings}
       isArchived={settingsState.isArchived}
     />
   );

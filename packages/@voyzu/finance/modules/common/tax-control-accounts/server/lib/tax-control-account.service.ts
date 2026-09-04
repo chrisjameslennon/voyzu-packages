@@ -8,7 +8,7 @@ import { createUpdateAuditStamp, withAuditActors } from "../../../server";
 
 import { TaxControlAccountRepo } from "../db/tax-control-account.repo";
 import type { TaxControlAccountRow } from "../db/tax-control-account.row.types";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 const REQUIRED_ACCOUNT_TYPE: Record<string, AccountType | null> = {
   TAX_ON_SALES: "LIABILITY",
   TAX_ON_PURCHASES: "ASSET",
@@ -45,9 +45,8 @@ async function enrichRow(row: TaxControlAccountRow): Promise<TaxControlAccountRe
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

@@ -14,7 +14,7 @@ interface CompanyInventoryItemPostingProfileDetailPageProps {
 
 export async function CompanyInventoryItemPostingProfileDetailPage({ code }: CompanyInventoryItemPostingProfileDetailPageProps) {
   if (!code) notFound();
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [profile, glAccounts, settingsUiState] = await Promise.all([
     getItemPostingProfile(decodeURIComponent(code), scope.companyId),
@@ -30,7 +30,6 @@ export async function CompanyInventoryItemPostingProfileDetailPage({ code }: Com
       listPath="/finance/inventory/item-posting-profiles"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/inventory/item-posting-profiles`}
       readOnly={settingsUiState.readOnly}
-      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

@@ -29,18 +29,16 @@ async function main(): Promise<void> {
     const result = await pool.query(
       `INSERT INTO finance_organization (
          id, organization_id, tax_filing_anchor_month, tax_filing_interval_months,
-         use_finance_template_settings, is_template,
          creation_actor_type, updated_actor_type
        )
        SELECT
          $1, $1, fc.tax_filing_anchor_month, fc.tax_filing_interval_months,
-         TRUE, FALSE, 'SYSTEM', 'SYSTEM'
+         'SYSTEM', 'SYSTEM'
        FROM finance_country fc
        WHERE fc.code = $2
        ON CONFLICT (organization_id) DO UPDATE SET
          tax_filing_anchor_month = EXCLUDED.tax_filing_anchor_month,
          tax_filing_interval_months = EXCLUDED.tax_filing_interval_months,
-         use_finance_template_settings = EXCLUDED.use_finance_template_settings,
          updated_date = NOW(), updated_actor_type = 'SYSTEM'`,
       [organization.id, organization.country_code],
     );

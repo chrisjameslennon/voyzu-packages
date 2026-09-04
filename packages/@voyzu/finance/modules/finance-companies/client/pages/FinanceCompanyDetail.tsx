@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
-import { Badge, Breadcrumbs, Button, ConfirmDialog, Input, SearchableSelect, TabGroup, Toast, ValidationAlert } from "@voyzu/ui-components";
+import { Badge, Breadcrumbs, Button, Input, SearchableSelect, TabGroup, Toast, ValidationAlert } from "@voyzu/ui-components";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detail from "@voyzu/ui-style/css-modules/detail.module.css";
@@ -32,7 +32,6 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
-  const [confirmDecouple, setConfirmDecouple] = useState(false);
 
   const request = async (url: string, init: RequestInit): Promise<FinanceCompanyResponseDto> => {
     const response = await fetch(url, init);
@@ -66,14 +65,13 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
     }
   };
 
-  const save = async (useFinanceTemplateSettings = current.useFinanceTemplateSettings) => {
+  const save = async () => {
     setBusy(true);
     setError("");
     try {
       const payload: FinanceCompanyUpdateRequestDto = {
         taxFilingAnchorMonth: Number(anchorMonth),
         taxFilingIntervalMonths: Number(interval) as 1 | 2 | 3 | 6 | 12,
-        useFinanceTemplateSettings,
         reportLine1: reportLine1 || undefined,
         reportLine2: reportLine2 || undefined,
         reportFooter: reportFooter || undefined,
@@ -135,19 +133,8 @@ export function FinanceCompanyDetail({ company }: { company: FinanceCompanyRespo
               </div></section>
             </>,
           },
-          {
-            key: "settings", label: "Settings", content: <section className={detail.card}>
-              <h2 className={typography.sectionHeading}>Finance Admin standard settings</h2>
-              {!current.financeEnabled ? <p>Create this financial entity before configuring its settings.</p>
-                : current.useFinanceTemplateSettings ? <>
-                  <p>This financial entity inherits the Finance Admin standard settings. It can be given its own copy, but cannot later be re-coupled.</p>
-                  <div className={detail.cardActions}><Button variant="secondary-destructive" disabled={readOnly} onClick={() => setConfirmDecouple(true)}>Use entity-specific settings</Button></div>
-                </> : <p>This financial entity uses its own financial settings.</p>}
-            </section>,
-          },
         ]} />
       </main>
-      <ConfirmDialog isOpen={confirmDecouple} title="Use entity-specific settings" message="This one-way change gives the financial entity its own copy of the current Finance Admin settings. Future Finance Admin changes will not flow through." confirmLabel="Proceed" confirmVariant="danger" onClose={() => setConfirmDecouple(false)} onConfirm={() => { setConfirmDecouple(false); void save(false); }} />
       <Toast isVisible={Boolean(toast)} onClose={() => setToast("")} message={toast} />
     </div>
   );

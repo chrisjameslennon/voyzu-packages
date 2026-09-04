@@ -11,16 +11,12 @@ import localStyles from "./finance-company-switcher.module.css";
 
 interface FinanceCompanySwitcherProps {
   isCollapsed: boolean;
-  isTemplateMode?: boolean;
   companyPath?: string;
-  templatePath?: string;
 }
 
 export function FinanceCompanySwitcher({
   isCollapsed,
-  isTemplateMode = false,
   companyPath = "/finance/journals",
-  templatePath = "/finance",
 }: FinanceCompanySwitcherProps) {
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -70,7 +66,7 @@ export function FinanceCompanySwitcher({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  const displayName = isTemplateMode ? "Finance Admin" : selectedCompany?.name ?? "Select Financial Entity";
+  const displayName = selectedCompany?.name ?? "Select Financial Entity";
 
   const selectCompany = async (company: OrganizationResponseDto) => {
     setIsSelectingCompanyId(company.id);
@@ -105,7 +101,7 @@ export function FinanceCompanySwitcher({
       >
         <span className={localStyles.triggerLeft}>
           <span
-            className={`${localStyles.dot} ${isTemplateMode ? localStyles.dotTemplate : selectedCompany?.status === "INACTIVE" ? localStyles.dotArchived : ""}`}
+            className={`${localStyles.dot} ${selectedCompany?.status === "INACTIVE" ? localStyles.dotArchived : ""}`}
           />
           {!isCollapsed && <span className={localStyles.name}>{displayName}</span>}
         </span>
@@ -118,26 +114,10 @@ export function FinanceCompanySwitcher({
 
       {isOpen && (
         <div className={`${localStyles.panel} ${isCollapsed ? localStyles.panelCollapsed : ""}`}>
-          <button
-            className={localStyles.templateOption}
-            type="button"
-            onClick={() => {
-              setIsOpen(false);
-              router.push(templatePath);
-            }}
-          >
-            <span className={`material-symbols-outlined ${localStyles.templateIcon}`}>account_balance</span>
-            <span className={localStyles.optionContent}>
-              <span className={localStyles.optionName}>Finance Admin</span>
-              <span className={localStyles.optionMeta}>Manage financial entities and the financial template</span>
-            </span>
-            <span className="material-symbols-outlined">chevron_right</span>
-          </button>
-          <div className={localStyles.panelDivider} />
           <div className={localStyles.panelLabel}>Select Financial Entity</div>
           <div className={localStyles.grid}>
             {companies.map((company) => {
-              const isActive = !isTemplateMode && selectedCompany?.id === company.id;
+              const isActive = selectedCompany?.id === company.id;
               const color = getAvatarColor(company.code);
               return (
                 <button

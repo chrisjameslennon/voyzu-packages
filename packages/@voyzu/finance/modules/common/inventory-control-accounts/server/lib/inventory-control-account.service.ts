@@ -8,7 +8,7 @@ import { createUpdateAuditStamp, withAuditActors } from "../../../server";
 
 import { InventoryControlAccountRepo } from "../db/inventory-control-account.repo";
 import type { InventoryControlAccountRow } from "../db/inventory-control-account.row.types";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 const REQUIRED_ACCOUNT_TYPE: Record<string, AccountType | null> = {
   INVENTORY_CONTROL: "ASSET",
 };
@@ -44,9 +44,8 @@ async function enrichRow(row: InventoryControlAccountRow): Promise<InventoryCont
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

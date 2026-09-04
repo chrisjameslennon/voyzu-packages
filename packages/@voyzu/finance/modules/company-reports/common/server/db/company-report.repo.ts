@@ -23,7 +23,7 @@ export class CompanyReportRepo {
               c.base_currency_code
        FROM organization c
        JOIN finance_organization fc ON fc.organization_id = c.id
-       WHERE fc.id = $1 AND fc.is_template = false`,
+       WHERE fc.id = $1`,
       [companyId],
     );
     const row = rows[0];
@@ -46,7 +46,7 @@ export class CompanyReportRepo {
     const { rows } = await this.db.query(
       `SELECT tax_filing_anchor_month, tax_filing_interval_months
        FROM finance_organization
-       WHERE organization_id = $1 AND is_template = false`,
+       WHERE organization_id = $1`,
       [organizationId],
     );
     const row = rows[0];

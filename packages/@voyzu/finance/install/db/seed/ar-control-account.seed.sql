@@ -1,12 +1,12 @@
-WITH seed (company_code, code, ledger, name, status, gl_account_code) AS (
+WITH seed (code, ledger, name, status, gl_account_code) AS (
   VALUES
-    ('TEMPLATE', 'AR_TRADE_RECEIVABLES', 'ACCOUNTS_RECEIVABLE', 'Trade Receivables', 'ACTIVE', '110000'),
-    ('TEMPLATE', 'AR_UNAPPLIED_CASH', 'ACCOUNTS_RECEIVABLE', 'Customer Receipts Awaiting Allocation', 'ACTIVE', '111000')
+    ('AR_TRADE_RECEIVABLES', 'ACCOUNTS_RECEIVABLE', 'Trade Receivables', 'ACTIVE', '110000'),
+    ('AR_UNAPPLIED_CASH', 'ACCOUNTS_RECEIVABLE', 'Customer Receipts Awaiting Allocation', 'ACTIVE', '111000')
 )
 INSERT INTO ar_control_account (finance_organization_id, code, ledger, name, status, gl_account_id, creation_actor_type, updated_actor_type)
 SELECT fc.id, s.code, s.ledger, s.name, s.status, ga.id, 'SYSTEM', 'SYSTEM'
 FROM seed s
-JOIN finance_organization fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
+CROSS JOIN finance_organization fc
 JOIN gl_account ga ON ga.finance_organization_id = fc.id AND ga.code = s.gl_account_code
 ON CONFLICT (finance_organization_id, code) DO UPDATE SET
     ledger = EXCLUDED.ledger,

@@ -36,7 +36,6 @@ function toDto(row: FinanceCompanyRow): FinanceCompanyResponseDto {
     financeEnabled: row.finance_organization_id != null,
     taxFilingAnchorMonth: Number(row.tax_filing_anchor_month),
     taxFilingIntervalMonths: Number(row.tax_filing_interval_months) as 1 | 2 | 3 | 6 | 12,
-    useFinanceTemplateSettings: row.use_finance_template_settings,
     ...(row.report_line_1 != null && { reportLine1: row.report_line_1 }),
     ...(row.report_line_2 != null && { reportLine2: row.report_line_2 }),
     ...(row.report_footer != null && { reportFooter: row.report_footer }),
@@ -105,14 +104,6 @@ export async function updateFinanceCompany(code: string, input: FinanceCompanyUp
     const current = await findByCode(code, db);
     if (!current) throw new NotFoundError(`Company ${code} not found`);
     if (!current.financeCompanyId) throw new BusinessRuleError(`Company ${code} is not enabled for Finance`);
-    if (!current.useFinanceTemplateSettings && input.useFinanceTemplateSettings) {
-      throw new BusinessRuleError("A company cannot be re-coupled to Finance Admin standard settings");
-    }
-    if (current.useFinanceTemplateSettings && !input.useFinanceTemplateSettings) {
-      if (!await repo.copyTemplateSettings(current.financeCompanyId)) {
-        throw new BusinessRuleError("Finance template is not configured");
-      }
-    }
     await repo.updateSettings(current.financeCompanyId, input);
     const updated = await findByCode(code, db);
     if (!updated) throw new NotFoundError(`Company ${code} not found after update`);

@@ -201,7 +201,7 @@ export class ArInvoicePostingRepo {
     const { rows } = await this.db.query(
       `SELECT fc.id, c.id AS organization_id, c.code, c.name, c.country_code, c.base_currency_code, c.status
        FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id
-       WHERE c.code = $1 AND fc.is_template = false`,
+       WHERE c.code = $1`,
       [code],
     );
     return rows[0] ? companyRow(rows[0] as Record<string, unknown>) : null;

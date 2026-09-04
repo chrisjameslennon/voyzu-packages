@@ -12,7 +12,7 @@ import { listFinancialDocumentTypes } from "@voyzu/finance/common/financial-docu
 import { CompanyFinancialDocumentTypesListContent } from "../../client";
 
 export async function CompanyFinancialDocumentTypesListPage() {
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [processors, settingsUiState] = await Promise.all([
     listFinancialDocumentTypes(scope.companyId),
@@ -28,7 +28,6 @@ export async function CompanyFinancialDocumentTypesListPage() {
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Financial Document Types</h1>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
               showArchived={settingsUiState.isArchived}
               showReadOnly={settingsUiState.readOnly}
             />

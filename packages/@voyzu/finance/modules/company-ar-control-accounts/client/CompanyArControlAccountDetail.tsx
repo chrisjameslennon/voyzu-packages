@@ -14,9 +14,9 @@ import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { CompanyArControlAccountDetailsForm } from "./CompanyArControlAccountDetailsForm";
 
-interface Props { account: ControlAccountResponseDto; glAccounts: GlAccountResponseDto[]; apiPath: string; listPath?: string; auditPath?: string; readOnly?: boolean; usesFinanceTemplateSettings?: boolean; isArchived?: boolean; }
+interface Props { account: ControlAccountResponseDto; glAccounts: GlAccountResponseDto[]; apiPath: string; listPath?: string; auditPath?: string; readOnly?: boolean; isArchived?: boolean; }
 
-export function CompanyArControlAccountDetail({ account, glAccounts, apiPath, listPath = "/finance/settings/control-accounts/ar", auditPath = "/settings/audit", readOnly = false, usesFinanceTemplateSettings = false, isArchived = false }: Props) {
+export function CompanyArControlAccountDetail({ account, glAccounts, apiPath, listPath = "/finance/settings/control-accounts/ar", auditPath = "/settings/audit", readOnly = false, isArchived = false }: Props) {
   const [currentAccount, setCurrentAccount] = useState(account);
   const [glAccountId, setGlAccountId] = useState(String(account.glAccountId));
   const [saving, setSaving] = useState(false);
@@ -44,7 +44,7 @@ export function CompanyArControlAccountDetail({ account, glAccounts, apiPath, li
     <div className={`${layoutStyles.detailView} ${layoutStyles.detailViewWithStatusRail}`}>
       <header className={layoutStyles.detailHeader}>
         <div className={layoutStyles.slotBreadcrumb}><Breadcrumbs /></div>
-        <div className={layoutStyles.slotTitle}><div className={detailStyles.title}><div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>account_tree</span></div><h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>{currentAccount.name}</h1></div><div className={layoutStyles.slotTitleMeta}><CompanySettingsTitleBadges showFinanceTemplateSettings={usesFinanceTemplateSettings} showArchived={isArchived} showReadOnly={readOnly} /></div></div>
+        <div className={layoutStyles.slotTitle}><div className={detailStyles.title}><div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>account_tree</span></div><h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>{currentAccount.name}</h1></div><div className={layoutStyles.slotTitleMeta}><CompanySettingsTitleBadges showArchived={isArchived} showReadOnly={readOnly} /></div></div>
         <div className={layoutStyles.slotActions}><div className={detailStyles.headerActions}><DetailBackButton fallbackHref={listPath} /><Button variant="primary" icon="save" disabled={saving || readOnly || !hasChange || blockers.length > 0} onClick={() => { void save(); }}>{saving ? "Saving..." : "Save"}</Button></div></div>
         <div className={layoutStyles.slotAlert}><ValidationAlert errors={serverError ? [serverError] : []} visible={!!serverError} onDismiss={() => setServerError("")} /></div>
       </header>

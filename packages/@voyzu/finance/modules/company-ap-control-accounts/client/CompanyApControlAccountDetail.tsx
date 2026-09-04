@@ -22,7 +22,6 @@ interface CompanyApControlAccountDetailProps {
   listPath?: string;
   auditPath?: string;
   readOnly?: boolean;
-  usesFinanceTemplateSettings?: boolean;
   isArchived?: boolean;
 }
 
@@ -33,7 +32,6 @@ export function CompanyApControlAccountDetail({
   listPath = "/finance/settings/control-accounts/ap",
   auditPath = "/settings/audit",
   readOnly = false,
-  usesFinanceTemplateSettings = false,
   isArchived = false,
 }: CompanyApControlAccountDetailProps) {
   const [currentAccount, setCurrentAccount] = useState(account);
@@ -102,7 +100,7 @@ export function CompanyApControlAccountDetail({
             <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>{currentAccount.name}</h1>
           </div>
           <div className={layoutStyles.slotTitleMeta}>
-            <CompanySettingsTitleBadges showFinanceTemplateSettings={usesFinanceTemplateSettings} showArchived={isArchived} showReadOnly={readOnly} />
+            <CompanySettingsTitleBadges showArchived={isArchived} showReadOnly={readOnly} />
           </div>
         </div>
         <div className={layoutStyles.slotActions}>

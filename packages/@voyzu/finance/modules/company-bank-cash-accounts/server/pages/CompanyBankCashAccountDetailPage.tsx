@@ -16,7 +16,7 @@ interface CompanyBankCashAccountDetailPageProps {
 
 export async function CompanyBankCashAccountDetailPage({ code, surface }: CompanyBankCashAccountDetailPageProps) {
   if (!code) notFound();
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [account, glAccounts, settingsState] = await Promise.all([
     getBankCashAccount(decodeURIComponent(code), scope.companyId),
@@ -34,7 +34,6 @@ export async function CompanyBankCashAccountDetailPage({ code, surface }: Compan
       auditPath="/settings/audit"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/bank-cash-accounts`}
       readOnly={settingsState.readOnly}
-      usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings}
       isArchived={settingsState.isArchived}
       from={normalizeDetailBackSource(searchParams.from)}
       fromCode={searchParams.fromCode}

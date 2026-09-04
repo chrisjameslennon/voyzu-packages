@@ -22,7 +22,7 @@ export function CountryTaxSettingDetail({ country }: { country: CountryTaxSettin
           <div className={detail.titleIcon}><span className="material-symbols-outlined">public</span></div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{country.name}</h1>
         </div></div>
-        <div className={layout.slotActions}><div className={detail.headerActions}><DetailBackButton fallbackHref="/finance/country-tax-settings" /></div></div>
+        <div className={layout.slotActions}><div className={detail.headerActions}><DetailBackButton fallbackHref="/settings/integration/country-tax-settings" /></div></div>
       </header>
       <aside className={layout.statusSection}><div className={detail.card}><div className={detail.fieldGroup}>
         <span className={typography.fieldLabel}>Status</span><Badge variant="soft" size="x-large" color="success">{country.status}</Badge>

@@ -4,6 +4,6 @@ import { PostingProfileAssignmentsView } from "../../client/PostingProfileAssign
 import { listPostingProfileAssignments } from "../lib/posting-profile-assignment.service";
 
 export async function CompanyInventoryItemPostingProfileAssignmentsPage() {
-  const [{ companyId }, { companyCode }] = await Promise.all([resolveServerSettingsScope("selected"), resolveServerCompanyApiContext()]);
+  const [{ companyId }, { companyCode }] = await Promise.all([resolveServerSettingsScope(), resolveServerCompanyApiContext()]);
   return <PostingProfileAssignmentsView data={await listPostingProfileAssignments(companyId)} apiPath={`/api/finance/${encodeURIComponent(companyCode)}/inventory/item-posting-profile-assignments`} />;
 }

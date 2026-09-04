@@ -9,9 +9,9 @@ import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../.
 
 export async function CompanyInventoryControlAccountDetailPage({ code }: { code?: string }) {
   if (!code) notFound();
-  const scope = await resolveServerSettingsScope("selected"); const apiContext = await resolveServerCompanyApiContext();
+  const scope = await resolveServerSettingsScope(); const apiContext = await resolveServerCompanyApiContext();
   const [account, allGlAccounts, settingsState] = await Promise.all([getInventoryControlAccountSetting(decodeURIComponent(code), scope.companyId), listGlAccounts(scope.companyId), getCompanySettingsUiState(scope.companyId)]);
   if (!account) notFound();
   const glAccounts = allGlAccounts.filter((item) => item.accountType === "ASSET" && (item.status === "ACTIVE" || item.id === account.glAccountId));
-  return <CompanyInventoryControlAccountDetail account={account} glAccounts={glAccounts} apiPath={`/api/finance/${encodeURIComponent(apiContext.companyCode)}/inventory-control-accounts`} listPath="/finance/settings/control-accounts/inventory" auditPath="/settings/audit" readOnly={settingsState.readOnly} usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings} isArchived={settingsState.isArchived} />;
+  return <CompanyInventoryControlAccountDetail account={account} glAccounts={glAccounts} apiPath={`/api/finance/${encodeURIComponent(apiContext.companyCode)}/inventory-control-accounts`} listPath="/finance/settings/control-accounts/inventory" auditPath="/settings/audit" readOnly={settingsState.readOnly} isArchived={settingsState.isArchived} />;
 }

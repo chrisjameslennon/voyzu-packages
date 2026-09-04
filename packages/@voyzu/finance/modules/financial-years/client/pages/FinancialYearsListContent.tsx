@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyPageTitleBadges, financeApiUrl, getStatusSemanticColor, StandardSettingsReadOnlyAlert } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges, financeApiUrl, getStatusSemanticColor } from "@voyzu/finance/common/client";
 import { Close, Delete, Open, Reopen, type FinancialYearOperationState } from "../../domain/operation-policy";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -245,7 +245,7 @@ export function FinancialYearsListContent({
   const hasSearch = search.trim().length > 0;
 
   const createYear = async (value: FinancialYearCreateRequestDto): Promise<string | undefined> => {
-    if (readOnly) return "Financial periods are read only while this company uses finance template settings";
+    if (readOnly) return "Financial periods are read only while this financial entity is archived";
     if (!companyId) return "Select a company before creating a financial year";
     const response = await fetch(await financeApiUrl(`/financial-years`), {
       method: "POST",
@@ -277,7 +277,6 @@ export function FinancialYearsListContent({
           </Button>
         </div>
         <div className={layout.slotAlert}>
-          {readOnly ? <StandardSettingsReadOnlyAlert /> : null}
           <ValidationAlert errors={listError ? [listError] : []} visible={!!listError} onDismiss={() => setListError("")} />
         </div>
       </header>

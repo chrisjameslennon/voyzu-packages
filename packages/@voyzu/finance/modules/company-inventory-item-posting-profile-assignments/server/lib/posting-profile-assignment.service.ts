@@ -7,7 +7,7 @@ import type { AssignPostingProfileRequest, PostingAssignments } from "../../type
 interface InventoryItem { id: number; sku: string; name: string; category: string | null; itemType: string; unit: string | null; status: string; }
 
 async function organizationId(companyId: number): Promise<number> {
-  const { rows } = await getDb().query("SELECT organization_id::int FROM finance_organization WHERE id = $1 AND is_template = false", [companyId]);
+  const { rows } = await getDb().query("SELECT organization_id::int FROM finance_organization WHERE id = $1", [companyId]);
   if (rows[0]?.organization_id == null) throw new NotFoundError("Finance company was not found");
   return Number(rows[0].organization_id);
 }

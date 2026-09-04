@@ -11,7 +11,7 @@ import type {
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 import { Deactivate, Delete } from "../../domain/operation-policy";
 import { GlAccountCategoryRepo } from "../db/gl-account-category.repo";
 import type { GlAccountCategoryRow } from "../db/gl-account-category.row.types";
@@ -27,9 +27,8 @@ function enrichRows(rows: GlAccountCategoryRow[]): Promise<GlAccountCategoryResp
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

@@ -22,13 +22,11 @@ import {
 export function CompanyFinancialDocumentTypeDetail({
   processor,
   postingTemplate,
-  showFinanceTemplateSettings = false,
   showArchived = false,
   readOnly = false,
 }: {
   processor: FinancialDocumentTypeResponseDto;
   postingTemplate: FinancialDocumentTypePostingTemplateDto | null;
-  showFinanceTemplateSettings?: boolean;
   showArchived?: boolean;
   readOnly?: boolean;
 }) {
@@ -60,7 +58,6 @@ export function CompanyFinancialDocumentTypeDetail({
           </div>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showFinanceTemplateSettings={showFinanceTemplateSettings}
               showArchived={showArchived}
               showReadOnly={readOnly}
             />

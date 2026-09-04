@@ -17,7 +17,7 @@ import type {
   BankCashAccountUpdateRequestDto,
 } from "@voyzu/finance/types/modules/bank-cash-accounts";
 import type { Filter, ListOptions } from "@voyzu/types/params";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 import { AssignGLAccount, ChangeCode, ChangeType, Deactivate, Delete, UpdateGLAccount } from "../../domain/operation-policy";
 import { BankCashAccountRepo } from "../db/bank-cash-account.repo";
 import { toDto, toInsertRow, toPatchRow, updateToPatch } from "./bank-cash-account.mapper";
@@ -28,9 +28,8 @@ async function enrichRow(row: Parameters<typeof toDto>[0]): Promise<BankCashAcco
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

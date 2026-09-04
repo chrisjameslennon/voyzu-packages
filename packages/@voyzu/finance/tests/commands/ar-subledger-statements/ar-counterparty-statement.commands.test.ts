@@ -92,7 +92,6 @@ async function getCompany(): Promise<OrganizationResponseDto> {
     hasPostings: row.hasPostings,
     country: undefined,
     baseCurrency: undefined,
-    useFinanceTemplateSettings: false,
     reportLine1: null,
     reportLine2: null,
     reportFooter: null,

@@ -1,4 +1,3 @@
-export { StandardSettingsReadOnlyAlert } from "./StandardSettingsReadOnlyAlert";
 export {
   CompanySettingsTitleBadges,
   type CompanySettingsTitleBadgesProps,

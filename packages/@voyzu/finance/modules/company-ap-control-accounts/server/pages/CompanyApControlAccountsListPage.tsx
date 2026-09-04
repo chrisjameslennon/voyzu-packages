@@ -12,7 +12,7 @@ import { getCompanySettingsUiState } from "../../../common/server/company-standa
 import { resolveServerSettingsScope } from "../../../common/server/settings-scope";
 
 export async function CompanyApControlAccountsListPage() {
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const [accounts, settingsState] = await Promise.all([
     listControlAccountSettingsByLedger("ACCOUNTS_PAYABLE", scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -30,7 +30,7 @@ export async function CompanyApControlAccountsListPage() {
           </div>
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Accounts Payable Control Accounts</h1>
           <div className={layoutStyles.slotTitleMeta}>
-            <CompanySettingsTitleBadges showFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings} showArchived={settingsState.isArchived} showReadOnly={settingsState.readOnly} />
+            <CompanySettingsTitleBadges showArchived={settingsState.isArchived} showReadOnly={settingsState.readOnly} />
           </div>
           <div className={layoutStyles.slotTitleByline}>
             <p className={typography.headingByline}>

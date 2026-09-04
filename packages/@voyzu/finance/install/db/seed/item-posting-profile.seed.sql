@@ -1,15 +1,15 @@
-WITH seed (company_code, code, name, description, is_sold, is_purchased, is_consumed, revenue_code, cogs_code, purchase_expense_code, consumption_code, adjustment_gain_code, adjustment_loss_code, status) AS (
+WITH seed (code, name, description, is_sold, is_purchased, is_consumed, revenue_code, cogs_code, purchase_expense_code, consumption_code, adjustment_gain_code, adjustment_loss_code, status) AS (
   VALUES
-    ('TEMPLATE', 'CONSULTING_SERVICES', 'Consulting Services', 'Services recognised as revenue when sold or service expense when purchased', TRUE, FALSE, FALSE, '403000', '501000', NULL, NULL, NULL, NULL, 'ACTIVE'),
-    ('TEMPLATE', 'CONSUMABLES', 'Consumables', 'Inventory held for internal consumption and charged to consumption expense when used', FALSE, TRUE, TRUE, NULL, NULL, '613000', '613000', '405000', '505000', 'ACTIVE'),
-    ('TEMPLATE', 'FINISHED_GOODS', 'Finished Goods', 'Manufactured or assembled goods held in inventory and relieved to cost of goods sold when sold', TRUE, FALSE, FALSE, '400000', '500000', NULL, NULL, '405000', '505000', 'ACTIVE'),
-    ('TEMPLATE', 'FREIGHT_COSTS', 'Freight Costs', 'Freight and courier charges purchased and expensed without inventory tracking', FALSE, TRUE, FALSE, NULL, NULL, '614000', NULL, NULL, NULL, 'ACTIVE'),
-    ('TEMPLATE', 'NON_INVENTORY_PURCHASES', 'Non-inventory Purchases', 'Goods and charges expensed when purchased without inventory tracking', FALSE, TRUE, FALSE, NULL, NULL, '612000', NULL, NULL, NULL, 'ACTIVE'),
-    ('TEMPLATE', 'PACKAGING', 'Packaging', 'Packaging materials held in inventory and consumed during fulfilment', FALSE, TRUE, TRUE, NULL, NULL, '503000', '503000', '405000', '505000', 'ACTIVE'),
-    ('TEMPLATE', 'RAW_MATERIALS', 'Raw Materials', 'Materials and components held in inventory and consumed into production', FALSE, TRUE, TRUE, NULL, NULL, '504000', '504000', '405000', '505000', 'ACTIVE'),
-    ('TEMPLATE', 'RESALE_GOODS', 'Resale Goods', 'Goods purchased into inventory for resale and relieved to cost of goods sold when sold', TRUE, TRUE, FALSE, '400000', '500000', '500000', NULL, '405000', '505000', 'ACTIVE'),
-    ('TEMPLATE', 'SPARE_PARTS', 'Spare Parts', 'Parts held in inventory and either sold or consumed for maintenance or repair', TRUE, TRUE, TRUE, '400000', '500000', '500000', '611000', '405000', '505000', 'ACTIVE'),
-    ('TEMPLATE', 'WIP_GOODS', 'Work in Progress', 'Part-complete goods held as work-in-progress inventory during production', FALSE, FALSE, TRUE, NULL, NULL, NULL, '504000', '405000', '505000', 'ACTIVE')
+    ('CONSULTING_SERVICES', 'Consulting Services', 'Services recognised as revenue when sold or service expense when purchased', TRUE, FALSE, FALSE, '403000', '501000', NULL, NULL, NULL, NULL, 'ACTIVE'),
+    ('CONSUMABLES', 'Consumables', 'Inventory held for internal consumption and charged to consumption expense when used', FALSE, TRUE, TRUE, NULL, NULL, '613000', '613000', '405000', '505000', 'ACTIVE'),
+    ('FINISHED_GOODS', 'Finished Goods', 'Manufactured or assembled goods held in inventory and relieved to cost of goods sold when sold', TRUE, FALSE, FALSE, '400000', '500000', NULL, NULL, '405000', '505000', 'ACTIVE'),
+    ('FREIGHT_COSTS', 'Freight Costs', 'Freight and courier charges purchased and expensed without inventory tracking', FALSE, TRUE, FALSE, NULL, NULL, '614000', NULL, NULL, NULL, 'ACTIVE'),
+    ('NON_INVENTORY_PURCHASES', 'Non-inventory Purchases', 'Goods and charges expensed when purchased without inventory tracking', FALSE, TRUE, FALSE, NULL, NULL, '612000', NULL, NULL, NULL, 'ACTIVE'),
+    ('PACKAGING', 'Packaging', 'Packaging materials held in inventory and consumed during fulfilment', FALSE, TRUE, TRUE, NULL, NULL, '503000', '503000', '405000', '505000', 'ACTIVE'),
+    ('RAW_MATERIALS', 'Raw Materials', 'Materials and components held in inventory and consumed into production', FALSE, TRUE, TRUE, NULL, NULL, '504000', '504000', '405000', '505000', 'ACTIVE'),
+    ('RESALE_GOODS', 'Resale Goods', 'Goods purchased into inventory for resale and relieved to cost of goods sold when sold', TRUE, TRUE, FALSE, '400000', '500000', '500000', NULL, '405000', '505000', 'ACTIVE'),
+    ('SPARE_PARTS', 'Spare Parts', 'Parts held in inventory and either sold or consumed for maintenance or repair', TRUE, TRUE, TRUE, '400000', '500000', '500000', '611000', '405000', '505000', 'ACTIVE'),
+    ('WIP_GOODS', 'Work in Progress', 'Part-complete goods held as work-in-progress inventory during production', FALSE, FALSE, TRUE, NULL, NULL, NULL, '504000', '405000', '505000', 'ACTIVE')
 )
 INSERT INTO item_posting_profile (
   finance_organization_id, code, name, description, is_sold, is_purchased, is_consumed,
@@ -21,7 +21,7 @@ SELECT fc.id, s.code, s.name, s.description, s.is_sold, s.is_purchased, s.is_con
   revenue.id, cogs.id, purchase.id, consumption.id, gain.id, loss.id,
   s.status, 'SYSTEM', 'SYSTEM'
 FROM seed s
-JOIN finance_organization fc ON fc.is_template = TRUE AND s.company_code = 'TEMPLATE'
+CROSS JOIN finance_organization fc
 LEFT JOIN gl_account revenue ON revenue.finance_organization_id = fc.id AND revenue.code = s.revenue_code
 LEFT JOIN gl_account cogs ON cogs.finance_organization_id = fc.id AND cogs.code = s.cogs_code
 LEFT JOIN gl_account purchase ON purchase.finance_organization_id = fc.id AND purchase.code = s.purchase_expense_code

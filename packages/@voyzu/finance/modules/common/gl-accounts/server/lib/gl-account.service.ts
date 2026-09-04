@@ -5,7 +5,7 @@ import type { GlAccountBatchPatchRequestDto, GlAccountBatchUpdateRequestDto, GlA
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withCreationAudit, withUpdateAudit } from "../../../server";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 import { ChangeCode, Deactivate, Delete } from "../../domain/operation-policy";
 import { GlAccountRepo } from "../db/gl-account.repo";
 import type { GlAccountRow } from "../db/gl-account.row.types";
@@ -56,9 +56,8 @@ async function enrichRows(rows: GlAccountRow[]): Promise<GlAccountResponseDto[]>
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

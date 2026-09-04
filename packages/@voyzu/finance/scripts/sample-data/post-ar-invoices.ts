@@ -130,7 +130,7 @@ async function ensureOpenFiscalPeriodFor(companyCode: string, date: string): Pro
   }>(
     `SELECT fc.id AS finance_organization_id, fy.id AS fiscal_year_id, fy.start_date::text, fy.end_date::text
        FROM organization c
-       JOIN finance_organization fc ON fc.organization_id = c.id AND fc.is_template = false
+       JOIN finance_organization fc ON fc.organization_id = c.id
        JOIN fiscal_year fy ON fy.finance_organization_id = fc.id
       WHERE c.code = $1
         AND $2::date BETWEEN fy.start_date AND fy.end_date

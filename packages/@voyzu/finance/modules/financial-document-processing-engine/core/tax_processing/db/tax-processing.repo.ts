@@ -3,7 +3,7 @@ import type { DbExecutor } from "@voyzu/capability/db";
 type Lookup = "company" | "taxAuthority" | "period" | "taxControl" | "glAccount" | "documentDefault" | "bankOverride" | "glOverride" | "defaultAccount" | "taxRule" | "documentProcessor";
 
 const SQL: Record<Lookup, string> = {
-  company: `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id WHERE c.code = $1 AND fc.is_template = false`,
+  company: `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id WHERE c.code = $1`,
   taxAuthority: `SELECT id, code, name FROM tax_authority WHERE code = $1 AND country_code = $2 AND status = 'ACTIVE'`,
   period: `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fp.status = 'OPEN' AND fy.status = 'OPEN' LIMIT 1`,
   taxControl: `SELECT tca.code AS tax_control_account_code, ga.id AS gl_account_id, ga.code AS gl_account_code, ga.name AS gl_account_name FROM tax_control_account tca JOIN gl_account ga ON ga.finance_organization_id = tca.finance_organization_id AND ga.id = tca.gl_account_id WHERE tca.finance_organization_id = $1 AND tca.code = $2 AND tca.status = 'ACTIVE' AND ga.status = 'ACTIVE'`,

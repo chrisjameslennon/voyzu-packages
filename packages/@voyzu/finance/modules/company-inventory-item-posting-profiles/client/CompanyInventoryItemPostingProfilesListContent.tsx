@@ -61,7 +61,6 @@ export function CompanyInventoryItemPostingProfilesListContent({
   glAccounts,
   basePath = "/finance/inventory/item-posting-profiles",
   apiPath = "/api/inventory/item-posting-profiles",
-  showFinanceTemplateSettings = false,
   showArchived = false,
   readOnly = false,
 }: {
@@ -69,7 +68,6 @@ export function CompanyInventoryItemPostingProfilesListContent({
   glAccounts: GlAccountResponseDto[];
   basePath?: string;
   apiPath?: string;
-  showFinanceTemplateSettings?: boolean;
   showArchived?: boolean;
   readOnly?: boolean;
 }) {
@@ -262,7 +260,7 @@ export function CompanyInventoryItemPostingProfilesListContent({
   const hasSearch = search.trim().length > 0;
 
   const createProfile = async (value: ItemPostingProfileCreateRequestDto): Promise<string | undefined> => {
-    if (readOnly) return "Item posting profiles are read only while this company uses finance template settings";
+    if (readOnly) return "Item posting profiles are read only while this financial entity is archived";
     const response = await fetch(apiUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -339,7 +337,6 @@ export function CompanyInventoryItemPostingProfilesListContent({
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Item Posting Profiles</h1>
           <div className={layout.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showFinanceTemplateSettings={showFinanceTemplateSettings}
               showArchived={showArchived}
               showReadOnly={readOnly}
             />

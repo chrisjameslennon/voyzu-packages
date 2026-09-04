@@ -23,7 +23,6 @@ interface FinancialDocumentDefaultDetailProps {
   from?: DetailBackSource;
   fromCode?: string;
   routePrefix?: string;
-  showFinanceTemplateSettings?: boolean;
   showArchived?: boolean;
   readOnly?: boolean;
 }
@@ -36,7 +35,6 @@ export function FinancialDocumentDefaultDetail({
   from,
   fromCode,
   routePrefix = "/organization",
-  showFinanceTemplateSettings = false,
   showArchived = false,
   readOnly = false,
 }: FinancialDocumentDefaultDetailProps) {
@@ -116,7 +114,6 @@ export function FinancialDocumentDefaultDetail({
           </div>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showFinanceTemplateSettings={showFinanceTemplateSettings}
               showArchived={showArchived}
               showReadOnly={readOnly}
             />

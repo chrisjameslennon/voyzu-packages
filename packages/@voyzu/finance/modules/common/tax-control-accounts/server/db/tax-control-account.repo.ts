@@ -8,12 +8,7 @@ import type { GlAccountLookupRow, TaxControlAccountRow } from "./tax-control-acc
 const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
     SELECT DISTINCT posting_organization.code
     FROM finance_organization source_finance_organization
-    JOIN finance_organization posting_finance_organization ON (
-      (source_finance_organization.is_template = true
-        AND posting_finance_organization.is_template = false
-        AND posting_finance_organization.use_finance_template_settings = true)
-      OR (source_finance_organization.is_template = false AND posting_finance_organization.id = source_finance_organization.id)
-    )
+    JOIN finance_organization posting_finance_organization ON posting_finance_organization.id = source_finance_organization.id
     JOIN organization posting_organization ON posting_organization.id = posting_finance_organization.organization_id
       AND posting_organization.status != 'DELETED'
     JOIN journal_line jl ON jl.gl_account_id = tmt.gl_account_id

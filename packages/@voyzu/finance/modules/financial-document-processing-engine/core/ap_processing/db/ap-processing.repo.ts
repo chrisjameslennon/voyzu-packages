@@ -2,7 +2,7 @@ import type { DbExecutor } from "@voyzu/capability/db";
 
 type Lookup = "company" | "documentProcessor" | "counterparty" | "period" | "control" | "documentDefault" | "bankOverride" | "glOverride" | "defaultAccount" | "openBill" | "openPayment" | "taxControl" | "taxSetup";
 const SQL: Record<Lookup, string> = {
-  company: `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id WHERE c.code = $1 AND fc.is_template = false`,
+  company: `SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id WHERE c.code = $1`,
   documentProcessor: `SELECT code, status, supports_dimensions, cash_movement, supports_items FROM financial_document_type WHERE code = $1`,
   counterparty: `SELECT * FROM ap_counterparty WHERE finance_organization_id = $1 AND code = $2`,
   period: `SELECT fy.id AS financial_year_id, fy.code AS financial_year_code, fp.id AS financial_period_id, fp.code AS financial_period_code FROM fiscal_period fp JOIN fiscal_year fy ON fy.id = fp.fiscal_year_id WHERE fp.finance_organization_id = $1 AND $2::date BETWEEN fp.start_date AND fp.end_date AND fp.status = 'OPEN' AND fy.status = 'OPEN' LIMIT 1`,

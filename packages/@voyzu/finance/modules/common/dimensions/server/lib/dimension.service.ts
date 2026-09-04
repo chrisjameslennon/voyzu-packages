@@ -5,7 +5,7 @@ import type { DimensionBatchPatchRequestDto, DimensionBatchUpdateRequestDto, Dim
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../server";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 import { DimensionValueRepo } from "../db/dimension-value.repo";
 import { DimensionRepo } from "../db/dimension.repo";
 
@@ -19,9 +19,8 @@ async function enrichRow(row: Parameters<typeof toDto>[0], values?: DimensionVal
 // Item operations.
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

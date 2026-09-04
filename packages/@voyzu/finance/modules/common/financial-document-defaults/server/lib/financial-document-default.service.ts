@@ -5,7 +5,7 @@ import type { FinancialDocumentDefaultCreateRequestDto, FinancialDocumentDefault
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createUpdateAuditStamp, withAuditActors, withUpdateAudit } from "../../../server";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 import { FinancialDocumentDefaultRepo, type FinancialDocumentDefaultKey } from "../db/financial-document-default.repo";
 
 import { toDto, toPatchRow, toUpdateRow } from "./financial-document-default.mapper";
@@ -20,9 +20,8 @@ function enrichRows(rows: Array<Parameters<typeof toDto>[0]>): Promise<Financial
 }
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

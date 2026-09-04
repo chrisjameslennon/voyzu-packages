@@ -12,7 +12,7 @@ import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "@voy
 import { CompanyFinancialDocumentDefaultsListContent } from "../../client";
 
 export async function CompanyFinancialDocumentDefaultsListPage() {
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [financialDocumentDefaults, settingsUiState] = await Promise.all([
     listFinancialDocumentDefaults(scope.companyId),
@@ -28,7 +28,6 @@ export async function CompanyFinancialDocumentDefaultsListPage() {
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Financial Document Defaults</h1>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
               showArchived={settingsUiState.isArchived}
               showReadOnly={settingsUiState.readOnly}
             />

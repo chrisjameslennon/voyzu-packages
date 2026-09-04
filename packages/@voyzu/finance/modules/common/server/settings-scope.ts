@@ -12,7 +12,6 @@ import { SettingsScopeRepo } from "./db/settings-scope.repo";
 
 export interface CompanySettingsScope {
   companyId: number;
-  isTemplate: boolean;
 }
 
 export interface CompanyApiContext {
@@ -20,23 +19,15 @@ export interface CompanyApiContext {
   companyCode: string;
 }
 
-async function getTemplateCompanyId(db: DbExecutor): Promise<number> {
-  const id = await new SettingsScopeRepo(db).getTemplateCompanyId();
-  if (!id) throw new BusinessRuleError("Template company is not configured");
-  return id;
-}
-
 async function getCompanySettingsState(
   companyId: number,
   db: DbExecutor,
-): Promise<{ id: number; isTemplate: boolean; status: string; useFinanceTemplateSettings: boolean }> {
+): Promise<{ id: number; status: string }> {
   const row = await new SettingsScopeRepo(db).getCompanySettingsState(companyId);
   if (!row) throw new BusinessRuleError(`Company id ${companyId} was not found`);
   return {
     id: row.id,
-    isTemplate: row.isTemplate,
     status: row.status,
-    useFinanceTemplateSettings: row.useFinanceTemplateSettings,
   };
 }
 
@@ -52,10 +43,6 @@ async function getActiveCompanyApiContext(companyId: number, db: DbExecutor): Pr
   return row;
 }
 
-export async function resolveTemplateSettingsScope(db: DbExecutor = getDb()): Promise<CompanySettingsScope> {
-  return { companyId: await getTemplateCompanyId(db), isTemplate: true };
-}
-
 export async function findCompanySettingsScope(
   organizationId: number,
   db: DbExecutor = getDb(),
@@ -63,7 +50,7 @@ export async function findCompanySettingsScope(
   const companyId = await new SettingsScopeRepo(db).getActiveCompanyIdByOrganizationId(
     organizationId,
   );
-  return companyId ? { companyId, isTemplate: false } : null;
+  return companyId ? { companyId } : null;
 }
 
 export async function resolveCompanySettingsScope(companyId: number, db: DbExecutor = getDb()): Promise<CompanySettingsScope> {
@@ -73,11 +60,11 @@ export async function resolveCompanySettingsScope(companyId: number, db: DbExecu
 }
 
 export async function resolveCompanySettingsScopeByCode(companyCode: string, db: DbExecutor = getDb()): Promise<CompanySettingsScope> {
-  return { companyId: await getActiveCompanyIdByCode(companyCode, db), isTemplate: false };
+  return { companyId: await getActiveCompanyIdByCode(companyCode, db) };
 }
 
 export async function resolveServerCompanyApiContext(db: DbExecutor = getDb()): Promise<CompanyApiContext> {
-  const scope = await resolveServerSettingsScope("selected", db);
+  const scope = await resolveServerSettingsScope(db);
   return getActiveCompanyApiContext(scope.companyId, db);
 }
 
@@ -97,8 +84,7 @@ export async function resolveEffectiveSettingsCompanyId(
   db: DbExecutor = getDb(),
 ): Promise<number> {
   const state = await getCompanySettingsState(companyId, db);
-  if (state.isTemplate || !state.useFinanceTemplateSettings) return state.id;
-  return getTemplateCompanyId(db);
+  return state.id;
 }
 
 export async function assertCompanySettingsWritable(
@@ -106,20 +92,14 @@ export async function assertCompanySettingsWritable(
   db: DbExecutor = getDb(),
 ): Promise<void> {
   const state = await getCompanySettingsState(companyId, db);
-  if (!state.isTemplate && state.status === "INACTIVE") {
+  if (state.status === "INACTIVE") {
     throw new BusinessRuleError("This company has been archived, so its settings are read only.");
-  }
-  if (!state.isTemplate && state.useFinanceTemplateSettings) {
-    throw new BusinessRuleError("This company uses finance template settings, so settings are read only here.");
   }
 }
 
 export async function resolveServerSettingsScope(
-  mode: "template" | "selected",
   db: DbExecutor = getDb(),
 ): Promise<CompanySettingsScope> {
-  if (mode === "template") return resolveTemplateSettingsScope(db);
-
   const cookieStore = await cookies();
   const raw = cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value;
   const companyId = raw ? Number.parseInt(raw, 10) : NaN;
@@ -145,6 +125,5 @@ export async function resolveApiSettingsScope(
   const financeIndex = segments.indexOf("finance");
   const companyCode = financeIndex >= 0 ? segments[financeIndex + 1] : undefined;
   if (companyCode) return resolveCompanySettingsScopeByCode(companyCode, db);
-
-  return resolveTemplateSettingsScope(db);
+  throw new BusinessRuleError("Company code path parameter is required");
 }

@@ -7,7 +7,7 @@ import { resolveServerSettingsScope } from "../../../common/server/settings-scop
 import { listGlAccounts } from "../../../common/gl-accounts/server";
 
 export async function CompanyGlAccountsListPage() {
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const [accounts, categories, settingsState] = await Promise.all([
     listGlAccounts(scope.companyId),
     listGlAccountCategories(scope.companyId),
@@ -19,7 +19,6 @@ export async function CompanyGlAccountsListPage() {
       accounts={accounts}
       categories={categories}
       readOnly={settingsState.readOnly}
-      usesFinanceTemplateSettings={settingsState.usesFinanceTemplateSettings}
       isArchived={settingsState.isArchived}
     />
   );

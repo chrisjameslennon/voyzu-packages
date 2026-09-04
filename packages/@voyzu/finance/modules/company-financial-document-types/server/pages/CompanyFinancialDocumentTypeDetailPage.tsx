@@ -9,7 +9,7 @@ import { CompanyFinancialDocumentTypeDetail } from "../../client";
 
 export async function CompanyFinancialDocumentTypeDetailPage({ code }: { code?: string }) {
   if (!code) notFound();
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const [processor, settingsUiState] = await Promise.all([
     getFinancialDocumentType(decodeURIComponent(code), scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -21,7 +21,6 @@ export async function CompanyFinancialDocumentTypeDetailPage({ code }: { code?: 
       processor={processor}
       postingTemplate={postingTemplate}
       readOnly={settingsUiState.readOnly}
-      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

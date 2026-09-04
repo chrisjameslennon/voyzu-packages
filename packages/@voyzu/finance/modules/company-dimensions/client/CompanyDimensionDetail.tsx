@@ -30,7 +30,6 @@ interface CompanyDimensionDetailProps {
   listPath?: string;
   auditPath?: string;
   apiPath?: string;
-  showFinanceTemplateSettings?: boolean;
   showArchived?: boolean;
   readOnly?: boolean;
 }
@@ -40,7 +39,6 @@ export function CompanyDimensionDetail({
   listPath = "/organization/dimensions",
   auditPath = "/settings/audit",
   apiPath = "/api/organization/dimensions",
-  showFinanceTemplateSettings = false,
   showArchived = false,
   readOnly = false,
 }: CompanyDimensionDetailProps) {
@@ -69,7 +67,7 @@ export function CompanyDimensionDetail({
     [...items].sort((left, right) => left.name.localeCompare(right.name));
 
   const createValue = async (value: DimensionValueCreateRequestDto): Promise<string | undefined> => {
-    if (readOnly) return "Dimensions are read only while this company uses finance template settings";
+    if (readOnly) return "Dimensions are read only while this financial entity is archived";
     setServerError("");
     const response = await fetch(apiUrl(`/${encodeURIComponent(dimension.code)}/values`), {
       method: "POST",
@@ -88,7 +86,7 @@ export function CompanyDimensionDetail({
   };
 
   const patchValue = async (id: number, value: DimensionValuePatchRequestDto): Promise<string | undefined> => {
-    if (readOnly) return "Dimensions are read only while this company uses finance template settings";
+    if (readOnly) return "Dimensions are read only while this financial entity is archived";
     setServerError("");
     const response = await fetch(apiUrl(`/values/${id}`), {
       method: "PATCH",
@@ -256,7 +254,6 @@ export function CompanyDimensionDetail({
           </div>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showFinanceTemplateSettings={showFinanceTemplateSettings}
               showArchived={showArchived}
               showReadOnly={readOnly}
             />

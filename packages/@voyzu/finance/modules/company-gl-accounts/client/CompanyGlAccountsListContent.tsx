@@ -38,7 +38,6 @@ interface CompanyGlAccountsListContentProps {
   accounts: GlAccountResponseDto[];
   categories: GlAccountCategoryResponseDto[];
   readOnly?: boolean;
-  usesFinanceTemplateSettings?: boolean;
   isArchived?: boolean;
 }
 
@@ -92,7 +91,6 @@ export function CompanyGlAccountsListContent({
   accounts,
   categories,
   readOnly = false,
-  usesFinanceTemplateSettings = false,
   isArchived = false,
 }: CompanyGlAccountsListContentProps) {
   const router = useRouter();
@@ -244,7 +242,7 @@ export function CompanyGlAccountsListContent({
   };
 
   const createAccount = async (value: GlAccountCreateRequestDto): Promise<string | undefined> => {
-    if (readOnly) return "General ledger accounts are read only while this company uses finance template settings";
+    if (readOnly) return "General ledger accounts are read only while this financial entity is archived";
     const response = await fetch(await financeApiUrl("/gl-accounts"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -391,7 +389,7 @@ export function CompanyGlAccountsListContent({
             General Ledger Accounts
           </h1>
           <div className={layoutStyles.slotTitleMeta}>
-            <CompanySettingsTitleBadges showFinanceTemplateSettings={usesFinanceTemplateSettings} showArchived={isArchived} showReadOnly={readOnly} />
+            <CompanySettingsTitleBadges showArchived={isArchived} showReadOnly={readOnly} />
           </div>
           <div className={layoutStyles.slotTitleByline}>
             <p className={typography.headingByline}>

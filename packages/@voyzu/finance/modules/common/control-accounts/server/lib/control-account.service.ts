@@ -10,7 +10,7 @@ import type { AccountType } from "@voyzu/finance/types/modules/core";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createUpdateAuditStamp, withAuditActors } from "../../../server";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId, resolveTemplateSettingsScope } from "../../../server/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../server/settings-scope";
 import { ControlAccountRepo } from "../db/control-account.repo";
 import type { ControlAccountRow } from "../db/control-account.row.types";
 
@@ -31,9 +31,8 @@ const FIXED_CONTROL_ACCOUNT_SETTINGS: Array<{
 export type ControlAccountLedger = typeof FIXED_CONTROL_ACCOUNT_SETTINGS[number]["ledger"];
 
 async function scopedCompanyId(companyId?: number): Promise<number> {
-  return companyId === undefined
-    ? (await resolveTemplateSettingsScope()).companyId
-    : resolveEffectiveSettingsCompanyId(companyId);
+  if (companyId === undefined) throw new BusinessRuleError("Financial entity context is required");
+  return resolveEffectiveSettingsCompanyId(companyId);
 }
 
 async function assertWritableScope(companyId?: number): Promise<void> {

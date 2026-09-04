@@ -7,7 +7,7 @@ import { getCompanySettingsUiState } from "../../../common/server/company-standa
 import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../common/server/settings-scope";
 
 export async function CompanyInventoryItemPostingProfilesListPage() {
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [profiles, glAccounts, settingsUiState] = await Promise.all([
     listItemPostingProfiles(scope.companyId),
@@ -22,7 +22,6 @@ export async function CompanyInventoryItemPostingProfilesListPage() {
       basePath="/finance/inventory/item-posting-profiles"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/inventory/item-posting-profiles`}
       readOnly={settingsUiState.readOnly}
-      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

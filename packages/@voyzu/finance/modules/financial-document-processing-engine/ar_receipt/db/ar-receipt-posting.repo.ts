@@ -22,7 +22,7 @@ export class ArReceiptPostingRepo {
     return rows[0] ? map(rows[0] as Record<string, unknown>) : null;
   }
 
-  getCompany(code: string) { return this.one(`SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id WHERE c.code = $1 AND fc.is_template = false`, [code], companyRow); }
+  getCompany(code: string) { return this.one(`SELECT fc.id, c.code, c.name, c.country_code, c.base_currency_code, c.status FROM finance_organization fc JOIN organization c ON c.id = fc.organization_id WHERE c.code = $1`, [code], companyRow); }
   getDocumentProcessor(code: string) { return this.one(`SELECT code, status, supports_dimensions, cash_movement, supports_items FROM financial_document_type WHERE code = $1`, [code], documentProcessorRow); }
   getCounterparty(companyId: number, code: string) { return this.one(`SELECT cp.*, c.currency_code AS country_currency_code FROM ar_counterparty cp JOIN country c ON c.code = cp.country_code WHERE cp.finance_organization_id = $1 AND cp.code = $2`, [companyId, code], counterpartyRow); }
 

@@ -13,7 +13,7 @@ interface CompanyGlAccountCategoryDetailPageProps {
 
 export async function CompanyGlAccountCategoryDetailPage({ code }: CompanyGlAccountCategoryDetailPageProps) {
   if (!code) notFound();
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [category, settingsUiState] = await Promise.all([
     getGlAccountCategory(decodeURIComponent(code), scope.companyId),
@@ -28,7 +28,6 @@ export async function CompanyGlAccountCategoryDetailPage({ code }: CompanyGlAcco
       auditPath="/settings/audit"
       apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/gl-account-categories`}
       readOnly={settingsUiState.readOnly}
-      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

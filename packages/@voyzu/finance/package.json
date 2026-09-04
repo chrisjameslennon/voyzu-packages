@@ -12,7 +12,8 @@
       "@voyzu/erp-core"
     ],
     "pageRootPaths": [
-      "/finance"
+      "/finance",
+      "/settings/integration"
     ],
     "apiRootPaths": [
       "/finance"
@@ -41,6 +42,10 @@
     "./country-tax-settings/commands": {
       "types": "./modules/country-tax-settings/commands.ts",
       "import": "./modules/country-tax-settings/commands.ts"
+    },
+    "./country-tax-settings/components": {
+      "types": "./modules/country-tax-settings/components.tsx",
+      "import": "./modules/country-tax-settings/components.tsx"
     },
     "./country-tax-settings/client": "./modules/country-tax-settings/client/index.ts",
     "./country-tax-settings/server": "./modules/country-tax-settings/server/index.ts",
@@ -439,122 +444,6 @@
       "types": "./modules/financial-years/domain/operation-policy.ts",
       "import": "./modules/financial-years/domain/operation-policy.ts"
     },
-    "./organization-ap-control-accounts": {
-      "types": "./modules/organization-ap-control-accounts/module.ts",
-      "import": "./modules/organization-ap-control-accounts/module.ts"
-    },
-    "./organization-ap-control-accounts/client": {
-      "types": "./modules/organization-ap-control-accounts/client/index.ts",
-      "import": "./modules/organization-ap-control-accounts/client/index.ts"
-    },
-    "./organization-ap-control-accounts/server": {
-      "types": "./modules/organization-ap-control-accounts/server/index.ts",
-      "import": "./modules/organization-ap-control-accounts/server/index.ts"
-    },
-    "./organization-ar-control-accounts": {
-      "types": "./modules/organization-ar-control-accounts/module.ts",
-      "import": "./modules/organization-ar-control-accounts/module.ts"
-    },
-    "./organization-ar-control-accounts/client": {
-      "types": "./modules/organization-ar-control-accounts/client/index.ts",
-      "import": "./modules/organization-ar-control-accounts/client/index.ts"
-    },
-    "./organization-ar-control-accounts/server": {
-      "types": "./modules/organization-ar-control-accounts/server/index.ts",
-      "import": "./modules/organization-ar-control-accounts/server/index.ts"
-    },
-    "./organization-bank-cash-accounts": {
-      "types": "./modules/organization-bank-cash-accounts/module.ts",
-      "import": "./modules/organization-bank-cash-accounts/module.ts"
-    },
-    "./organization-bank-cash-accounts/client": {
-      "types": "./modules/organization-bank-cash-accounts/client/index.ts",
-      "import": "./modules/organization-bank-cash-accounts/client/index.ts"
-    },
-    "./organization-bank-cash-accounts/server": {
-      "types": "./modules/organization-bank-cash-accounts/server/index.ts",
-      "import": "./modules/organization-bank-cash-accounts/server/index.ts"
-    },
-    "./organization-dimensions": {
-      "types": "./modules/organization-dimensions/module.ts",
-      "import": "./modules/organization-dimensions/module.ts"
-    },
-    "./organization-dimensions/client": {
-      "types": "./modules/organization-dimensions/client/index.ts",
-      "import": "./modules/organization-dimensions/client/index.ts"
-    },
-    "./organization-dimensions/server": {
-      "types": "./modules/organization-dimensions/server/index.ts",
-      "import": "./modules/organization-dimensions/server/index.ts"
-    },
-    "./organization-financial-document-defaults": "./modules/organization-financial-document-defaults/module.ts",
-    "./organization-financial-document-defaults/client": {
-      "types": "./modules/organization-financial-document-defaults/client/index.ts",
-      "import": "./modules/organization-financial-document-defaults/client/index.ts"
-    },
-    "./organization-financial-document-defaults/server": "./modules/organization-financial-document-defaults/server/index.ts",
-    "./organization-financial-document-types": "./modules/organization-financial-document-types/module.ts",
-    "./organization-financial-document-types/client": {
-      "types": "./modules/organization-financial-document-types/client/index.ts",
-      "import": "./modules/organization-financial-document-types/client/index.ts"
-    },
-    "./organization-financial-document-types/server": "./modules/organization-financial-document-types/server/index.ts",
-    "./organization-gl-account-categories": {
-      "types": "./modules/organization-gl-account-categories/module.ts",
-      "import": "./modules/organization-gl-account-categories/module.ts"
-    },
-    "./organization-gl-account-categories/client": {
-      "types": "./modules/organization-gl-account-categories/client/index.ts",
-      "import": "./modules/organization-gl-account-categories/client/index.ts"
-    },
-    "./organization-gl-account-categories/server": {
-      "types": "./modules/organization-gl-account-categories/server/index.ts",
-      "import": "./modules/organization-gl-account-categories/server/index.ts"
-    },
-    "./organization-gl-accounts": "./modules/organization-gl-accounts/module.ts",
-    "./organization-gl-accounts/client": {
-      "types": "./modules/organization-gl-accounts/client/index.ts",
-      "import": "./modules/organization-gl-accounts/client/index.ts"
-    },
-    "./organization-gl-accounts/server": "./modules/organization-gl-accounts/server/index.ts",
-    "./organization-inventory-control-accounts": {
-      "types": "./modules/organization-inventory-control-accounts/module.ts",
-      "import": "./modules/organization-inventory-control-accounts/module.ts"
-    },
-    "./organization-inventory-control-accounts/client": {
-      "types": "./modules/organization-inventory-control-accounts/client/index.ts",
-      "import": "./modules/organization-inventory-control-accounts/client/index.ts"
-    },
-    "./organization-inventory-control-accounts/server": {
-      "types": "./modules/organization-inventory-control-accounts/server/index.ts",
-      "import": "./modules/organization-inventory-control-accounts/server/index.ts"
-    },
-    "./organization-inventory-item-posting-profiles": {
-      "types": "./modules/organization-inventory-item-posting-profiles/module.ts",
-      "import": "./modules/organization-inventory-item-posting-profiles/module.ts"
-    },
-    "./organization-inventory-item-posting-profiles/client": {
-      "types": "./modules/organization-inventory-item-posting-profiles/client/index.ts",
-      "import": "./modules/organization-inventory-item-posting-profiles/client/index.ts"
-    },
-    "./organization-inventory-item-posting-profiles/server": {
-      "types": "./modules/organization-inventory-item-posting-profiles/server/index.ts",
-      "import": "./modules/organization-inventory-item-posting-profiles/server/index.ts"
-    },
-    "./organization-reports": "./modules/organization-reports/module.ts",
-    "./organization-reports/server": "./modules/organization-reports/server/index.ts",
-    "./organization-tax-control-accounts": {
-      "types": "./modules/organization-tax-control-accounts/module.ts",
-      "import": "./modules/organization-tax-control-accounts/module.ts"
-    },
-    "./organization-tax-control-accounts/client": {
-      "types": "./modules/organization-tax-control-accounts/client/index.ts",
-      "import": "./modules/organization-tax-control-accounts/client/index.ts"
-    },
-    "./organization-tax-control-accounts/server": {
-      "types": "./modules/organization-tax-control-accounts/server/index.ts",
-      "import": "./modules/organization-tax-control-accounts/server/index.ts"
-    },
     "./tax": {
       "types": "./modules/tax/module.ts",
       "import": "./modules/tax/module.ts"
@@ -616,50 +505,6 @@
     "./company-tax-control-accounts/commands": {
       "types": "./modules/company-tax-control-accounts/commands.ts",
       "import": "./modules/company-tax-control-accounts/commands.ts"
-    },
-    "./organization-ap-control-accounts/commands": {
-      "types": "./modules/organization-ap-control-accounts/commands.ts",
-      "import": "./modules/organization-ap-control-accounts/commands.ts"
-    },
-    "./organization-ar-control-accounts/commands": {
-      "types": "./modules/organization-ar-control-accounts/commands.ts",
-      "import": "./modules/organization-ar-control-accounts/commands.ts"
-    },
-    "./organization-bank-cash-accounts/commands": {
-      "types": "./modules/organization-bank-cash-accounts/commands.ts",
-      "import": "./modules/organization-bank-cash-accounts/commands.ts"
-    },
-    "./organization-dimensions/commands": {
-      "types": "./modules/organization-dimensions/commands.ts",
-      "import": "./modules/organization-dimensions/commands.ts"
-    },
-    "./organization-financial-document-defaults/commands": {
-      "types": "./modules/organization-financial-document-defaults/commands.ts",
-      "import": "./modules/organization-financial-document-defaults/commands.ts"
-    },
-    "./organization-financial-document-types/commands": {
-      "types": "./modules/organization-financial-document-types/commands.ts",
-      "import": "./modules/organization-financial-document-types/commands.ts"
-    },
-    "./organization-gl-account-categories/commands": {
-      "types": "./modules/organization-gl-account-categories/commands.ts",
-      "import": "./modules/organization-gl-account-categories/commands.ts"
-    },
-    "./organization-gl-accounts/commands": {
-      "types": "./modules/organization-gl-accounts/commands.ts",
-      "import": "./modules/organization-gl-accounts/commands.ts"
-    },
-    "./organization-inventory-control-accounts/commands": {
-      "types": "./modules/organization-inventory-control-accounts/commands.ts",
-      "import": "./modules/organization-inventory-control-accounts/commands.ts"
-    },
-    "./organization-inventory-item-posting-profiles/commands": {
-      "types": "./modules/organization-inventory-item-posting-profiles/commands.ts",
-      "import": "./modules/organization-inventory-item-posting-profiles/commands.ts"
-    },
-    "./organization-tax-control-accounts/commands": {
-      "types": "./modules/organization-tax-control-accounts/commands.ts",
-      "import": "./modules/organization-tax-control-accounts/commands.ts"
     },
     "./ap-subledger-bills/commands": {
       "types": "./modules/ap-subledger-bills/commands.ts",
@@ -925,14 +770,6 @@
       "types": "./modules/finance-companies/api.routes.ts",
       "import": "./modules/finance-companies/api.routes.ts"
     },
-    "./finance-template/pages.routes": {
-      "types": "./modules/finance-template/pages.routes.ts",
-      "import": "./modules/finance-template/pages.routes.ts"
-    },
-    "./finance-template/api.routes": {
-      "types": "./modules/finance-template/api.routes.ts",
-      "import": "./modules/finance-template/api.routes.ts"
-    },
     "./financial-document-processing-engine/pages.routes": {
       "types": "./modules/financial-document-processing-engine/pages.routes.ts",
       "import": "./modules/financial-document-processing-engine/pages.routes.ts"
@@ -964,102 +801,6 @@
     "./journals/api.routes": {
       "types": "./modules/journals/api.routes.ts",
       "import": "./modules/journals/api.routes.ts"
-    },
-    "./organization-ap-control-accounts/pages.routes": {
-      "types": "./modules/organization-ap-control-accounts/pages.routes.ts",
-      "import": "./modules/organization-ap-control-accounts/pages.routes.ts"
-    },
-    "./organization-ap-control-accounts/api.routes": {
-      "types": "./modules/organization-ap-control-accounts/api.routes.ts",
-      "import": "./modules/organization-ap-control-accounts/api.routes.ts"
-    },
-    "./organization-ar-control-accounts/pages.routes": {
-      "types": "./modules/organization-ar-control-accounts/pages.routes.ts",
-      "import": "./modules/organization-ar-control-accounts/pages.routes.ts"
-    },
-    "./organization-ar-control-accounts/api.routes": {
-      "types": "./modules/organization-ar-control-accounts/api.routes.ts",
-      "import": "./modules/organization-ar-control-accounts/api.routes.ts"
-    },
-    "./organization-bank-cash-accounts/pages.routes": {
-      "types": "./modules/organization-bank-cash-accounts/pages.routes.ts",
-      "import": "./modules/organization-bank-cash-accounts/pages.routes.ts"
-    },
-    "./organization-bank-cash-accounts/api.routes": {
-      "types": "./modules/organization-bank-cash-accounts/api.routes.ts",
-      "import": "./modules/organization-bank-cash-accounts/api.routes.ts"
-    },
-    "./organization-dimensions/pages.routes": {
-      "types": "./modules/organization-dimensions/pages.routes.ts",
-      "import": "./modules/organization-dimensions/pages.routes.ts"
-    },
-    "./organization-dimensions/api.routes": {
-      "types": "./modules/organization-dimensions/api.routes.ts",
-      "import": "./modules/organization-dimensions/api.routes.ts"
-    },
-    "./organization-financial-document-defaults/pages.routes": {
-      "types": "./modules/organization-financial-document-defaults/pages.routes.ts",
-      "import": "./modules/organization-financial-document-defaults/pages.routes.ts"
-    },
-    "./organization-financial-document-defaults/api.routes": {
-      "types": "./modules/organization-financial-document-defaults/api.routes.ts",
-      "import": "./modules/organization-financial-document-defaults/api.routes.ts"
-    },
-    "./organization-financial-document-types/pages.routes": {
-      "types": "./modules/organization-financial-document-types/pages.routes.ts",
-      "import": "./modules/organization-financial-document-types/pages.routes.ts"
-    },
-    "./organization-financial-document-types/api.routes": {
-      "types": "./modules/organization-financial-document-types/api.routes.ts",
-      "import": "./modules/organization-financial-document-types/api.routes.ts"
-    },
-    "./organization-gl-account-categories/pages.routes": {
-      "types": "./modules/organization-gl-account-categories/pages.routes.ts",
-      "import": "./modules/organization-gl-account-categories/pages.routes.ts"
-    },
-    "./organization-gl-account-categories/api.routes": {
-      "types": "./modules/organization-gl-account-categories/api.routes.ts",
-      "import": "./modules/organization-gl-account-categories/api.routes.ts"
-    },
-    "./organization-gl-accounts/pages.routes": {
-      "types": "./modules/organization-gl-accounts/pages.routes.ts",
-      "import": "./modules/organization-gl-accounts/pages.routes.ts"
-    },
-    "./organization-gl-accounts/api.routes": {
-      "types": "./modules/organization-gl-accounts/api.routes.ts",
-      "import": "./modules/organization-gl-accounts/api.routes.ts"
-    },
-    "./organization-inventory-control-accounts/pages.routes": {
-      "types": "./modules/organization-inventory-control-accounts/pages.routes.ts",
-      "import": "./modules/organization-inventory-control-accounts/pages.routes.ts"
-    },
-    "./organization-inventory-control-accounts/api.routes": {
-      "types": "./modules/organization-inventory-control-accounts/api.routes.ts",
-      "import": "./modules/organization-inventory-control-accounts/api.routes.ts"
-    },
-    "./organization-inventory-item-posting-profiles/pages.routes": {
-      "types": "./modules/organization-inventory-item-posting-profiles/pages.routes.ts",
-      "import": "./modules/organization-inventory-item-posting-profiles/pages.routes.ts"
-    },
-    "./organization-inventory-item-posting-profiles/api.routes": {
-      "types": "./modules/organization-inventory-item-posting-profiles/api.routes.ts",
-      "import": "./modules/organization-inventory-item-posting-profiles/api.routes.ts"
-    },
-    "./organization-reports/pages.routes": {
-      "types": "./modules/organization-reports/pages.routes.ts",
-      "import": "./modules/organization-reports/pages.routes.ts"
-    },
-    "./organization-reports/api.routes": {
-      "types": "./modules/organization-reports/api.routes.ts",
-      "import": "./modules/organization-reports/api.routes.ts"
-    },
-    "./organization-tax-control-accounts/pages.routes": {
-      "types": "./modules/organization-tax-control-accounts/pages.routes.ts",
-      "import": "./modules/organization-tax-control-accounts/pages.routes.ts"
-    },
-    "./organization-tax-control-accounts/api.routes": {
-      "types": "./modules/organization-tax-control-accounts/api.routes.ts",
-      "import": "./modules/organization-tax-control-accounts/api.routes.ts"
     },
     "./tax/pages.routes": {
       "types": "./modules/tax/pages.routes.ts",

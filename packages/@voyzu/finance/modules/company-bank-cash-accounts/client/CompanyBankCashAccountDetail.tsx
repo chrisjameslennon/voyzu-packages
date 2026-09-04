@@ -26,7 +26,6 @@ interface CompanyBankCashAccountDetailProps {
   auditPath?: string;
   apiPath?: string;
   readOnly?: boolean;
-  usesFinanceTemplateSettings?: boolean;
   isArchived?: boolean;
   from?: DetailBackSource;
   fromCode?: string;
@@ -39,7 +38,6 @@ export function CompanyBankCashAccountDetail({
   auditPath = "/settings/audit",
   apiPath = "/api/organization/bank-cash-accounts",
   readOnly = false,
-  usesFinanceTemplateSettings = false,
   isArchived = false,
   from,
   fromCode,
@@ -151,7 +149,7 @@ export function CompanyBankCashAccountDetail({
             </h1>
           </div>
           <div className={layoutStyles.slotTitleMeta}>
-            <CompanySettingsTitleBadges showFinanceTemplateSettings={usesFinanceTemplateSettings} showArchived={isArchived} showReadOnly={readOnly} />
+            <CompanySettingsTitleBadges showArchived={isArchived} showReadOnly={readOnly} />
           </div>
         </div>
         <div className={layoutStyles.slotActions}>

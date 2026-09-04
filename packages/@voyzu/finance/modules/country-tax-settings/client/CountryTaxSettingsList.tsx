@@ -54,7 +54,7 @@ export function CountryTaxSettingsList({ initialCountries }: { initialCountries:
         <DataTable<CountryTaxSetting, string>
           columns={columns} rows={filtered} selectedIds={new Set()} isAllSelected={false} isSomeSelected={false}
           onSelectAll={() => undefined} onSelectOne={() => undefined}
-          onRowClick={(country) => router.push(`/finance/country-tax-settings/${encodeURIComponent(country.code)}`)}
+          onRowClick={(country) => router.push(`/settings/integration/country-tax-settings/${encodeURIComponent(country.code)}`)}
           currentPage={1} totalPages={1} onPageChange={() => undefined}
           totalCount={countries.length} filteredCount={filtered.length} itemLabel="countries"
           hasData={countries.length > 0} emptyIcon="public" emptyTitle="No active countries found" emptyText="No active countries have Finance tax settings" />

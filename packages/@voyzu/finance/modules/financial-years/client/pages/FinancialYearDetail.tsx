@@ -6,7 +6,7 @@ import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { CompanyPageTitleBadges, financeApiUrl, getHasPostingsColor, getStatusSemanticColor, StandardSettingsReadOnlyAlert } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges, financeApiUrl, getHasPostingsColor, getStatusSemanticColor } from "@voyzu/finance/common/client";
 import type { FinancialPeriodResponseDto } from "@voyzu/finance/types/modules/financial-periods";
 import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
 import { Badge, Breadcrumbs, Button, Checkbox, ConfirmDialog, Input, ValidationAlert } from "@voyzu/ui-components";
@@ -222,7 +222,6 @@ export function FinancialYearDetail({
           </div>
         </div>
         <div className={layout.slotAlert}>
-          {readOnly ? <StandardSettingsReadOnlyAlert /> : null}
           <ValidationAlert errors={yearActionError ? [yearActionError] : []} visible={!!yearActionError} onDismiss={() => setYearActionError("")} />
         </div>
       </header>

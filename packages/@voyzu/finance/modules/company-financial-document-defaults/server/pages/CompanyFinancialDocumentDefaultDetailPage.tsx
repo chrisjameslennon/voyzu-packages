@@ -14,7 +14,7 @@ export async function CompanyFinancialDocumentDefaultDetailPage({ code, surface 
   if (!code) notFound();
   const key = decodeFinancialDocumentDefaultKey(code);
   if (!key) notFound();
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const [financialDocumentDefault, glAccounts, bankCashAccounts, settingsUiState, companyApiContext] = await Promise.all([
     getFinancialDocumentDefault(key.documentCode, key.code, scope.companyId),
     listGlAccounts(scope.companyId),
@@ -34,7 +34,6 @@ export async function CompanyFinancialDocumentDefaultDetailPage({ code, surface 
       fromCode={searchParams.fromCode}
       routePrefix="/finance/integration"
       readOnly={settingsUiState.readOnly}
-      showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
       showArchived={settingsUiState.isArchived}
     />
   );

@@ -12,7 +12,7 @@ import { getCompanySettingsUiState } from "../../../common/server/company-standa
 import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../common/server/settings-scope";
 
 export async function CompanyDimensionsListPage() {
-  const scope = await resolveServerSettingsScope("selected");
+  const scope = await resolveServerSettingsScope();
   const companyApiContext = await resolveServerCompanyApiContext();
   const [dimensions, settingsUiState] = await Promise.all([
     listDimensions(scope.companyId),
@@ -32,7 +32,6 @@ export async function CompanyDimensionsListPage() {
           <h1 className={`${typography.pageTitle} ${layoutStyles.pageTitleResponsive}`}>Dimensions</h1>
           <div className={layoutStyles.slotTitleMeta}>
             <CompanySettingsTitleBadges
-              showFinanceTemplateSettings={settingsUiState.usesFinanceTemplateSettings}
               showArchived={settingsUiState.isArchived}
               showReadOnly={settingsUiState.readOnly}
             />

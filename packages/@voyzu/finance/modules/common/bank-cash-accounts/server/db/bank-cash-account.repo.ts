@@ -15,12 +15,7 @@ const SEARCHABLE_COLUMNS = ["code", "type", "bank_name", "bank_branch_name", "ba
 const COMPANIES_WITH_POSTINGS_SQL = `COALESCE(ARRAY(
            SELECT DISTINCT posting_organization.code
            FROM finance_organization source_finance_organization
-           JOIN finance_organization posting_finance_organization ON (
-             (source_finance_organization.is_template = true
-               AND posting_finance_organization.is_template = false
-               AND posting_finance_organization.use_finance_template_settings = true)
-             OR (source_finance_organization.is_template = false AND posting_finance_organization.id = source_finance_organization.id)
-           )
+           JOIN finance_organization posting_finance_organization ON posting_finance_organization.id = source_finance_organization.id
            JOIN journal_line jl ON jl.gl_account_id = bca.gl_account_id
            JOIN journal_header jh ON jh.id = jl.journal_header_id
              AND jh.finance_organization_id = posting_finance_organization.id
