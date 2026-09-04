@@ -3,6 +3,7 @@ export {
   resolveApiCompanyIdFromPath,
   resolveServerCompanyApiContext,
   assertCompanySettingsWritable,
+  findCompanySettingsScope,
   resolveCompanySettingsScope,
   resolveEffectiveSettingsCompanyId,
   resolveServerSettingsScope,

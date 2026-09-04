@@ -30,7 +30,7 @@ export const apiDefinitions = {
     path: "/inventory/financial-activity/[id]",
     loadHandler: () => load().then((module) => module.handleGet),
     summary: "Get inventory financial activity",
-    description: "Gets one financial activity record and its source inventory movement.",
+    description: "Gets one financial activity record and its inventory movement.",
     tags: ["Inventory Financial Activity"],
     request: { path: { id: { schema: Type.Integer({ minimum: 1 }) } } },
     responses: { "200": { description: "Financial activity", body: FinancialActivityDetailDto }, ...errors },

@@ -25,12 +25,9 @@ export type StockPosition = Static<typeof StockPositionDto>;
 export const StockActivityDto = StrictObject({
   id: Type.Integer(),
   code: Text,
-  activitySource: Type.Literal("TRANSACTION"),
   date: Type.String(),
   type: Text,
   lineCount: Type.Integer({ minimum: 0 }),
-  source: Type.Union([Type.String(), Type.Null()]),
-  sourceCode: Type.Union([Type.String(), Type.Null()]),
   reference: Type.Union([Type.String(), Type.Null()]),
 });
 export type StockActivity = Static<typeof StockActivityDto>;
@@ -45,16 +42,22 @@ export const StockTransactionLineDto = StrictObject({
   reasonCode: Type.Union([StockReasonCode, Type.Null()]),
 });
 export type StockTransactionLine = Static<typeof StockTransactionLineDto>;
+export const LinkedDocumentDto = StrictObject({
+  documentType: Text,
+  documentId: Id,
+  documentCode: Text,
+  creationDate: Type.String(),
+  href: Type.Union([Type.String(), Type.Null()]),
+});
+export type LinkedDocument = Static<typeof LinkedDocumentDto>;
 export const StockActivityDetailDto = StrictObject({
   id: Id,
   code: Text,
-  activitySource: Type.Literal("TRANSACTION"),
   date: Type.String(),
   type: Text,
-  source: Type.Union([Type.String(), Type.Null()]),
-  sourceCode: Type.Union([Type.String(), Type.Null()]),
   reference: Type.Union([Type.String(), Type.Null()]),
   notes: Type.String(),
+  linkedDocuments: Type.Array(LinkedDocumentDto),
   lines: Type.Array(StockTransactionLineDto),
   audit: AuditMetadataDto,
 });

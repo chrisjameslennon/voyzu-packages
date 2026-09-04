@@ -237,7 +237,7 @@ export async function getInventoryReport(
   }
   if (key === "stock-reservation-activity") {
     const result = await getDb().query(
-      `SELECT line.id,reservation.code,line.item_code,line.item_name,warehouse.name warehouse,line.quantity_change::float8,reservation.reference,reservation.reserved_at,reservation.source_type,NULL::text source_code FROM inventory_reservation reservation JOIN inventory_reservation_line line ON line.organization_id=reservation.organization_id AND line.inventory_reservation_id=reservation.id JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id WHERE reservation.organization_id=$1 ORDER BY reservation.creation_date DESC,reservation.id DESC,line.id`,
+      `SELECT line.id,reservation.code,line.item_code,line.item_name,warehouse.name warehouse,line.quantity_change::float8,reservation.reference,reservation.reserved_at FROM inventory_reservation reservation JOIN inventory_reservation_line line ON line.organization_id=reservation.organization_id AND line.inventory_reservation_id=reservation.id JOIN warehouse ON warehouse.organization_id=line.organization_id AND warehouse.id=line.warehouse_id WHERE reservation.organization_id=$1 ORDER BY reservation.creation_date DESC,reservation.id DESC,line.id`,
       [organizationId],
     );
     return {
@@ -250,8 +250,6 @@ export async function getInventoryReport(
         "Warehouse",
         "Quantity Change",
         "Reference",
-        "Source",
-        "Source Code",
       ],
       rows: result.rows.map((r: Record<string, unknown>) => ({
         id: String(r.id),
@@ -264,8 +262,6 @@ export async function getInventoryReport(
           String(r.warehouse),
           n(Number(r.quantity_change)),
           String(r.reference ?? "—"),
-          String(r.source_type),
-          String(r.source_code ?? "—"),
         ],
       })),
     };
@@ -307,12 +303,7 @@ export async function getInventoryReport(
             line.item_name,
             warehouse.name warehouse,
             line.quantity_change::float8 quantity_change,
-            transaction.reference,
-            transaction.source_type source,
-            CASE WHEN transaction.source_type='STOCK_COUNT'
-              THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
-              ELSE NULL
-            END source_code
+            transaction.reference
      FROM inventory_transaction transaction
      JOIN inventory_transaction_line line
        ON line.organization_id=transaction.organization_id
@@ -363,8 +354,6 @@ export async function getInventoryReport(
       "Warehouse",
       "Quantity Change",
       "Reference",
-      "Source",
-      "Source Code",
     ],
     rows: filtered.map((r) => ({
       id: String(r.id),
@@ -380,8 +369,6 @@ export async function getInventoryReport(
         String(r.warehouse),
         n(Number(r.quantity_change)),
         String(r.reference ?? "—"),
-        String(r.source ?? "—"),
-        String(r.source_code ?? "—"),
       ],
     })),
   };

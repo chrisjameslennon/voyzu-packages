@@ -20,7 +20,6 @@ const codeHeaders = new Set([
   "Code",
   "Item Code",
   "Reference",
-  "Source Code",
 ]);
 
 function cellClass(header: string): string | undefined {

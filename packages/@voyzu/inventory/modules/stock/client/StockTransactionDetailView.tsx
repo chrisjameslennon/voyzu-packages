@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { AuditPanel } from "@voyzu/audit/client";
 import {
   Badge,
@@ -31,6 +33,27 @@ const reasonLabels = new Map<string, string>(
   [...STOCK_ADJUSTMENT_REASONS, ...STOCK_ISSUE_REASONS, ...STOCK_RECEIPT_REASONS]
     .map(({ code, label }) => [code, label]),
 );
+
+function detectMMDD(): boolean {
+  try {
+    const parts = new Intl.DateTimeFormat(undefined, {
+      month: "numeric",
+      day: "numeric",
+    }).formatToParts(new Date(2000, 2, 15));
+    return parts.findIndex((part) => part.type === "month")
+      < parts.findIndex((part) => part.type === "day");
+  } catch {
+    return false;
+  }
+}
+
+function formatDate(value: string, isMMDD: boolean): string {
+  const date = new Date(value);
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return isMMDD ? `${month}/${day}/${year}` : `${day}/${month}/${year}`;
+}
 
 const columns: EditableGridColumn<StockTransactionLine>[] = [
   {
@@ -80,6 +103,8 @@ export function StockTransactionDetailView({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isMMDD, setIsMMDD] = useState(false);
+  useEffect(() => setIsMMDD(detectMMDD()), []);
   const mutationId =
     record.audit.updated.mutationId ?? record.audit.created.mutationId;
   const auditFilter = mutationId
@@ -124,6 +149,37 @@ export function StockTransactionDetailView({
             {transactionType.toUpperCase()}
           </Badge>
         </div>
+        <div className={`${detailStyles.card} ${styles.linkedDocumentsCard}`}>
+          <h2 className={typography.sectionHeading}>Linked Documents</h2>
+          {record.linkedDocuments.length ? (
+            <div className={styles.linkedDocumentList}>
+              {record.linkedDocuments.map((document) => (
+                <div
+                  className={styles.linkedDocumentEntry}
+                  key={`${document.documentType}-${document.documentId}`}
+                >
+                  <div className={styles.linkedDocumentType}>
+                    {document.documentType.replaceAll("_", " ")}
+                  </div>
+                  <div className={styles.linkedDocumentDetails}>
+                    {document.href ? (
+                      <Link className={styles.documentLink} href={document.href}>
+                        {document.documentCode}
+                      </Link>
+                    ) : (
+                      <span>{document.documentCode}</span>
+                    )}
+                    <span>
+                      {formatDate(document.creationDate, isMMDD)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.emptyLinkedDocuments}>No linked documents.</p>
+          )}
+        </div>
         <AuditPanel
           id={record.id}
           creationDate={record.audit.created.date}
@@ -161,14 +217,6 @@ export function StockTransactionDetailView({
             <div className={styles.field}>
               <label className={typography.fieldLabel}>Reference</label>
               <Input value={record.reference ?? ""} disabled />
-            </div>
-            <div className={styles.field}>
-              <label className={typography.fieldLabel}>Source</label>
-              <Input value={record.source ?? ""} disabled />
-            </div>
-            <div className={styles.field}>
-              <label className={typography.fieldLabel}>Source Code</label>
-              <Input value={record.sourceCode ?? ""} disabled />
             </div>
             {record.notes ? (
               <div className={`${styles.field} ${styles.wide}`}>

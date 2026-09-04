@@ -5,4 +5,5 @@ export {
 } from "./StockLists";
 export { StockOperationView } from "./StockOperationView";
 export { StockCountEditor } from "./StockCountEditor";
+export { StockCountReportTemplate } from "./StockCountReportTemplate";
 export { StockTransactionDetailView } from "./StockTransactionDetailView";

@@ -40,12 +40,6 @@ async function getCompanySettingsState(
   };
 }
 
-async function getActiveCompanyId(companyId: number, db: DbExecutor): Promise<number> {
-  const id = await new SettingsScopeRepo(db).getActiveCompanyIdByOrganizationId(companyId);
-  if (!id) throw new BusinessRuleError(`Company id ${companyId} was not found`);
-  return id;
-}
-
 async function getActiveCompanyIdByCode(companyCode: string, db: DbExecutor): Promise<number> {
   const id = await new SettingsScopeRepo(db).getActiveCompanyIdByCode(companyCode);
   if (!id) throw new BusinessRuleError(`Company code ${companyCode} was not found`);
@@ -62,8 +56,20 @@ export async function resolveTemplateSettingsScope(db: DbExecutor = getDb()): Pr
   return { companyId: await getTemplateCompanyId(db), isTemplate: true };
 }
 
+export async function findCompanySettingsScope(
+  organizationId: number,
+  db: DbExecutor = getDb(),
+): Promise<CompanySettingsScope | null> {
+  const companyId = await new SettingsScopeRepo(db).getActiveCompanyIdByOrganizationId(
+    organizationId,
+  );
+  return companyId ? { companyId, isTemplate: false } : null;
+}
+
 export async function resolveCompanySettingsScope(companyId: number, db: DbExecutor = getDb()): Promise<CompanySettingsScope> {
-  return { companyId: await getActiveCompanyId(companyId, db), isTemplate: false };
+  const scope = await findCompanySettingsScope(companyId, db);
+  if (!scope) throw new BusinessRuleError(`Company id ${companyId} was not found`);
+  return scope;
 }
 
 export async function resolveCompanySettingsScopeByCode(companyCode: string, db: DbExecutor = getDb()): Promise<CompanySettingsScope> {

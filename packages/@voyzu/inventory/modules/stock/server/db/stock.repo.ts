@@ -17,6 +17,13 @@ import type {
 import type { StockReasonCode } from "../../../core/types";
 import type { FinancialMovementType } from "../../../financial-activity/types/financial-activity.types";
 const isoDate = (value: unknown) => new Date(String(value)).toISOString();
+const transactionDocumentType = (type: string) => `STOCK_${type}`;
+const documentHref = (type: string, id: number, code: string) => {
+  if (type === "STOCK_COUNT") return `/inventory/stock-counts/${id}`;
+  if (["STOCK_RECEIPT", "STOCK_ISSUE", "STOCK_TRANSFER", "STOCK_ADJUSTMENT"].includes(type))
+    return `/inventory/stock-activity/${encodeURIComponent(code)}`;
+  return null;
+};
 const audit = (row: Record<string, unknown>) => ({
   created: {
     date: isoDate(row.creation_date),
@@ -95,15 +102,9 @@ export class StockRepo {
     const { rows } = await this.db.query(
       `SELECT transaction.id::int id,
               transaction.code,
-              'TRANSACTION'::text activity_source,
               transaction.transaction_date date,
               transaction.transaction_type type,
               count(line.id)::int line_count,
-              transaction.source_type source,
-              CASE WHEN transaction.source_type='STOCK_COUNT'
-                THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
-                ELSE NULL
-              END source_code,
               transaction.reference
        FROM inventory_transaction transaction
        LEFT JOIN inventory_transaction_line line
@@ -117,13 +118,9 @@ export class StockRepo {
     return rows.map((row: Record<string, unknown>) => ({
       id: Number(row.id),
       code: String(row.code),
-      activitySource: row.activity_source as StockActivity["activitySource"],
       date: new Date(String(row.date)).toISOString(),
       type: String(row.type),
       lineCount: Number(row.line_count),
-      source: row.source == null ? null : String(row.source),
-      sourceCode:
-        row.source_code == null ? null : String(row.source_code),
       reference: row.reference == null ? null : String(row.reference),
     }));
   }
@@ -135,14 +132,8 @@ export class StockRepo {
       `SELECT transaction.id::int,
               transaction.organization_id,
               transaction.code,
-              'TRANSACTION'::text activity_source,
               transaction.transaction_date date,
               transaction.transaction_type type,
-              transaction.source_type,
-              CASE WHEN transaction.source_type='STOCK_COUNT'
-                THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
-                ELSE NULL
-              END source_code,
               transaction.reference,
               transaction.notes,
               transaction.creation_date,
@@ -171,20 +162,48 @@ export class StockRepo {
         Number(row.id),
       ],
     );
+    const currentDocumentType = transactionDocumentType(String(row.type));
+    const links = await this.db.query(
+      `SELECT upstream_document_type document_type,
+              upstream_document_id::int document_id,
+              upstream_document_code document_code,
+              creation_date
+       FROM document_link
+       WHERE organization_id=$1
+         AND downstream_document_type=$2
+         AND downstream_document_id=$3
+       UNION ALL
+       SELECT downstream_document_type document_type,
+              downstream_document_id::int document_id,
+              downstream_document_code document_code,
+              creation_date
+       FROM document_link
+       WHERE organization_id=$1
+         AND upstream_document_type=$2
+         AND upstream_document_id=$3
+       ORDER BY creation_date,document_id`,
+      [organizationId, currentDocumentType, Number(row.id)],
+    );
     return {
       id: Number(row.id),
       code: String(row.code),
-      activitySource: row.activity_source as StockActivityDetail["activitySource"],
       date: new Date(String(row.date)).toISOString(),
       type: String(row.type),
-      source:
-        row.source_type == null
-          ? null
-          : String(row.source_type),
-      sourceCode:
-        row.source_code == null ? null : String(row.source_code),
       reference: row.reference == null ? null : String(row.reference),
       notes: String(row.notes ?? ""),
+      linkedDocuments: links.rows.map((link: Record<string, unknown>) => {
+        const documentType = String(link.document_type);
+        const documentId = Number(link.document_id);
+        const documentCode = String(link.document_code);
+        return {
+          direction: link.direction as "UPSTREAM" | "DOWNSTREAM",
+          documentType,
+          documentId,
+          documentCode,
+          creationDate: isoDate(link.creation_date),
+          href: documentHref(documentType, documentId, documentCode),
+        };
+      }),
       lines: lines.rows.map((line: Record<string, unknown>) => ({
         id: Number(line.id),
         itemId: Number(line.item_id),
@@ -213,7 +232,7 @@ export class StockRepo {
     stamp: Record<string, unknown>,
     customFields: StockCustomFieldInput[] = [],
     options: {
-      source?: { type: "STOCK_COUNT"; id: number };
+      upstreamDocument?: { type: "STOCK_COUNT"; id: number; code: string };
     } = {},
   ) {
     const e = Object.entries(stamp);
@@ -222,14 +241,14 @@ export class StockRepo {
     );
     const transactionId = Number(sequence.rows[0].id);
     const prefixes: Record<string, string> = {
-      RECEIPT: "INV-REC",
-      ISSUE: "INV-ISS",
-      TRANSFER: "INV-TRF",
-      ADJUSTMENT: "INV-ADJ",
+      RECEIPT: "STOCK-REC",
+      ISSUE: "STOCK-ISS",
+      TRANSFER: "STOCK-TRF",
+      ADJUSTMENT: "STOCK-ADJ",
     };
-    const code = `${prefixes[type] ?? "INV-TXN"}-${transactionId}`;
+    const code = `${prefixes[type] ?? "STOCK-TXN"}-${transactionId}`;
     await this.db.query(
-      `INSERT INTO inventory_transaction(id,organization_id,code,transaction_type,transaction_date,reference,notes,source_type,source_id,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5::timestamptz,$6,$7,$8,$9,${e.map((_, i) => `$${i + 10}`).join(",")}) RETURNING id::int`,
+      `INSERT INTO inventory_transaction(id,organization_id,code,transaction_type,transaction_date,reference,notes,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5::timestamptz,$6,$7,${e.map((_, i) => `$${i + 8}`).join(",")}) RETURNING id::int`,
       [
         transactionId,
         organizationId,
@@ -238,8 +257,6 @@ export class StockRepo {
         date,
         reference ?? null,
         notes ?? "",
-        options.source?.type ?? "DIRECT",
-        options.source?.id ?? null,
         ...e.map(([, v]) => v),
       ],
     );
@@ -303,6 +320,21 @@ export class StockRepo {
           ],
         );
       }
+    }
+    if (options.upstreamDocument) {
+      await this.db.query(
+        `INSERT INTO document_link(organization_id,upstream_document_type,upstream_document_id,upstream_document_code,downstream_document_type,downstream_document_id,downstream_document_code,${e.map(([key]) => key).join(",")}) VALUES($1,$2,$3,$4,$5,$6,$7,${e.map((_, index) => `$${index + 8}`).join(",")})`,
+        [
+          organizationId,
+          options.upstreamDocument.type,
+          options.upstreamDocument.id,
+          options.upstreamDocument.code,
+          transactionDocumentType(type),
+          transactionId,
+          code,
+          ...e.map(([, value]) => value),
+        ],
+      );
     }
     return transactionId;
   }
@@ -386,9 +418,9 @@ export class StockRepo {
       "SELECT nextval(pg_get_serial_sequence('inventory_reservation','id')) AS id",
     );
     const reservationId = Number(sequence.rows[0].id);
-    const code = `INV-RSV-${reservationId}`;
+    const code = `STOCK-RSV-${reservationId}`;
     await this.db.query(
-      `INSERT INTO inventory_reservation(id,organization_id,code,source_type,reference,notes,reserved_at,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,'DIRECT',$4,$5,now(),${e.map((_, i) => `$${i + 6}`).join(",")})`,
+      `INSERT INTO inventory_reservation(id,organization_id,code,reference,notes,reserved_at,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5,now(),${e.map((_, i) => `$${i + 6}`).join(",")})`,
       [
         reservationId,
         organizationId,
@@ -469,23 +501,21 @@ export class StockRepo {
       audit: audit(row),
     };
   }
-  async nextCountCode(organizationId: number) {
-    const r = await this.db.query(
-      "SELECT COALESCE(MAX((substring(code from '[0-9]+$'))::int),0)+1 value FROM stock_count WHERE organization_id=$1",
-      [organizationId],
-    );
-    return `INV-STCOUNT-${String(r.rows[0].value).padStart(6, "0")}`;
-  }
   async createCount(
     organizationId: number,
     input: StockCountRequest,
     stamp: Record<string, unknown>,
   ) {
-    const code = await this.nextCountCode(organizationId);
+    const sequence = await this.db.query(
+      "SELECT nextval(pg_get_serial_sequence('stock_count','id')) AS id",
+    );
+    const countId = Number(sequence.rows[0].id);
+    const code = `STOCK-COUNT-${countId}`;
     const e = Object.entries(stamp);
     const r = await this.db.query(
-      `INSERT INTO stock_count(organization_id,code,warehouse_id,count_date,status,reference,notes,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4::date,'DRAFT',$5,$6,${e.map((_, i) => `$${i + 7}`).join(",")}) RETURNING id::int`,
+      `INSERT INTO stock_count(id,organization_id,code,warehouse_id,count_date,status,reference,notes,${e.map(([k]) => k).join(",")}) VALUES($1,$2,$3,$4,$5::date,'DRAFT',$6,$7,${e.map((_, i) => `$${i + 8}`).join(",")}) RETURNING id::int`,
       [
+        countId,
         organizationId,
         code,
         input.warehouseId,
@@ -569,7 +599,7 @@ export class StockRepo {
         stamp,
         [],
         {
-          source: { type: "STOCK_COUNT", id },
+          upstreamDocument: { type: "STOCK_COUNT", id, code: count.code },
         },
       );
     const e = Object.entries(stamp);

@@ -9,6 +9,7 @@ import {
   StockActivityView,
   StockTransactionDetailView,
   StockCountEditor,
+  StockCountReportTemplate,
   StockCountsView,
   StockOperationView,
   StockPositionsView,
@@ -103,14 +104,38 @@ export async function StockCountNewPage() {
     />
   );
 }
-export async function StockCountDetailPage({ id }: { id?: string }) {
+export async function StockCountDetailPage({
+  id,
+  surface,
+}: {
+  id?: string;
+  surface?: { unframed?: boolean };
+}) {
   const c = await context();
   if (!c.organizationId || !id) notFound();
   const record = await getStockCount(c.organizationId, Number(id));
   if (!record) notFound();
+  const organization = await getSelectedOrganization();
+  if (!organization) notFound();
+  if (surface?.unframed) {
+    return (
+      <StockCountReportTemplate
+        record={record}
+        organization={organization}
+        generatedAt={new Date().toLocaleString(undefined, {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      />
+    );
+  }
   return (
     <StockCountEditor
       record={record}
+      organization={organization}
       positions={c.positions}
       warehouses={c.options.warehouses}
     />

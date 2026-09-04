@@ -42,8 +42,6 @@ export const FinancialActivityDetailDto = StrictObject({
   ...FinancialActivitySummaryDto.properties,
   reference: Type.Union([Type.String(), Type.Null()]),
   notes: Type.String(),
-  sourceType: Text,
-  sourceCode: Type.Union([Type.String(), Type.Null()]),
   audit: AuditMetadataDto,
 });
 export type FinancialActivityDetail = Static<typeof FinancialActivityDetailDto>;

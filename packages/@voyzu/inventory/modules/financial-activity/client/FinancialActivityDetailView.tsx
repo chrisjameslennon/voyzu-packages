@@ -69,13 +69,11 @@ export function FinancialActivityDetailView({ record }: { record: FinancialActiv
           </div>
         </section>
         <section className={detailStyles.card}>
-          <h2 className={typography.sectionHeading}>Source Transaction</h2>
+          <h2 className={typography.sectionHeading}>Inventory Transaction</h2>
           <div className={styles.fields}>
             <div className={styles.field}><label className={typography.fieldLabel}>Transaction Code</label><Input value={record.transactionCode} disabled /></div>
             <div className={styles.field}><label className={typography.fieldLabel}>Transaction Date</label><Input value={new Date(record.transactionDate).toLocaleString("en-NZ")} disabled /></div>
             <div className={styles.field}><label className={typography.fieldLabel}>Reference</label><Input value={record.reference ?? ""} disabled /></div>
-            <div className={styles.field}><label className={typography.fieldLabel}>Source</label><Input value={record.sourceType} disabled /></div>
-            <div className={styles.field}><label className={typography.fieldLabel}>Source Code</label><Input value={record.sourceCode ?? ""} disabled /></div>
             <div className={styles.field} style={{ gridColumn: "1 / -1" }}><label className={typography.fieldLabel}>Notes</label><textarea className={styles.textarea} value={record.notes} disabled /></div>
           </div>
         </section>

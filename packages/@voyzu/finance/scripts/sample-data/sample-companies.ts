@@ -34,7 +34,7 @@ async function main(): Promise<void> {
        )
        SELECT
          $1, $1, fc.tax_filing_anchor_month, fc.tax_filing_interval_months,
-         FALSE, FALSE, 'SYSTEM', 'SYSTEM'
+         TRUE, FALSE, 'SYSTEM', 'SYSTEM'
        FROM finance_country fc
        WHERE fc.code = $2
        ON CONFLICT (organization_id) DO UPDATE SET

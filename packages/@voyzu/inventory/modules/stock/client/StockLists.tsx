@@ -414,13 +414,9 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
     (r) =>
       (!selectedTypes?.length || selectedTypes.includes(r.type)) &&
       (!search ||
-        [
-          r.type,
-          r.code,
-          r.reference ?? "",
-          r.source ?? "",
-          r.sourceCode ?? "",
-        ].some((v) => v.toLowerCase().includes(search.toLowerCase()))),
+        [r.type, r.code, r.reference ?? ""].some((v) =>
+          v.toLowerCase().includes(search.toLowerCase()),
+        )),
   );
   const filterTabs: FilterTab[] = [
     {
@@ -446,14 +442,7 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
       width: "7%",
       align: "right",
     },
-    { key: "reference", label: "Reference", width: "18%", render: (r) => r.reference ?? "—" },
-    { key: "source", label: "Source", width: "15%", render: (r) => r.source ?? "—" },
-    {
-      key: "sourceCode",
-      label: "Source Code",
-      width: "18%",
-      render: (r) => r.sourceCode ?? "—",
-    },
+    { key: "reference", label: "Reference", width: "51%", render: (r) => r.reference ?? "—" },
   ];
   return (
     <Shell
@@ -485,13 +474,10 @@ export function StockActivityView({ rows }: { rows: StockActivity[] }) {
               { key: "type", label: "Type" },
               { key: "lineCount", label: "Lines" },
               { key: "reference", label: "Reference" },
-              { key: "source", label: "Source" },
-              { key: "sourceCode", label: "Source Code" },
             ]}
             toExportRow={(row) => ({
               ...row,
               date: date(row.date),
-              sourceCode: row.sourceCode ?? null,
             })}
           />
         </div>

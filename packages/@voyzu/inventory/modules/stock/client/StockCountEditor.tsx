@@ -1,6 +1,6 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AuditPanel } from "@voyzu/audit/client";
 import {
   Badge,
@@ -11,9 +11,11 @@ import {
   EditableGrid,
   Input,
   SearchableSelect,
+  TabGroup,
   Toast,
   ValidationAlert,
   type EditableGridColumn,
+  type TabDef,
 } from "@voyzu/ui-components";
 import {
   DetailBackButton,
@@ -21,7 +23,9 @@ import {
 } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import entryLayout from "@voyzu/ui-layout/css-modules/document-entry.layout.module.css";
+import reportLayout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
+import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import type {
   StockCountDetail,
@@ -31,6 +35,11 @@ import type {
 import { STOCK_ADJUSTMENT_REASONS } from "../../core/types";
 import { CompleteStockCount, CreateStockCount, SaveStockCount } from "../domain/operation-policy";
 import { isSelectSearchable } from "../../core/client/select-policy";
+import {
+  StockCountReportTemplate,
+  type StockCountOrganization,
+} from "./StockCountReportTemplate";
+import reportStyles from "./stock-count-report.module.css";
 import styles from "./stock.module.css";
 type Row = {
   id: number;
@@ -44,10 +53,12 @@ type Row = {
 };
 export function StockCountEditor({
   record: initial,
+  organization,
   positions,
   warehouses,
 }: {
   record?: StockCountDetail;
+  organization?: StockCountOrganization;
   positions: StockPosition[];
   warehouses: StockOption[];
 }) {
@@ -71,9 +82,19 @@ export function StockCountEditor({
   );
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
-  const [confirm, setConfirm] = useState(false);
   const [confirmComplete, setConfirmComplete] = useState(false);
   const [saving, setSaving] = useState(false);
+  const generatedAt = useMemo(
+    () =>
+      new Date().toLocaleString(undefined, {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    [],
+  );
   const selectableWarehouses = warehouses.filter(
     (warehouse) =>
       warehouse.status !== "INACTIVE" || warehouse.id === initial?.warehouseId,
@@ -290,15 +311,6 @@ export function StockCountEditor({
       return;
     }
     setConfirmComplete(true);
-  };
-  const remove = async () => {
-    if (!record) return;
-    const response = await request(`/api/inventory/stock-counts/${record.id}`, {
-      method: "DELETE",
-    });
-    if (!response) return;
-    router.push("/inventory/stock-counts");
-    router.refresh();
   };
   const readOnly = record?.status === "COMPLETED";
   const title = record?.code ?? "New Stocktake";
@@ -530,8 +542,13 @@ export function StockCountEditor({
         />
       </div>
     );
-  const body = (
-    <main className={`${layout.mainSection} ${styles.stack}`}>
+  if (!organization) return null;
+  const filter = record.audit.updated.mutationId
+    ? `mutationId=${encodeURIComponent(record.audit.updated.mutationId)}`
+    : `entityType=stock_count&entityId=${record.id}`;
+  const details = (
+    <div className={reportStyles.detailsTab}>
+      <main className={reportStyles.detailsMain}>
       <section className={detailStyles.card}>
         <h2 className={typography.sectionHeading}>Stocktake Details</h2>
         <div className={styles.fields}>
@@ -596,61 +613,11 @@ export function StockCountEditor({
           ariaLabel="Stocktake quantities"
         />
       </section>
-    </main>
-  );
-  const header = (
-    <header className={layout.detailHeader}>
-      <div className={layout.slotBreadcrumb}>
-        <Breadcrumbs />
-      </div>
-      <div className={layout.slotTitle}>
-        <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>
-          {title}
-        </h1>
-      </div>
-      {record ? (
-        <div className={layout.slotActions}>
-          <div className={detailStyles.headerActions}>
-            <DetailBackButton fallbackHref="/inventory/stock-counts" />
-            {!readOnly ? (
-              <Button
-                variant="danger"
-                icon="delete"
-                onClick={() => setConfirm(true)}
-              />
-            ) : null}
-          </div>
-        </div>
-      ) : null}
-      <div className={layout.slotAlert}>
-        <ValidationAlert
-          errors={error ? [error] : []}
-          visible={!!error}
-          onDismiss={() => setError("")}
-        />
-      </div>
-    </header>
-  );
-  const filter = record.audit.updated.mutationId
-    ? `mutationId=${encodeURIComponent(record.audit.updated.mutationId)}`
-    : `entityType=stock_count&entityId=${record.id}`;
-  return (
-    <div className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}>
-      {header}
-      <aside className={layout.statusSection}>
+      </main>
+      <aside className={reportStyles.detailsRail}>
         <div className={detailStyles.card}>
           <label className={typography.fieldLabel}>Status</label>
-          <Badge
-            variant="soft"
-            size="x-large"
-            color={
-              record.status === "COMPLETED"
-                ? "success"
-                : record.status === "IN_PROGRESS"
-                  ? "info"
-                  : "neutral"
-            }
-          >
+          <Badge variant="soft" size="x-large" color="success">
             {record.status.replace("_", " ")}
           </Badge>
         </div>
@@ -670,16 +637,77 @@ export function StockCountEditor({
           onNavigate={(href) => router.push(href)}
         />
       </aside>
-      {body}
-      <ConfirmDialog
-        isOpen={confirm}
-        title="Delete Stocktake"
-        message={`Delete ${record.code}?`}
-        confirmLabel="Delete"
-        confirmVariant="danger"
-        onClose={() => setConfirm(false)}
-        onConfirm={() => void remove()}
-      />
+    </div>
+  );
+  const printablePath = `/inventory/stock-counts/${record.id}/printable`;
+  const pdfParams = new URLSearchParams({
+    orientation: "portrait",
+    path: printablePath,
+    filename: `stock-count-${record.code}`,
+  });
+  const pdfViewPath = `/api/capability/pdf-view?${pdfParams.toString()}`;
+  const pdfDownloadPath = `/api/capability/pdf?${pdfParams.toString()}`;
+  const tabs: TabDef[] = [
+    {
+      key: "document",
+      label: "Document",
+      content: (
+        <div className={reportStyles.tabContent}>
+          <div className={reportStyles.toolbar}>
+            <Button
+              variant="secondary"
+              icon="open_in_new"
+              title="Printable Page"
+              onClick={() => window.open(printablePath, "_blank", "noopener,noreferrer")}
+            />
+            <Button
+              variant="secondary"
+              icon="picture_as_pdf"
+              title="View PDF"
+              onClick={() => window.open(pdfViewPath, "_blank", "noopener,noreferrer")}
+            />
+            <Button
+              variant="secondary"
+              icon="download"
+              title="Download PDF"
+              onClick={() => { window.location.href = pdfDownloadPath; }}
+            />
+          </div>
+          <div className={reportStyles.documentShell}>
+            <div className={`${reportLayout.document} ${reportStyles.portraitDocument}`}>
+              <StockCountReportTemplate
+                record={record}
+                organization={organization}
+                generatedAt={generatedAt}
+              />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    { key: "details", label: "Details", content: details },
+  ];
+  return (
+    <div className={reportLayout.reportView}>
+      <header className={reportLayout.reportHeader}>
+        <div className={reportLayout.slotBreadcrumb}><Breadcrumbs /></div>
+        <div className={reportLayout.slotTitle}>
+          <div className={listStyles.titleIcon}>
+            <span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>fact_check</span>
+          </div>
+          <div className={reportLayout.slotTitleText}>
+            <h1 className={`${typography.pageTitle} ${reportLayout.pageTitleResponsive}`}>
+              Stock Count {title}
+            </h1>
+          </div>
+        </div>
+        <div className={reportLayout.slotTitleActions}>
+          <DetailBackButton fallbackHref="/inventory/stock-counts" />
+        </div>
+      </header>
+      <div className={reportLayout.slotDocument}>
+        <TabGroup tabs={tabs} defaultKey="document" />
+      </div>
       <Toast isVisible={!!toast} message={toast} onClose={() => setToast("")} />
     </div>
   );

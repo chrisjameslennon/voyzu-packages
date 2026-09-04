@@ -15,11 +15,6 @@ const SELECT = `SELECT activity.id::int,
   transaction.transaction_date,
   transaction.reference,
   transaction.notes,
-  transaction.source_type,
-  CASE WHEN transaction.source_type='STOCK_COUNT'
-    THEN (SELECT count.code FROM stock_count count WHERE count.organization_id=transaction.organization_id AND count.id=transaction.source_id)
-    ELSE NULL
-  END source_code,
   line.item_id::int,
   line.item_code,
   line.item_name,
@@ -86,8 +81,6 @@ export class FinancialActivityRepo {
       ...summary(row),
       reference: row.reference == null ? null : String(row.reference),
       notes: String(row.notes ?? ""),
-      sourceType: String(row.source_type),
-      sourceCode: row.source_code == null ? null : String(row.source_code),
       audit: {
         created: {
           date: iso(row.creation_date),
