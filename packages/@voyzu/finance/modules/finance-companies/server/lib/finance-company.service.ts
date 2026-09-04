@@ -48,10 +48,6 @@ async function findByCode(code: string, db: DbExecutor): Promise<FinanceCompanyR
   return row ? toDto(row) : null;
 }
 
-export async function listFinanceCompanies(): Promise<FinanceCompanyResponseDto[]> {
-  return (await new FinanceCompanyRepo(getDb()).list()).map(toDto);
-}
-
 export function getFinanceCompany(code: string): Promise<FinanceCompanyResponseDto | null> {
   return findByCode(code, getDb());
 }

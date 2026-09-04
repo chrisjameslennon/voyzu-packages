@@ -20,11 +20,6 @@ export class FinanceCompanyRepo {
     return (rows[0] as unknown as FinanceCompanyRow | undefined) ?? null;
   }
 
-  async list(): Promise<FinanceCompanyRow[]> {
-    const { rows } = await this.db.query(`${SELECT_SQL} WHERE c.status != 'DELETED' ORDER BY c.code`);
-    return rows as unknown as FinanceCompanyRow[];
-  }
-
   async listOrganizationIds(): Promise<number[]> {
     const { rows } = await this.db.query("SELECT organization_id::int FROM finance_organization");
     return rows.map((row) => Number(row.organization_id));

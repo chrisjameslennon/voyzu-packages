@@ -37,10 +37,6 @@ import { journalsModule } from "./modules/journals/module";
 import { taxModule } from "./modules/tax/module";
 import { taxLedgerModule } from "./modules/tax-ledger/module";
 
-export const financeAdminModules = [
-  financeCompaniesModule,
-] as const;
-
 export const financeModules = [
   journalsModule,
   companyReportsModule,

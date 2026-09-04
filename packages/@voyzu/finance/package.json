@@ -766,10 +766,6 @@
       "types": "./modules/country-tax-settings/api.routes.ts",
       "import": "./modules/country-tax-settings/api.routes.ts"
     },
-    "./finance-companies/pages.routes": {
-      "types": "./modules/finance-companies/pages.routes.ts",
-      "import": "./modules/finance-companies/pages.routes.ts"
-    },
     "./finance-companies/api.routes": {
       "types": "./modules/finance-companies/api.routes.ts",
       "import": "./modules/finance-companies/api.routes.ts"

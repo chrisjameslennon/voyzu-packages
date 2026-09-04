@@ -1,6 +1,5 @@
 import type { VoyzuPackageNavigationDomain } from "@voyzu/types/framework";
 
-import { pageRoutes as financeCompaniesRouteManifest } from "@voyzu/finance/finance-companies/pages.routes";
 import { pageRoutes as journalsRouteManifest } from "@voyzu/finance/journals/pages.routes";
 import { pageRoutes as companyReportsRouteManifest } from "@voyzu/finance/company-reports/pages.routes";
 import { pageRoutes as companyInventoryItemPostingProfilesRouteManifest } from "@voyzu/finance/company-inventory-item-posting-profiles/pages.routes";
@@ -28,11 +27,6 @@ import { pageRoutes as companyFinancialDocumentTypesRouteManifest } from "@voyzu
 import { pageRoutes as companyTaxControlAccountsRouteManifest } from "@voyzu/finance/company-tax-control-accounts/pages.routes";
 import { pageRoutes as financialYearsRouteManifest } from "@voyzu/finance/financial-years/pages.routes";
 import { financeLeftNav } from "./finance.left-nav";
-import { financeAdminLeftNav } from "./organization.left-nav";
-
-const financeAdminPageRoutes = [
-  financeCompaniesRouteManifest,
-] as const;
 const financePageRoutes = [
   journalsRouteManifest,
   companyReportsRouteManifest,
@@ -67,13 +61,6 @@ function routeIds(modules: readonly Readonly<Record<string, { id: string }>>[]) 
 }
 
 const domains = [
-  {
-    label: "Finance Admin",
-    routeId: financeAdminPageRoutes[0].list.id,
-    routeIds: routeIds(financeAdminPageRoutes),
-    leftNav: financeAdminLeftNav,
-    topNavigationVisible: false,
-  },
   {
     label: "Finance",
     routeId: financePageRoutes[0].list.id,

@@ -14,8 +14,6 @@ import {
 } from "@voyzu/erp-core/organization-switcher/server";
 import {
   activateFinanceCompany,
-  getFinanceCompany,
-  listFinanceCompanies,
   listSelectableFinanceCompaniesForCurrentUser,
   resolveFinanceCompanySelectionForCurrentUser,
   updateFinanceCompany,
@@ -59,27 +57,6 @@ export async function handleSetFinanceCompanySelection(
     return response;
   } catch (error) {
     if (error instanceof SyntaxError) return inputValidationError(error.message);
-    return serverError(error);
-  }
-}
-
-export async function handleList(): Promise<NextResponse<FinanceCompanyResponseDto[] | InternalServerErrorResponseDto>> {
-  try {
-    return ok(await listFinanceCompanies());
-  } catch (error) {
-    return serverError(error);
-  }
-}
-
-export async function handleGet(
-  _request: NextRequest,
-  { params }: { params: Promise<{ code: string }> },
-): Promise<NextResponse<FinanceCompanyResponseDto | ErrorResponse>> {
-  try {
-    const { code } = await params;
-    const company = await getFinanceCompany(code);
-    return company ? ok(company) : notFoundError(`Company ${code} not found`);
-  } catch (error) {
     return serverError(error);
   }
 }

@@ -9,14 +9,6 @@ const FinanceCompanySelectionResponseDto = Type.Object({
   selectedOrganization: Type.Union([OrganizationResponseDto, Type.Null()]),
 }, { additionalProperties: false });
 
-export const listFinanceCompanies = platformCommand.defineLazy(
-  { parameters: Type.Tuple([]), result: Type.Array(FinanceCompanyResponseDto) },
-  () => import("./server/lib/finance-company.service").then((module) => module.listFinanceCompanies),
-);
-export const getFinanceCompany = platformCommand.defineLazy(
-  { parameters: Type.Tuple([Type.String()]), result: Type.Union([FinanceCompanyResponseDto, Type.Null()]) },
-  () => import("./server/lib/finance-company.service").then((module) => module.getFinanceCompany),
-);
 export const activateFinanceCompany = platformCommand.defineLazy(
   { parameters: Type.Tuple([Type.String()]), result: FinanceCompanyResponseDto },
   () => import("./server/lib/finance-company.service").then((module) => module.activateFinanceCompany),
@@ -42,8 +34,6 @@ export const deleteFinanceCompanyForErpOrganization = platformCommand.defineLazy
 );
 
 export const commands = {
-  listFinanceCompanies,
-  getFinanceCompany,
   activateFinanceCompany,
   updateFinanceCompany,
   listSelectableFinanceCompaniesForCurrentUser,

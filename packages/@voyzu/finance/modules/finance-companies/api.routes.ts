@@ -26,23 +26,6 @@ export const apiDefinitions = {
       "500": { description: "Unexpected server error.", body: InternalServerErrorResponseDto },
     },
   },
-  list: {
-    method: "GET", path: "/finance/companies", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleList),
-    summary: "List Finance companies", description: "Lists ERP companies with their Finance activation state and financial settings.", tags: ["Finance Companies"],
-    responses: {
-      "200": { description: "ERP organizations with their Finance activation state.", body: Type.Array(FinanceCompanyResponseDto) },
-      "500": { description: "Unexpected server error.", body: InternalServerErrorResponseDto },
-    },
-  },
-  get: {
-    method: "GET", path: "/finance/companies/[code]", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleGet),
-    request: { path: codePath }, summary: "Get Finance company", description: "Gets an ERP company and its Finance activation state and settings.", tags: ["Finance Companies"],
-    responses: {
-      "200": { description: "Finance company details.", body: FinanceCompanyResponseDto },
-      "404": { description: "Company not found.", body: EntityNotFoundErrorResponseDto },
-      "500": { description: "Unexpected server error.", body: InternalServerErrorResponseDto },
-    },
-  },
   activate: {
     method: "POST", path: "/finance/companies/[code]/activate", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleActivate),
     request: { path: codePath }, summary: "Enable an ERP company for Finance", description: "Creates the Finance company aggregate from its country settings and creates its fiscal calendar.", tags: ["Finance Companies"],
