@@ -485,7 +485,10 @@ export function StockOperationView({
                 reasonLines.map(() => "ACTIVE"),
               )
             : Adjust(
-                [{ quantityChange: Number(lines[0]?.quantity ?? 0), reasonCode }],
+                [{
+                  quantityChange: Number(quantity) - (adjustmentPosition?.onHand ?? 0),
+                  reasonCode,
+                }],
                 notes,
                 warehouses.find((warehouse) => warehouse.id === Number(warehouseId))
                   ?.status ?? "ACTIVE",
@@ -609,6 +612,7 @@ export function StockOperationView({
   };
   const title = titles[kind][0];
   const selectedItem = items.find((i) => i.id === Number(itemId));
+  const confirmAdjustmentVariance = Number(quantity) - (adjustmentPosition?.onHand ?? 0);
   const confirmLines = lines.filter(
     (line) => line.itemId && Number(line.quantity) > 0,
   );
@@ -1257,6 +1261,7 @@ export function StockOperationView({
                         <th>Item</th>
                         <th>Recorded</th>
                         <th>Revised</th>
+                        <th>Variance</th>
                       </tr>
                     ) : (
                       <tr>
@@ -1283,6 +1288,9 @@ export function StockOperationView({
                         <td>{selectedItem?.name}</td>
                         <td>{adjustmentPosition?.onHand}</td>
                         <td>{quantity}</td>
+                        <td className={styles.adjustmentVariance}>
+                          {confirmAdjustmentVariance > 0 ? "+" : ""}{confirmAdjustmentVariance}
+                        </td>
                       </tr>
                     ) : (
                       confirmLines.map((line) => {

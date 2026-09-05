@@ -44,7 +44,10 @@ CREATE TABLE IF NOT EXISTS finance_inventory_activity (
     -- this activity. All three fields must be populated together.
     finance_document_type           TEXT,
     finance_document_id             BIGINT,
-    finance_document_code           business_code,
+    -- business_code itself is a NOT NULL domain, so it cannot represent the
+    -- intentionally absent document reference while this row is RECEIVED.
+    -- Keep the same format contract with a nullable TEXT column instead.
+    finance_document_code           TEXT,
     processed_at                    TIMESTAMPTZ,
 
     creation_date                   audit_timestamp,
@@ -111,5 +114,53 @@ CREATE TABLE IF NOT EXISTS finance_inventory_activity (
       CHECK (
         processing_status <> 'PROCESSED'
         OR processed_at IS NOT NULL
+      ),
+
+    CONSTRAINT ck_finance_inventory_activity_finance_document_code
+      CHECK (
+        finance_document_code IS NULL
+        OR (
+          finance_document_code ~ '^[A-Z0-9_-]+$'
+          AND length(finance_document_code) BETWEEN 1 AND 40
+          AND finance_document_code = btrim(finance_document_code)
+        )
       )
 );
+
+-- Upgrade installations created before finance_document_code became nullable.
+-- The business_code domain is itself NOT NULL, so column nullability cannot
+-- override it while an activity is waiting to be resolved to a Finance document.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = current_schema()
+      AND table_name = 'finance_inventory_activity'
+      AND column_name = 'finance_document_code'
+      AND domain_name = 'business_code'
+  ) THEN
+    ALTER TABLE finance_inventory_activity
+      ALTER COLUMN finance_document_code TYPE TEXT
+      USING finance_document_code::text;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conrelid = 'finance_inventory_activity'::regclass
+      AND conname = 'ck_finance_inventory_activity_finance_document_code'
+  ) THEN
+    ALTER TABLE finance_inventory_activity
+      ADD CONSTRAINT ck_finance_inventory_activity_finance_document_code
+      CHECK (
+        finance_document_code IS NULL
+        OR (
+          finance_document_code ~ '^[A-Z0-9_-]+$'
+          AND length(finance_document_code) BETWEEN 1 AND 40
+          AND finance_document_code = btrim(finance_document_code)
+        )
+      );
+  END IF;
+END
+$$;

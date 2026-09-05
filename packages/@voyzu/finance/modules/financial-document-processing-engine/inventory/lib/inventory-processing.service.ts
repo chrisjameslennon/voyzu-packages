@@ -241,7 +241,11 @@ function buildDetailedLine(
         unitSupplied = amount(adjustmentLine.unit_book_value);
         unitUsed = unitSupplied;
       } else {
-        unitUsed = requireCurrentAverage(item, previous, "QUANTITY_ADJUSTMENT");
+        // An operational quantity can exist before Finance has received any
+        // valued inventory movement. In that case the adjustment is still a
+        // valid zero-value movement and establishes a zero-valued Finance
+        // ledger balance rather than blocking the operational transaction.
+        unitUsed = previous?.avg_unit_value ?? 0;
       }
       bookValueDelta = round2(quantityDelta * unitUsed);
     } else {

@@ -42,6 +42,20 @@ export const FinanceInventoryActivityDto = StrictObject({
 });
 export type FinanceInventoryActivity = Type.Static<typeof FinanceInventoryActivityDto>;
 
+export const ProcessInventoryMovementRequestDto = StrictObject({
+  inventoryFinancialActivityId: PositiveId,
+  inventoryTransactionLineId: PositiveId,
+  inventoryDocumentCode: BusinessCode,
+  inventoryDocumentType: InventoryProcessingDocumentTypeDto,
+  itemId: PositiveId,
+  itemCode: BusinessCode,
+  itemName: NonBlankText,
+  quantityChange: Type.Number(),
+  reasonCode: NonBlankText,
+  activityDate: Type.String({ format: "date-time" }),
+});
+export type ProcessInventoryMovementRequest = Type.Static<typeof ProcessInventoryMovementRequestDto>;
+
 export const InventoryProcessingRuleActionDto = Type.Union([
   Type.Literal(InventoryProcessingRuleAction.WaitForMatchedDocument),
   Type.Literal(InventoryProcessingRuleAction.CreateInventoryReceiptJournal),

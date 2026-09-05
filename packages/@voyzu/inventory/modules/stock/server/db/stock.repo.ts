@@ -408,6 +408,44 @@ export class StockRepo {
       stamp,
     );
   }
+
+  async financialActivitiesForTransaction(organizationId: number, transactionId: number) {
+    const { rows } = await this.db.query(
+      `SELECT activity.id::int inventory_financial_activity_id,
+              line.id::int inventory_transaction_line_id,
+              transaction.code inventory_document_code,
+              transaction.transaction_type inventory_document_type,
+              line.item_id::int,
+              line.item_code,
+              line.item_name,
+              line.quantity_change::float8,
+              activity.reason_code,
+              transaction.transaction_date::text activity_date
+       FROM inventory_financial_activity activity
+       JOIN inventory_transaction_line line
+         ON line.organization_id = activity.organization_id
+        AND line.id = activity.inventory_transaction_line_id
+       JOIN inventory_transaction transaction
+         ON transaction.organization_id = line.organization_id
+        AND transaction.id = line.inventory_transaction_id
+       WHERE activity.organization_id = $1
+         AND transaction.id = $2
+       ORDER BY activity.id`,
+      [organizationId, transactionId],
+    );
+    return rows.map((row: Record<string, unknown>) => ({
+      inventoryFinancialActivityId: Number(row.inventory_financial_activity_id),
+      inventoryTransactionLineId: Number(row.inventory_transaction_line_id),
+      inventoryDocumentCode: String(row.inventory_document_code),
+      inventoryDocumentType: row.inventory_document_type as "RECEIPT" | "ISSUE" | "ADJUSTMENT",
+      itemId: Number(row.item_id),
+      itemCode: String(row.item_code),
+      itemName: String(row.item_name),
+      quantityChange: Number(row.quantity_change),
+      reasonCode: String(row.reason_code),
+      activityDate: new Date(String(row.activity_date)).toISOString(),
+    }));
+  }
   async reserve(
     organizationId: number,
     input: ReservationRequest,

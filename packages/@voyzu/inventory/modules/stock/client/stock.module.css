@@ -232,6 +232,10 @@
 .issueConfirmItemsTable tbody tr:last-child td {
   border-bottom: 0;
 }
+.adjustmentVariance {
+  color: var(--voyzu-color-danger);
+  font-weight: 600;
+}
 .issueItemsSection {
   display: flex;
   flex-direction: column;

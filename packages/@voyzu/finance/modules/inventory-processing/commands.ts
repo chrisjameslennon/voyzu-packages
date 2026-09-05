@@ -1,10 +1,11 @@
 import "server-only";
 
 import { command } from "@voyzu/capability/commands";
-import { FinanceInventoryActivityDto, FinanceInventoryProcessingRuleDto, FinanceInventoryProcessingRulePatchDto } from "@voyzu/finance/types/modules/inventory-processing";
+import { FinanceInventoryActivityDto, FinanceInventoryProcessingRuleDto, FinanceInventoryProcessingRulePatchDto, ProcessInventoryMovementRequestDto } from "@voyzu/finance/types/modules/inventory-processing";
 import Type from "typebox";
 
 const load = () => import("./server/lib/inventory-processing.service");
+const loadRulesEngine = () => import("./server/lib/processing-rules-engine");
 
 export const listFinanceInventoryActivities = command.defineLazy(
   { parameters: Type.Tuple([Type.Number()]), result: Type.Array(FinanceInventoryActivityDto) },
@@ -34,10 +35,16 @@ export const updateFinanceInventoryProcessingRule = command.defineLazy(
   () => load().then((module) => module.updateFinanceInventoryProcessingRule),
 );
 
+export const processInventoryMovement = command.defineLazy(
+  { parameters: Type.Tuple([Type.Number(), ProcessInventoryMovementRequestDto]), result: FinanceInventoryActivityDto },
+  () => loadRulesEngine().then((module) => module.processInventoryMovement),
+);
+
 export const commands = {
   listFinanceInventoryActivities,
   getFinanceInventoryActivity,
   listFinanceInventoryProcessingRules,
   getFinanceInventoryProcessingRule,
   updateFinanceInventoryProcessingRule,
+  processInventoryMovement,
 } as const;

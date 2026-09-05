@@ -1,4 +1,5 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
+import { command } from "@voyzu/capability/commands";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import {
   createCreationAuditStamp,
@@ -18,6 +19,7 @@ import type {
 } from "../../types/stock.types";
 import { StockRepo } from "../db/stock.repo";
 import { ConfigurationRepo } from "../../../configuration/server/db/configuration.repo";
+import { FinancialActivityRepo } from "../../../financial-activity/server/db/financial-activity.repo";
 import {
   Adjust,
   CompleteStockCount,
@@ -237,11 +239,28 @@ export async function adjustStock(
     const repo = new StockRepo(db);
     const statuses = await warehouseStatuses(repo, organizationId, [input.warehouseId]);
     enforce(Adjust(input.lines, input.notes, statuses.get(input.warehouseId)!));
-    return repo.adjust(
+    const transactionId = await repo.adjust(
       organizationId,
       input,
       withCreationAudit({}, await createCreationAuditStamp()),
     );
+    const activities = await repo.financialActivitiesForTransaction(organizationId, transactionId);
+    const financialActivityRepo = new FinancialActivityRepo(db);
+    for (const activity of activities) {
+      const response = await command.callOptional(
+        "@voyzu/finance.processInventoryMovement",
+        organizationId,
+        activity,
+      );
+      if (response !== undefined) {
+        await financialActivityRepo.markProcessed(
+          organizationId,
+          activity.inventoryFinancialActivityId,
+          withUpdateAudit({}, await createUpdateAuditStamp()),
+        );
+      }
+    }
+    return transactionId;
   });
 }
 export async function createStockCount(

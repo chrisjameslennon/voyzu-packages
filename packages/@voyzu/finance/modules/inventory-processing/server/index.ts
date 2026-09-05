@@ -6,6 +6,8 @@ export {
   updateFinanceInventoryProcessingRule,
 } from "./lib/inventory-processing.service";
 
+export { processInventoryMovement } from "./lib/processing-rules-engine";
+
 export {
   handleGetInventoryTransaction,
   handleListInventoryTransactions,
