@@ -8,6 +8,7 @@ import type {
   DimensionValueLookupRow,
   DocumentProcessorValidationRow,
   FiscalPostingPeriodRow,
+  GlAccountPostingRow,
   InventoryControlAccountPostingRow,
   InventoryItemPostingRow,
 } from "../db/inventory-processing.row.types";
@@ -68,6 +69,7 @@ export interface InventoryDataValidationContext {
   fiscalPeriod: FiscalPostingPeriodRow | null;
   inventoryControlAccount: InventoryControlAccountPostingRow | null;
   itemsByCode: Map<string, InventoryItemPostingRow>;
+  glAccountsByCode: Map<string, GlAccountPostingRow>;
   dimensionValuesByDimensionCodeAndName: Map<string, DimensionValueLookupRow>;
 }
 
@@ -79,7 +81,7 @@ const COMMON_ROOT_KEYS = ["document_type", "company_code", "document_id", "memo"
 const SOURCE_KEYS = ["source_document", "source_document_id", "source_type", "source_line_id"] as const;
 const RECEIPT_LINE_KEYS = ["line_id", "inventory_item_code", "description", "quantity_delta", "valuation_method", "unit_book_value", "dimensions"] as const;
 const ISSUE_LINE_KEYS = ["line_id", "inventory_item_code", "description", "quantity_delta", "issue_purpose", "dimensions"] as const;
-const ADJUSTMENT_LINE_KEYS = ["line_id", "inventory_item_code", "description", "adjustment_type", "quantity_delta", "unit_book_value", "book_value_delta", "reason_code", "dimensions"] as const;
+const ADJUSTMENT_LINE_KEYS = ["line_id", "inventory_item_code", "description", "adjustment_type", "quantity_delta", "unit_book_value", "book_value_delta", "reason_code", "gl_account_code", "dimensions"] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -238,6 +240,7 @@ function validateAdjustmentLine(value: unknown, index: number, errors: string[])
   validateBusinessCode(value.inventory_item_code, `${path}.inventory_item_code`, errors);
   validateNullableString(value.description, `${path}.description`, errors);
   validateNullableString(value.reason_code, `${path}.reason_code`, errors);
+  validateBusinessCode(value.gl_account_code, `${path}.gl_account_code`, errors);
   if (value.adjustment_type === "QUANTITY_ADJUSTMENT") {
     validateNonZeroAmount(value.quantity_delta, `${path}.quantity_delta`, errors);
     if (Number(value.quantity_delta) > 0 && value.unit_book_value !== undefined && value.unit_book_value !== null) validatePositiveAmount(value.unit_book_value, `${path}.unit_book_value`, errors);
@@ -299,6 +302,11 @@ export function requestedItemCodes(input: InventoryProcessingRequestDto): string
   return [...new Set(input.lines.map((line) => line.inventory_item_code))];
 }
 
+export function requestedGlAccountCodes(input: InventoryProcessingRequestDto): string[] {
+  if (input.document_type !== "INVENTORY_ADJUSTMENT") return [];
+  return [...new Set(input.lines.map((line) => line.gl_account_code))];
+}
+
 export function requestedDimensionPairs(input: InventoryProcessingRequestDto): Array<{ dimensionCode: string; valueName: string }> {
   const pairs = new Map<string, { dimensionCode: string; valueName: string }>();
   for (const line of input.lines) {
@@ -346,12 +354,18 @@ export function validateInventoryData(input: InventoryProcessingRequestDto, data
     }
     if (item.status !== "ACTIVE") errors.push(`Inventory item ${item.code} is not ACTIVE`);
     if (item.item_type !== "INVENTORY") errors.push(`Inventory item ${item.code} must have item_type INVENTORY`);
-    if (item.posting_profile_status !== "ACTIVE") errors.push(`Item posting profile ${item.posting_profile_code} is not ACTIVE`);
+    if (input.document_type !== "INVENTORY_ADJUSTMENT" && item.posting_profile_status !== "ACTIVE") errors.push(`Item posting profile ${item.posting_profile_code} is not ACTIVE`);
     if (input.document_type === "INVENTORY_RECEIPT" && !item.is_purchased) errors.push(`Item posting profile for ${item.code} does not permit purchases`);
     if (input.document_type === "INVENTORY_ISSUE") {
       const issueLine = line as InventoryIssueRequestDto["lines"][number];
       if (issueLine.issue_purpose === "SOLD" && !item.is_sold) errors.push(`Item posting profile for ${item.code} does not permit sales`);
       if (issueLine.issue_purpose === "CONSUMED" && !item.is_consumed) errors.push(`Item posting profile for ${item.code} does not permit consumption`);
+    }
+    if (input.document_type === "INVENTORY_ADJUSTMENT") {
+      const adjustmentLine = line as InventoryAdjustmentRequestDto["lines"][number];
+      const account = data.glAccountsByCode.get(adjustmentLine.gl_account_code);
+      if (!account) errors.push(`GL account ${adjustmentLine.gl_account_code} was not found`);
+      else if (account.status !== "ACTIVE") errors.push(`GL account ${adjustmentLine.gl_account_code} is not ACTIVE`);
     }
   }
 
@@ -369,4 +383,3 @@ export function validateInventoryData(input: InventoryProcessingRequestDto, data
 
   if (errors.length) throw new InputValidationError(errors.join("; "));
 }
-

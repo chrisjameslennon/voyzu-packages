@@ -129,6 +129,7 @@ function quantityAdjustmentRequest(documentId: string, itemCode: string): Invent
         quantity_delta: 3,
         unit_book_value: 12,
         reason_code: "STOCKTAKE_VARIANCE",
+        gl_account_code: "405000",
       },
       {
         line_id: 2,
@@ -137,6 +138,7 @@ function quantityAdjustmentRequest(documentId: string, itemCode: string): Invent
         adjustment_type: "VALUE_ADJUSTMENT",
         book_value_delta: -30,
         reason_code: "VALUE_CORRECTION",
+        gl_account_code: "505000",
       },
     ],
   };

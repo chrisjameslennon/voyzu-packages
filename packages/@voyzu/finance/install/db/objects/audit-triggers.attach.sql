@@ -197,3 +197,15 @@ CREATE TRIGGER finance_organization_audit_trigger
   BEFORE INSERT OR UPDATE OR DELETE ON finance_organization
   FOR EACH ROW
   EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
+
+DROP TRIGGER IF EXISTS finance_inventory_activity_audit_trigger ON finance_inventory_activity;
+CREATE TRIGGER finance_inventory_activity_audit_trigger
+  BEFORE INSERT OR UPDATE OR DELETE ON finance_inventory_activity
+  FOR EACH ROW
+  EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');
+
+DROP TRIGGER IF EXISTS finance_inventory_processing_rule_audit_trigger ON finance_inventory_processing_rule;
+CREATE TRIGGER finance_inventory_processing_rule_audit_trigger
+  BEFORE INSERT OR UPDATE OR DELETE ON finance_inventory_processing_rule
+  FOR EACH ROW
+  EXECUTE FUNCTION audit_trigger_fn('@voyzu/finance');

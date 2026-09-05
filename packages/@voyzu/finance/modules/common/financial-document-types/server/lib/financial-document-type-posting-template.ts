@@ -234,7 +234,7 @@ function directGlCard(
     title,
     side,
     documentDefault: {
-      label: "Caller supplied",
+      label: "GL code supplied",
       glAccount: null,
     },
   };
@@ -431,4 +431,3 @@ export async function buildFinancialDocumentTypePostingTemplate(
       : entries.map(({ key, resolved }) => buildCard(key, documentCode, resolved, routePrefix)),
   };
 }
-

@@ -62,9 +62,9 @@ export interface InventoryItemPostingRow {
   is_purchased: boolean;
   is_consumed: boolean;
   status: "ACTIVE" | "INACTIVE";
-  posting_profile_code: string;
-  posting_profile_name: string;
-  posting_profile_status: "ACTIVE" | "INACTIVE";
+  posting_profile_code: string | null;
+  posting_profile_name: string | null;
+  posting_profile_status: "ACTIVE" | "INACTIVE" | null;
   cogs_gl_account: GlAccountPostingRow | null;
   consumption_gl_account: GlAccountPostingRow | null;
   adjustment_gain_gl_account: GlAccountPostingRow | null;

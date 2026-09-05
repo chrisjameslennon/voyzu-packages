@@ -20,8 +20,6 @@ import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import {
   INVENTORY_ADJUSTMENT_CONTROL_COMPONENT,
-  INVENTORY_ADJUSTMENT_GAIN_COMPONENT,
-  INVENTORY_ADJUSTMENT_LOSS_COMPONENT,
 } from "../../inventory_adjustment/journal-posting-components";
 import {
   INVENTORY_ISSUE_COGS_COMPONENT,
@@ -48,6 +46,7 @@ import {
   type InventoryProcessingRequestDto,
   postingDateFor,
   requestedDimensionPairs,
+  requestedGlAccountCodes,
   requestedItemCodes,
   validateInventoryData,
   validateInventoryRequest,
@@ -61,7 +60,7 @@ export interface ProcessInventoryOptions {
 }
 
 type ResolvedInventoryRequestDto = InventoryProcessingRequestDto & { document_id: string };
-type ItemPostingProfileFieldCode = "cogs_code" | "consumption_code" | "adjustment_gain_code" | "adjustment_loss_code";
+type ItemPostingProfileFieldCode = "cogs_code" | "consumption_code" | "adjustment_gain_code";
 
 interface InventoryLineDimension {
   dimension_id: number;
@@ -164,7 +163,6 @@ function itemPostingProfileAccount(
     cogs_code: item.cogs_gl_account,
     consumption_code: item.consumption_gl_account,
     adjustment_gain_code: item.adjustment_gain_gl_account,
-    adjustment_loss_code: item.adjustment_loss_gl_account,
   };
   return requireAccount(accountByField[fieldCode], `Item posting profile ${item.posting_profile_code}.${fieldCode}`, expectedType);
 }
@@ -269,6 +267,9 @@ function buildDetailedLine(
     inventory_item_code: item.code,
     inventory_item_name: item.name,
     item_posting_profile_code: item.posting_profile_code,
+    gl_account_code: request.document_type === "INVENTORY_ADJUSTMENT"
+      ? (line as InventoryAdjustmentRequestDto["lines"][number]).gl_account_code
+      : null,
     description: line.description?.trim() || item.name,
     movement,
     quantity_delta: quantityDelta,
@@ -285,7 +286,12 @@ function buildDetailedLine(
   };
 }
 
-function accountForLine(request: ResolvedInventoryRequestDto, detail: InventoryProcessingDetailedLineDto, item: InventoryItemPostingRow): GlAccountPostingRow {
+function accountForLine(
+  request: ResolvedInventoryRequestDto,
+  detail: InventoryProcessingDetailedLineDto,
+  item: InventoryItemPostingRow,
+  glAccountsByCode: Map<string, GlAccountPostingRow>,
+): GlAccountPostingRow {
   if (request.document_type === "INVENTORY_RECEIPT") {
     return itemPostingProfileAccount(item, INVENTORY_RECEIPT_ADJUSTMENT_GAIN_COMPONENT.code, "REVENUE");
   }
@@ -293,8 +299,10 @@ function accountForLine(request: ResolvedInventoryRequestDto, detail: InventoryP
     if (detail.issue_purpose === "SOLD") return itemPostingProfileAccount(item, INVENTORY_ISSUE_COGS_COMPONENT.code, "EXPENSE");
     return itemPostingProfileAccount(item, INVENTORY_ISSUE_CONSUMPTION_COMPONENT.code, "EXPENSE");
   }
-  if (detail.book_value_delta > 0) return itemPostingProfileAccount(item, INVENTORY_ADJUSTMENT_GAIN_COMPONENT.code, "REVENUE");
-  return itemPostingProfileAccount(item, INVENTORY_ADJUSTMENT_LOSS_COMPONENT.code, "EXPENSE");
+  if (!detail.gl_account_code) throw new BusinessRuleError("Inventory adjustment GL account was not supplied");
+  const account = glAccountsByCode.get(detail.gl_account_code);
+  if (!account) throw new BusinessRuleError(`GL account ${detail.gl_account_code} was not resolved`);
+  return account;
 }
 
 function inventoryControlCodeForDocument(documentType: InventoryDocumentType): "INVENTORY_CONTROL" {
@@ -314,7 +322,7 @@ function buildGeneratedPosting(
   for (const detail of detailedDocument.lines) {
     if (detail.book_value_delta === 0) continue;
     const item = context.data.itemsByCode.get(detail.inventory_item_code)!;
-    const offsetAccount = accountForLine(context.request, detail, item);
+    const offsetAccount = accountForLine(context.request, detail, item, context.data.glAccountsByCode);
     const absAmount = Math.abs(detail.book_value_delta);
     const dimensions = dimensionsForLine(context.data, detail.dimensions);
     if (detail.book_value_delta > 0) {
@@ -335,8 +343,8 @@ function buildGeneratedPosting(
         gl_account_id: offsetAccount.id,
         gl_account_code: offsetAccount.code,
         gl_account_name: offsetAccount.name,
-        source_ledger: "ITEM_POSTING_PROFILE",
-        source_control_account: item.posting_profile_code,
+        source_ledger: context.request.document_type === "INVENTORY_ADJUSTMENT" ? null : "ITEM_POSTING_PROFILE",
+        source_control_account: context.request.document_type === "INVENTORY_ADJUSTMENT" ? null : item.posting_profile_code,
         dr_cr: "CR",
         base_currency_amount: absAmount,
         description: detail.description,
@@ -349,8 +357,8 @@ function buildGeneratedPosting(
         gl_account_id: offsetAccount.id,
         gl_account_code: offsetAccount.code,
         gl_account_name: offsetAccount.name,
-        source_ledger: "ITEM_POSTING_PROFILE",
-        source_control_account: item.posting_profile_code,
+        source_ledger: context.request.document_type === "INVENTORY_ADJUSTMENT" ? null : "ITEM_POSTING_PROFILE",
+        source_control_account: context.request.document_type === "INVENTORY_ADJUSTMENT" ? null : item.posting_profile_code,
         dr_cr: "DR",
         base_currency_amount: absAmount,
         description: detail.description,
@@ -386,11 +394,16 @@ async function resolveContext(repo: InventoryProcessingRepo, request: ResolvedIn
   const operationalItems = company
     ? await getOperationalInventoryItems(company.organization_id, requestedItemCodes(request))
     : [];
-  const [documentProcessor, fiscalPeriod, controlAccount, items, dimensionValues] = await Promise.all([
+  const [documentProcessor, fiscalPeriod, controlAccount, items, glAccounts, dimensionValues] = await Promise.all([
     company ? repo.getDocumentProcessor(request.document_type) : Promise.resolve(null),
     company ? repo.getOpenFiscalPeriod(company.id, postingDateFor(request)) : Promise.resolve(null),
     settingsCompanyId ? repo.getInventoryControlAccount(settingsCompanyId) : Promise.resolve(null),
-    company ? repo.listInventoryItems(company.id, operationalItems) : Promise.resolve([]),
+    company
+      ? request.document_type === "INVENTORY_ADJUSTMENT"
+        ? Promise.resolve(repo.listAdjustmentInventoryItems(operationalItems))
+        : repo.listInventoryItems(company.id, operationalItems)
+      : Promise.resolve([]),
+    company ? repo.listGlAccountsByCode(company.id, requestedGlAccountCodes(request)) : Promise.resolve([]),
     settingsCompanyId ? repo.listDimensionValues(settingsCompanyId, requestedDimensionPairs(request)) : Promise.resolve([]),
   ]);
   const balances = mapBalances(company ? await repo.listCurrentBalances(company.id, items.map((item) => item.id)) : []);
@@ -400,6 +413,7 @@ async function resolveContext(repo: InventoryProcessingRepo, request: ResolvedIn
     fiscalPeriod,
     inventoryControlAccount: controlAccount,
     itemsByCode: mapByCode(items),
+    glAccountsByCode: mapByCode(glAccounts),
     dimensionValuesByDimensionCodeAndName: mapDimensionValues(dimensionValues),
   };
   validateInventoryData(request, data);

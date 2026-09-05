@@ -3,6 +3,7 @@ import type { VoyzuPackageNavigationDomain } from "@voyzu/types/framework";
 import { pageRoutes as journalsRouteManifest } from "@voyzu/finance/journals/pages.routes";
 import { pageRoutes as companyReportsRouteManifest } from "@voyzu/finance/company-reports/pages.routes";
 import { pageRoutes as companyInventoryItemPostingProfilesRouteManifest } from "@voyzu/finance/company-inventory-item-posting-profiles/pages.routes";
+import { pageRoutes as companyInventoryItemPostingProfileAssignmentsRouteManifest } from "@voyzu/finance/company-inventory-item-posting-profile-assignments/pages.routes";
 import { pageRoutes as inventoryLedgerRouteManifest } from "@voyzu/finance/inventory-ledger/pages.routes";
 import { pageRoutes as taxLedgerRouteManifest } from "@voyzu/finance/tax-ledger/pages.routes";
 import { pageRoutes as apSubledgerLedgerEntriesRouteManifest } from "@voyzu/finance/ap-subledger-ledger-entries/pages.routes";
@@ -26,11 +27,15 @@ import { pageRoutes as companyFinancialDocumentDefaultsRouteManifest } from "@vo
 import { pageRoutes as companyFinancialDocumentTypesRouteManifest } from "@voyzu/finance/company-financial-document-types/pages.routes";
 import { pageRoutes as companyTaxControlAccountsRouteManifest } from "@voyzu/finance/company-tax-control-accounts/pages.routes";
 import { pageRoutes as financialYearsRouteManifest } from "@voyzu/finance/financial-years/pages.routes";
+import { pageRoutes as inventoryProcessingRouteManifest } from "@voyzu/finance/inventory-processing/pages.routes";
+import { pageRoutes as apIntegrationProcessingRouteManifest } from "@voyzu/finance/ap-integration-processing/pages.routes";
+import { pageRoutes as arIntegrationProcessingRouteManifest } from "@voyzu/finance/ar-integration-processing/pages.routes";
 import { financeLeftNav } from "./finance.left-nav";
 const financePageRoutes = [
   journalsRouteManifest,
   companyReportsRouteManifest,
   companyInventoryItemPostingProfilesRouteManifest,
+  companyInventoryItemPostingProfileAssignmentsRouteManifest,
   inventoryLedgerRouteManifest,
   taxLedgerRouteManifest,
   apSubledgerLedgerEntriesRouteManifest,
@@ -54,6 +59,9 @@ const financePageRoutes = [
   companyFinancialDocumentTypesRouteManifest,
   companyTaxControlAccountsRouteManifest,
   financialYearsRouteManifest,
+  inventoryProcessingRouteManifest,
+  apIntegrationProcessingRouteManifest,
+  arIntegrationProcessingRouteManifest,
 ] as const;
 
 function routeIds(modules: readonly Readonly<Record<string, { id: string }>>[]) {

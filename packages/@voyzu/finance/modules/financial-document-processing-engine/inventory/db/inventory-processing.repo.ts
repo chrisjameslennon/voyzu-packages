@@ -104,6 +104,27 @@ function inventoryItemRow(row: Record<string, unknown>): InventoryItemPostingRow
   };
 }
 
+function adjustmentInventoryItemRow(item: OperationalInventoryItem): InventoryItemPostingRow {
+  return {
+    id: item.id,
+    code: item.sku,
+    name: item.name,
+    description: item.description,
+    item_type: item.quantityTracked ? "INVENTORY" : "NON_INVENTORY",
+    is_sold: false,
+    is_purchased: false,
+    is_consumed: false,
+    status: item.status,
+    posting_profile_code: null,
+    posting_profile_name: null,
+    posting_profile_status: null,
+    cogs_gl_account: null,
+    consumption_gl_account: null,
+    adjustment_gain_gl_account: null,
+    adjustment_loss_gl_account: null,
+  };
+}
+
 function dimensionValueRow(row: Record<string, unknown>): DimensionValueLookupRow {
   return {
     dimension_id: Number(row.dimension_id),
@@ -227,6 +248,27 @@ export class InventoryProcessingRepo {
         status: item.status,
       })];
     });
+  }
+
+  listAdjustmentInventoryItems(items: OperationalInventoryItem[]): InventoryItemPostingRow[] {
+    return items.map(adjustmentInventoryItemRow);
+  }
+
+  async listGlAccountsByCode(companyId: number, codes: string[]): Promise<GlAccountPostingRow[]> {
+    if (codes.length === 0) return [];
+    const { rows } = await this.db.query(
+      `SELECT id::int, code, name, account_type, status
+       FROM gl_account
+       WHERE finance_organization_id = $1 AND code = ANY($2::text[])`,
+      [companyId, codes],
+    );
+    return rows.map((row: Record<string, unknown>) => ({
+      id: Number(row.id),
+      code: String(row.code),
+      name: String(row.name),
+      account_type: row.account_type as GlAccountPostingRow["account_type"],
+      status: row.status as GlAccountPostingRow["status"],
+    }));
   }
 
   async listCurrentBalances(companyId: number, itemIds: number[]): Promise<InventoryBalanceRow[]> {

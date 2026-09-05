@@ -193,7 +193,9 @@ function DynamicPostingEntryPointCard({
   const documentDefaultCode = card.managedIn?.link.label === "Document defaults"
     ? card.managedIn.badge?.label
     : undefined;
-  const showItemPostingProfiles = supportsItems && Boolean(card.documentDefault);
+  const isCallerSuppliedGl = card.documentDefault?.label === "GL code supplied";
+  const showItemPostingProfiles = supportsItems && card.documentDefault?.label === "Resolved per item profile";
+  const showInventoryProcessingRules = processorCode === "INVENTORY_ADJUSTMENT" && isCallerSuppliedGl;
   const itemPostingProfilesHref = routePrefix.startsWith("/finance")
     ? "/finance/inventory/item-posting-profiles"
     : `${routePrefix}/inventory/item-posting-profiles`;
@@ -217,7 +219,7 @@ function DynamicPostingEntryPointCard({
           </span>
         </div>
       )}
-      {(documentDefaultCode || card.documentDefault) && (
+      {(documentDefaultCode || card.documentDefault) && !isCallerSuppliedGl && (
         <div className={localStyles.postingMeta}>
           <span>Document Default</span>
           <span className={stackedValueClass}>
@@ -238,6 +240,8 @@ function DynamicPostingEntryPointCard({
                   {card.documentDefault.glAccount.code}
                 </Badge>
               </>
+            ) : isCallerSuppliedGl ? (
+              <span>GL code supplied</span>
             ) : (
               <span>Per item posting profile</span>
             )}
@@ -274,6 +278,15 @@ function DynamicPostingEntryPointCard({
           <p>Item Posting Profiles will control GL account codes used for lines where items are supplied.</p>
           <a className={`${typography.link} ${localStyles.itemPostingProfilesLink}`} href={itemPostingProfilesHref}>
             Manage item posting profiles
+          </a>
+        </div>
+      )}
+      {showInventoryProcessingRules && (
+        <div className={localStyles.itemPostingProfilesBox}>
+          <h4>Inventory Processing Rules</h4>
+          <p>Inventory Processing Rules resolve and supply the GL account code for each adjustment line before the posting engine is called.</p>
+          <a className={`${typography.link} ${localStyles.itemPostingProfilesLink}`} href="/finance/integration/inventory-processing/rules">
+            Manage inventory processing rules
           </a>
         </div>
       )}

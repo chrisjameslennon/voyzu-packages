@@ -29,9 +29,11 @@ DROP TABLE IF EXISTS inventory_control_account;
 DROP TABLE IF EXISTS ar_control_account;
 DROP TABLE IF EXISTS ap_control_account;
 DROP TABLE IF EXISTS bank_cash_control_account;
+DROP TABLE IF EXISTS finance_inventory_processing_rule;
 DROP TABLE IF EXISTS gl_account;
 DROP TABLE IF EXISTS gl_account_category;
 DROP TABLE IF EXISTS financial_document_type;
+DROP TABLE IF EXISTS finance_inventory_activity;
 DROP TABLE IF EXISTS finance_organization;
 DROP TABLE IF EXISTS finance_country;
 

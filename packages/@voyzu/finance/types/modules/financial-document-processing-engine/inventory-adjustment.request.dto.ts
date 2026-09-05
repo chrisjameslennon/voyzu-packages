@@ -12,6 +12,7 @@ export const InventoryAdjustmentLineRequestDto = StrictObject({
   unit_book_value: Type.Optional(Type.Union([Type.Number(), Type.String(), Type.Null()])),
   book_value_delta: Type.Optional(Type.Union([Type.Number(), Type.String(), Type.Null()])),
   reason_code: Type.Optional(Type.Union([BusinessCode, Type.Null()])),
+  gl_account_code: BusinessCode,
   dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),
 });
 export type InventoryAdjustmentLineRequestDto = Type.Static<typeof InventoryAdjustmentLineRequestDto>;

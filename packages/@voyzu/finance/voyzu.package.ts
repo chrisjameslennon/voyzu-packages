@@ -33,6 +33,9 @@ import { financialYearsModule } from "./modules/financial-years/module";
 import { financeCompaniesModule } from "./modules/finance-companies/module";
 import { countryTaxSettingsModule } from "./modules/country-tax-settings/module";
 import { inventoryLedgerModule } from "./modules/inventory-ledger/module";
+import { inventoryProcessingModule } from "./modules/inventory-processing/module";
+import { apIntegrationProcessingModule } from "./modules/ap-integration-processing/module";
+import { arIntegrationProcessingModule } from "./modules/ar-integration-processing/module";
 import { journalsModule } from "./modules/journals/module";
 import { taxModule } from "./modules/tax/module";
 import { taxLedgerModule } from "./modules/tax-ledger/module";
@@ -43,6 +46,9 @@ export const financeModules = [
   companyInventoryItemPostingProfilesModule,
   companyInventoryItemPostingProfileAssignmentsModule,
   inventoryLedgerModule,
+  inventoryProcessingModule,
+  apIntegrationProcessingModule,
+  arIntegrationProcessingModule,
   taxLedgerModule,
   apSubledgerLedgerEntriesModule,
   apSubledgerLedgerEntryEnquiryModule,
@@ -81,6 +87,9 @@ export const financePackage = {
     companyInventoryItemPostingProfilesModule,
     companyInventoryItemPostingProfileAssignmentsModule,
     inventoryLedgerModule,
+    inventoryProcessingModule,
+    apIntegrationProcessingModule,
+    arIntegrationProcessingModule,
     taxLedgerModule,
     apSubledgerLedgerEntriesModule,
     apSubledgerLedgerEntryEnquiryModule,

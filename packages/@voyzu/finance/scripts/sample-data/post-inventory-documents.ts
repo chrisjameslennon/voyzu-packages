@@ -191,6 +191,7 @@ async function postStandaloneInventoryDocuments(): Promise<void> {
         adjustment_type: "QUANTITY_ADJUSTMENT",
         quantity_delta: -5,
         reason_code: "STOCKTAKE_VARIANCE",
+        gl_account_code: "505000",
       },
       {
         line_id: 2,
@@ -199,6 +200,7 @@ async function postStandaloneInventoryDocuments(): Promise<void> {
         adjustment_type: "VALUE_ADJUSTMENT",
         book_value_delta: 75,
         reason_code: "VALUE_CORRECTION",
+        gl_account_code: "405000",
       },
     ],
   };

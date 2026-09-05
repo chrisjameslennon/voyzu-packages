@@ -26,6 +26,9 @@ import { pageRoutes as companyFinancialDocumentDefaultsPageRoutes } from "@voyzu
 import { pageRoutes as companyInventoryItemPostingProfilesPageRoutes } from "@voyzu/finance/company-inventory-item-posting-profiles/pages.routes";
 import { pageRoutes as companyInventoryItemPostingProfileAssignmentsPageRoutes } from "@voyzu/finance/company-inventory-item-posting-profile-assignments/pages.routes";
 import { pageRoutes as companyDimensionsPageRoutes } from "@voyzu/finance/company-dimensions/pages.routes";
+import { pageRoutes as inventoryProcessingPageRoutes } from "@voyzu/finance/inventory-processing/pages.routes";
+import { pageRoutes as apIntegrationProcessingPageRoutes } from "@voyzu/finance/ap-integration-processing/pages.routes";
+import { pageRoutes as arIntegrationProcessingPageRoutes } from "@voyzu/finance/ar-integration-processing/pages.routes";
 
 export const financeLeftNav = [
   {
@@ -90,6 +93,38 @@ export const financeLeftNav = [
         ],
       },
       {
+        label: "Integration",
+        icon: "sync_alt",
+        path: "#finance-integration",
+        children: [
+          { label: "Financial Document Types", routeId: companyFinancialDocumentTypesPageRoutes.list.id },
+          {
+            label: "Inventory",
+            path: "/finance/integration/inventory-processing/rules",
+            children: [
+              { label: "Movement Processing Rules", routeId: inventoryProcessingPageRoutes.rules.id },
+              { label: "Inventory Transactions", routeId: inventoryProcessingPageRoutes.inventoryTransactions.id },
+            ],
+          },
+          {
+            label: "Accounts Payable",
+            path: "/finance/integration/accounts-payable/transactions",
+            children: [
+              { label: "Rules", path: "/finance/integration/accounts-payable/rules" },
+              { label: "Accounts Payable Transactions", routeId: apIntegrationProcessingPageRoutes.transactions.id },
+            ],
+          },
+          {
+            label: "Accounts Receivable",
+            path: "/finance/integration/accounts-receivable/transactions",
+            children: [
+              { label: "Rules", path: "/finance/integration/accounts-receivable/rules" },
+              { label: "Accounts Receivable Transactions", routeId: arIntegrationProcessingPageRoutes.transactions.id },
+            ],
+          },
+        ],
+      },
+      {
         label: "Financial Periods",
         icon: "calendar_month",
         routeId: financialYearsPageRoutes.list.id,
@@ -122,7 +157,6 @@ export const financeLeftNav = [
             label: "Integration",
             path: "#finance-settings-integration",
             children: [
-              { label: "Financial Document Types", routeId: companyFinancialDocumentTypesPageRoutes.list.id },
               { label: "Financial Document Defaults", routeId: companyFinancialDocumentDefaultsPageRoutes.list.id },
               { label: "Item Posting Profiles", routeId: companyInventoryItemPostingProfilesPageRoutes.list.id },
               { label: "Posting Profile Assignments", routeId: companyInventoryItemPostingProfileAssignmentsPageRoutes.list.id },

@@ -60,14 +60,12 @@ export function FinancialDocumentTypeListContent({
   const [refreshing, setRefreshing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const uniquePurposes = useMemo(() => [...new Set(data.map((row) => row.documentPurpose))].sort(), [data]);
   const uniqueModels = useMemo(() => [...new Set(data.map((row) => row.primarySupportingLedger))].sort(), [data]);
   const uniqueStatuses = useMemo(() => [...new Set(data.map((row) => row.status))].sort(), [data]);
   const filterTabs = useMemo<FilterTab[]>(() => [
-    { key: "documentPurpose", label: "Purpose", type: "checkbox", options: uniquePurposes },
     { key: "primarySupportingLedger", label: "Supporting Ledger", type: "checkbox", options: uniqueModels },
     { key: "status", label: "Status", type: "checkbox", options: uniqueStatuses },
-  ], [uniqueModels, uniquePurposes, uniqueStatuses]);
+  ], [uniqueModels, uniqueStatuses]);
 
   const filtered = useMemo(() => {
     let result = data;
@@ -81,8 +79,6 @@ export function FinancialDocumentTypeListContent({
         row.primarySupportingLedger.toLowerCase().includes(query)
       ));
     }
-    const purposes = activeFilters.documentPurpose as string[] | undefined;
-    if (purposes?.length) result = result.filter((row) => purposes.includes(row.documentPurpose));
     const models = activeFilters.primarySupportingLedger as string[] | undefined;
     if (models?.length) result = result.filter((row) => models.includes(row.primarySupportingLedger));
     const statuses = activeFilters.status as string[] | undefined;

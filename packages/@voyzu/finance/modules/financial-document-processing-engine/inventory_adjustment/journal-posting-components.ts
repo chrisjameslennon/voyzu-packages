@@ -1,8 +1,8 @@
 import { ComponentType } from "../core/journal-posting-components";
 
 export const INVENTORY_ADJUSTMENT_JOURNAL_POSTING_COMPONENTS = {
-  description: "Inventory adjustments change inventory control and offset gains or losses through the item's posting profile.",
-  formula: "Positive: Dr Inventory Control = Cr Item Posting Profile.adjustment_gain_code; Negative: Dr Item Posting Profile.adjustment_loss_code = Cr Inventory Control",
+  description: "Inventory adjustments change inventory control using the GL account code supplied on each line.",
+  formula: "Positive: Dr Inventory Control = Cr GL code supplied; Negative: Dr GL code supplied = Cr Inventory Control",
   components: {
     inventory_control: {
       title: "Inventory control",
@@ -11,23 +11,16 @@ export const INVENTORY_ADJUSTMENT_JOURNAL_POSTING_COMPONENTS = {
       ledger: "INVENTORY",
       code: "INVENTORY_CONTROL",
     },
-    adjustment_gain: {
-      title: "Adjustment gain",
-      side: "CR",
-      type: ComponentType.ITEM_POSTING_PROFILE_CODE,
-      code: "adjustment_gain_code",
-    },
-    adjustment_loss: {
-      title: "Adjustment loss",
-      side: "DR",
-      type: ComponentType.ITEM_POSTING_PROFILE_CODE,
-      code: "adjustment_loss_code",
+    offset_gl_account: {
+      title: "GL code supplied",
+      side: "DR/CR",
+      type: ComponentType.DIRECT_GL,
+      code: "gl_account_code",
     },
   },
 } as const;
 
 export const INVENTORY_ADJUSTMENT_CONTROL_COMPONENT = INVENTORY_ADJUSTMENT_JOURNAL_POSTING_COMPONENTS.components.inventory_control;
-export const INVENTORY_ADJUSTMENT_GAIN_COMPONENT = INVENTORY_ADJUSTMENT_JOURNAL_POSTING_COMPONENTS.components.adjustment_gain;
-export const INVENTORY_ADJUSTMENT_LOSS_COMPONENT = INVENTORY_ADJUSTMENT_JOURNAL_POSTING_COMPONENTS.components.adjustment_loss;
+export const INVENTORY_ADJUSTMENT_OFFSET_COMPONENT = INVENTORY_ADJUSTMENT_JOURNAL_POSTING_COMPONENTS.components.offset_gl_account;
 
 export default INVENTORY_ADJUSTMENT_JOURNAL_POSTING_COMPONENTS;

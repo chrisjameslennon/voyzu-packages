@@ -45,7 +45,7 @@ export async function getItemPostingProfileUsages(
   );
   const results: Array<{ itemPostingProfileId: number; sku: string }> = [];
   for (const organizationId of [...new Set(rows.map((row: Record<string, unknown>) => Number(row.organization_id)))]) {
-    const inventory = await command.callOptional("@voyzu/inventory.listInventoryItems", organizationId);
+    const inventory = await command.callOptional("@voyzu/inventory.listInventoryItems", organizationId, "");
     if (!Array.isArray(inventory)) continue;
     const skuById = new Map((inventory as Array<{ id: number; sku: string }>).map((item) => [item.id, item.sku]));
     for (const row of rows as Record<string, unknown>[]) {

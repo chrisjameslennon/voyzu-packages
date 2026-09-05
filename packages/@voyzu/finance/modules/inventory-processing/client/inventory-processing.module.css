@@ -1,0 +1,5 @@
+.statusRailStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vz-grid-gap);
+}
