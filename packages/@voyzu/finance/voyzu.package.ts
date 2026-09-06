@@ -12,6 +12,7 @@ import { apSubledgerLedgerEntryEnquiryModule } from "./modules/ap-subledger-ledg
 import { apSubledgerStatementsModule } from "./modules/ap-subledger-statements/module";
 import { arSubledgerCounterpartiesModule } from "./modules/ar-subledger-counterparties/module";
 import { arSubledgerInvoicesModule } from "./modules/ar-subledger-invoices/module";
+import { operationsInvoicesModule } from "./modules/operations-invoices/module";
 import { arSubledgerLedgerEntriesModule } from "./modules/ar-subledger-ledger-entries/module";
 import { arSubledgerLedgerEntryEnquiryModule } from "./modules/ar-subledger-ledger-entry-enquiry/module";
 import { arSubledgerStatementsModule } from "./modules/ar-subledger-statements/module";
@@ -34,7 +35,6 @@ import { financeCompaniesModule } from "./modules/finance-companies/module";
 import { countryTaxSettingsModule } from "./modules/country-tax-settings/module";
 import { inventoryLedgerModule } from "./modules/inventory-ledger/module";
 import { inventoryProcessingModule } from "./modules/inventory-processing/module";
-import { apIntegrationProcessingModule } from "./modules/ap-integration-processing/module";
 import { arIntegrationProcessingModule } from "./modules/ar-integration-processing/module";
 import { journalsModule } from "./modules/journals/module";
 import { taxModule } from "./modules/tax/module";
@@ -47,7 +47,6 @@ export const financeModules = [
   companyInventoryItemPostingProfileAssignmentsModule,
   inventoryLedgerModule,
   inventoryProcessingModule,
-  apIntegrationProcessingModule,
   arIntegrationProcessingModule,
   taxLedgerModule,
   apSubledgerLedgerEntriesModule,
@@ -60,6 +59,7 @@ export const financeModules = [
   arSubledgerCounterpartiesModule,
   arSubledgerStatementsModule,
   arSubledgerInvoicesModule,
+  operationsInvoicesModule,
   companyInventoryControlAccountsModule,
   companyGlAccountsModule,
   companyGlAccountCategoriesModule,
@@ -88,7 +88,6 @@ export const financePackage = {
     companyInventoryItemPostingProfileAssignmentsModule,
     inventoryLedgerModule,
     inventoryProcessingModule,
-    apIntegrationProcessingModule,
     arIntegrationProcessingModule,
     taxLedgerModule,
     apSubledgerLedgerEntriesModule,
@@ -101,6 +100,7 @@ export const financePackage = {
     arSubledgerCounterpartiesModule,
     arSubledgerStatementsModule,
     arSubledgerInvoicesModule,
+    operationsInvoicesModule,
     companyInventoryControlAccountsModule,
     companyGlAccountsModule,
     companyGlAccountCategoriesModule,

@@ -1,0 +1,53 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.documentPanel {
+  padding: 1rem;
+  border: 1px solid var(--voyzu-color-info-border);
+  border-radius: var(--voyzu-radius-surface);
+  background: var(--voyzu-color-info-bg);
+}
+
+.documentPanelLabel {
+  margin-bottom: 0.875rem;
+  color: var(--voyzu-color-info-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.documentPanelFields {
+  display: grid;
+  gap: 1rem;
+}
+
+.linesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--voyzu-color-surface-secondary);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 5rem;
+  resize: vertical;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--voyzu-color-border);
+  border-radius: var(--voyzu-radius-control);
+  background: var(--voyzu-color-surface);
+  color: var(--voyzu-color-text);
+  font: inherit;
+  outline: none;
+  box-shadow: var(--voyzu-shadow-surface);
+}
+
+.textarea:focus {
+  border-color: var(--voyzu-color-primary-focus-ring);
+  box-shadow: 0 0 0 2px var(--voyzu-color-surface), 0 0 0 5px var(--voyzu-color-primary-focus-ring);
+}

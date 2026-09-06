@@ -1,0 +1,83 @@
+{
+  "name": "@voyzu/commercial",
+  "version": "0.1.0",
+  "description": "Commercial customers, suppliers, sales, purchasing and products for Voyzu.",
+  "repository": "https://github.com/chrisjameslennon/voyzu-packages.git",
+  "private": true,
+  "type": "module",
+  "voyzu": {
+    "voyzu-package": true,
+    "allowInstall": true,
+    "dependencies": [],
+    "pageRootPaths": [
+      "/commercial"
+    ],
+    "apiRootPaths": []
+  },
+  "exports": {
+    "./voyzu-package": {
+      "types": "./voyzu.package.ts",
+      "import": "./voyzu.package.ts"
+    },
+    "./navigation": {
+      "types": "./navigation/index.ts",
+      "import": "./navigation/index.ts"
+    },
+    "./modules/customers": {
+      "types": "./modules/customers/module.ts",
+      "import": "./modules/customers/module.ts"
+    },
+    "./customers/pages.routes": {
+      "types": "./modules/customers/pages.routes.ts",
+      "import": "./modules/customers/pages.routes.ts"
+    },
+    "./modules/suppliers": {
+      "types": "./modules/suppliers/module.ts",
+      "import": "./modules/suppliers/module.ts"
+    },
+    "./suppliers/pages.routes": {
+      "types": "./modules/suppliers/pages.routes.ts",
+      "import": "./modules/suppliers/pages.routes.ts"
+    },
+    "./modules/sales": {
+      "types": "./modules/sales/module.ts",
+      "import": "./modules/sales/module.ts"
+    },
+    "./sales/pages.routes": {
+      "types": "./modules/sales/pages.routes.ts",
+      "import": "./modules/sales/pages.routes.ts"
+    },
+    "./modules/purchasing": {
+      "types": "./modules/purchasing/module.ts",
+      "import": "./modules/purchasing/module.ts"
+    },
+    "./purchasing/pages.routes": {
+      "types": "./modules/purchasing/pages.routes.ts",
+      "import": "./modules/purchasing/pages.routes.ts"
+    },
+    "./modules/products": {
+      "types": "./modules/products/module.ts",
+      "import": "./modules/products/module.ts"
+    },
+    "./products/pages.routes": {
+      "types": "./modules/products/pages.routes.ts",
+      "import": "./modules/products/pages.routes.ts"
+    },
+    "./modules/settings": {
+      "types": "./modules/settings/module.ts",
+      "import": "./modules/settings/module.ts"
+    },
+    "./settings/pages.routes": {
+      "types": "./modules/settings/pages.routes.ts",
+      "import": "./modules/settings/pages.routes.ts"
+    }
+  },
+  "peerDependencies": {
+    "@voyzu/types": "^0.1.0",
+    "@voyzu/ui-components": "^0.1.0",
+    "@voyzu/ui-layout": "^0.1.0",
+    "@voyzu/ui-style": "^0.1.0",
+    "react": "^19",
+    "server-only": "^0.0.1"
+  }
+}

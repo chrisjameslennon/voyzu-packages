@@ -97,22 +97,6 @@ export function InventoryOrganizationSwitcher({ isCollapsed }: { isCollapsed: bo
 
       {isOpen && (
         <div className={`${styles.panel} ${isCollapsed ? styles.panelCollapsed : ""}`}>
-          <button
-            className={styles.adminOption}
-            type="button"
-            onClick={() => {
-              setIsOpen(false);
-              router.push("/inventory/admin");
-            }}
-          >
-            <span className={`material-symbols-outlined ${styles.adminIcon}`}>inventory_2</span>
-            <span className={styles.optionContent}>
-              <span className={styles.optionName}>Inventory Admin</span>
-              <span className={styles.optionMeta}>Manage inventory settings</span>
-            </span>
-            <span className="material-symbols-outlined">chevron_right</span>
-          </button>
-          <div className={styles.panelDivider} />
           <div className={styles.panelLabel}>Select Organization</div>
           <div className={styles.grid}>
             {organizations.map((organization) => {

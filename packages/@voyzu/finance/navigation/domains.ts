@@ -16,6 +16,7 @@ import { pageRoutes as arSubledgerLedgerEntryEnquiryRouteManifest } from "@voyzu
 import { pageRoutes as arSubledgerCounterpartiesRouteManifest } from "@voyzu/finance/ar-subledger-counterparties/pages.routes";
 import { pageRoutes as arSubledgerStatementsRouteManifest } from "@voyzu/finance/ar-subledger-statements/pages.routes";
 import { pageRoutes as arSubledgerInvoicesRouteManifest } from "@voyzu/finance/ar-subledger-invoices/pages.routes";
+import { pageRoutes as operationsInvoicesRouteManifest } from "@voyzu/finance/operations-invoices/pages.routes";
 import { pageRoutes as companyInventoryControlAccountsRouteManifest } from "@voyzu/finance/company-inventory-control-accounts/pages.routes";
 import { pageRoutes as companyGlAccountsRouteManifest } from "@voyzu/finance/company-gl-accounts/pages.routes";
 import { pageRoutes as companyGlAccountCategoriesRouteManifest } from "@voyzu/finance/company-gl-account-categories/pages.routes";
@@ -28,7 +29,6 @@ import { pageRoutes as companyFinancialDocumentTypesRouteManifest } from "@voyzu
 import { pageRoutes as companyTaxControlAccountsRouteManifest } from "@voyzu/finance/company-tax-control-accounts/pages.routes";
 import { pageRoutes as financialYearsRouteManifest } from "@voyzu/finance/financial-years/pages.routes";
 import { pageRoutes as inventoryProcessingRouteManifest } from "@voyzu/finance/inventory-processing/pages.routes";
-import { pageRoutes as apIntegrationProcessingRouteManifest } from "@voyzu/finance/ap-integration-processing/pages.routes";
 import { pageRoutes as arIntegrationProcessingRouteManifest } from "@voyzu/finance/ar-integration-processing/pages.routes";
 import { financeLeftNav } from "./finance.left-nav";
 const financePageRoutes = [
@@ -48,6 +48,7 @@ const financePageRoutes = [
   arSubledgerCounterpartiesRouteManifest,
   arSubledgerStatementsRouteManifest,
   arSubledgerInvoicesRouteManifest,
+  operationsInvoicesRouteManifest,
   companyInventoryControlAccountsRouteManifest,
   companyGlAccountsRouteManifest,
   companyGlAccountCategoriesRouteManifest,
@@ -60,7 +61,6 @@ const financePageRoutes = [
   companyTaxControlAccountsRouteManifest,
   financialYearsRouteManifest,
   inventoryProcessingRouteManifest,
-  apIntegrationProcessingRouteManifest,
   arIntegrationProcessingRouteManifest,
 ] as const;
 

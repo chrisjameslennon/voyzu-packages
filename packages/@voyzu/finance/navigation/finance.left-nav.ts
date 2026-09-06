@@ -27,11 +27,57 @@ import { pageRoutes as companyInventoryItemPostingProfilesPageRoutes } from "@vo
 import { pageRoutes as companyInventoryItemPostingProfileAssignmentsPageRoutes } from "@voyzu/finance/company-inventory-item-posting-profile-assignments/pages.routes";
 import { pageRoutes as companyDimensionsPageRoutes } from "@voyzu/finance/company-dimensions/pages.routes";
 import { pageRoutes as inventoryProcessingPageRoutes } from "@voyzu/finance/inventory-processing/pages.routes";
-import { pageRoutes as apIntegrationProcessingPageRoutes } from "@voyzu/finance/ap-integration-processing/pages.routes";
-import { pageRoutes as arIntegrationProcessingPageRoutes } from "@voyzu/finance/ar-integration-processing/pages.routes";
 
 export const financeLeftNav = [
   {
+    label: "Operations",
+    items: [
+      {
+        label: "Accounts Receivable",
+        icon: "receipt_long",
+        path: "/finance/operations/accounts-receivable/invoices",
+        children: [
+          { label: "Invoices", path: "/finance/operations/accounts-receivable/invoices" },
+          { label: "Sales Items", path: "/finance/operations/accounts-receivable/sales-items" },
+          { label: "Statements", path: "/finance/operations/accounts-receivable/statements" },
+          { label: "Counterparties", path: "/finance/operations/accounts-receivable/counterparties" },
+        ],
+      },
+      {
+        label: "Accounts Payable",
+        icon: "payments",
+        path: "/finance/operations/accounts-payable/bills",
+        children: [
+          { label: "Bills", path: "/finance/operations/accounts-payable/bills" },
+          { label: "Purchase Items", path: "/finance/operations/accounts-payable/purchase-items" },
+          { label: "Statements", path: "/finance/operations/accounts-payable/statements" },
+          { label: "Counterparties", path: "/finance/operations/accounts-payable/counterparties" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Integration",
+    items: [
+      {
+        label: "Financial Document Types",
+        icon: "description",
+        routeId: companyFinancialDocumentTypesPageRoutes.list.id,
+      },
+      {
+        label: "Inventory",
+        icon: "inventory_2",
+        path: "/finance/integration/inventory-processing/rules",
+        children: [
+          { label: "Item Valuation", path: "/finance/inventory/item-valuation" },
+          { label: "Movement Processing Rules", routeId: inventoryProcessingPageRoutes.rules.id },
+          { label: "Inventory Transactions", routeId: inventoryProcessingPageRoutes.inventoryTransactions.id },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Accounting",
     items: [
       {
         label: "Company General Ledger",
@@ -88,40 +134,6 @@ export const financeLeftNav = [
             children: [
               { label: "Ledger Entries", routeId: inventoryLedgerPageRoutes.list.id },
               { label: "Stock Valuation", routeId: inventoryLedgerPageRoutes.valuation.id },
-            ],
-          },
-        ],
-      },
-      {
-        label: "Inventory",
-        icon: "inventory_2",
-        path: "/finance/integration/inventory-processing/rules",
-        children: [
-          { label: "Item Valuation", path: "/finance/inventory/item-valuation" },
-          { label: "Movement Processing Rules", routeId: inventoryProcessingPageRoutes.rules.id },
-          { label: "Inventory Transactions", routeId: inventoryProcessingPageRoutes.inventoryTransactions.id },
-        ],
-      },
-      {
-        label: "Integration",
-        icon: "sync_alt",
-        path: "#finance-integration",
-        children: [
-          { label: "Financial Document Types", routeId: companyFinancialDocumentTypesPageRoutes.list.id },
-          {
-            label: "Accounts Payable",
-            path: "/finance/integration/accounts-payable/transactions",
-            children: [
-              { label: "Rules", path: "/finance/integration/accounts-payable/rules" },
-              { label: "Accounts Payable Transactions", routeId: apIntegrationProcessingPageRoutes.transactions.id },
-            ],
-          },
-          {
-            label: "Accounts Receivable",
-            path: "/finance/integration/accounts-receivable/transactions",
-            children: [
-              { label: "Rules", path: "/finance/integration/accounts-receivable/rules" },
-              { label: "Accounts Receivable Transactions", routeId: arIntegrationProcessingPageRoutes.transactions.id },
             ],
           },
         ],
