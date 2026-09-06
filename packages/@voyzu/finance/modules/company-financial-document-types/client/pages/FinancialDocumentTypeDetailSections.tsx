@@ -195,7 +195,7 @@ function DynamicPostingEntryPointCard({
     : undefined;
   const isCallerSuppliedGl = card.documentDefault?.label === "GL code supplied";
   const showItemPostingProfiles = supportsItems && card.documentDefault?.label === "Resolved per item profile";
-  const showInventoryProcessingRules = processorCode === "INVENTORY_ADJUSTMENT" && isCallerSuppliedGl;
+  const showInventoryProcessingRules = processorCode.startsWith("INVENTORY_") && isCallerSuppliedGl;
   const itemPostingProfilesHref = routePrefix.startsWith("/finance")
     ? "/finance/inventory/item-posting-profiles"
     : `${routePrefix}/inventory/item-posting-profiles`;
@@ -284,7 +284,7 @@ function DynamicPostingEntryPointCard({
       {showInventoryProcessingRules && (
         <div className={localStyles.itemPostingProfilesBox}>
           <h4>Inventory Processing Rules</h4>
-          <p>Inventory Processing Rules resolve and supply the GL account code for each adjustment line before the posting engine is called.</p>
+          <p>Inventory Processing Rules resolve and supply the GL account code for each movement line before the posting engine is called.</p>
           <a className={`${typography.link} ${localStyles.itemPostingProfilesLink}`} href="/finance/integration/inventory-processing/rules">
             Manage inventory processing rules
           </a>

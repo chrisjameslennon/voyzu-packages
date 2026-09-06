@@ -93,19 +93,21 @@ export const financeLeftNav = [
         ],
       },
       {
+        label: "Inventory",
+        icon: "inventory_2",
+        path: "/finance/integration/inventory-processing/rules",
+        children: [
+          { label: "Item Valuation", path: "/finance/inventory/item-valuation" },
+          { label: "Movement Processing Rules", routeId: inventoryProcessingPageRoutes.rules.id },
+          { label: "Inventory Transactions", routeId: inventoryProcessingPageRoutes.inventoryTransactions.id },
+        ],
+      },
+      {
         label: "Integration",
         icon: "sync_alt",
         path: "#finance-integration",
         children: [
           { label: "Financial Document Types", routeId: companyFinancialDocumentTypesPageRoutes.list.id },
-          {
-            label: "Inventory",
-            path: "/finance/integration/inventory-processing/rules",
-            children: [
-              { label: "Movement Processing Rules", routeId: inventoryProcessingPageRoutes.rules.id },
-              { label: "Inventory Transactions", routeId: inventoryProcessingPageRoutes.inventoryTransactions.id },
-            ],
-          },
           {
             label: "Accounts Payable",
             path: "/finance/integration/accounts-payable/transactions",

@@ -8,6 +8,7 @@ export const InventoryIssueLineRequestDto = StrictObject({
   inventory_item_code: BusinessCode,
   description: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   quantity_delta: Type.Union([Type.Number(), Type.String()]),
+  gl_account_code: BusinessCode,
   issue_purpose: Type.Union([Type.Literal("SOLD"), Type.Literal("CONSUMED")]),
   dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),
 });

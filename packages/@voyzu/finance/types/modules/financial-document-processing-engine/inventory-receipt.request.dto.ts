@@ -15,6 +15,7 @@ export const InventoryReceiptLineRequestDto = StrictObject({
   inventory_item_code: BusinessCode,
   description: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   quantity_delta: Type.Union([Type.Number(), Type.String()]),
+  gl_account_code: BusinessCode,
   valuation_method: Type.Union([Type.Literal("SUPPLIED_UNIT_BOOK_VALUE"), Type.Literal("CURRENT_AVERAGE_BOOK_VALUE"), Type.Literal("SOURCE_LINE_UNIT_VALUE")]),
   unit_book_value: Type.Optional(Type.Union([Type.Number(), Type.String(), Type.Null()])),
   dimensions: Type.Optional(Type.Union([Type.Record(Type.String(), Type.String()), Type.Null()])),

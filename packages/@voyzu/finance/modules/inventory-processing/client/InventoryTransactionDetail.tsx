@@ -1,89 +1,101 @@
 "use client";
 
-import { CompanyAuditPanel, getStatusSemanticColor } from "@voyzu/finance/common/client";
-import type { FinanceInventoryActivity } from "@voyzu/finance/types/modules/inventory-processing";
-import { Badge, Breadcrumbs, Input } from "@voyzu/ui-components";
-import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { AuditPanel } from "@voyzu/audit/client";
+import { Badge, Breadcrumbs, Button, EditableGrid, Input, TabGroup, type EditableGridColumn, type TabDef } from "@voyzu/ui-components";
+import reportLayout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
+import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
-import { DetailBackButton } from "@voyzu/ui-surface/client";
+import { DetailBackButton, detailLinkWithBackContext } from "@voyzu/ui-surface/client";
 
-import localStyles from "./inventory-processing.module.css";
+import styles from "./inventory-processing.module.css";
+import type { InventoryTransactionProjection, InventoryTransactionProjectionLine, InventoryTransactionProjectionOrganization } from "./inventory-transaction-projection.types";
+import { InventoryTransactionReportTemplate, inventoryTransactionTypeLabel } from "./InventoryTransactionReportTemplate";
 
-const dateTime = (value: string | null) => value ? new Date(value).toLocaleString() : "";
-const text = (value: string | number | null) => value == null ? "" : String(value);
-const label = (value: string) => value.replaceAll("_", " ");
+const reasonLabels: Record<string, string> = {
+  STOCK_VARIANCE: "Stock variance", DAMAGED: "Damaged stock", MISSING: "Missing stock", FOUND: "Found stock",
+  DATA_CORRECTION: "Data correction", OTHER: "Other", SALE: "Sale / customer fulfilment",
+  INTERNAL_CONSUMPTION: "Internal consumption", WRITE_OFF_DAMAGED: "Write-off - damaged",
+  WRITE_OFF_OTHER: "Write-off - other", SUPPLIER_RETURN: "Return to supplier", SAMPLE: "Sample / promotional use",
+  PURCHASE: "Purchase / supplier receipt", CUSTOMER_RETURN: "Customer return", OPENING_STOCK: "Opening stock",
+  PRODUCTION: "Produced / manufactured stock",
+};
 
-export function InventoryTransactionDetail({ activity }: { activity: FinanceInventoryActivity }) {
-  const fields = [
-    { label: "Finance Activity ID", value: activity.id },
-    { label: "Inventory Activity ID", value: activity.inventoryFinancialActivityId },
-    { label: "Inventory Transaction Line ID", value: activity.inventoryTransactionLineId },
-    { label: "Inventory Document", value: activity.inventoryDocumentCode },
-    { label: "Movement", value: label(activity.inventoryDocumentType) },
-    { label: "Reason", value: activity.reasonCode ? label(activity.reasonCode) : null },
-    { label: "Activity Date", value: dateTime(activity.activityDate) },
-    { label: "Item ID", value: activity.itemId },
-    { label: "Item Code", value: activity.itemCode },
-    { label: "Item Name", value: activity.itemName },
-    { label: "Quantity Change", value: activity.quantityChange },
-  ];
-  const financeDocumentFields = [
-    { label: "Document Type", value: activity.financeDocumentType },
-    { label: "Document ID", value: activity.financeDocumentId },
-    { label: "Document Code", value: activity.financeDocumentCode },
-    { label: "Processed At", value: dateTime(activity.processedAt) },
-  ];
+function detectMMDD(): boolean {
+  try {
+    const parts = new Intl.DateTimeFormat(undefined, { month: "numeric", day: "numeric" }).formatToParts(new Date(2000, 2, 15));
+    return parts.findIndex((part) => part.type === "month") < parts.findIndex((part) => part.type === "day");
+  } catch { return false; }
+}
 
-  return (
-    <div className={`${layout.detailView} ${layout.detailViewWithStatusRail}`}>
-      <header className={layout.detailHeader}>
-        <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
-        <div className={layout.slotTitle}>
-          <div className={detailStyles.title}>
-            <div className={detailStyles.titleIcon}><span className={`material-symbols-outlined ${detailStyles.titleIconSymbol}`}>sync_alt</span></div>
-            <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{activity.inventoryDocumentCode}</h1>
-          </div>
+function formatDate(value: string, isMMDD: boolean): string {
+  const date = new Date(value);
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return isMMDD ? `${month}/${day}/${year}` : `${day}/${month}/${year}`;
+}
+
+const columns: EditableGridColumn<InventoryTransactionProjectionLine>[] = [
+  { key: "sku", label: "SKU", type: "text", readOnly: true, width: 140 },
+  { key: "itemName", label: "Item Name", type: "text", readOnly: true, width: 250 },
+  { key: "warehouse", label: "Warehouse", type: "text", readOnly: true, width: 190 },
+  { key: "quantityChange", label: "Quantity Change", type: "number", readOnly: true, align: "right", width: 128, format: (value) => `${Number(value) > 0 ? "+" : ""}${value}` },
+  { key: "reasonCode", label: "Reason", type: "text", readOnly: true, width: 180, format: (value) => value == null ? "—" : (reasonLabels[String(value)] ?? String(value)) },
+];
+
+export function InventoryTransactionDetail({ record, organization, financeActivityId }: {
+  record: InventoryTransactionProjection;
+  organization: InventoryTransactionProjectionOrganization;
+  financeActivityId: number;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isMMDD, setIsMMDD] = useState(false);
+  const [generatedAt, setGeneratedAt] = useState("");
+  const [displayDate, setDisplayDate] = useState("");
+  useEffect(() => {
+    setIsMMDD(detectMMDD());
+    setGeneratedAt(new Date().toLocaleString(undefined, { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }));
+    setDisplayDate(new Date(record.date).toLocaleString());
+  }, [record.date]);
+
+  const mutationId = record.audit.updated.mutationId ?? record.audit.created.mutationId;
+  const auditFilter = mutationId ? `mutationId=${encodeURIComponent(mutationId)}` : `entityType=inventory_transaction&entityId=${record.id}`;
+  const documentType = inventoryTransactionTypeLabel(record.type);
+  const printablePath = `/finance/integration/inventory-processing/inventory-transactions/${financeActivityId}/printable`;
+  const pdfParams = new URLSearchParams({ orientation: "portrait", path: printablePath, filename: `${record.type.toLowerCase().replaceAll("_", "-")}-${record.code}` });
+
+  const details = <div className={styles.detailsTab}>
+    <main className={styles.detailsMain}>
+      <section className={detailStyles.card}>
+        <h2 className={typography.sectionHeading}>Transaction Details</h2>
+        <div className={styles.fields}>
+          <div className={styles.field}><label className={typography.fieldLabel}>Code</label><Input value={record.code} disabled /></div>
+          <div className={styles.field}><label className={typography.fieldLabel}>Date</label><Input value={displayDate} disabled /></div>
+          <div className={styles.field}><label className={typography.fieldLabel}>Reference</label><Input value={record.reference ?? ""} disabled /></div>
+          {record.notes ? <div className={`${styles.field} ${styles.wide}`}><label className={typography.fieldLabel}>Notes</label><textarea className={styles.textarea} rows={2} value={record.notes} disabled readOnly /></div> : null}
         </div>
-        <div className={layout.slotActions}><div className={detailStyles.headerActions}><DetailBackButton fallbackHref="/finance/integration/inventory-processing/inventory-transactions" /></div></div>
-      </header>
+      </section>
+      <section className={detailStyles.card}><h2 className={typography.sectionHeading}>Transaction Lines</h2><EditableGrid className={styles.gridWithoutHeaderIcons} columns={columns} initialRows={record.lines} emptyText="This transaction has no lines" ariaLabel="Stock transaction lines" /></section>
+    </main>
+    <aside className={styles.detailsRail}>
+      <div className={detailStyles.card}><label className={typography.fieldLabel}>Activity Type</label><Badge variant="soft" size="x-large" color="info">{documentType.toUpperCase()}</Badge></div>
+      <div className={`${detailStyles.card} ${styles.linkedDocumentsCard}`}>
+        <h2 className={typography.sectionHeading}>Linked Documents</h2>
+        {record.linkedDocuments.length ? <div className={styles.linkedDocumentList}>{record.linkedDocuments.map((document) => <div className={styles.linkedDocumentEntry} key={`${document.documentType}-${document.documentId}`}><div className={styles.linkedDocumentType}>{document.documentType.replaceAll("_", " ")}</div><div className={styles.linkedDocumentDetails}>{document.href ? <Link className={styles.documentLink} href={document.href}>{document.documentCode}</Link> : <span>{document.documentCode}</span>}<span>{formatDate(document.creationDate, isMMDD)}</span></div></div>)}</div> : <p className={styles.emptyLinkedDocuments}>No linked documents.</p>}
+      </div>
+      <AuditPanel id={record.id} creationDate={record.audit.created.date} updatedDate={record.audit.updated.date} creationActorType={record.audit.created.actorType} creationUser={record.audit.created.user} updatedActorType={record.audit.updated.actorType} updatedUser={record.audit.updated.user} auditHref={detailLinkWithBackContext(`/settings/audit?${auditFilter}`, "audit", pathname)} onNavigate={(href) => router.push(href)} />
+    </aside>
+  </div>;
 
-      <aside className={layout.statusSection}>
-        <div className={localStyles.statusRailStack}>
-          <div className={detailStyles.card}>
-            <div className={detailStyles.fieldGroup}>
-              <label className={typography.fieldLabel}>Processing Status</label>
-              <Badge variant="soft" size="x-large" color={getStatusSemanticColor(activity.processingStatus)}>{label(activity.processingStatus)}</Badge>
-            </div>
-          </div>
-          <CompanyAuditPanel
-            id={activity.id}
-            creationDate={activity.audit.created.date}
-            updatedDate={activity.audit.updated.date}
-            creationActorType={activity.audit.created.actorType}
-            creationUser={activity.audit.created.user}
-            updatedActorType={activity.audit.updated.actorType}
-            updatedUser={activity.audit.updated.user}
-            auditHref={`/settings/audit?entityType=finance_inventory_activity&entityId=${activity.id}`}
-            mutationId={activity.audit.updated.mutationId ?? activity.audit.created.mutationId}
-          />
-        </div>
-      </aside>
+  const tabs: TabDef[] = [
+    { key: "document", label: "Document", content: <div className={styles.tabContent}><div className={styles.toolbar}><Button variant="secondary" icon="open_in_new" title="Printable Page" onClick={() => window.open(printablePath, "_blank", "noopener,noreferrer")} /><Button variant="secondary" icon="picture_as_pdf" title="View PDF" onClick={() => window.open(`/api/capability/pdf-view?${pdfParams.toString()}`, "_blank", "noopener,noreferrer")} /><Button variant="secondary" icon="download" title="Download PDF" onClick={() => { window.location.href = `/api/capability/pdf?${pdfParams.toString()}`; }} /></div><div className={styles.documentShell}><div className={`${reportLayout.document} ${styles.portraitDocument}`}><InventoryTransactionReportTemplate record={record} organization={organization} generatedAt={generatedAt} /></div></div></div> },
+    { key: "details", label: "Details", content: details },
+  ];
 
-      <main className={layout.mainSection}>
-        <section className={detailStyles.card}>
-          <h2 className={typography.sectionHeading}>Inventory Activity</h2>
-          <div className={detailStyles.formGrid}>
-            {fields.map((field) => <label key={field.label} className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>{field.label}</span><Input value={text(field.value)} disabled /></label>)}
-          </div>
-        </section>
-        <section className={detailStyles.card}>
-          <h2 className={typography.sectionHeading}>Finance Document</h2>
-          <div className={detailStyles.formGrid}>
-            {financeDocumentFields.map((field) => <label key={field.label} className={detailStyles.fieldGroup}><span className={typography.fieldLabel}>{field.label}</span><Input value={text(field.value)} disabled /></label>)}
-          </div>
-        </section>
-      </main>
-    </div>
-  );
+  return <div className={reportLayout.reportView}><header className={reportLayout.reportHeader}><div className={reportLayout.slotBreadcrumb}><Breadcrumbs /></div><div className={reportLayout.slotTitle}><div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>history</span></div><div className={reportLayout.slotTitleText}><h1 className={`${typography.pageTitle} ${reportLayout.pageTitleResponsive}`}>{documentType} {record.code}</h1></div></div><div className={reportLayout.slotTitleActions}><DetailBackButton fallbackHref="/finance/integration/inventory-processing/inventory-transactions" /></div></header><div className={reportLayout.slotDocument}><TabGroup tabs={tabs} defaultKey="document" /></div></div>;
 }

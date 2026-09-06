@@ -14,7 +14,6 @@ export type InventoryProcessingDocumentType = Type.Static<typeof InventoryProces
 export const InventoryProcessingStatusDto = Type.Union([
   Type.Literal("RECEIVED"),
   Type.Literal("PROCESSED"),
-  Type.Literal("ERROR"),
 ]);
 export type InventoryProcessingStatus = Type.Static<typeof InventoryProcessingStatusDto>;
 

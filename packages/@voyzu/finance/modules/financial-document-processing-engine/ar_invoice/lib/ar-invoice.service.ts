@@ -586,11 +586,16 @@ function inventoryIssueRequest(context: ResolvedContext): InventoryIssueRequestD
     },
     lines: inventoryLines.map((line) => {
       if (line.quantity == null) throw new InputValidationError(`AR invoice inventory line ${line.line_id} requires quantity`);
+      const profile = context.data.itemPostingProfilesByItemCode.get(line.inventory_item_code!);
+      if (!profile?.cogs_gl_account_code) {
+        throw new InputValidationError(`AR invoice inventory line ${line.line_id} requires a cost of goods sold GL account`);
+      }
       return {
         line_id: line.line_id,
         inventory_item_code: line.inventory_item_code!,
         description: line.line_description,
         quantity_delta: -line.quantity,
+        gl_account_code: profile.cogs_gl_account_code,
         issue_purpose: "SOLD",
         dimensions: line.dimensions,
       };

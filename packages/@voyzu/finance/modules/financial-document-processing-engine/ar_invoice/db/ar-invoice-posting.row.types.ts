@@ -58,6 +58,11 @@ export interface ArInvoiceItemPostingProfileRow {
   revenue_gl_account_name: string | null;
   revenue_gl_account_type: AccountType | null;
   revenue_gl_account_status: "ACTIVE" | "INACTIVE" | null;
+  cogs_gl_account_id: number | null;
+  cogs_gl_account_code: string | null;
+  cogs_gl_account_name: string | null;
+  cogs_gl_account_type: AccountType | null;
+  cogs_gl_account_status: "ACTIVE" | "INACTIVE" | null;
 }
 
 export interface ControlAccountPostingRow {

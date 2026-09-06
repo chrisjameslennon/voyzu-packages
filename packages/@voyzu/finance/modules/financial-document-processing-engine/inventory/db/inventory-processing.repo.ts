@@ -83,28 +83,7 @@ function inventoryControlAccountRow(row: Record<string, unknown>): InventoryCont
   };
 }
 
-function inventoryItemRow(row: Record<string, unknown>): InventoryItemPostingRow {
-  return {
-    id: Number(row.id),
-    code: String(row.code),
-    name: String(row.name),
-    description: String(row.description),
-    item_type: row.item_type as InventoryItemPostingRow["item_type"],
-    is_sold: Boolean(row.is_sold),
-    is_purchased: Boolean(row.is_purchased),
-    is_consumed: Boolean(row.is_consumed),
-    status: row.status as "ACTIVE" | "INACTIVE",
-    posting_profile_code: String(row.posting_profile_code),
-    posting_profile_name: String(row.posting_profile_name),
-    posting_profile_status: row.posting_profile_status as "ACTIVE" | "INACTIVE",
-    cogs_gl_account: glAccount("cogs", row),
-    consumption_gl_account: glAccount("consumption", row),
-    adjustment_gain_gl_account: glAccount("adjustment_gain", row),
-    adjustment_loss_gl_account: glAccount("adjustment_loss", row),
-  };
-}
-
-function adjustmentInventoryItemRow(item: OperationalInventoryItem): InventoryItemPostingRow {
+function operationalInventoryItemRow(item: OperationalInventoryItem): InventoryItemPostingRow {
   return {
     id: item.id,
     code: item.sku,
@@ -196,62 +175,8 @@ export class InventoryProcessingRepo {
     return rows[0] ? inventoryControlAccountRow(rows[0] as Record<string, unknown>) : null;
   }
 
-  async listInventoryItems(companyId: number, items: OperationalInventoryItem[]): Promise<InventoryItemPostingRow[]> {
-    const profileIds = items.flatMap((item) => item.itemPostingProfileId == null ? [] : [item.itemPostingProfileId]);
-    if (profileIds.length === 0) return [];
-    const { rows } = await this.db.query(
-      `SELECT ipp.id::int AS posting_profile_id,
-              ipp.is_sold, ipp.is_purchased, ipp.is_consumed,
-              ipp.code AS posting_profile_code,
-              ipp.name AS posting_profile_name,
-              ipp.status AS posting_profile_status,
-              cogs.id AS cogs_gl_account_id,
-              cogs.code AS cogs_gl_account_code,
-              cogs.name AS cogs_gl_account_name,
-              cogs.account_type AS cogs_gl_account_type,
-              cogs.status AS cogs_gl_account_status,
-              consumption.id AS consumption_gl_account_id,
-              consumption.code AS consumption_gl_account_code,
-              consumption.name AS consumption_gl_account_name,
-              consumption.account_type AS consumption_gl_account_type,
-              consumption.status AS consumption_gl_account_status,
-              adjustment_gain.id AS adjustment_gain_gl_account_id,
-              adjustment_gain.code AS adjustment_gain_gl_account_code,
-              adjustment_gain.name AS adjustment_gain_gl_account_name,
-              adjustment_gain.account_type AS adjustment_gain_gl_account_type,
-              adjustment_gain.status AS adjustment_gain_gl_account_status,
-              adjustment_loss.id AS adjustment_loss_gl_account_id,
-              adjustment_loss.code AS adjustment_loss_gl_account_code,
-              adjustment_loss.name AS adjustment_loss_gl_account_name,
-              adjustment_loss.account_type AS adjustment_loss_gl_account_type,
-              adjustment_loss.status AS adjustment_loss_gl_account_status
-       FROM item_posting_profile ipp
-       LEFT JOIN gl_account cogs ON cogs.finance_organization_id = ipp.finance_organization_id AND cogs.id = ipp.cogs_gl_account_id
-       LEFT JOIN gl_account consumption ON consumption.finance_organization_id = ipp.finance_organization_id AND consumption.id = ipp.consumption_gl_account_id
-       LEFT JOIN gl_account adjustment_gain ON adjustment_gain.finance_organization_id = ipp.finance_organization_id AND adjustment_gain.id = ipp.adjustment_gain_gl_account_id
-       LEFT JOIN gl_account adjustment_loss ON adjustment_loss.finance_organization_id = ipp.finance_organization_id AND adjustment_loss.id = ipp.adjustment_loss_gl_account_id
-       WHERE ipp.finance_organization_id = $1
-         AND ipp.id = ANY($2::bigint[])`,
-      [companyId, profileIds],
-    );
-    const profiles = new Map(rows.map((row: Record<string, unknown>) => [Number(row.posting_profile_id), row]));
-    return items.flatMap((item) => {
-      const profile = item.itemPostingProfileId == null ? undefined : profiles.get(item.itemPostingProfileId);
-      if (!profile) return [];
-      return [inventoryItemRow({
-        ...profile,
-        id: item.id,
-        code: item.sku,
-        name: item.name,
-        description: item.description,
-        item_type: item.quantityTracked ? "INVENTORY" : "NON_INVENTORY",
-        status: item.status,
-      })];
-    });
-  }
-
-  listAdjustmentInventoryItems(items: OperationalInventoryItem[]): InventoryItemPostingRow[] {
-    return items.map(adjustmentInventoryItemRow);
+  listOperationalInventoryItems(items: OperationalInventoryItem[]): InventoryItemPostingRow[] {
+    return items.map(operationalInventoryItemRow);
   }
 
   async listGlAccountsByCode(companyId: number, codes: string[]): Promise<GlAccountPostingRow[]> {

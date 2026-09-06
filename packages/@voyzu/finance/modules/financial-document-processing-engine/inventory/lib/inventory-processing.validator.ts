@@ -79,8 +79,8 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 const COMMON_ROOT_KEYS = ["document_type", "company_code", "document_id", "memo", "posting_date", "source", "lines", "bank_cash_details", "items"] as const;
 const SOURCE_KEYS = ["source_document", "source_document_id", "source_type", "source_line_id"] as const;
-const RECEIPT_LINE_KEYS = ["line_id", "inventory_item_code", "description", "quantity_delta", "valuation_method", "unit_book_value", "dimensions"] as const;
-const ISSUE_LINE_KEYS = ["line_id", "inventory_item_code", "description", "quantity_delta", "issue_purpose", "dimensions"] as const;
+const RECEIPT_LINE_KEYS = ["line_id", "inventory_item_code", "description", "quantity_delta", "gl_account_code", "valuation_method", "unit_book_value", "dimensions"] as const;
+const ISSUE_LINE_KEYS = ["line_id", "inventory_item_code", "description", "quantity_delta", "gl_account_code", "issue_purpose", "dimensions"] as const;
 const ADJUSTMENT_LINE_KEYS = ["line_id", "inventory_item_code", "description", "adjustment_type", "quantity_delta", "unit_book_value", "book_value_delta", "reason_code", "gl_account_code", "dimensions"] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -204,6 +204,7 @@ function validateReceiptLine(value: unknown, index: number, errors: string[]): v
   validateBusinessCode(value.inventory_item_code, `${path}.inventory_item_code`, errors);
   validateNullableString(value.description, `${path}.description`, errors);
   validatePositiveAmount(value.quantity_delta, `${path}.quantity_delta`, errors);
+  validateBusinessCode(value.gl_account_code, `${path}.gl_account_code`, errors);
   if (value.valuation_method !== "SUPPLIED_UNIT_BOOK_VALUE" && value.valuation_method !== "CURRENT_AVERAGE_BOOK_VALUE") {
     errors.push(`${path}.valuation_method must be SUPPLIED_UNIT_BOOK_VALUE or CURRENT_AVERAGE_BOOK_VALUE`);
   }
@@ -225,6 +226,7 @@ function validateIssueLine(value: unknown, index: number, errors: string[]): voi
   validateBusinessCode(value.inventory_item_code, `${path}.inventory_item_code`, errors);
   validateNullableString(value.description, `${path}.description`, errors);
   if (!isFiniteNumber(value.quantity_delta) || amount(value.quantity_delta) >= 0) errors.push(`${path}.quantity_delta must be a negative number`);
+  validateBusinessCode(value.gl_account_code, `${path}.gl_account_code`, errors);
   if (value.issue_purpose !== "SOLD" && value.issue_purpose !== "CONSUMED") errors.push(`${path}.issue_purpose must be SOLD or CONSUMED`);
   validateDimensions(value.dimensions, `${path}.dimensions`, errors);
 }
@@ -303,7 +305,6 @@ export function requestedItemCodes(input: InventoryProcessingRequestDto): string
 }
 
 export function requestedGlAccountCodes(input: InventoryProcessingRequestDto): string[] {
-  if (input.document_type !== "INVENTORY_ADJUSTMENT") return [];
   return [...new Set(input.lines.map((line) => line.gl_account_code))];
 }
 
@@ -354,19 +355,9 @@ export function validateInventoryData(input: InventoryProcessingRequestDto, data
     }
     if (item.status !== "ACTIVE") errors.push(`Inventory item ${item.code} is not ACTIVE`);
     if (item.item_type !== "INVENTORY") errors.push(`Inventory item ${item.code} must have item_type INVENTORY`);
-    if (input.document_type !== "INVENTORY_ADJUSTMENT" && item.posting_profile_status !== "ACTIVE") errors.push(`Item posting profile ${item.posting_profile_code} is not ACTIVE`);
-    if (input.document_type === "INVENTORY_RECEIPT" && !item.is_purchased) errors.push(`Item posting profile for ${item.code} does not permit purchases`);
-    if (input.document_type === "INVENTORY_ISSUE") {
-      const issueLine = line as InventoryIssueRequestDto["lines"][number];
-      if (issueLine.issue_purpose === "SOLD" && !item.is_sold) errors.push(`Item posting profile for ${item.code} does not permit sales`);
-      if (issueLine.issue_purpose === "CONSUMED" && !item.is_consumed) errors.push(`Item posting profile for ${item.code} does not permit consumption`);
-    }
-    if (input.document_type === "INVENTORY_ADJUSTMENT") {
-      const adjustmentLine = line as InventoryAdjustmentRequestDto["lines"][number];
-      const account = data.glAccountsByCode.get(adjustmentLine.gl_account_code);
-      if (!account) errors.push(`GL account ${adjustmentLine.gl_account_code} was not found`);
-      else if (account.status !== "ACTIVE") errors.push(`GL account ${adjustmentLine.gl_account_code} is not ACTIVE`);
-    }
+    const account = data.glAccountsByCode.get(line.gl_account_code);
+    if (!account) errors.push(`GL account ${line.gl_account_code} was not found`);
+    else if (account.status !== "ACTIVE") errors.push(`GL account ${line.gl_account_code} is not ACTIVE`);
   }
 
   for (const line of input.lines) {

@@ -105,12 +105,14 @@ export async function receiveStock(
     const missingCustomFields = await missingMovementCustomFields(db, organizationId, "RECEIPT", input);
     const statuses = await warehouseStatuses(repo, organizationId, [input.warehouseId]);
     enforce(Receive(input.lines, input.notes, missingCustomFields, statuses.get(input.warehouseId)!));
-    return repo.movement(
+    const transactionId = await repo.movement(
       organizationId,
       "RECEIPT",
       input,
       withCreationAudit({}, await createCreationAuditStamp()),
     );
+    await processFinancialActivities(db, organizationId, transactionId);
+    return transactionId;
   });
 }
 export async function issueStock(
@@ -127,13 +129,39 @@ export async function issueStock(
         quantity: line.quantity,
       })));
     enforce(Issue(availability, input.lines, input.notes, missingCustomFields));
-    return repo.movement(
+    const transactionId = await repo.movement(
       organizationId,
       "ISSUE",
       input,
       withCreationAudit({}, await createCreationAuditStamp()),
     );
+    await processFinancialActivities(db, organizationId, transactionId);
+    return transactionId;
   });
+}
+
+async function processFinancialActivities(
+  db: DbExecutor,
+  organizationId: number,
+  transactionId: number,
+): Promise<void> {
+  const repo = new StockRepo(db);
+  const activities = await repo.financialActivitiesForTransaction(organizationId, transactionId);
+  const financialActivityRepo = new FinancialActivityRepo(db);
+  for (const activity of activities) {
+    const response = await command.callOptional(
+      "@voyzu/finance.processInventoryMovement",
+      organizationId,
+      activity,
+    );
+    if (response !== undefined) {
+      await financialActivityRepo.markProcessed(
+        organizationId,
+        activity.inventoryFinancialActivityId,
+        withUpdateAudit({}, await createUpdateAuditStamp()),
+      );
+    }
+  }
 }
 
 async function missingMovementCustomFields(
@@ -244,22 +272,7 @@ export async function adjustStock(
       input,
       withCreationAudit({}, await createCreationAuditStamp()),
     );
-    const activities = await repo.financialActivitiesForTransaction(organizationId, transactionId);
-    const financialActivityRepo = new FinancialActivityRepo(db);
-    for (const activity of activities) {
-      const response = await command.callOptional(
-        "@voyzu/finance.processInventoryMovement",
-        organizationId,
-        activity,
-      );
-      if (response !== undefined) {
-        await financialActivityRepo.markProcessed(
-          organizationId,
-          activity.inventoryFinancialActivityId,
-          withUpdateAudit({}, await createUpdateAuditStamp()),
-        );
-      }
-    }
+    await processFinancialActivities(db, organizationId, transactionId);
     return transactionId;
   });
 }
@@ -313,11 +326,14 @@ export async function completeStockCount(organizationId: number, id: number) {
       current.notes,
       statuses.get(current.warehouseId)!,
     ));
-    await repo.completeCount(
+    const transactionId = await repo.completeCount(
       organizationId,
       id,
       withUpdateAudit({}, await createUpdateAuditStamp()),
     );
+    if (transactionId != null) {
+      await processFinancialActivities(db, organizationId, transactionId);
+    }
     return enrichStockCountAudit((await repo.count(organizationId, id))!);
   });
 }

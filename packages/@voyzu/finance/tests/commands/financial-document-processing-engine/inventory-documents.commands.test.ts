@@ -83,6 +83,7 @@ function receiptRequest(documentId: string, itemCode: string, quantity = 10, uni
         inventory_item_code: itemCode,
         description: "Receipt test line",
         quantity_delta: quantity,
+        gl_account_code: "405000",
         valuation_method: "SUPPLIED_UNIT_BOOK_VALUE",
         unit_book_value: unitValue,
       },
@@ -105,6 +106,7 @@ function issueRequest(documentId: string, itemCode: string, quantity = -5): Inve
         inventory_item_code: itemCode,
         description: "Issue test line",
         quantity_delta: quantity,
+        gl_account_code: "505000",
         issue_purpose: "SOLD",
       },
     ],
@@ -204,7 +206,7 @@ describe("Inventory document processing engines", () => {
     assert.deepEqual(result.inventory_ledger_details.inventory_ledger_lines.map((line) => line.movement), ["INVENTORY_QUANTITY_ADJUSTMENT", "INVENTORY_VALUE_ADJUSTMENT"]);
   });
 
-  it("rejects current-average receipt valuation when the item has no inventory balance", async () => {
+  it("uses zero current-average receipt valuation when the item has no inventory balance", async () => {
     const id = suffix();
     const itemCode = `TST-CAV-${id}`;
     await createItem(itemCode);
@@ -213,13 +215,12 @@ describe("Inventory document processing engines", () => {
     input.lines[0].valuation_method = "CURRENT_AVERAGE_BOOK_VALUE";
     delete input.lines[0].unit_book_value;
 
-    await assert.rejects(
-      () => processInventoryReceipt(input, { preview: true }),
-      (err: unknown) => err instanceof Error && err.message.includes("requires a current average unit book value"),
-    );
+    const result = await processInventoryReceipt(input, { preview: true });
+    assert.equal(result.detailed_document.lines[0].unit_book_value_used, 0);
+    assert.equal(result.detailed_document.lines[0].book_value_delta, 0);
   });
 
-  it("rejects sold issues for items not enabled for sale", async () => {
+  it("uses the caller-supplied account without item posting-profile eligibility checks", async () => {
     const id = suffix();
     const itemCode = `TST-NOS-${id}`;
     const receiptId = `IVRN${id}`;
@@ -227,9 +228,7 @@ describe("Inventory document processing engines", () => {
     await createItem(itemCode, { isSold: false });
     await processInventoryReceipt(receiptRequest(receiptId, itemCode, 5, 10));
 
-    await assert.rejects(
-      () => processInventoryIssue(issueRequest(`IVIN${id}`, itemCode), { preview: true }),
-      (err: unknown) => err instanceof Error && err.message.includes("does not permit sales"),
-    );
+    const result = await processInventoryIssue(issueRequest(`IVIN${id}`, itemCode), { preview: true });
+    assert.equal(result.posting_details.journal_lines[0]?.gl_account_code, "500000");
   });
 });

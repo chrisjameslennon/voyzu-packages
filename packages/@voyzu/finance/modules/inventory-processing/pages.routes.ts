@@ -43,4 +43,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth,
   },
+  inventoryTransactionDetailPrintable: {
+    id: "voyzu.inventory-processing.page.inventory-transaction-detail.printable",
+    pageTitle: "Inventory Transaction",
+    path: "/finance/integration/inventory-processing/inventory-transactions/[id]/printable",
+    loadPage: () => import("./server/pages/InventoryTransactionDetailPage").then((module) => module.InventoryTransactionDetailPage),
+    unframed: true,
+    auth: companyFinancePageAuth,
+  },
 } as const;

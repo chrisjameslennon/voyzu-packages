@@ -12,7 +12,7 @@ export interface FinanceInventoryActivityRow {
   quantity_change: number;
   reason_code: string | null;
   activity_date: string;
-  processing_status: "RECEIVED" | "PROCESSED" | "ERROR";
+  processing_status: "RECEIVED" | "PROCESSED";
   finance_document_type: string | null;
   finance_document_id: number | null;
   finance_document_code: string | null;

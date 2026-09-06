@@ -22,12 +22,9 @@ import {
   INVENTORY_ADJUSTMENT_CONTROL_COMPONENT,
 } from "../../inventory_adjustment/journal-posting-components";
 import {
-  INVENTORY_ISSUE_COGS_COMPONENT,
-  INVENTORY_ISSUE_CONSUMPTION_COMPONENT,
   INVENTORY_ISSUE_CONTROL_COMPONENT,
 } from "../../inventory_issue/journal-posting-components";
 import {
-  INVENTORY_RECEIPT_ADJUSTMENT_GAIN_COMPONENT,
   INVENTORY_RECEIPT_CONTROL_COMPONENT,
 } from "../../inventory_receipt/journal-posting-components";
 import { InventoryProcessingRepo } from "../db/inventory-processing.repo";
@@ -60,8 +57,6 @@ export interface ProcessInventoryOptions {
 }
 
 type ResolvedInventoryRequestDto = InventoryProcessingRequestDto & { document_id: string };
-type ItemPostingProfileFieldCode = "cogs_code" | "consumption_code" | "adjustment_gain_code";
-
 interface InventoryLineDimension {
   dimension_id: number;
   dimension_value_id: number;
@@ -147,33 +142,6 @@ function mapDimensionValues(rows: DimensionValueLookupRow[]): Map<string, Dimens
   return new Map(rows.map((row) => [`${row.dimension_code}\u0000${row.dimension_value_name}`, row]));
 }
 
-function requireAccount(account: GlAccountPostingRow | null, label: string, expectedType: GlAccountPostingRow["account_type"]): GlAccountPostingRow {
-  if (!account) throw new BusinessRuleError(`${label} is not configured on the item posting profile`);
-  if (account.status !== "ACTIVE") throw new BusinessRuleError(`${label} resolves to an inactive GL account`);
-  if (account.account_type !== expectedType) throw new BusinessRuleError(`${label} must resolve to a ${expectedType} GL account`);
-  return account;
-}
-
-function itemPostingProfileAccount(
-  item: InventoryItemPostingRow,
-  fieldCode: ItemPostingProfileFieldCode,
-  expectedType: GlAccountPostingRow["account_type"],
-): GlAccountPostingRow {
-  const accountByField: Record<ItemPostingProfileFieldCode, GlAccountPostingRow | null> = {
-    cogs_code: item.cogs_gl_account,
-    consumption_code: item.consumption_gl_account,
-    adjustment_gain_code: item.adjustment_gain_gl_account,
-  };
-  return requireAccount(accountByField[fieldCode], `Item posting profile ${item.posting_profile_code}.${fieldCode}`, expectedType);
-}
-
-function requireCurrentAverage(item: InventoryItemPostingRow, balance: InventoryBalanceRow | undefined, label: string): number {
-  if (!balance || balance.qty_balance === 0) {
-    throw new BusinessRuleError(`${label} requires a current average unit book value for item ${item.code}`);
-  }
-  return balance.avg_unit_value;
-}
-
 function nextAverage(qtyBalance: number, bookValueBalance: number): number {
   if (qtyBalance === 0) return 0;
   return round2(bookValueBalance / qtyBalance);
@@ -221,7 +189,7 @@ function buildDetailedLine(
       unitSupplied = amount(receiptLine.unit_book_value);
       unitUsed = unitSupplied;
     } else {
-      unitUsed = requireCurrentAverage(item, previous, "CURRENT_AVERAGE_BOOK_VALUE");
+      unitUsed = previous?.avg_unit_value ?? 0;
     }
     bookValueDelta = round2(quantityDelta * unitUsed);
   } else if (request.document_type === "INVENTORY_ISSUE") {
@@ -229,7 +197,7 @@ function buildDetailedLine(
     movement = "INVENTORY_ISSUE";
     issuePurpose = issueLine.issue_purpose;
     quantityDelta = amount(issueLine.quantity_delta);
-    unitUsed = requireCurrentAverage(item, previous, "INVENTORY_ISSUE");
+    unitUsed = previous?.avg_unit_value ?? 0;
     bookValueDelta = round2(quantityDelta * unitUsed);
   } else {
     const adjustmentLine = line as InventoryAdjustmentRequestDto["lines"][number];
@@ -271,9 +239,7 @@ function buildDetailedLine(
     inventory_item_code: item.code,
     inventory_item_name: item.name,
     item_posting_profile_code: item.posting_profile_code,
-    gl_account_code: request.document_type === "INVENTORY_ADJUSTMENT"
-      ? (line as InventoryAdjustmentRequestDto["lines"][number]).gl_account_code
-      : null,
+    gl_account_code: line.gl_account_code,
     description: line.description?.trim() || item.name,
     movement,
     quantity_delta: quantityDelta,
@@ -291,19 +257,10 @@ function buildDetailedLine(
 }
 
 function accountForLine(
-  request: ResolvedInventoryRequestDto,
   detail: InventoryProcessingDetailedLineDto,
-  item: InventoryItemPostingRow,
   glAccountsByCode: Map<string, GlAccountPostingRow>,
 ): GlAccountPostingRow {
-  if (request.document_type === "INVENTORY_RECEIPT") {
-    return itemPostingProfileAccount(item, INVENTORY_RECEIPT_ADJUSTMENT_GAIN_COMPONENT.code, "REVENUE");
-  }
-  if (request.document_type === "INVENTORY_ISSUE") {
-    if (detail.issue_purpose === "SOLD") return itemPostingProfileAccount(item, INVENTORY_ISSUE_COGS_COMPONENT.code, "EXPENSE");
-    return itemPostingProfileAccount(item, INVENTORY_ISSUE_CONSUMPTION_COMPONENT.code, "EXPENSE");
-  }
-  if (!detail.gl_account_code) throw new BusinessRuleError("Inventory adjustment GL account was not supplied");
+  if (!detail.gl_account_code) throw new BusinessRuleError("Inventory movement GL account was not supplied");
   const account = glAccountsByCode.get(detail.gl_account_code);
   if (!account) throw new BusinessRuleError(`GL account ${detail.gl_account_code} was not resolved`);
   return account;
@@ -325,8 +282,7 @@ function buildGeneratedPosting(
 
   for (const detail of detailedDocument.lines) {
     if (detail.book_value_delta === 0) continue;
-    const item = context.data.itemsByCode.get(detail.inventory_item_code)!;
-    const offsetAccount = accountForLine(context.request, detail, item, context.data.glAccountsByCode);
+    const offsetAccount = accountForLine(detail, context.data.glAccountsByCode);
     const absAmount = Math.abs(detail.book_value_delta);
     const dimensions = dimensionsForLine(context.data, detail.dimensions);
     if (detail.book_value_delta > 0) {
@@ -347,8 +303,8 @@ function buildGeneratedPosting(
         gl_account_id: offsetAccount.id,
         gl_account_code: offsetAccount.code,
         gl_account_name: offsetAccount.name,
-        source_ledger: context.request.document_type === "INVENTORY_ADJUSTMENT" ? null : "ITEM_POSTING_PROFILE",
-        source_control_account: context.request.document_type === "INVENTORY_ADJUSTMENT" ? null : item.posting_profile_code,
+        source_ledger: null,
+        source_control_account: null,
         dr_cr: "CR",
         base_currency_amount: absAmount,
         description: detail.description,
@@ -361,8 +317,8 @@ function buildGeneratedPosting(
         gl_account_id: offsetAccount.id,
         gl_account_code: offsetAccount.code,
         gl_account_name: offsetAccount.name,
-        source_ledger: context.request.document_type === "INVENTORY_ADJUSTMENT" ? null : "ITEM_POSTING_PROFILE",
-        source_control_account: context.request.document_type === "INVENTORY_ADJUSTMENT" ? null : item.posting_profile_code,
+        source_ledger: null,
+        source_control_account: null,
         dr_cr: "DR",
         base_currency_amount: absAmount,
         description: detail.description,
@@ -402,11 +358,7 @@ async function resolveContext(repo: InventoryProcessingRepo, request: ResolvedIn
     company ? repo.getDocumentProcessor(request.document_type) : Promise.resolve(null),
     company ? repo.getOpenFiscalPeriod(company.id, postingDateFor(request)) : Promise.resolve(null),
     settingsCompanyId ? repo.getInventoryControlAccount(settingsCompanyId) : Promise.resolve(null),
-    company
-      ? request.document_type === "INVENTORY_ADJUSTMENT"
-        ? Promise.resolve(repo.listAdjustmentInventoryItems(operationalItems))
-        : repo.listInventoryItems(company.id, operationalItems)
-      : Promise.resolve([]),
+    company ? Promise.resolve(repo.listOperationalInventoryItems(operationalItems)) : Promise.resolve([]),
     company ? repo.listGlAccountsByCode(company.id, requestedGlAccountCodes(request)) : Promise.resolve([]),
     settingsCompanyId ? repo.listDimensionValues(settingsCompanyId, requestedDimensionPairs(request)) : Promise.resolve([]),
   ]);

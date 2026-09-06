@@ -309,9 +309,13 @@ export class ArInvoicePostingRepo {
               ipp.code AS profile_code, ipp.status AS profile_status, ipp.is_sold,
               ga.id::int AS revenue_gl_account_id, ga.code AS revenue_gl_account_code,
               ga.name AS revenue_gl_account_name, ga.account_type AS revenue_gl_account_type,
-              ga.status AS revenue_gl_account_status
+              ga.status AS revenue_gl_account_status,
+              cogs.id::int AS cogs_gl_account_id, cogs.code AS cogs_gl_account_code,
+              cogs.name AS cogs_gl_account_name, cogs.account_type AS cogs_gl_account_type,
+              cogs.status AS cogs_gl_account_status
        FROM item_posting_profile ipp
        LEFT JOIN gl_account ga ON ga.finance_organization_id = ipp.finance_organization_id AND ga.id = ipp.revenue_gl_account_id
+       LEFT JOIN gl_account cogs ON cogs.finance_organization_id = ipp.finance_organization_id AND cogs.id = ipp.cogs_gl_account_id
        WHERE ipp.finance_organization_id = $1 AND ipp.id = ANY($2::bigint[])`,
       [companyId, profileIds],
     );
@@ -331,6 +335,11 @@ export class ArInvoicePostingRepo {
       revenue_gl_account_name: row.revenue_gl_account_name == null ? null : String(row.revenue_gl_account_name),
       revenue_gl_account_type: row.revenue_gl_account_type == null ? null : row.revenue_gl_account_type as ArInvoiceItemPostingProfileRow["revenue_gl_account_type"],
       revenue_gl_account_status: row.revenue_gl_account_status == null ? null : row.revenue_gl_account_status as ArInvoiceItemPostingProfileRow["revenue_gl_account_status"],
+      cogs_gl_account_id: row.cogs_gl_account_id == null ? null : Number(row.cogs_gl_account_id),
+      cogs_gl_account_code: row.cogs_gl_account_code == null ? null : String(row.cogs_gl_account_code),
+      cogs_gl_account_name: row.cogs_gl_account_name == null ? null : String(row.cogs_gl_account_name),
+      cogs_gl_account_type: row.cogs_gl_account_type == null ? null : row.cogs_gl_account_type as ArInvoiceItemPostingProfileRow["cogs_gl_account_type"],
+      cogs_gl_account_status: row.cogs_gl_account_status == null ? null : row.cogs_gl_account_status as ArInvoiceItemPostingProfileRow["cogs_gl_account_status"],
       } satisfies ArInvoiceItemPostingProfileRow];
     });
   }

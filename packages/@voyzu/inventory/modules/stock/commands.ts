@@ -7,6 +7,7 @@ import {
   ReceiptRequestDto,
   ReservationRequestDto,
   StockActivityDto,
+  StockActivityDetailDto,
   StockCountDetailDto,
   StockCountRequestDto,
   StockCountRowDto,
@@ -28,6 +29,13 @@ export const listInventoryStockActivity = command.defineLazy(
     result: Type.Array(StockActivityDto),
   },
   () => load().then((m) => m.listStockActivity),
+);
+export const getInventoryStockActivityDetail = command.defineLazy(
+  {
+    parameters: Type.Tuple([Type.Number(), Type.String()]),
+    result: Type.Union([StockActivityDetailDto, Type.Null()]),
+  },
+  () => load().then((m) => m.getStockActivityDetail),
 );
 export const getInventoryStockOptions = command.defineLazy(
   {
@@ -124,6 +132,7 @@ export const deleteInventoryStockCount = command.defineLazy(
 export const commands = {
   listInventoryStock,
   listInventoryStockActivity,
+  getInventoryStockActivityDetail,
   getInventoryStockOptions,
   receiveInventoryStock,
   issueInventoryStock,

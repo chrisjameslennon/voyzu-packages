@@ -621,8 +621,8 @@ export class StockRepo {
     const count = await this.count(organizationId, id);
     if (!count) return;
     const changes = count.lines.filter((line) => line.variance);
-    if (changes.length)
-      await this.insertTransaction(
+    const transactionId = changes.length
+      ? await this.insertTransaction(
         organizationId,
         "ADJUSTMENT",
         new Date().toISOString(),
@@ -639,12 +639,14 @@ export class StockRepo {
         {
           upstreamDocument: { type: "STOCK_COUNT", id, code: count.code },
         },
-      );
+      )
+      : null;
     const e = Object.entries(stamp);
     await this.db.query(
       `UPDATE stock_count SET status='COMPLETED',completed_at=now(),${e.map(([k], i) => `${k}=$${i + 3}`).join(",")} WHERE organization_id=$1 AND id=$2`,
       [organizationId, id, ...e.map(([, v]) => v)],
     );
+    return transactionId;
   }
   async deleteCount(
     organizationId: number,

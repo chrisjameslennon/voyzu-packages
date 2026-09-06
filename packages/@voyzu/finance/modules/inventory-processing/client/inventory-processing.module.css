@@ -3,3 +3,24 @@
   flex-direction: column;
   gap: var(--vz-grid-gap);
 }
+.tabContent { display: flex; flex-direction: column; gap: 1rem; }
+.toolbar { display: flex; justify-content: flex-end; gap: 0.5rem; padding-top: 1rem; }
+.documentShell { display: flex; justify-content: center; min-width: 0; overflow-x: auto; }
+.portraitDocument { box-sizing: border-box; width: 210mm; flex: 0 0 210mm; }
+.detailsTab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem); gap: var(--vz-grid-gap); padding-top: 1rem; align-items: start; }
+.detailsMain, .detailsRail { display: flex; flex-direction: column; gap: var(--vz-grid-gap); min-width: 0; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 2rem; }
+.field { display: flex; flex-direction: column; gap: 0.5rem; }
+.wide { grid-column: 1 / -1; }
+.textarea { width: 100%; min-height: 5rem; resize: vertical; padding: 0.75rem 1rem; border: 1px solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-control); background: var(--voyzu-color-surface); color: inherit; font: inherit; }
+.gridWithoutHeaderIcons :global(.material-symbols-outlined[title="Read only"]) { display: none; }
+.linkedDocumentsCard { gap: 1rem; }
+.linkedDocumentsCard h2 { margin: 0; }
+.linkedDocumentList { display: flex; flex-direction: column; gap: 0.5rem; }
+.linkedDocumentEntry { display: flex; flex-direction: column; gap: 0.375rem; padding: 0.75rem; border: 1px solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-control); }
+.linkedDocumentType { color: var(--voyzu-color-text-secondary); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.linkedDocumentDetails { display: flex; justify-content: space-between; gap: 0.75rem; color: var(--voyzu-color-text-secondary); font-size: 0.8125rem; }
+.documentLink { color: var(--voyzu-color-link); font-weight: 600; text-decoration: underline; text-underline-offset: 0.15em; }
+.emptyLinkedDocuments { margin: 0; color: var(--voyzu-color-text-secondary); }
+@media (max-width: 1023px) { .detailsTab { grid-template-columns: 1fr; } }
+@media (max-width: 767px) { .toolbar { justify-content: flex-start; flex-wrap: wrap; } .documentShell { justify-content: flex-start; } .fields { grid-template-columns: 1fr; } }

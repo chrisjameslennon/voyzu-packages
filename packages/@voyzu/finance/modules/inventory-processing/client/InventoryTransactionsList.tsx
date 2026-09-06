@@ -19,35 +19,58 @@ import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const ITEMS_PER_PAGE = 100;
 const label = (value: string | null) => value ? value.replaceAll("_", " ") : "-";
-const date = (value: string) => new Date(value).toLocaleDateString();
-const quantity = new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 });
+const quantity = new Intl.NumberFormat("en-NZ", { maximumFractionDigits: 4 });
 
-const columns: DataTableColumn<FinanceInventoryActivity>[] = [
+function detectMMDD(): boolean {
+  try {
+    const parts = new Intl.DateTimeFormat(undefined, { month: "numeric", day: "numeric" })
+      .formatToParts(new Date(2000, 2, 15));
+    return parts.findIndex((part) => part.type === "month")
+      < parts.findIndex((part) => part.type === "day");
+  } catch {
+    return false;
+  }
+}
+
+function formatDate(value: string, isMMDD: boolean): string {
+  const date = new Date(value);
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return isMMDD ? `${month}/${day}/${year}` : `${day}/${month}/${year}`;
+}
+
+function makeColumns(isMMDD: boolean): DataTableColumn<FinanceInventoryActivity>[] {
+  return [
   { key: "inventoryDocumentCode", label: "Document", width: "13rem", render: (row) => <span className={listStyles.codeCell}>{row.inventoryDocumentCode}</span> },
-  { key: "activityDate", label: "Date", width: "8rem", render: (row) => date(row.activityDate) },
+  { key: "activityDate", label: "Date", width: "8rem", render: (row) => formatDate(row.activityDate, isMMDD) },
   { key: "inventoryDocumentType", label: "Movement", width: "10rem", render: (row) => label(row.inventoryDocumentType) },
   { key: "reasonCode", label: "Reason", width: "13rem", render: (row) => label(row.reasonCode) },
   { key: "itemCode", label: "Item", width: "11rem", render: (row) => <span className={listStyles.codeCell}>{row.itemCode}</span> },
   { key: "itemName", label: "Item Name" },
   { key: "quantityChange", label: "Quantity", width: "8rem", align: "right", render: (row) => quantity.format(row.quantityChange) },
-  { key: "processingStatus", label: "Status", width: "9rem", align: "center", render: (row) => <Badge variant="soft" size="x-small" color={row.processingStatus === "PROCESSED" ? "success" : row.processingStatus === "ERROR" ? "danger" : "neutral"}>{label(row.processingStatus)}</Badge> },
-];
+  { key: "processingStatus", label: "Status", width: "9rem", align: "center", render: (row) => <Badge variant="soft" size="x-small" color={row.processingStatus === "PROCESSED" ? "success" : "neutral"}>{label(row.processingStatus)}</Badge> },
+  ];
+}
 
 export function InventoryTransactionsList({ activities, apiPath }: { activities: FinanceInventoryActivity[]; apiPath: string }) {
   const router = useRouter();
   const [rows, setRows] = useState(activities);
   const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState<FilterState>({});
+  const [filters, setFilters] = useState<FilterState>({ processingStatus: ["RECEIVED"] });
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
+  const [isMMDD, setIsMMDD] = useState(false);
+  useEffect(() => setIsMMDD(detectMMDD()), []);
+  const columns = useMemo(() => makeColumns(isMMDD), [isMMDD]);
   const filterTabs = useMemo<FilterTab[]>(() => [
     { key: "inventoryDocumentType", label: "Movement", type: "checkbox", options: [...new Set(rows.map((row) => row.inventoryDocumentType))].sort() },
-    { key: "processingStatus", label: "Status", type: "checkbox", options: ["RECEIVED", "PROCESSED", "ERROR"] },
+    { key: "processingStatus", label: "Status", type: "checkbox", options: ["RECEIVED", "PROCESSED"] },
   ], [rows]);
   const visible = useMemo(() => rows.filter((row) => {
     const movements = filters.inventoryDocumentType as string[] | undefined;

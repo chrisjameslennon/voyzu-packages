@@ -90,8 +90,7 @@ CREATE TABLE IF NOT EXISTS finance_inventory_activity (
       CHECK (
         processing_status IN (
           'RECEIVED',
-          'PROCESSED',
-          'ERROR'
+          'PROCESSED'
         )
       ),
 

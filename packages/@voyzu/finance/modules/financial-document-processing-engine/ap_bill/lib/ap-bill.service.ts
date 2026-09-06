@@ -611,11 +611,16 @@ function inventoryReceiptRequest(context: ResolvedContext): InventoryReceiptRequ
     },
     lines: inventoryLines.map((line) => {
       if (line.quantity == null || line.quantity <= 0) throw new InputValidationError(`AP bill inventory line ${line.line_id} requires a positive quantity`);
+      const profile = context.data.itemPostingProfilesByItemCode.get(line.inventory_item_code!);
+      if (!profile?.purchase_gl_account_code) {
+        throw new InputValidationError(`AP bill inventory line ${line.line_id} requires a purchase GL account`);
+      }
       return {
         line_id: line.line_id,
         inventory_item_code: line.inventory_item_code!,
         description: line.line_description,
         quantity_delta: line.quantity,
+        gl_account_code: profile.purchase_gl_account_code,
         valuation_method: "SUPPLIED_UNIT_BOOK_VALUE",
         unit_book_value: round2(line.purchase_amount / line.quantity),
         dimensions: line.dimensions,

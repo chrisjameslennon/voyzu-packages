@@ -115,6 +115,7 @@ async function seedBalance(documentId: string, itemCode: string): Promise<void> 
       inventory_item_code: itemCode,
       description: "Opening test stock",
       quantity_delta: 20,
+      gl_account_code: "405000",
       valuation_method: "SUPPLIED_UNIT_BOOK_VALUE",
       unit_book_value: 25,
     }],
