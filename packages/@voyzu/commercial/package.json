@@ -8,13 +8,17 @@
   "voyzu": {
     "voyzu-package": true,
     "allowInstall": true,
-    "dependencies": [],
+    "dependencies": ["@voyzu/erp-core"],
     "pageRootPaths": [
       "/commercial"
     ],
     "apiRootPaths": []
   },
   "exports": {
+    "./navigation/left-nav-header": {
+      "types": "./navigation/left-nav-header.tsx",
+      "import": "./navigation/left-nav-header.tsx"
+    },
     "./voyzu-package": {
       "types": "./voyzu.package.ts",
       "import": "./voyzu.package.ts"
@@ -73,6 +77,8 @@
     }
   },
   "peerDependencies": {
+    "@voyzu/erp-core": "^0.1.0",
+    "@voyzu/ui-surface": "^0.1.0",
     "@voyzu/types": "^0.1.0",
     "@voyzu/ui-components": "^0.1.0",
     "@voyzu/ui-layout": "^0.1.0",

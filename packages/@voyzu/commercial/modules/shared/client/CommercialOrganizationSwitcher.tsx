@@ -7,7 +7,7 @@ import type { OrganizationSelectionUpdateRequestDto } from "@voyzu/erp-core/orga
 import type { OrganizationSelectionResponseDto } from "@voyzu/erp-core/types/modules/organization-switcher";
 import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
 
-export function FinanceCompanySwitcher({ isCollapsed, companyPath = "/finance/journals" }: { isCollapsed: boolean; companyPath?: string }) {
+export function CommercialOrganizationSwitcher({ isCollapsed }: { isCollapsed: boolean }) {
   const router = useRouter();
   const [organizations, setOrganizations] = useState<OrganizationResponseDto[]>([]);
   const [selectedOrganization, setSelectedOrganization] = useState<OrganizationResponseDto | null>(null);
@@ -17,7 +17,7 @@ export function FinanceCompanySwitcher({ isCollapsed, companyPath = "/finance/jo
 
     async function loadSelection() {
       try {
-        const response = await fetch("/api/finance/company-selection");
+        const response = await fetch("/api/organization-selection");
         const selection = response.ok
           ? await response.json() as OrganizationSelectionResponseDto
           : { organizations: [], selectedOrganization: null, selectedOrganizationId: null };
@@ -39,7 +39,7 @@ export function FinanceCompanySwitcher({ isCollapsed, companyPath = "/finance/jo
   }, []);
 
   const selectOrganization = async (organization: OrganizationResponseDto) => {
-    const response = await fetch("/api/finance/company-selection", {
+    const response = await fetch("/api/organization-selection", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ organizationId: organization.id } satisfies OrganizationSelectionUpdateRequestDto),
@@ -47,7 +47,7 @@ export function FinanceCompanySwitcher({ isCollapsed, companyPath = "/finance/jo
     if (!response.ok) return false;
 
     setSelectedOrganization(organization);
-    router.push(companyPath);
+    router.push("/commercial/products");
     router.refresh();
   };
 

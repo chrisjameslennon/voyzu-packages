@@ -1,12 +1,12 @@
 # Company switcher
 
-This is an internal development pattern for `@voyzu/finance`. The company switcher belongs to Finance rather than the Voyzu platform because company selection is part of the Finance domain.
+This is an internal development pattern for `@voyzu/finance`. Finance owns selection data and behaviour; the platform `ContextSwitcher` owns the generic selector presentation and interaction. The UI labels this context “Organization” and prompts “Select Organization”.
 
 Authentication identifies the user. Company selection identifies the company whose Finance data the user is currently viewing. Selection is context, not authorization: every Core service and query must still enforce user access and company scope.
 
 ## UI integration
 
-Core mounts the shared `CompanySwitcher` through its Finance left-navigation header. Other packages may use the generic navigation support, but they must not add another selector inside individual Finance pages.
+Finance mounts `FinanceCompanySwitcher` through its left-navigation header. It renders `ContextSwitcher` from `@voyzu/ui-components`, without local selector CSS. Other packages can use the same platform control with their own selection data and callbacks; individual Finance pages must not add another selector.
 
 After a successful selection change, the switcher calls `router.refresh()` so server components reload in the new company context.
 
