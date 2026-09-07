@@ -1,9 +1,9 @@
 import { Fragment } from "react";
 import type { InventoryReport } from "../types/report.types";
 import {
-  inventoryReportCss,
-  inventoryReportStyles as styles,
-} from "./inventory-report.css";
+  printableReportCss,
+  printableReportStyles as reportStyles,
+} from "@voyzu/ui-style";
 
 const numericHeaders = new Set([
   "On Hand",
@@ -23,9 +23,9 @@ const codeHeaders = new Set([
 ]);
 
 function cellClass(header: string): string | undefined {
-  if (numericHeaders.has(header)) return styles.numeric;
-  if (codeHeaders.has(header)) return styles.code;
-  if (header === "Status") return styles.status;
+  if (numericHeaders.has(header)) return reportStyles.numeric;
+  if (codeHeaders.has(header)) return reportStyles.code;
+  if (header === "Status") return reportStyles.status;
   return undefined;
 }
 
@@ -37,13 +37,13 @@ export function InventoryReportTemplate({
   generatedAt: string;
 }) {
   return (
-    <article className={styles.document}>
-      <style>{inventoryReportCss}</style>
-      <header className={styles.header}>
+    <article className={reportStyles.document}>
+      <style>{printableReportCss}</style>
+      <header className={reportStyles.header}>
         <h1>{report.title}</h1>
         <p>Generated {new Date(generatedAt).toLocaleString("en-NZ")}</p>
       </header>
-      <table className={styles.table}>
+      <table className={reportStyles.table}>
         <thead>
           <tr>
             {report.headers.map((header) => (
@@ -56,7 +56,7 @@ export function InventoryReportTemplate({
         <tbody>
           {report.rows.map((row) => (
             <Fragment key={row.id}>
-              <tr className={row.inactive ? styles.inactiveRow : undefined}>
+              <tr className={row.inactive ? reportStyles.inactiveRow : undefined}>
                 {row.cells.map((cell, index) => (
                   <td
                     key={`${row.id}-${index}`}
@@ -68,12 +68,12 @@ export function InventoryReportTemplate({
               </tr>
               {row.details?.length ? (
                 <tr
-                  className={`${styles.detailRow}${row.inactive ? ` ${styles.inactiveRow}` : ""}`}
+                  className={`${reportStyles.detailRow}${row.inactive ? ` ${reportStyles.inactiveRow}` : ""}`}
                 >
                   <td colSpan={report.headers.length}>
-                    <div className={styles.detailLines}>
+                    <div className={reportStyles.detailLines}>
                       {row.details.map((detail) => (
-                        <div className={styles.detailLine} key={detail.label}>
+                        <div className={reportStyles.detailLine} key={detail.label}>
                           <span>{detail.label}</span>
                           <strong>{detail.value}</strong>
                         </div>
@@ -87,9 +87,9 @@ export function InventoryReportTemplate({
         </tbody>
       </table>
       {!report.rows.length ? (
-        <div className={styles.empty}>No records</div>
+        <div className={reportStyles.empty}>No records</div>
       ) : null}
-      <footer className={styles.footer}>
+      <footer className={reportStyles.footer}>
         {report.rows.length} record{report.rows.length === 1 ? "" : "s"}
       </footer>
     </article>

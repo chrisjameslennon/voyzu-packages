@@ -1,4 +1,6 @@
 "use client";
+
+import { Textarea } from "@voyzu/ui-components";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { AuditPanel } from "@voyzu/audit/client";
@@ -33,7 +35,6 @@ import type {
   ConfigurationPatch,
   ConfigurationRow,
 } from "../types/configuration.types";
-import styles from "./configuration.module.css";
 import { Deactivate } from "../domain/operation-policy";
 import { isSelectSearchable } from "../../core/client/select-policy";
 type Meta = {
@@ -239,10 +240,10 @@ export function ConfigurationDetailView({
       : { value: "activate", label: "Activate", icon: "check_circle", onSelect: () => { void transitionOption(option, "ACTIVE"); } },
     { value: "remove", label: "Remove", icon: "delete", variant: "danger", onSelect: () => setDeletingOption(option) },
   ];
-  const optionEditor = <div className={styles.optionsSection}>
+  const optionEditor = <div className={detailStyles.dividedStack}>
     <h2 className={typography.sectionHeading}>Options</h2>
-    <div className={styles.optionAdderPanel}><div className={styles.optionAdder}><Input value={optionValue} invalid={optionValidation.hasError("option")} onChange={(event) => setOptionValue(event.target.value)} placeholder="New option value" /><Button variant="secondary" icon="add" onClick={() => { void addOption(); }}>Add Option</Button></div></div>
-    <div className={styles.optionTableWrap}><table className={detailStyles.table}><thead><tr><th>Value</th><th>Status</th><th className={detailStyles.numericCell}>Used By</th><th /></tr></thead><tbody>{record.options.length ? record.options.map((option) => <tr key={option.id}><td className={detailStyles.strongCell}>{option.value}</td><td><Badge variant="soft" size="x-small" color={option.status === "ACTIVE" ? "success" : "neutral"}>{option.status}</Badge></td><td className={detailStyles.numericCell}>{option.usedBy} record{option.usedBy === 1 ? "" : "s"}</td><td className={styles.optionActionCell}><DropdownMenu trigger={<Button variant="plain" size="small" icon="more_horiz" title={`Actions for ${option.value}`} />} items={optionActions(option)} alignment="right" width={180} /></td></tr>) : <tr><td colSpan={4} className={styles.emptyCell}>No options have been added.</td></tr>}</tbody></table></div>
+    <div className={detailStyles.card}><div className={detailStyles.fieldWithAction}><Input value={optionValue} invalid={optionValidation.hasError("option")} onChange={(event) => setOptionValue(event.target.value)} placeholder="New option value" /><Button variant="secondary" icon="add" onClick={() => { void addOption(); }}>Add Option</Button></div></div>
+    <div className={detailStyles.tableWrap}><table className={detailStyles.table}><thead><tr><th>Value</th><th>Status</th><th className={detailStyles.numericCell}>Used By</th><th /></tr></thead><tbody>{record.options.length ? record.options.map((option) => <tr key={option.id}><td className={detailStyles.strongCell}>{option.value}</td><td><Badge variant="soft" size="x-small" color={option.status === "ACTIVE" ? "success" : "neutral"}>{option.status}</Badge></td><td className={detailStyles.numericCell}>{option.usedBy} record{option.usedBy === 1 ? "" : "s"}</td><td className={detailStyles.numericCell}><DropdownMenu trigger={<Button variant="plain" size="small" icon="more_horiz" title={`Actions for ${option.value}`} />} items={optionActions(option)} alignment="right" width={180} /></td></tr>) : <tr><td colSpan={4} className={detailStyles.emptyCell}>No options have been added.</td></tr>}</tbody></table></div>
   </div>;
   const usedColumns: DataTableColumn<ConfigurationDetail["usedBy"][number]>[] =
     [
@@ -348,7 +349,7 @@ export function ConfigurationDetailView({
           onNavigate={(href) => router.push(href)}
         />
       </aside>
-      <main className={`${layout.mainSection} ${styles.stack}`}>
+      <main className={`${layout.mainSection} ${detailStyles.stack}`}>
         <section className={detailStyles.card}>
           <div className={detailStyles.cardHeader}>
             <h2
@@ -360,14 +361,14 @@ export function ConfigurationDetailView({
               Save
             </Button>
           </div>
-          <div className={styles.fields}>
+          <div className={detailStyles.formGrid}>
             {record.code ? (
-              <div className={styles.field}>
+              <div className={detailStyles.fieldGroup}>
                 <label className={typography.fieldLabel}>Code</label>
                 <Input value={record.code} disabled />
               </div>
             ) : null}
-            <div className={styles.field}>
+            <div className={detailStyles.fieldGroup}>
               <label className={typography.fieldLabel}>Name</label>
               <Input
                 invalid={validation.hasError("name")}
@@ -376,10 +377,9 @@ export function ConfigurationDetailView({
               />
             </div>
             {kind === "category" ? (
-              <div className={`${styles.field} ${styles.wide}`}>
+              <div className={`${detailStyles.fieldGroup} ${detailStyles.fieldFull}`}>
                 <label className={typography.fieldLabel}>Description</label>
-                <textarea
-                  className={styles.textarea}
+                <Textarea
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
                 />
@@ -387,7 +387,7 @@ export function ConfigurationDetailView({
             ) : null}
             {kind === "warehouse" ? (
               <>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>
                     Address Line 1
                   </label>
@@ -396,7 +396,7 @@ export function ConfigurationDetailView({
                     onChange={(event) => setAddressLine1(event.target.value)}
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>
                     Address Line 2
                   </label>
@@ -405,14 +405,14 @@ export function ConfigurationDetailView({
                     onChange={(event) => setAddressLine2(event.target.value)}
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>City</label>
                   <Input
                     value={city}
                     onChange={(event) => setCity(event.target.value)}
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>
                     Region / State
                   </label>
@@ -421,14 +421,14 @@ export function ConfigurationDetailView({
                     onChange={(event) => setRegion(event.target.value)}
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Post Code</label>
                   <Input
                     value={postcode}
                     onChange={(event) => setPostcode(event.target.value)}
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Country Code</label>
                   <Input
                     value={countryCode}
@@ -443,7 +443,7 @@ export function ConfigurationDetailView({
             ) : null}
             {kind === "custom-field" ? (
               <>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Data Type</label>
                   <Input
                     value={
@@ -454,11 +454,11 @@ export function ConfigurationDetailView({
                     disabled
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Applies To</label>
                   <Input value={record.appliesTo ?? ""} disabled />
                 </div>
-                <label className={styles.optionChoice}>
+                <label className={detailStyles.choiceLabel}>
                   <Checkbox
                     checked={requiredField}
                     onChange={setRequiredField}
@@ -469,7 +469,7 @@ export function ConfigurationDetailView({
                 (record.dataType === "BOOLEAN" ||
                   record.dataType === "OPTION" ||
                   record.dataType === "MULTIPLE_OPTIONS") ? (
-                  <label className={styles.optionChoice}>
+                  <label className={detailStyles.choiceLabel}>
                     <Checkbox
                       checked={showInFilter}
                       onChange={setShowInFilter}
@@ -479,7 +479,7 @@ export function ConfigurationDetailView({
                 ) : null}
                 {record.dataType === "OPTION" ||
                 record.dataType === "MULTIPLE_OPTIONS" ? (
-                  <div className={styles.field}>
+                  <div className={detailStyles.fieldGroup}>
                     <label className={typography.fieldLabel}>
                       Shared Options List
                     </label>

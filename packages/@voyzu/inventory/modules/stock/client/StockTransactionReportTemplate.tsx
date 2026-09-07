@@ -2,10 +2,8 @@
 
 import type { StockActivityDetail } from "../types/stock.types";
 import type { StockCountOrganization } from "./StockCountReportTemplate";
-import {
-  stockCountReportCss,
-  stockCountReportStyles as styles,
-} from "./stock-count-report-template.css";
+import { printableDocumentCss, printableDocumentStyles as documentStyles } from "@voyzu/ui-style";
+import { stockCountReportCss, stockCountReportStyles as localStyles } from "./stock-count-report-template.css";
 import {
   STOCK_ADJUSTMENT_REASONS,
   STOCK_ISSUE_REASONS,
@@ -44,73 +42,74 @@ export function StockTransactionReportTemplate({
 }) {
   const documentType = stockTransactionTypeLabel(record.type);
   return (
-    <div className={styles.reportPage}>
-      <style>{`${stockCountReportCss}\n@media print { @page { size: A4 portrait; } }`}</style>
-      <header className={styles.reportHeader}>
-        <div className={`${styles.reportHeaderLine} ${styles.reportHeaderLineStrong} ${styles.documentTypeLine}`}>
+    <div className={documentStyles.reportPage}>
+      <style>{`${printableDocumentCss}
+${stockCountReportCss}\n@media print { @page { size: A4 portrait; } }`}</style>
+      <header className={documentStyles.reportHeader}>
+        <div className={`${documentStyles.reportHeaderLine} ${documentStyles.reportHeaderLineStrong} ${documentStyles.documentTypeLine}`}>
           {documentType}
         </div>
-        <div className={styles.reportCompanyName}>{record.code}</div>
-        <div className={`${styles.reportHeaderLine} ${styles.documentDateLine}`} suppressHydrationWarning>
+        <div className={documentStyles.reportCompanyName}>{record.code}</div>
+        <div className={`${documentStyles.reportHeaderLine} ${documentStyles.documentDateLine}`} suppressHydrationWarning>
           {formatDate(record.date)}
         </div>
       </header>
 
-      <section className={styles.reportSection}>
-        <div className={`${styles.grid12} ${styles.rowBordered}`}>
-          <div className={`${styles.topCompany} ${styles.addressBlock}`}>
-            <p className={styles.label}>Company</p>
-            <p className={styles.name}>{organization.name}</p>
-            <p className={styles.line}>{organization.code}</p>
-            <p className={styles.line}>{organization.country?.name ?? organization.countryCode}</p>
-            <p className={styles.line}>Base currency {organization.baseCurrencyCode}</p>
+      <section className={documentStyles.reportSection}>
+        <div className={`${documentStyles.grid12} ${documentStyles.rowBordered}`}>
+          <div className={`${localStyles.topCompany} ${documentStyles.addressBlock}`}>
+            <p className={documentStyles.label}>Company</p>
+            <p className={documentStyles.name}>{organization.name}</p>
+            <p className={documentStyles.line}>{organization.code}</p>
+            <p className={documentStyles.line}>{organization.country?.name ?? organization.countryCode}</p>
+            <p className={documentStyles.line}>Base currency {organization.baseCurrencyCode}</p>
           </div>
-          <div className={`${styles.topWarehouse} ${styles.addressBlock}`}>
-            <p className={styles.label}>Activity Type</p>
-            <p className={styles.name}>{documentType}</p>
-          </div>
-        </div>
-
-        <div className={`${styles.grid12} ${styles.metaRow}`}>
-          <div className={styles.metaSlot}>
-            <p className={styles.label}>Document</p>
-            <p className={styles.metaValue}>{record.code}</p>
-          </div>
-          <div className={styles.metaSlot}>
-            <p className={styles.label}>Reference</p>
-            <p className={styles.metaValue}>{record.reference || <span className={styles.muted}>-</span>}</p>
-          </div>
-          <div className={styles.metaSlot}>
-            <p className={styles.label}>Date</p>
-            <p className={styles.metaValue} suppressHydrationWarning>{formatDate(record.date)}</p>
-          </div>
-          <div className={styles.metaSlot}>
-            <p className={styles.label}>Lines</p>
-            <p className={styles.metaValue}>{record.lines.length}</p>
+          <div className={`${localStyles.topWarehouse} ${documentStyles.addressBlock}`}>
+            <p className={documentStyles.label}>Activity Type</p>
+            <p className={documentStyles.name}>{documentType}</p>
           </div>
         </div>
 
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>{documentType} Lines</h2>
-          <table className={styles.table}>
+        <div className={`${documentStyles.grid12} ${documentStyles.metaRow}`}>
+          <div className={documentStyles.metaSlot}>
+            <p className={documentStyles.label}>Document</p>
+            <p className={documentStyles.metaValue}>{record.code}</p>
+          </div>
+          <div className={documentStyles.metaSlot}>
+            <p className={documentStyles.label}>Reference</p>
+            <p className={documentStyles.metaValue}>{record.reference || <span className={documentStyles.muted}>-</span>}</p>
+          </div>
+          <div className={documentStyles.metaSlot}>
+            <p className={documentStyles.label}>Date</p>
+            <p className={documentStyles.metaValue} suppressHydrationWarning>{formatDate(record.date)}</p>
+          </div>
+          <div className={documentStyles.metaSlot}>
+            <p className={documentStyles.label}>Lines</p>
+            <p className={documentStyles.metaValue}>{record.lines.length}</p>
+          </div>
+        </div>
+
+        <section className={documentStyles.section}>
+          <h2 className={documentStyles.sectionTitle}>{documentType} Lines</h2>
+          <table className={documentStyles.table}>
             <thead>
               <tr>
                 <th>Line</th>
                 <th>SKU</th>
                 <th>Item</th>
                 <th>Warehouse</th>
-                <th className={styles.number}>Quantity</th>
+                <th className={documentStyles.number}>Quantity</th>
                 <th>Reason</th>
               </tr>
             </thead>
             <tbody>
               {record.lines.map((line, index) => (
                 <tr key={line.id}>
-                  <td className={styles.code}>{index + 1}</td>
-                  <td className={styles.code}>{line.sku}</td>
+                  <td className={documentStyles.code}>{index + 1}</td>
+                  <td className={documentStyles.code}>{line.sku}</td>
                   <td>{line.itemName}</td>
                   <td>{line.warehouse}</td>
-                  <td className={styles.number}>{line.quantityChange > 0 ? `+${line.quantityChange}` : line.quantityChange}</td>
+                  <td className={documentStyles.number}>{line.quantityChange > 0 ? `+${line.quantityChange}` : line.quantityChange}</td>
                   <td>{line.reasonCode == null ? "-" : (reasonLabels.get(line.reasonCode) ?? line.reasonCode)}</td>
                 </tr>
               ))}
@@ -119,16 +118,16 @@ export function StockTransactionReportTemplate({
         </section>
 
         {record.notes ? (
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Notes</h2>
-            <p className={styles.notes}>{record.notes}</p>
+          <section className={documentStyles.section}>
+            <h2 className={documentStyles.sectionTitle}>Notes</h2>
+            <p className={documentStyles.notes}>{record.notes}</p>
           </section>
         ) : null}
 
         {record.linkedDocuments.length ? (
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Linked Documents</h2>
-            <table className={styles.table}>
+          <section className={documentStyles.section}>
+            <h2 className={documentStyles.sectionTitle}>Linked Documents</h2>
+            <table className={documentStyles.table}>
               <thead>
                 <tr>
                   <th>Document Type</th>
@@ -142,11 +141,11 @@ export function StockTransactionReportTemplate({
                     <td>{document.documentType.replaceAll("_", " ")}</td>
                     <td>
                       {document.href ? (
-                        <a className={styles.documentLink} href={document.href}>
+                        <a className={documentStyles.documentLink} href={document.href}>
                           {document.documentCode}
                         </a>
                       ) : (
-                        <span className={styles.code}>{document.documentCode}</span>
+                        <span className={documentStyles.code}>{document.documentCode}</span>
                       )}
                     </td>
                     <td suppressHydrationWarning>{formatDate(document.creationDate)}</td>
@@ -157,7 +156,7 @@ export function StockTransactionReportTemplate({
           </section>
         ) : null}
       </section>
-      <footer className={styles.reportFooter} suppressHydrationWarning>Generated {generatedAt}</footer>
+      <footer className={documentStyles.reportFooter} suppressHydrationWarning>Generated {generatedAt}</footer>
     </div>
   );
 }

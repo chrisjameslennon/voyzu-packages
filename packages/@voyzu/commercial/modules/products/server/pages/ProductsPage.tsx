@@ -1,6 +1,6 @@
 import "server-only";
-import { CommercialPageShell } from "../../../common/server/CommercialPageShell";
+import { ProductsList } from "../../client/ProductsList";
 
 export function ProductsPage() {
-  return <CommercialPageShell title="Products" icon="inventory_2" />;
+  return <ProductsList />;
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
+
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -36,9 +38,7 @@ import type {
 } from "../types/item.types";
 import { UNIT_VALUES } from "../../core/types";
 import type { Unit } from "../../core/types";
-import { InventoryListActions } from "../../../client/InventoryListActions";
-import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
-import styles from "./items.module.css";
+import { InventoryListActions } from "../../shared/client/InventoryListActions";
 import { Create as CreatePolicy, Delete } from "../domain/operation-policy";
 import { customFieldDisplayValues, ItemMatchesSearch } from "../domain/item-list-policy";
 import { isSelectSearchable } from "../../core/client/select-policy";
@@ -560,10 +560,10 @@ export function ItemsList({
                   setServerError("");
                 }}
               />
-              <div className={styles.createFields}>
-                <div className={styles.field}>
+              <div className={detailStyles.stack}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>SKU</label>
-                  <div className={styles.inlineField}>
+                  <div className={detailStyles.fieldWithAction}>
                     <Input
                       value={sku}
                       disabled={autoSku || reservingSku}
@@ -588,7 +588,7 @@ export function ItemsList({
                     </Button>
                   </div>
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Name</label>
                   <Input
                     value={name}
@@ -596,7 +596,7 @@ export function ItemsList({
                     onChange={(event) => setName(event.target.value)}
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Category</label>
                   <SearchableSelect
                     value={categoryId}
@@ -611,7 +611,7 @@ export function ItemsList({
                     placeholder="Select a category"
                   />
                 </div>
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Unit</label>
                   <SearchableSelect
                     value={unit}
@@ -625,7 +625,7 @@ export function ItemsList({
                     }
                   />
                 </div>
-                <label className={styles.checkboxField}>
+                <label className={detailStyles.choiceLabel}>
                   <Checkbox
                     checked={quantityTracked}
                     onChange={(checked) => {
@@ -685,7 +685,7 @@ export function ItemsList({
                 visible={!!serverError}
                 onDismiss={() => setServerError("")}
               />
-              <div className={styles.field}>
+              <div className={detailStyles.fieldGroup}>
                 <label className={typography.fieldLabel}>Category</label>
                 <SearchableSelect
                   value={changeCategoryId}
@@ -753,7 +753,7 @@ export function ItemsList({
           />
         </div>
         <div
-          className={`${layout.slotToolbarRight} ${inventoryListStyles.toolbarLayer}`}
+          className={`${layout.slotToolbarRight}`}
         >
           <div className={listStyles.toolbarActions}>
             <Button

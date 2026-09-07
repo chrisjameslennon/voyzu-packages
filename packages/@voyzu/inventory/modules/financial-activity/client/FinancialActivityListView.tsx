@@ -15,8 +15,7 @@ import {
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
-import { InventoryListActions } from "../../../client/InventoryListActions";
-import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
+import { InventoryListActions } from "../../shared/client/InventoryListActions";
 import type { FinancialActivitySummary } from "../types/financial-activity.types";
 
 const date = (value: string) => new Date(value).toLocaleDateString("en-NZ");
@@ -76,7 +75,7 @@ export function FinancialActivityListView({ rows }: { rows: FinancialActivitySum
         <div className={layout.slotToolbarSearch}>
           <Input search containerClassName={layout.slotSearchControl} placeholder="Search financial activity..." value={search} onChange={(event) => setSearch(event.target.value)} />
         </div>
-        <div className={`${layout.slotToolbarRight} ${inventoryListStyles.toolbarLayer}`}>
+        <div className={`${layout.slotToolbarRight}`}>
           <div className={listStyles.toolbarActions}>
             <InventoryListActions
               rows={rows}

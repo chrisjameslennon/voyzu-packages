@@ -1,5 +1,7 @@
 "use client";
 
+import { Textarea } from "@voyzu/ui-components";
+
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AuditPanel } from "@voyzu/audit/client";
@@ -35,7 +37,6 @@ import {
 } from "../types/item.types";
 import { UNIT_VALUES } from "../../core/types";
 import type { Unit } from "../../core/types";
-import styles from "./items.module.css";
 import { Delete, Update } from "../domain/operation-policy";
 import { isSelectSearchable } from "../../core/client/select-policy";
 
@@ -235,7 +236,7 @@ export function ItemDetail({
     "Complete required custom field",
   );
   const details = (
-    <div className={styles.detailStack}>
+    <div className={detailStyles.stack}>
       <section className={detailStyles.card}>
         <div className={detailStyles.cardHeader}>
           <h2
@@ -271,8 +272,7 @@ export function ItemDetail({
             className={`${detailStyles.fieldGroup} ${detailStyles.fieldFull}`}
           >
             <label className={typography.fieldLabel}>Description</label>
-            <textarea
-              className={styles.textarea}
+            <Textarea
               value={description}
               rows={3}
               onChange={(event) => setDescription(event.target.value)}
@@ -293,7 +293,7 @@ export function ItemDetail({
               placeholder="Uncategorised"
             />
           </div>
-          <label className={styles.checkboxField}>
+          <label className={detailStyles.choiceLabel}>
             <Checkbox
               checked={quantityTracked}
               onChange={(checked) => {
@@ -399,7 +399,7 @@ export function ItemDetail({
             const label = `${field.name}${field.required ? " *" : ""}`;
             if (field.dataType === "BOOLEAN")
               return (
-                <label key={field.id} className={styles.checkboxField}>
+                <label key={field.id} className={detailStyles.choiceLabel}>
                   <Checkbox
                     checked={value === true}
                     disabled={disabled}

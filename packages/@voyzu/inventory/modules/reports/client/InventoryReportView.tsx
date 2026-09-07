@@ -15,7 +15,7 @@ import type {
   InventoryReportKey,
 } from "../types/report.types";
 import { InventoryReportTemplate } from "./InventoryReportTemplate";
-import localStyles from "./inventory-report.module.css";
+import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 
 const STOCK_ACTIVITY_REPORT_KEYS: InventoryReportKey[] = [
   "stock-activity",
@@ -177,7 +177,7 @@ export function InventoryReportView({
       {
         value: "show-custom-fields",
         label: (
-          <span className={localStyles.checkboxOption}>
+          <span className={detailStyles.choiceLabel}>
             <Checkbox
               checked={showCustomFields}
               onChange={() => undefined}
@@ -266,8 +266,8 @@ export function InventoryReportView({
           </h1>
         </div>
         {hasInactiveItemOption ? (
-          <div className={`${layout.slotToolbarLeft} ${localStyles.toolbarLeft}`}>
-            <label className={localStyles.inlineCheckboxOption}>
+          <div className={`${layout.slotToolbarLeft} ${layout.filterAlignment}`}>
+            <label className={detailStyles.choiceLabel}>
               <Checkbox
                 checked={showInactive}
                 onChange={() => setShowInactive((current) => !current)}
@@ -277,7 +277,7 @@ export function InventoryReportView({
           </div>
         ) : null}
         {hasDateRangeOption ? (
-          <div className={`${layout.slotToolbarLeft} ${localStyles.dateRange}`}>
+          <div className={`${layout.slotToolbarLeft} ${layout.filterRange}`}>
             <DropdownMenu
               alignment="left"
               width={240}
@@ -289,7 +289,7 @@ export function InventoryReportView({
                 </Button>
               }
             />
-            <div className={localStyles.dateControl}>
+            <div className={layout.filterControl}>
               <DatePicker
                 value={fromDate}
                 onChange={customFromDate}
@@ -297,8 +297,8 @@ export function InventoryReportView({
                 clearable={false}
               />
             </div>
-            <span className={localStyles.rangeSeparator}>through</span>
-            <div className={localStyles.dateControl}>
+            <span className={detailStyles.fieldHelp}>through</span>
+            <div className={layout.filterControl}>
               <DatePicker
                 value={toDate}
                 onChange={customToDate}
@@ -348,7 +348,7 @@ export function InventoryReportView({
         </div>
       </header>
       <div className={layout.slotDocument}>
-        <div className={layout.document} style={{ maxWidth: "297mm" }}>
+        <div className={`${layout.document} ${layout.landscapeDocument}`}>
           {document}
         </div>
       </div>

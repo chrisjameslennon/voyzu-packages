@@ -1,4 +1,8 @@
 "use client";
+
+import { Textarea } from "@voyzu/ui-components";
+
+import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -31,9 +35,7 @@ import type {
   ConfigurationKind,
   ConfigurationRow,
 } from "../types/configuration.types";
-import { InventoryListActions } from "../../../client/InventoryListActions";
-import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
-import styles from "./configuration.module.css";
+import { InventoryListActions } from "../../shared/client/InventoryListActions";
 import {
   Create,
   Deactivate,
@@ -442,9 +444,9 @@ export function ConfigurationListView({
                   setError("");
                 }}
               />
-              <div className={styles.stack}>
+              <div className={detailStyles.stack}>
                 {kind === "category" || kind === "warehouse" ? (
-                  <div className={styles.field}>
+                  <div className={detailStyles.fieldGroup}>
                     <label className={typography.fieldLabel}>Code</label>
                     <Input
                       invalid={validation.hasError("code")}
@@ -455,7 +457,7 @@ export function ConfigurationListView({
                     />
                   </div>
                 ) : null}
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Name</label>
                   <Input
                     invalid={validation.hasError("name")}
@@ -464,10 +466,9 @@ export function ConfigurationListView({
                   />
                 </div>
                 {kind === "category" ? (
-                  <div className={styles.field}>
+                  <div className={detailStyles.fieldGroup}>
                     <label className={typography.fieldLabel}>Description</label>
-                    <textarea
-                      className={styles.textarea}
+                    <Textarea
                       value={description}
                       onChange={(event) => setDescription(event.target.value)}
                     />
@@ -475,7 +476,7 @@ export function ConfigurationListView({
                 ) : null}
                 {kind === "custom-field" ? (
                   <>
-                    <div className={styles.field}>
+                    <div className={detailStyles.fieldGroup}>
                       <label className={typography.fieldLabel}>Data Type</label>
                       <SearchableSelect
                         searchable={false}
@@ -502,7 +503,7 @@ export function ConfigurationListView({
                         }))}
                       />
                     </div>
-                    <div className={styles.field}>
+                    <div className={detailStyles.fieldGroup}>
                       <label className={typography.fieldLabel}>
                         Applies To
                       </label>
@@ -519,7 +520,7 @@ export function ConfigurationListView({
                         }))}
                       />
                     </div>
-                    <label className={styles.optionChoice}>
+                    <label className={detailStyles.choiceLabel}>
                       <Checkbox
                         checked={requiredField}
                         onChange={setRequiredField}
@@ -527,7 +528,7 @@ export function ConfigurationListView({
                       Required
                     </label>
                     {canShowInFilter ? (
-                      <label className={styles.optionChoice}>
+                      <label className={detailStyles.choiceLabel}>
                         <Checkbox
                           checked={showInFilter}
                           onChange={setShowInFilter}
@@ -536,12 +537,12 @@ export function ConfigurationListView({
                       </label>
                     ) : null}
                     {hasOptionValues ? (
-                      <div className={styles.customFieldOptionsSection}>
-                        <div className={styles.field}>
+                      <div className={detailStyles.dividedStack}>
+                        <div className={detailStyles.fieldGroup}>
                           <label className={typography.fieldLabel}>
                             Options
                           </label>
-                          <div className={styles.optionChoices}>
+                          <div className={detailStyles.stack}>
                             <RadioGroup
                               name="custom-field-option-source"
                               value={optionSource}
@@ -564,7 +565,7 @@ export function ConfigurationListView({
                           </div>
                         </div>
                         {optionSource === "SHARED" ? (
-                          <div className={styles.field}>
+                          <div className={detailStyles.fieldGroup}>
                             <label className={typography.fieldLabel}>
                               Shared Options List
                             </label>
@@ -635,7 +636,7 @@ export function ConfigurationListView({
           />
         </div>
         <div
-          className={`${layout.slotToolbarRight} ${inventoryListStyles.toolbarLayer}`}
+          className={`${layout.slotToolbarRight}`}
         >
           <div className={listStyles.toolbarActions}>
             {kind === "warehouse" ? (

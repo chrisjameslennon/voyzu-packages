@@ -24,8 +24,7 @@ import type {
   StockCountRow,
   StockPosition,
 } from "../types/stock.types";
-import { InventoryListActions } from "../../../client/InventoryListActions";
-import inventoryListStyles from "../../../client/inventory-list-actions.module.css";
+import { InventoryListActions } from "../../shared/client/InventoryListActions";
 import { DeleteStockCount } from "../domain/operation-policy";
 const date = (value: string) => new Date(value).toLocaleDateString("en-NZ");
 function Shell({
@@ -104,7 +103,7 @@ function Shell({
         </div>
         {toolbarRight ? (
           <div
-            className={`${layout.slotToolbarRight} ${inventoryListStyles.toolbarLayer}`}
+            className={`${layout.slotToolbarRight}`}
           >
             {toolbarRight}
           </div>

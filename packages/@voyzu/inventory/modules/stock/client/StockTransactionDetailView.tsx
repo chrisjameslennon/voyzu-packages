@@ -1,5 +1,7 @@
 "use client";
 
+import { Textarea } from "@voyzu/ui-components";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,8 +27,6 @@ import {
   StockTransactionReportTemplate,
   stockTransactionTypeLabel,
 } from "./StockTransactionReportTemplate";
-import reportStyles from "./stock-count-report.module.css";
-import styles from "./stock.module.css";
 import {
   STOCK_ADJUSTMENT_REASONS,
   STOCK_ISSUE_REASONS,
@@ -109,56 +109,56 @@ export function StockTransactionDetailView({
   const pdfDownloadPath = `/api/capability/pdf?${pdfParams.toString()}`;
 
   const details = (
-    <div className={reportStyles.detailsTab}>
-      <main className={reportStyles.detailsMain}>
+    <div className={reportLayout.detailsTab}>
+      <main className={reportLayout.detailsMain}>
         <section className={detailStyles.card}>
           <h2 className={typography.sectionHeading}>Transaction Details</h2>
-          <div className={styles.fields}>
-            <div className={styles.field}>
+          <div className={detailStyles.formGrid}>
+            <div className={detailStyles.fieldGroup}>
               <label className={typography.fieldLabel}>Code</label>
               <Input value={record.code} disabled />
             </div>
-            <div className={styles.field}>
+            <div className={detailStyles.fieldGroup}>
               <label className={typography.fieldLabel}>Date</label>
               <Input value={new Date(record.date).toLocaleString()} disabled />
             </div>
-            <div className={styles.field}>
+            <div className={detailStyles.fieldGroup}>
               <label className={typography.fieldLabel}>Reference</label>
               <Input value={record.reference ?? ""} disabled />
             </div>
             {record.notes ? (
-              <div className={`${styles.field} ${styles.wide}`}>
+              <div className={`${detailStyles.fieldGroup} ${detailStyles.fieldFull}`}>
                 <label className={typography.fieldLabel}>Notes</label>
-                <textarea className={`${styles.textarea} ${styles.completedStocktakeNotes}`} rows={2} value={record.notes} disabled readOnly />
+                <Textarea rows={2} value={record.notes} disabled readOnly />
               </div>
             ) : null}
           </div>
         </section>
         <section className={detailStyles.card}>
           <h2 className={typography.sectionHeading}>Transaction Lines</h2>
-          <EditableGrid className={styles.gridWithoutHeaderIcons} columns={columns} initialRows={record.lines} emptyText="This transaction has no lines" ariaLabel="Stock transaction lines" />
+          <EditableGrid columns={columns} initialRows={record.lines} emptyText="This transaction has no lines" ariaLabel="Stock transaction lines" />
         </section>
       </main>
-      <aside className={reportStyles.detailsRail}>
+      <aside className={reportLayout.detailsRail}>
         <div className={detailStyles.card}>
           <label className={typography.fieldLabel}>Activity Type</label>
           <Badge variant="soft" size="x-large" color="info">{documentType.toUpperCase()}</Badge>
         </div>
-        <div className={`${detailStyles.card} ${styles.linkedDocumentsCard}`}>
+        <div className={`${detailStyles.card} ${detailStyles.stack}`}>
           <h2 className={typography.sectionHeading}>Linked Documents</h2>
           {record.linkedDocuments.length ? (
-            <div className={styles.linkedDocumentList}>
+            <div className={detailStyles.stack}>
               {record.linkedDocuments.map((document) => (
-                <div className={styles.linkedDocumentEntry} key={`${document.documentType}-${document.documentId}`}>
-                  <div className={styles.linkedDocumentType}>{document.documentType.replaceAll("_", " ")}</div>
-                  <div className={styles.linkedDocumentDetails}>
-                    {document.href ? <Link className={styles.documentLink} href={document.href}>{document.documentCode}</Link> : <span>{document.documentCode}</span>}
+                <div className={detailStyles.card} key={`${document.documentType}-${document.documentId}`}>
+                  <div className={detailStyles.fieldHelp}>{document.documentType.replaceAll("_", " ")}</div>
+                  <div className={detailStyles.summaryRow}>
+                    {document.href ? <Link className={detailStyles.link} href={document.href}>{document.documentCode}</Link> : <span>{document.documentCode}</span>}
                     <span>{formatDate(document.creationDate, isMMDD)}</span>
                   </div>
                 </div>
               ))}
             </div>
-          ) : <p className={styles.emptyLinkedDocuments}>No linked documents.</p>}
+          ) : <p className={detailStyles.fieldHelp}>No linked documents.</p>}
         </div>
         <AuditPanel
           id={record.id}
@@ -180,14 +180,14 @@ export function StockTransactionDetailView({
       key: "document",
       label: "Document",
       content: (
-        <div className={reportStyles.tabContent}>
-          <div className={reportStyles.toolbar}>
+        <div className={reportLayout.tabContent}>
+          <div className={reportLayout.toolbar}>
             <Button variant="secondary" icon="open_in_new" title="Printable Page" onClick={() => window.open(printablePath, "_blank", "noopener,noreferrer")} />
             <Button variant="secondary" icon="picture_as_pdf" title="View PDF" onClick={() => window.open(pdfViewPath, "_blank", "noopener,noreferrer")} />
             <Button variant="secondary" icon="download" title="Download PDF" onClick={() => { window.location.href = pdfDownloadPath; }} />
           </div>
-          <div className={reportStyles.documentShell}>
-            <div className={`${reportLayout.document} ${reportStyles.portraitDocument}`}>
+          <div className={reportLayout.documentShell}>
+            <div className={`${reportLayout.document} ${reportLayout.portraitDocument}`}>
               <StockTransactionReportTemplate record={record} organization={organization} generatedAt={generatedAt} />
             </div>
           </div>

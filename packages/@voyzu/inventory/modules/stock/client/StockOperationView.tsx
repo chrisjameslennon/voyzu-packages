@@ -1,4 +1,8 @@
 "use client";
+
+import { Textarea } from "@voyzu/ui-components";
+
+import localStyles from "./stock.module.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -27,7 +31,6 @@ import {
   STOCK_RECEIPT_REASONS,
 } from "../../core/types";
 import type { StockOption, StockPosition } from "../types/stock.types";
-import styles from "./stock.module.css";
 type Kind = "receive" | "issue" | "transfer" | "reserve" | "adjust";
 type Line = {
   id: number;
@@ -649,7 +652,7 @@ export function StockOperationView({
     "Complete required custom field",
   );
   const customFieldControls = customFields.map((field) => (
-    <div className={styles.field} key={field.id}>
+    <div className={detailStyles.fieldGroup} key={field.id}>
       <label className={typography.fieldLabel}>
         {field.name}
         {field.required ? " *" : ""}
@@ -744,7 +747,7 @@ export function StockOperationView({
           <Breadcrumbs />
         </div>
         <div className={layout.slotTitle}>
-          <div className={styles.titleTextBlock}>
+          <div className={detailStyles.sectionIntro}>
             <h1
               className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}
             >
@@ -757,7 +760,7 @@ export function StockOperationView({
                   {" "}Generally quantity adjustment should be done as part of
                   a{" "}
                   <a
-                    className={styles.stockCountLink}
+                    className={detailStyles.link}
                     href="/inventory/stock-counts"
                   >
                     Stock Count
@@ -815,8 +818,8 @@ export function StockOperationView({
       kind === "reserve" ||
       kind === "adjust" ? (
         <aside className={layout.slotDocument}>
-          <div className={styles.documentPanel}>
-            <div className={styles.documentPanelLabel}>
+          <div className={detailStyles.infoPanel}>
+            <div className={detailStyles.infoPanelHeading}>
               {kind === "transfer"
                 ? "Transfer document"
                 : kind === "receive"
@@ -827,9 +830,9 @@ export function StockOperationView({
                       ? "Adjustment document"
                       : "Issue document"}
             </div>
-            <div className={styles.documentPanelFields}>
+            <div className={detailStyles.stack}>
               {kind !== "reserve" ? (
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Date</label>
                   <Input
                     type="date"
@@ -841,7 +844,7 @@ export function StockOperationView({
                   />
                 </div>
               ) : null}
-              <div className={styles.field}>
+              <div className={detailStyles.fieldGroup}>
                 <label className={typography.fieldLabel}>
                   Reference (optional)
                 </label>
@@ -851,12 +854,11 @@ export function StockOperationView({
                 />
               </div>
               {kind !== "transfer" ? (
-                <div className={styles.field}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>
                     Notes{error === "Notes are required when a reason is Other" ? " *" : " (optional)"}
                   </label>
-                  <textarea
-                    className={styles.textarea}
+                  <Textarea
                     value={notes}
                     onChange={(event) => setNotes(event.target.value)}
                   />
@@ -868,21 +870,21 @@ export function StockOperationView({
           customFields.length ? (
             <div className={detailStyles.card}>
               <h2 className={typography.sectionHeading}>Custom Fields</h2>
-              <div className={styles.railCustomFields}>
+              <div className={detailStyles.stack}>
                 {customFieldControls}
               </div>
             </div>
           ) : null}
         </aside>
       ) : null}
-      <main className={`${layout.slotMain} ${styles.stack}`}>
+      <main className={`${layout.slotMain} ${detailStyles.stack}`}>
           <>
             {kind === "issue" || kind === "receive" ? (
               <section className={detailStyles.card}>
                 <h2 className={typography.sectionHeading}>
                   {kind === "issue" ? "Issue Details" : "Receipt Details"}
                 </h2>
-                <div className={styles.issueWarehouseField}>
+                <div className={detailStyles.fieldGroup}>
                   <label className={typography.fieldLabel}>Warehouse</label>
                   <SearchableSelect
                     value={warehouseId}
@@ -912,7 +914,7 @@ export function StockOperationView({
                     }
                   />
                 </div>
-                <div className={styles.issueItemsSection}>
+                <div className={detailStyles.dividedStack}>
                   <h2 className={typography.sectionHeading}>Items</h2>
                   {warehouseId ? (
                     <EditableGrid
@@ -934,7 +936,7 @@ export function StockOperationView({
                       mobileLayout="cards"
                     />
                   ) : (
-                    <p className={styles.issueItemsHint}>
+                    <p className={detailStyles.card}>
                       Select a warehouse to add items.
                     </p>
                   )}
@@ -943,8 +945,8 @@ export function StockOperationView({
             ) : kind === "transfer" ? (
               <section className={detailStyles.card}>
                 <h2 className={typography.sectionHeading}>Transfer Details</h2>
-                <div className={styles.transferStory}>
-                  <div className={styles.transferSentence}>
+                <div className={localStyles.transferStory}>
+                  <div className={localStyles.transferSentence}>
                     <span>Transfer</span>
                     <Input
                       type="number"
@@ -971,7 +973,7 @@ export function StockOperationView({
                       placeholder="Select an item"
                     />
                   </div>
-                  <div className={styles.transferWarehouses}>
+                  <div className={localStyles.transferWarehouses}>
                     <span>from</span>
                     <SearchableSelect
                       value={warehouseId}
@@ -990,7 +992,7 @@ export function StockOperationView({
                       placeholder="Select source warehouse"
                     />
                     <span
-                      className={`material-symbols-outlined ${styles.transferArrow}`}
+                      className={`material-symbols-outlined ${localStyles.transferArrow}`}
                       aria-hidden="true"
                     >
                       arrow_forward
@@ -1021,8 +1023,8 @@ export function StockOperationView({
             ) : kind === "reserve" ? (
               <section className={detailStyles.card}>
                 <h2 className={typography.sectionHeading}>Reserve Item</h2>
-                <div className={styles.reserveItemForm}>
-                  <div className={styles.field}>
+                <div className={detailStyles.stack}>
+                  <div className={detailStyles.fieldGroup}>
                     <label className={typography.fieldLabel}>Item</label>
                     <SearchableSelect
                       value={itemId}
@@ -1042,7 +1044,6 @@ export function StockOperationView({
                   {selectedItem ? (
                     <EditableGrid
                       key={itemId}
-                      className={styles.gridWithoutHeaderIcons}
                       columns={reserveColumns}
                       initialRows={positionRows}
                       onRowsChange={setLines}
@@ -1050,7 +1051,7 @@ export function StockOperationView({
                       mobileLayout="cards"
                     />
                   ) : (
-                    <p className={styles.issueItemsHint}>
+                    <p className={detailStyles.card}>
                       Select an item to view available stock by warehouse.
                     </p>
                   )}
@@ -1061,8 +1062,8 @@ export function StockOperationView({
                 <h2 className={typography.sectionHeading}>
                   Adjustment Details
                 </h2>
-                <div className={styles.adjustmentFields}>
-                  <div className={styles.field}>
+                <div className={detailStyles.formGrid}>
+                  <div className={detailStyles.fieldGroup}>
                     <label className={typography.fieldLabel}>Item</label>
                     <SearchableSelect
                       value={itemId}
@@ -1086,7 +1087,7 @@ export function StockOperationView({
                       placeholder="Select an item"
                     />
                   </div>
-                  <div className={styles.field}>
+                  <div className={detailStyles.fieldGroup}>
                     <label className={typography.fieldLabel}>Warehouse</label>
                     <SearchableSelect
                       value={warehouseId}
@@ -1116,11 +1117,11 @@ export function StockOperationView({
                   </div>
                 </div>
                 {adjustmentPosition ? (
-                  <div className={styles.adjustmentQuantities}>
+                  <div className={detailStyles.dividedStack}>
                     <h2 className={typography.sectionHeading}>
                       Recorded Quantities
                     </h2>
-                    <dl className={styles.quantityFacts}>
+                    <dl className={detailStyles.metricCards}>
                       <div>
                         <dt>On Hand</dt>
                         <dd>{adjustmentPosition.onHand}</dd>
@@ -1134,7 +1135,7 @@ export function StockOperationView({
                         <dd>{adjustmentPosition.available}</dd>
                       </div>
                     </dl>
-                    <div className={styles.revisedQuantityField}>
+                    <div className={detailStyles.fieldGroup}>
                       <label className={typography.fieldLabel}>
                         Revised Quantity on Hand
                       </label>
@@ -1153,7 +1154,7 @@ export function StockOperationView({
                         onChange={(event) => setQuantity(event.target.value)}
                       />
                     </div>
-                    <div className={styles.revisedQuantityField}>
+                    <div className={detailStyles.fieldGroup}>
                       <label className={typography.fieldLabel}>Reason</label>
                       <SearchableSelect
                         value={reasonCode}
@@ -1174,7 +1175,7 @@ export function StockOperationView({
             kind !== "adjust" ? (
               <section className={detailStyles.card}>
                 <h2 className={typography.sectionHeading}>Custom Fields</h2>
-                <div className={styles.customFields}>
+                <div className={detailStyles.formGrid}>
                   {customFieldControls}
                 </div>
               </section>
@@ -1193,9 +1194,9 @@ export function StockOperationView({
           void submit();
         }}
         message={
-          <div className={styles.issueConfirmDocument}>
-            <div className={styles.issueConfirmBox}>
-              <p className={styles.issueConfirmSummary}>
+          <div className={detailStyles.stack}>
+            <div className={detailStyles.card}>
+              <p className={detailStyles.sectionIntro}>
                 {kind === "transfer" ? (
                   <>
                     Transfer <strong>{quantity}</strong> units of{" "}
@@ -1232,7 +1233,7 @@ export function StockOperationView({
                   </>
                 )}
               </p>
-              <dl className={styles.issueConfirmMetadata}>
+              <dl className={detailStyles.metadata}>
                 {kind !== "reserve" ? (
                   <div>
                     <dt>Date</dt>
@@ -1247,9 +1248,9 @@ export function StockOperationView({
                 </div>
               </dl>
             </div>
-            <div className={`${styles.issueConfirmBox} ${styles.issueConfirmItems}`}>
-              <div className={styles.issueConfirmItemsScroll}>
-                <table className={styles.issueConfirmItemsTable}>
+            <div className={`${detailStyles.card} ${detailStyles.stack}`}>
+              <div className={detailStyles.scrollTable}>
+                <table className={detailStyles.table}>
                   <thead>
                     {kind === "reserve" ? (
                       <tr>
@@ -1288,7 +1289,7 @@ export function StockOperationView({
                         <td>{selectedItem?.name}</td>
                         <td>{adjustmentPosition?.onHand}</td>
                         <td>{quantity}</td>
-                        <td className={styles.adjustmentVariance}>
+                        <td className={detailStyles.dangerText}>
                           {confirmAdjustmentVariance > 0 ? "+" : ""}{confirmAdjustmentVariance}
                         </td>
                       </tr>

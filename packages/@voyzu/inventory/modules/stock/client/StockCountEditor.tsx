@@ -1,4 +1,6 @@
 "use client";
+
+import { Textarea } from "@voyzu/ui-components";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuditPanel } from "@voyzu/audit/client";
@@ -39,8 +41,6 @@ import {
   StockCountReportTemplate,
   type StockCountOrganization,
 } from "./StockCountReportTemplate";
-import reportStyles from "./stock-count-report.module.css";
-import styles from "./stock.module.css";
 type Row = {
   id: number;
   itemId: number | string;
@@ -152,7 +152,7 @@ export function StockCountEditor({
       type: "text",
       readOnly: true,
       width: 112,
-      valueClassName: styles.varianceValue,
+      valueClassName: detailStyles.dangerText,
       calculate: (row) =>
         row.countedQuantity === ""
           ? "—"
@@ -336,7 +336,7 @@ export function StockCountEditor({
             <Breadcrumbs />
           </div>
           <div className={entryLayout.slotTitle}>
-            <div className={styles.titleTextBlock}>
+            <div className={detailStyles.sectionIntro}>
               <h1
                 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}
               >
@@ -381,14 +381,14 @@ export function StockCountEditor({
           </div>
         </header>
         <aside className={entryLayout.slotDocument}>
-          <div className={styles.documentPanel}>
-            <div className={styles.documentPanelLabel}>
+          <div className={detailStyles.infoPanel}>
+            <div className={detailStyles.infoPanelHeading}>
               Stocktake document
             </div>
-            <div className={styles.documentPanelFields}>
-              <div className={styles.field}>
+            <div className={detailStyles.stack}>
+              <div className={detailStyles.fieldGroup}>
                 <label className={typography.fieldLabel}>Count Date</label>
-                <fieldset className={styles.datePickerFieldset}>
+                <fieldset className={detailStyles.fieldset}>
                   <DatePicker
                     value={countDate}
                     onChange={setCountDate}
@@ -397,7 +397,7 @@ export function StockCountEditor({
                   />
                 </fieldset>
               </div>
-              <div className={styles.field}>
+              <div className={detailStyles.fieldGroup}>
                 <label className={typography.fieldLabel}>
                   Reference (optional)
                 </label>
@@ -406,13 +406,12 @@ export function StockCountEditor({
                   onChange={(event) => setReference(event.target.value)}
                 />
               </div>
-              <div className={styles.field}>
+              <div className={detailStyles.fieldGroup}>
                 <label className={typography.fieldLabel}>
                   Notes (optional)
                   {error === "Notes are required when a reason is Other" ? " *" : ""}
                 </label>
-                <textarea
-                  className={`${styles.textarea} ${styles.stocktakeNotes}`}
+                <Textarea
                   value={notes}
                   onChange={(event) => setNotes(event.target.value)}
                 />
@@ -420,16 +419,16 @@ export function StockCountEditor({
             </div>
           </div>
         </aside>
-        <main className={`${entryLayout.slotMain} ${styles.stack}`}>
+        <main className={`${entryLayout.slotMain} ${detailStyles.stack}`}>
           <section className={detailStyles.card}>
             <h2 className={typography.sectionHeading}>Stocktake Details</h2>
             {record ? (
-              <div className={styles.issueWarehouseField}>
+              <div className={detailStyles.fieldGroup}>
                 <label className={typography.fieldLabel}>Code</label>
                 <Input value={record.code} disabled />
               </div>
             ) : null}
-            <div className={styles.issueWarehouseField}>
+            <div className={detailStyles.fieldGroup}>
               <label className={typography.fieldLabel}>Warehouse</label>
               <SearchableSelect
                 value={warehouseId}
@@ -449,17 +448,16 @@ export function StockCountEditor({
                 placeholder="Select a warehouse"
               />
             </div>
-            <div className={styles.issueItemsSection}>
+            <div className={detailStyles.dividedStack}>
               <h2 className={typography.sectionHeading}>
                 Items
               </h2>
-              <p className={styles.stocktakeItemsHelp}>
+              <p className={detailStyles.fieldHelp}>
                 Leave the Actual Quantity blank to accept the On Hand value.
               </p>
               {warehouseId ? (
                 <EditableGrid
                   key={`stocktake-${warehouseId}`}
-                  className={styles.stocktakeGrid}
                   columns={columns}
                   initialRows={calculated}
                   onRowsChange={setRows}
@@ -468,7 +466,7 @@ export function StockCountEditor({
                   mobileLayout="cards"
                 />
               ) : (
-                <p className={styles.issueItemsHint}>
+                <p className={detailStyles.card}>
                   Select a warehouse to load its stocked items.
                 </p>
               )}
@@ -487,9 +485,9 @@ export function StockCountEditor({
             void complete();
           }}
           message={
-            <div className={styles.issueConfirmDocument}>
-              <div className={styles.issueConfirmBox}>
-                <p className={styles.issueConfirmSummary}>
+            <div className={detailStyles.stack}>
+              <div className={detailStyles.card}>
+                <p className={detailStyles.sectionIntro}>
                   Complete the stocktake for{" "}
                   <strong>
                     {selectedWarehouse?.name ?? "the selected warehouse"}
@@ -497,7 +495,7 @@ export function StockCountEditor({
                   with <strong>{changes.length}</strong>{" "}
                   {changes.length === 1 ? "adjustment" : "adjustments"}.
                 </p>
-                <dl className={styles.issueConfirmMetadata}>
+                <dl className={detailStyles.metadata}>
                   <div>
                     <dt>Count Date</dt>
                     <dd>{confirmCountDate}</dd>
@@ -509,10 +507,10 @@ export function StockCountEditor({
                 </dl>
               </div>
               <div
-                className={`${styles.issueConfirmBox} ${styles.issueConfirmItems}`}
+                className={`${detailStyles.card} ${detailStyles.stack}`}
               >
-                <div className={styles.issueConfirmItemsScroll}>
-                  <table className={styles.issueConfirmItemsTable}>
+                <div className={detailStyles.scrollTable}>
+                  <table className={detailStyles.table}>
                     <thead>
                       <tr>
                         <th>Item</th>
@@ -549,16 +547,16 @@ export function StockCountEditor({
     ? `mutationId=${encodeURIComponent(record.audit.updated.mutationId)}`
     : `entityType=stock_count&entityId=${record.id}`;
   const details = (
-    <div className={reportStyles.detailsTab}>
-      <main className={reportStyles.detailsMain}>
+    <div className={reportLayout.detailsTab}>
+      <main className={reportLayout.detailsMain}>
       <section className={detailStyles.card}>
         <h2 className={typography.sectionHeading}>Stocktake Details</h2>
-        <div className={styles.fields}>
-          <div className={styles.field}>
+        <div className={detailStyles.formGrid}>
+          <div className={detailStyles.fieldGroup}>
             <label className={typography.fieldLabel}>Code</label>
             <Input value={record.code} disabled />
           </div>
-          <div className={styles.field}>
+          <div className={detailStyles.fieldGroup}>
             <label className={typography.fieldLabel}>Warehouse</label>
             <SearchableSelect
               value={warehouseId}
@@ -575,10 +573,10 @@ export function StockCountEditor({
               }))}
             />
           </div>
-          <div className={styles.field}>
+          <div className={detailStyles.fieldGroup}>
             <label className={typography.fieldLabel}>Count Date</label>
             <fieldset
-              className={styles.datePickerFieldset}
+              className={detailStyles.fieldset}
               disabled={readOnly}
             >
               <DatePicker
@@ -589,14 +587,13 @@ export function StockCountEditor({
               />
             </fieldset>
           </div>
-          <div className={styles.field}>
+          <div className={detailStyles.fieldGroup}>
             <label className={typography.fieldLabel}>Reference (optional)</label>
             <Input value={reference} disabled />
           </div>
-          <div className={`${styles.field} ${styles.wide}`}>
+          <div className={`${detailStyles.fieldGroup} ${detailStyles.fieldFull}`}>
             <label className={typography.fieldLabel}>Notes (optional)</label>
-            <textarea
-              className={`${styles.textarea} ${styles.completedStocktakeNotes}`}
+            <Textarea
               rows={2}
               value={notes}
               disabled={readOnly}
@@ -608,7 +605,6 @@ export function StockCountEditor({
       <section className={detailStyles.card}>
         <EditableGrid
           key={`${warehouseId}-${readOnly}`}
-          className={styles.stocktakeGrid}
           columns={columns.map((column) => ({ ...column, readOnly: true }))}
           initialRows={calculated}
           onRowsChange={setRows}
@@ -616,7 +612,7 @@ export function StockCountEditor({
         />
       </section>
       </main>
-      <aside className={reportStyles.detailsRail}>
+      <aside className={reportLayout.detailsRail}>
         <div className={detailStyles.card}>
           <label className={typography.fieldLabel}>Status</label>
           <Badge variant="soft" size="x-large" color="success">
@@ -654,8 +650,8 @@ export function StockCountEditor({
       key: "document",
       label: "Document",
       content: (
-        <div className={reportStyles.tabContent}>
-          <div className={reportStyles.toolbar}>
+        <div className={reportLayout.tabContent}>
+          <div className={reportLayout.toolbar}>
             <Button
               variant="secondary"
               icon="open_in_new"
@@ -675,8 +671,8 @@ export function StockCountEditor({
               onClick={() => { window.location.href = pdfDownloadPath; }}
             />
           </div>
-          <div className={reportStyles.documentShell}>
-            <div className={`${reportLayout.document} ${reportStyles.portraitDocument}`}>
+          <div className={reportLayout.documentShell}>
+            <div className={`${reportLayout.document} ${reportLayout.portraitDocument}`}>
               <StockCountReportTemplate
                 record={record}
                 organization={organization}
