@@ -1,9 +1,8 @@
 import type { VoyzuPackageModuleDefinition } from "@voyzu/types/framework";
 
 import { apiDefinitions } from "./api.routes";
-import { commands } from "./commands";
 import { pageRoutes } from "./pages.routes";
 
-export const organizationReportsModule = { pageRoutes, apiDefinitions, commands } as const satisfies VoyzuPackageModuleDefinition;
+export const organizationReportsModule = { pageRoutes, apiDefinitions } as const satisfies VoyzuPackageModuleDefinition;
 
 export default organizationReportsModule;

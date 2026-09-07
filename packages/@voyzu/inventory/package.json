@@ -8,9 +8,15 @@
   "voyzu": {
     "voyzu-package": true,
     "allowInstall": true,
-    "dependencies": ["@voyzu/erp-core"],
-    "pageRootPaths": ["/inventory"],
-    "apiRootPaths": ["/inventory"],
+    "dependencies": [
+      "@voyzu/erp-core"
+    ],
+    "pageRootPaths": [
+      "/inventory"
+    ],
+    "apiRootPaths": [
+      "/inventory"
+    ],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }
@@ -48,10 +54,6 @@
       "types": "./modules/items/api.routes.ts",
       "import": "./modules/items/api.routes.ts"
     },
-    "./items/commands": {
-      "types": "./modules/items/commands.ts",
-      "import": "./modules/items/commands.ts"
-    },
     "./configuration/pages.routes": {
       "types": "./modules/configuration/pages.routes.ts",
       "import": "./modules/configuration/pages.routes.ts"
@@ -59,10 +61,6 @@
     "./configuration/api.routes": {
       "types": "./modules/configuration/api.routes.ts",
       "import": "./modules/configuration/api.routes.ts"
-    },
-    "./configuration/commands": {
-      "types": "./modules/configuration/commands.ts",
-      "import": "./modules/configuration/commands.ts"
     },
     "./stock/pages.routes": {
       "types": "./modules/stock/pages.routes.ts",
@@ -72,10 +70,6 @@
       "types": "./modules/stock/api.routes.ts",
       "import": "./modules/stock/api.routes.ts"
     },
-    "./stock/commands": {
-      "types": "./modules/stock/commands.ts",
-      "import": "./modules/stock/commands.ts"
-    },
     "./financial-activity/pages.routes": {
       "types": "./modules/financial-activity/pages.routes.ts",
       "import": "./modules/financial-activity/pages.routes.ts"
@@ -83,10 +77,6 @@
     "./financial-activity/api.routes": {
       "types": "./modules/financial-activity/api.routes.ts",
       "import": "./modules/financial-activity/api.routes.ts"
-    },
-    "./financial-activity/commands": {
-      "types": "./modules/financial-activity/commands.ts",
-      "import": "./modules/financial-activity/commands.ts"
     },
     "./financial-activity/types": {
       "types": "./modules/financial-activity/types/financial-activity.types.ts",
@@ -99,10 +89,6 @@
     "./reports/api.routes": {
       "types": "./modules/reports/api.routes.ts",
       "import": "./modules/reports/api.routes.ts"
-    },
-    "./reports/commands": {
-      "types": "./modules/reports/commands.ts",
-      "import": "./modules/reports/commands.ts"
     }
   },
   "peerDependencies": {

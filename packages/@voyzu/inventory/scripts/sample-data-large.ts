@@ -1,14 +1,8 @@
 import { getDb } from "@voyzu/capability/db";
 
-import { listInventoryConfiguration } from "../modules/configuration/commands";
-import {
-  createInventoryItem,
-  listInventoryItems,
-} from "../modules/items/commands";
-import {
-  listInventoryStock,
-  receiveInventoryStock,
-} from "../modules/stock/commands";
+import { listConfiguration as listInventoryConfiguration } from "../modules/configuration/server/lib/configuration.service";
+import { createItem as createInventoryItem, listItems as listInventoryItems } from "../modules/items/server/lib/item.service";
+import { listStockPositions as listInventoryStock, receiveStock as receiveInventoryStock } from "../modules/stock/server/lib/stock.service";
 import { sampleData } from "./sample-data";
 
 const ITEM_COUNT = 100;

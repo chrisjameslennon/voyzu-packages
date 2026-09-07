@@ -52,6 +52,20 @@ export function getFinanceCompany(code: string): Promise<FinanceCompanyResponseD
   return findByCode(code, getDb());
 }
 
+export async function getOrganizationFinanceMasterData(organizationId: number): Promise<FinanceCompanyResponseDto | null> {
+  const row = await new FinanceCompanyRepo(getDb()).getByOrganizationId(organizationId);
+  return row?.finance_organization_id != null ? toDto(row) : null;
+}
+
+export async function createFinancialEntity({ organizationId }: { organizationId: number }): Promise<{ financialEntityId: number }> {
+  return withTransaction(async () => {
+    await createFinanceCompanyForErpOrganization(organizationId);
+    const company = await getOrganizationFinanceMasterData(organizationId);
+    if (company?.financeCompanyId == null) throw new BusinessRuleError(`Unable to create financial entity for organization ${organizationId}`);
+    return { financialEntityId: company.financeCompanyId };
+  });
+}
+
 export async function listSelectableFinanceCompaniesForCurrentUser(): Promise<OrganizationResponseDto[]> {
   const accessibleOrganizations = await listSelectableOrganizationsForCurrentUser();
   if (accessibleOrganizations.length === 0) return [];

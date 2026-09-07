@@ -1,0 +1,40 @@
+import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
+import { test } from "node:test";
+import { capabilities, masterData, registerContracts } from "@voyzu/capability/contracts";
+import { getDb, withTransaction } from "@voyzu/capability/db";
+import { createOrganization } from "../../modules/organizations/server/lib/organization.service";
+import erp from "../../voyzu.package";
+import finance from "../../../finance/voyzu.package";
+
+// Requires an initialized development DB with Finance country settings for NZ.
+// Every write (including fiscal calendar provisioning) is rolled back.
+test("organization, Finance capability and composed master data share a transaction", async () => {
+  const code = `CT${randomUUID().replaceAll("-", "").slice(0, 12)}`.toUpperCase();
+  const rollback = new Error("test rollback");
+  const packages = [{ name: "@voyzu/erp-core", contracts: erp.contracts }, { name: "@voyzu/finance", contracts: finance.contracts }];
+  try {
+    await assert.rejects(withTransaction(async () => {
+      registerContracts([packages[0]]);
+      assert.equal(capabilities.optional("erp.organization-finance"), undefined);
+      const organization = await createOrganization({ code, name: "Contract integration test", countryCode: "NZ", baseCurrencyCode: "NZD" });
+      await assert.rejects(masterData.get("erp.organization.finance", organization.id), /No implementation/);
+      await assert.rejects(masterData.compose("erp.organization", organization.id, ["erp.organization.finance"]), /No implementation/);
+      registerContracts(packages);
+      const result = await capabilities.use("erp.organization-finance").createFinancialEntity({ organizationId: organization.id });
+      assert.equal(typeof result.financialEntityId, "number");
+      const composed = await masterData.compose("erp.organization", organization.id, ["erp.organization.finance"]);
+      assert.deepEqual(composed?.organization, organization);
+      assert.equal(composed?.extensions.finance?.financeCompanyId, result.financialEntityId);
+      assert.equal(composed?.extensions.finance?.id, organization.id);
+      assert.equal(composed?.extensions.finance?.financeEnabled, true);
+      assert.ok(composed?.extensions.finance?.audit.created);
+      // Validate the automatic creation hook as well as explicit capability invocation.
+      const automatic = await createOrganization({ code: `${code.slice(0, 13)}A`, name: "Automatic Finance test", countryCode: "NZ", baseCurrencyCode: "NZD" });
+      assert.equal((await masterData.get("erp.organization.finance", automatic.id))?.financeEnabled, true);
+      throw rollback;
+    }), (error) => error === rollback);
+    const { rows } = await getDb().query("SELECT id FROM organization WHERE code = $1", [code]);
+    assert.equal(rows.length, 0, "outer rollback must include organization and Finance writes");
+  } finally { registerContracts(packages); }
+});

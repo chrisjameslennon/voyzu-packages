@@ -12,7 +12,24 @@ export const organizationModules = [
   organizationReportsModule,
 ] as const;
 
+
+import { masterDataContracts } from "./contracts/master-data/master-data-map";
+import { capabilityContracts } from "./contracts/capability/capability-map";
+
 export const erpCorePackage = {
+   contracts: {
+    defines: {
+      masterData: masterDataContracts,
+      capabilities: capabilityContracts,
+    },
+    implements: {
+      masterData: {
+        "erp.organization": {
+          get: (id: number) => import("./modules/organizations/server/lib/organization.service").then((module) => module.getOrganizationMasterData(id)),
+        },
+      },
+    },
+  },
   modules: [
     organizationsModule,
     organizationAccessModule,

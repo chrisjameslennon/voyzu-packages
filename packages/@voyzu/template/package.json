@@ -9,8 +9,12 @@
     "voyzu-package": true,
     "allowInstall": true,
     "dependencies": [],
-    "pageRootPaths": ["/template"],
-    "apiRootPaths": ["/template"],
+    "pageRootPaths": [
+      "/template"
+    ],
+    "apiRootPaths": [
+      "/template"
+    ],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }
@@ -28,10 +32,6 @@
       "types": "./modules/template/module.ts",
       "import": "./modules/template/module.ts"
     },
-    "./template/commands": {
-      "types": "./modules/template/commands.ts",
-      "import": "./modules/template/commands.ts"
-    },
     "./template/pages.routes": {
       "types": "./modules/template/pages.routes.ts",
       "import": "./modules/template/pages.routes.ts"
@@ -43,10 +43,6 @@
     "./modules/reports": {
       "types": "./modules/reports/module.ts",
       "import": "./modules/reports/module.ts"
-    },
-    "./reports/commands": {
-      "types": "./modules/reports/commands.ts",
-      "import": "./modules/reports/commands.ts"
     },
     "./reports/pages.routes": {
       "types": "./modules/reports/pages.routes.ts",

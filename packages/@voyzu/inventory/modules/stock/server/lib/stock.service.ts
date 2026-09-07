@@ -1,5 +1,4 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
-import { command } from "@voyzu/capability/commands";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import {
   createCreationAuditStamp,
@@ -149,11 +148,8 @@ async function processFinancialActivities(
   const activities = await repo.financialActivitiesForTransaction(organizationId, transactionId);
   const financialActivityRepo = new FinancialActivityRepo(db);
   for (const activity of activities) {
-    const response = await command.callOptional(
-      "@voyzu/finance.processInventoryMovement",
-      organizationId,
-      activity,
-    );
+    // TODO(contracts, modification): restore @voyzu/finance.processInventoryMovement; integration temporarily unavailable.
+  const response: unknown = undefined;
     if (response !== undefined) {
       await financialActivityRepo.markProcessed(
         organizationId,

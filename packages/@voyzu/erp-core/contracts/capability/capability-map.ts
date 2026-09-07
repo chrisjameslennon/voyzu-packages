@@ -1,6 +1,2 @@
-import { OrganizationFinanceCapability } from "./organization-finance";
-
-interface CapabilityMap {
-  "erp.organization-finance": OrganizationFinanceCapability;
-  
-}
+import { organizationFinanceCapability } from "./organization-finance";
+export const capabilityContracts = { "erp.organization-finance": organizationFinanceCapability } as const;

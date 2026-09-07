@@ -1,6 +1,6 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
-import { command as platformCommand } from "@voyzu/capability/commands";
+import { capabilities } from "@voyzu/capability/contracts";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/erp-core/common/server";
 import type {
   OrganizationBatchPatchRequestDto,
@@ -42,10 +42,7 @@ export async function createOrganization(input: OrganizationCreateRequestDto): P
       const row = toInsertRow(input);
       const created = await new OrganizationRepo(db).insert(withCreationAudit(row, await createCreationAuditStamp()));
       const organization = await enrichRow(created);
-      await platformCommand.callOptional(
-        "@voyzu/finance.createFinanceCompanyForErpOrganization",
-        organization.id,
-      );
+      await capabilities.optional("erp.organization-finance")?.createFinancialEntity({ organizationId: organization.id });
       return organization;
     });
   } catch (error) {
@@ -92,10 +89,7 @@ export async function deleteOrganization(code: string): Promise<void> {
     const row = await repo.get(normalized);
     if (!row) throw new NotFoundError(`Organization ${normalized} not found`);
     const organization = await enrichRow(row);
-    await platformCommand.callOptional(
-      "@voyzu/finance.deleteFinanceCompanyForErpOrganization",
-      organization.id,
-    );
+    // TODO(contracts, modification): restore ERP Core -> Finance deleteFinanceCompanyForErpOrganization.
     await repo.delete(normalized);
   });
 }
@@ -121,10 +115,7 @@ export async function batchCreateOrganizations(inputs: OrganizationCreateRequest
       for (const input of inputs) {
         const row = await repo.insert(withCreationAudit(toInsertRow(input), audit));
         const organization = await enrichRow(row);
-        await platformCommand.callOptional(
-          "@voyzu/finance.createFinanceCompanyForErpOrganization",
-          organization.id,
-        );
+        await capabilities.optional("erp.organization-finance")?.createFinancialEntity({ organizationId: organization.id });
         rows.push(row);
       }
       return enrichRows(rows);
@@ -179,10 +170,7 @@ export async function batchDeleteOrganizations(codes: string[]): Promise<void> {
     const missing = normalized.filter((code) => !found.has(code));
     if (missing.length) throw new NotFoundError(`Organization ${missing.join(", ")} not found`);
     for (const organization of await enrichRows(rows)) {
-      await platformCommand.callOptional(
-        "@voyzu/finance.deleteFinanceCompanyForErpOrganization",
-        organization.id,
-      );
+      // TODO(contracts, modification): restore ERP Core -> Finance deleteFinanceCompanyForErpOrganization.
     }
     await repo.batchDelete(normalized);
   });
@@ -200,12 +188,7 @@ async function transitionStatus(codes: string[], status: "ACTIVE" | "INACTIVE"):
     const organizations = await enrichRows(
       await repo.batchUpdateStatus(normalized, status, await createUpdateAuditStamp()),
     );
-    const commandName = status === "ACTIVE"
-      ? "@voyzu/finance.activateFinanceCompanyForErpOrganization"
-      : "@voyzu/finance.deactivateFinanceCompanyForErpOrganization";
-    for (const organization of organizations) {
-      await platformCommand.callOptional(commandName, organization.id);
-    }
+    // TODO(contracts, modification): restore ERP Core -> Finance activate/deactivateFinanceCompanyForErpOrganization.
     return organizations;
   });
 }
@@ -214,3 +197,8 @@ export function activateOrganizations(codes: string[]): Promise<OrganizationResp
 export function deactivateOrganizations(codes: string[]): Promise<OrganizationResponseDto[]> { return transitionStatus(codes, "INACTIVE"); }
 export async function activateOrganization(code: string): Promise<OrganizationResponseDto> { return (await activateOrganizations([code]))[0]; }
 export async function deactivateOrganization(code: string): Promise<OrganizationResponseDto> { return (await deactivateOrganizations([code]))[0]; }
+
+export async function getOrganizationMasterData(id: number): Promise<OrganizationResponseDto | null> {
+  const rows = await new OrganizationRepo(getDb()).filter([{ field: "id", operator: "=", value: id }]);
+  return rows[0] ? enrichRow(rows[0]) : null;
+}

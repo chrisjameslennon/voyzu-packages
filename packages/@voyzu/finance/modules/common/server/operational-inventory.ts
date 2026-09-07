@@ -1,6 +1,5 @@
 import "server-only";
 
-import { command } from "@voyzu/capability/commands";
 import { getDb } from "@voyzu/capability/db";
 
 export interface OperationalInventoryItem {
@@ -18,7 +17,8 @@ export async function getOperationalInventoryItems(
   skus: string[],
 ): Promise<OperationalInventoryItem[]> {
   if (skus.length === 0) return [];
-  const result = await command.callOptional("@voyzu/inventory.getOperationalInventoryItems", organizationId, skus);
+  // TODO(contracts, retrieval): restore @voyzu/inventory.getOperationalInventoryItems; integration temporarily unavailable.
+  const result: unknown = undefined;
   if (!Array.isArray(result)) return [];
   const items = result as Omit<OperationalInventoryItem, "itemPostingProfileId">[];
   const { rows } = await getDb().query(
@@ -43,16 +43,10 @@ export async function getItemPostingProfileUsages(
      WHERE assignment.item_posting_profile_id = ANY($1::bigint[])`,
     [postingCodeIds],
   );
-  const results: Array<{ itemPostingProfileId: number; sku: string }> = [];
-  for (const organizationId of [...new Set(rows.map((row: Record<string, unknown>) => Number(row.organization_id)))]) {
-    const inventory = await command.callOptional("@voyzu/inventory.listInventoryItems", organizationId, "");
-    if (!Array.isArray(inventory)) continue;
-    const skuById = new Map((inventory as Array<{ id: number; sku: string }>).map((item) => [item.id, item.sku]));
-    for (const row of rows as Record<string, unknown>[]) {
-      if (Number(row.organization_id) !== organizationId) continue;
-      const sku = skuById.get(Number(row.inventory_item_id));
-      if (sku) results.push({ itemPostingProfileId: Number(row.item_posting_profile_id), sku });
-    }
+  // TODO(contracts, retrieval): restore @voyzu/inventory.listInventoryItems for SKU usage lookup.
+  // Fail closed: unavailable Inventory enrichment must not permit deletion of assigned profiles.
+  if (rows.length > 0) {
+    throw new Error("Cannot check posting-profile usage: Inventory integration is awaiting migration to contracts.");
   }
-  return results;
+  return [];
 }

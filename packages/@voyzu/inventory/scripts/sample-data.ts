@@ -1,25 +1,8 @@
 import { getDb } from "@voyzu/capability/db";
 
-import {
-  addInventoryOptionValue,
-  createInventoryConfiguration,
-  deleteInventoryOptionValue,
-  getInventoryConfiguration,
-  listInventoryConfiguration,
-  patchInventoryConfiguration,
-  patchInventoryOptionValue,
-  transitionInventoryConfiguration,
-} from "../modules/configuration/commands";
-import {
-  createInventoryItem,
-  listInventoryItems,
-  patchInventoryItem,
-} from "../modules/items/commands";
-import {
-  listInventoryStock,
-  receiveInventoryStock,
-  reserveInventoryStock,
-} from "../modules/stock/commands";
+import { addOptionValue as addInventoryOptionValue, createConfiguration as createInventoryConfiguration, deleteOptionValue as deleteInventoryOptionValue, getConfiguration as getInventoryConfiguration, listConfiguration as listInventoryConfiguration, patchConfiguration as patchInventoryConfiguration, patchOptionValue as patchInventoryOptionValue, transitionConfiguration as transitionInventoryConfiguration } from "../modules/configuration/server/lib/configuration.service";
+import { createItem as createInventoryItem, listItems as listInventoryItems, patchItem as patchInventoryItem } from "../modules/items/server/lib/item.service";
+import { listStockPositions as listInventoryStock, receiveStock as receiveInventoryStock, reserveStock as reserveInventoryStock } from "../modules/stock/server/lib/stock.service";
 
 const categories = [
   {

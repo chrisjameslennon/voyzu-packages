@@ -78,38 +78,23 @@ export const financeServiceModules = [
   taxModule,
 ] as const;
 
-/*
-async function getOrganizationFinanceMasterData(
-  organizationId: string,
-): Promise<OrganizationFinanceMasterData | null> {
-  // Finance-owned lookup
-}
 
-async function createFinancialEntity({
-  organizationId,
-}: {
-  organizationId: string;
-}): Promise<void> {
-  // Finance-owned operation
-}
-
-
-*/
 export const financePackage = {
-   provides: {
+  contracts: {
+   implements: {
     masterData: {
       "erp.organization.finance": {
-        extends: "erp.organization",
-        get: getOrganizationFinanceMasterData,
+        get: (id: number) => import("./modules/finance-companies/server/lib/finance-company.service").then((module) => module.getOrganizationFinanceMasterData(id)),
       },
     },
 
     capabilities: {
       "erp.organization-finance": {
-        createFinancialEntity,
+        load: () => import("./modules/finance-companies/server/lib/finance-company.service").then((module) => ({ createFinancialEntity: module.createFinancialEntity })),
       },
     },
-  },
+  }
+},
   modules: [
     financeCompaniesModule,
     countryTaxSettingsModule,

@@ -1,9 +1,4 @@
-import {
-  activateOrganization,
-  createOrganization,
-  getOrganization,
-  patchOrganization,
-} from "../modules/organizations/commands";
+import { activateOrganization, createOrganization, getOrganization, patchOrganization } from "../modules/organizations/server/lib/organization.service";
 
 const SAMPLE_ORGANIZATION = {
   code: "TESTCO",

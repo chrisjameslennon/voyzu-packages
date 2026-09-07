@@ -15,6 +15,11 @@ const SELECT_SQL = `SELECT c.id::int, c.code, c.name, c.country_code, country.na
 export class FinanceCompanyRepo {
   constructor(private readonly db: DbExecutor) {}
 
+  async getByOrganizationId(id: number): Promise<FinanceCompanyRow | null> {
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE c.id = $1 AND c.status != 'DELETED'`, [id]);
+    return (rows[0] as unknown as FinanceCompanyRow | undefined) ?? null;
+  }
+
   async getByCode(code: string): Promise<FinanceCompanyRow | null> {
     const { rows } = await this.db.query(`${SELECT_SQL} WHERE c.code = $1 AND c.status != 'DELETED'`, [code]);
     return (rows[0] as unknown as FinanceCompanyRow | undefined) ?? null;
