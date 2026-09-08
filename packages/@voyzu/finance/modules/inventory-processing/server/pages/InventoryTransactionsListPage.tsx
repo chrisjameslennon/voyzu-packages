@@ -1,6 +1,22 @@
 import "server-only";
+
+import { capabilities } from "@voyzu/capability/contracts";
+import { getSelectedCompany } from "@voyzu/finance/journals/server";
 import { IntegrationUnavailablePage } from "../../../common/server/IntegrationUnavailablePage";
-// TODO(contracts, retrieval): restore Finance -> Inventory listInventoryFinancialActivity.
+import { InventoryTransactionsList } from "../../client";
+import { listFinanceInventoryActivities } from "../lib/inventory-processing.service";
+
 export async function InventoryTransactionsListPage() {
-  return <IntegrationUnavailablePage pageTitle="Inventory Transactions" packageName="Inventory" message="Inventory integration is awaiting migration to contracts." icon="inventory_2" />;
+  if (!capabilities.optional("erp.inventory-activity")) {
+    return <IntegrationUnavailablePage pageTitle="Inventory Transactions" packageName="Inventory" message="Install the Inventory package to receive and view financially relevant stock transactions." icon="inventory_2" />;
+  }
+  const company = await getSelectedCompany();
+  return (
+    <InventoryTransactionsList
+      activities={company ? await listFinanceInventoryActivities(company.id) : []}
+      apiPath={company
+        ? `/api/finance/${encodeURIComponent(company.code)}/inventory-processing/inventory-transactions`
+        : ""}
+    />
+  );
 }

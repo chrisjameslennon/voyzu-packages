@@ -26,6 +26,9 @@ export const erpCorePackage = {
     },
     implements: {
       capabilities: {
+        "platform.organization-directory": {
+          load: () => import("./modules/organizations/server/lib/organization-directory.provider"),
+        },
         "erp.organization-context": {
           load: () => import("./modules/organization-switcher/server/organization-context.provider"),
         },

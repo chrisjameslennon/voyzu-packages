@@ -92,6 +92,11 @@ export const financePackage = {
     },
 
     capabilities: {
+      "erp.inventory-finance": {
+        load: () => import("./modules/inventory-processing/server/lib/inventory-finance.provider").then((module) => ({
+          processInventoryMovement: module.processInventoryMovementCapability,
+        })),
+      },
       "erp.organization-finance": {
         load: () => import("./modules/finance-companies/server/lib/finance-company.service").then((module) => ({ createFinancialEntity: module.createFinancialEntity })),
       },

@@ -1,4 +1,5 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
+import { capabilities } from "@voyzu/capability/contracts";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import {
   createCreationAuditStamp,
@@ -144,19 +145,20 @@ async function processFinancialActivities(
   organizationId: number,
   transactionId: number,
 ): Promise<void> {
+  const finance = capabilities.optional("erp.inventory-finance");
+  if (!finance) return;
   const repo = new StockRepo(db);
   const activities = await repo.financialActivitiesForTransaction(organizationId, transactionId);
   const financialActivityRepo = new FinancialActivityRepo(db);
   for (const activity of activities) {
-    // TODO(contracts, modification): restore @voyzu/finance.processInventoryMovement; integration temporarily unavailable.
-  const response: unknown = undefined;
-    if (response !== undefined) {
-      await financialActivityRepo.markProcessed(
-        organizationId,
-        activity.inventoryFinancialActivityId,
-        withUpdateAudit({}, await createUpdateAuditStamp()),
-      );
-    }
+    await finance.processInventoryMovement({ organizationId, movement: activity });
+    // Successful handoff, including Finance waiting for a matched document.
+    // Contract errors propagate and roll back the enclosing stock transaction.
+    await financialActivityRepo.markProcessed(
+      organizationId,
+      activity.inventoryFinancialActivityId,
+      withUpdateAudit({}, await createUpdateAuditStamp()),
+    );
   }
 }
 

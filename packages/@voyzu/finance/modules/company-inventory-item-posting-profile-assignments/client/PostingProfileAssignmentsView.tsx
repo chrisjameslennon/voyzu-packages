@@ -11,7 +11,7 @@ const columns: DataTableColumn<PostingAssignment>[] = [
   { key: "sku", label: "SKU", render: (row) => <span className={listStyles.codeCell}>{row.sku}</span> },
   { key: "name", label: "Item Name" },
   { key: "category", label: "Category", render: (row) => row.category ?? "—" },
-  { key: "itemType", label: "Type" },
+  { key: "quantityTracked", label: "Quantity Tracked", render: (row) => row.quantityTracked ? "Yes" : "No" },
   { key: "unit", label: "Unit", render: (row) => row.unit ?? "—" },
   { key: "postingCode", label: "Posting Profile", render: (row) => row.postingCode ?? "—" },
   { key: "status", label: "Status", align: "center", render: (row) => <Badge variant="soft" size="x-small" color={row.status === "ACTIVE" ? "success" : "neutral"}>{row.status}</Badge> },

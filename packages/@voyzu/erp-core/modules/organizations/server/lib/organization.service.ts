@@ -88,8 +88,7 @@ export async function deleteOrganization(code: string): Promise<void> {
     const repo = new OrganizationRepo(db);
     const row = await repo.get(normalized);
     if (!row) throw new NotFoundError(`Organization ${normalized} not found`);
-    const organization = await enrichRow(row);
-    // TODO(contracts, modification): restore ERP Core -> Finance deleteFinanceCompanyForErpOrganization.
+    // Dependent package records are removed by their upstream foreign-key cascades.
     await repo.delete(normalized);
   });
 }
@@ -169,9 +168,7 @@ export async function batchDeleteOrganizations(codes: string[]): Promise<void> {
     const found = new Set(rows.map((row) => row.code));
     const missing = normalized.filter((code) => !found.has(code));
     if (missing.length) throw new NotFoundError(`Organization ${missing.join(", ")} not found`);
-    for (const organization of await enrichRows(rows)) {
-      // TODO(contracts, modification): restore ERP Core -> Finance deleteFinanceCompanyForErpOrganization.
-    }
+    // Dependent package records are removed by their upstream foreign-key cascades.
     await repo.batchDelete(normalized);
   });
 }
@@ -188,7 +185,7 @@ async function transitionStatus(codes: string[], status: "ACTIVE" | "INACTIVE"):
     const organizations = await enrichRows(
       await repo.batchUpdateStatus(normalized, status, await createUpdateAuditStamp()),
     );
-    // TODO(contracts, modification): restore ERP Core -> Finance activate/deactivateFinanceCompanyForErpOrganization.
+    // Finance derives availability from the owning organization's status.
     return organizations;
   });
 }

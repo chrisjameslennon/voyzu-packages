@@ -13,6 +13,10 @@ BEGIN
       AND (
         constraint_record.confrelid = 'finance_organization'::regclass
         OR (
+          constraint_record.conrelid = 'finance_organization'::regclass
+          AND constraint_record.confrelid = 'organization'::regclass
+        )
+        OR (
           constraint_record.conrelid = 'journal_line'::regclass
           AND constraint_record.confrelid = 'journal_header'::regclass
         )

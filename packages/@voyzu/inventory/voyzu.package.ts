@@ -13,6 +13,18 @@ import { stockModule } from "./modules/stock/module";
 import { uninstall } from "./uninstall/manifest";
 
 export const inventoryPackage = {
+  contracts: {
+    implements: {
+      capabilities: {
+        "erp.inventory-catalog": {
+          load: () => import("./modules/items/server/lib/inventory-catalog.provider"),
+        },
+        "erp.inventory-activity": {
+          load: () => import("./modules/stock/server/lib/inventory-activity.provider"),
+        },
+      },
+    },
+  },
   modules: [
     coreModule,
     itemsModule,

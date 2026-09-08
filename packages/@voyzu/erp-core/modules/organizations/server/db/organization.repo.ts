@@ -132,6 +132,13 @@ export class OrganizationRepo {
     return rows.map((row: Record<string, unknown>) => this.mapRow(row));
   }
 
+  async listDirectory(): Promise<Array<{ id: number; code: string; name: string }>> {
+    const { rows } = await this.db.query(
+      "SELECT id, code, name FROM organization WHERE status != 'DELETED' ORDER BY code ASC",
+    );
+    return rows.map((row) => ({ id: Number(row.id), code: String(row.code), name: String(row.name) }));
+  }
+
   async filter(filters: Filter[], options?: ListOptions): Promise<OrganizationRow[]> {
     const built = buildWhere(filters);
     const where = [built.sql, "c.status != 'DELETED'"].filter(Boolean).join(" AND ");

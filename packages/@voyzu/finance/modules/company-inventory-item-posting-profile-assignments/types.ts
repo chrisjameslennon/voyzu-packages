@@ -4,7 +4,7 @@ import { StrictObject } from "@voyzu/types/api";
 export const PostingProfileOptionDto = StrictObject({ id: Type.Integer(), code: Type.String(), name: Type.String(), status: Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]) });
 export const PostingAssignmentDto = StrictObject({
   id: Type.Integer(), sku: Type.String(), name: Type.String(), category: Type.Union([Type.String(), Type.Null()]),
-  itemType: Type.String(), unit: Type.Union([Type.String(), Type.Null()]), postingProfileId: Type.Union([Type.Integer(), Type.Null()]),
+  quantityTracked: Type.Boolean(), unit: Type.Union([Type.String(), Type.Null()]), postingProfileId: Type.Union([Type.Integer(), Type.Null()]),
   postingCode: Type.Union([Type.String(), Type.Null()]), status: Type.String(),
 });
 export const PostingAssignmentsDto = StrictObject({ inventoryInstalled: Type.Boolean(), profiles: Type.Array(PostingProfileOptionDto), items: Type.Array(PostingAssignmentDto) });
