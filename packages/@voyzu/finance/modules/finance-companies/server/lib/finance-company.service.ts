@@ -20,13 +20,13 @@ function toDto(row: FinanceCompanyRow): FinanceCompanyResponseDto {
     status: row.status,
     audit: {
       created: {
-        date: row.creation_date,
+        date: new Date(row.creation_date).toISOString(),
         actorType: row.creation_actor_type,
         ...(row.creation_user_id != null && { userId: row.creation_user_id }),
         mutationId: row.creation_mutation_id,
       },
       updated: {
-        date: row.updated_date,
+        date: new Date(row.updated_date).toISOString(),
         actorType: row.updated_actor_type,
         ...(row.updated_user_id != null && { userId: row.updated_user_id }),
         mutationId: row.updated_mutation_id,
