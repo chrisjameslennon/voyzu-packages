@@ -28,12 +28,12 @@ CREATE TRIGGER fiscal_period_validate_trigger
 
 DROP TRIGGER IF EXISTS journal_validate_trigger ON journal_header;
 CREATE TRIGGER journal_validate_trigger
-  BEFORE INSERT OR UPDATE OR DELETE ON journal_header
+  BEFORE INSERT OR UPDATE ON journal_header
   FOR EACH ROW
   EXECUTE FUNCTION journal_validate_fn();
 
 DROP TRIGGER IF EXISTS journal_line_validate_trigger ON journal_line;
 CREATE TRIGGER journal_line_validate_trigger
-  BEFORE INSERT OR UPDATE OR DELETE ON journal_line
+  BEFORE INSERT OR UPDATE ON journal_line
   FOR EACH ROW
   EXECUTE FUNCTION journal_line_validate_fn();

@@ -10,7 +10,13 @@ BEGIN
       pg_get_constraintdef(constraint_record.oid) AS definition
     FROM pg_constraint constraint_record
     WHERE constraint_record.contype = 'f'
-      AND constraint_record.confrelid = 'finance_organization'::regclass
+      AND (
+        constraint_record.confrelid = 'finance_organization'::regclass
+        OR (
+          constraint_record.conrelid = 'journal_line'::regclass
+          AND constraint_record.confrelid = 'journal_header'::regclass
+        )
+      )
       AND constraint_record.confdeltype != 'c'
   LOOP
     constraint_definition := regexp_replace(

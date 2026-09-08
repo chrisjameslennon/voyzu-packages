@@ -8,6 +8,7 @@ type OrganizationResponseDto = MasterDataValue<"erp.organization">;
 import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
 import { createCreationAuditStamp } from "../../../common/server";
 import { FinanceCompanyRepo, type FinanceCompanyRow } from "../db/finance-company.repo";
+import { FinancialEntityInitializationRepo } from "../initialization/financial-entity-initialization.repo";
 
 function toDto(row: FinanceCompanyRow): FinanceCompanyResponseDto {
   return {
@@ -91,18 +92,7 @@ export async function activateFinanceCompany(code: string): Promise<FinanceCompa
     if (company.status !== "ACTIVE") throw new BusinessRuleError("Only an active organization company can be enabled for Finance");
     if (!company.financial_period_start_month) throw new BusinessRuleError(`Finance country settings are not configured for company ${code}`);
 
-    const financeCompanyId = await repo.ensureFinanceOrganization(
-      Number(company.id),
-      company.tax_filing_anchor_month,
-      company.tax_filing_interval_months,
-    );
-    if (!financeCompanyId) throw new BusinessRuleError(`Unable to enable company ${code} for Finance`);
-
-    await repo.createFiscalCalendar(
-      financeCompanyId,
-      String(company.financial_period_start_month),
-      await createCreationAuditStamp(),
-    );
+    await provisionFinanceCompanyForErpOrganization(Number(company.id), db);
     const result = await findByCode(code, db);
     if (!result) throw new NotFoundError(`Company ${code} not found after Finance activation`);
     return result;
@@ -120,31 +110,33 @@ async function provisionFinanceCompanyForErpOrganization(
     throw new BusinessRuleError(`Finance country settings are not configured for organization ${organizationId}`);
   }
 
-  const financeCompanyId = await repo.ensureFinanceOrganization(
+  const financialEntity = await repo.ensureFinanceOrganization(
     organizationId,
     organization.tax_filing_anchor_month,
     organization.tax_filing_interval_months,
   );
-  if (!financeCompanyId) {
+  if (!financialEntity) {
     throw new BusinessRuleError(`Unable to create financial entity for organization ${organizationId}`);
   }
-  await repo.createFiscalCalendar(
-    financeCompanyId,
-    String(organization.financial_period_start_month),
-    await createCreationAuditStamp(),
-  );
+  // Existing entities (including reactivations) keep their customized settings.
+  if (financialEntity.created) {
+    await new FinancialEntityInitializationRepo(db).initialize(
+      financialEntity.id,
+      await createCreationAuditStamp(),
+    );
+  }
 }
 
 export function createFinanceCompanyForErpOrganization(
   organizationId: number,
 ): Promise<void> {
-  return provisionFinanceCompanyForErpOrganization(organizationId, getDb());
+  return withTransaction((db) => provisionFinanceCompanyForErpOrganization(organizationId, db));
 }
 
 export function activateFinanceCompanyForErpOrganization(
   organizationId: number,
 ): Promise<void> {
-  return provisionFinanceCompanyForErpOrganization(organizationId, getDb());
+  return withTransaction((db) => provisionFinanceCompanyForErpOrganization(organizationId, db));
 }
 
 export async function deactivateFinanceCompanyForErpOrganization(

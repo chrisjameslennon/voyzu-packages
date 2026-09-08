@@ -28,6 +28,6 @@ CREATE TABLE IF NOT EXISTS journal_line (
     deletion_mutation_id UUID,
 
     CONSTRAINT uq_journal_line_header_line  UNIQUE (journal_header_id, line_number),
-    CONSTRAINT fk_journal_header            FOREIGN KEY (journal_header_id) REFERENCES journal_header(id),
+    CONSTRAINT fk_journal_header            FOREIGN KEY (journal_header_id) REFERENCES journal_header(id) ON DELETE CASCADE,
     CONSTRAINT fk_gl_account                FOREIGN KEY (gl_account_id)     REFERENCES gl_account(id)
 );

@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS finance_initialize_entity(bigint, text, text, uuid);
+
 -- Tables are removed in the reverse of Core's installation dependency order.
 DROP TABLE IF EXISTS trial_balance_snapshot;
 DROP TABLE IF EXISTS financial_document_default;

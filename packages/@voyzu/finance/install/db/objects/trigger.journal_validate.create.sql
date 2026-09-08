@@ -1,20 +1,10 @@
 -- ============================================================
 -- Journal – validation trigger
--- Enforces: status transitions, delete only from DRAFT
+-- Enforces: status transitions on insert/update
 -- ============================================================
-
-DROP FUNCTION IF EXISTS journal_validate_fn CASCADE;
 
 CREATE OR REPLACE FUNCTION journal_validate_fn() RETURNS TRIGGER AS $$
 BEGIN
-
-  -- ── DELETE: only DRAFT journals may be deleted ──────────────
-  IF TG_OP = 'DELETE' THEN
-    IF OLD.status != 'DRAFT' THEN
-      RAISE EXCEPTION 'journal can only be deleted in DRAFT status, current status: %', OLD.status;
-    END IF;
-    RETURN OLD;
-  END IF;
 
   -- ── INSERT: status must be DRAFT ────────────────────────────
   IF TG_OP = 'INSERT' THEN
