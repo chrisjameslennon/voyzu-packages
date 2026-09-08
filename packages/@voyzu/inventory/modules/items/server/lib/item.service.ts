@@ -1,6 +1,6 @@
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, ConflictError, DataError, NotFoundError } from "@voyzu/capability/errors";
-import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/audit/stamps";
+import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "@voyzu/capability/audit";
 import type { ItemListRow, ItemStatus } from "../../types/item-list.types";
 import type { OperationalItemDto } from "../../types/operational-item.types";
 import type { ItemCategoryOptionDto, ItemCreateRequestDto, ItemDeletionImpactDto, ItemPatchRequestDto, ItemResponseDto } from "../../types/item.types";

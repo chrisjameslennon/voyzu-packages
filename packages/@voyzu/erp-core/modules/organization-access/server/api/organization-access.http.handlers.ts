@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import { currentUserCanManageUsers } from "@voyzu/auth/users/server";
+import { capabilities } from "@voyzu/capability/contracts";
 import { BusinessRuleError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
 import {
   businessRuleError,
@@ -16,7 +16,8 @@ import type { OrganizationAccessUpdateRequest } from "@voyzu/erp-core/types/modu
 import { listOrganizationAccess, replaceUserOrganizationAccess } from "../lib/organization-access.service";
 
 async function requireAdmin() {
-  return await currentUserCanManageUsers() ? null : forbiddenError("You do not have access");
+  return (await capabilities.use("platform.identity").current({})).permissions.includes("users.manage")
+    ? null : forbiddenError("You do not have access");
 }
 
 export async function handleList(_request: NextRequest) {

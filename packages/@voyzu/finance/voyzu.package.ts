@@ -83,6 +83,9 @@ export const financePackage = {
   contracts: {
    implements: {
     masterData: {
+      "erp.country.finance": {
+        get: (code: string) => import("./modules/country-tax-settings/server/lib/country-tax-setting.service").then((module) => module.getCountryTaxSetting(code)),
+      },
       "erp.organization.finance": {
         get: (id: number) => import("./modules/finance-companies/server/lib/finance-company.service").then((module) => module.getOrganizationFinanceMasterData(id)),
       },

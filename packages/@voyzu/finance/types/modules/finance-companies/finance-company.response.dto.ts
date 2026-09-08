@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
-import { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations";
+import { OrganizationResponseDto } from "@voyzu/finance/types/modules/finance-companies/organization.response.dto";
 import { PositiveId } from "../../constraints";
 
 export const FinanceCompanyResponseDto = StrictObject({

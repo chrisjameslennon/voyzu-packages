@@ -11,7 +11,7 @@ import {
   withAuditActors,
   withCreationAudit,
   withUpdateAudit,
-} from "@voyzu/audit/stamps";
+} from "@voyzu/capability/audit";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import type { Status } from "@voyzu/types/modules/core";
 

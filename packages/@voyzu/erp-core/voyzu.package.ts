@@ -14,18 +14,26 @@ export const organizationModules = [
 
 
 import { masterDataContracts } from "./contracts/master-data/master-data-map";
+import { masterDataCompositions } from "./contracts/master-data/composition-map";
 import { capabilityContracts } from "./contracts/capability/capability-map";
 
 export const erpCorePackage = {
    contracts: {
     defines: {
       masterData: masterDataContracts,
+      compositions: masterDataCompositions,
       capabilities: capabilityContracts,
     },
     implements: {
+      capabilities: {
+        "erp.organization-context": {
+          load: () => import("./modules/organization-switcher/server/organization-context.provider"),
+        },
+      },
       masterData: {
         "erp.organization": {
           get: (id: number) => import("./modules/organizations/server/lib/organization.service").then((module) => module.getOrganizationMasterData(id)),
+          list: () => import("./modules/organizations/server/lib/organization.service").then((module) => module.listOrganizations()),
         },
       },
     },

@@ -1,4 +1,4 @@
-import { UserRepo } from "@voyzu/auth/users/server";
+import { withAuditActors } from "@voyzu/capability/audit";
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
 import type { GlAccountBatchPatchRequestDto, GlAccountBatchUpdateRequestDto, GlAccountCreateRequestDto, GlAccountPatchRequestDto, GlAccountResponseDto, GlAccountUpdateRequestDto } from "@voyzu/finance/types/modules/gl-accounts";
@@ -12,43 +12,8 @@ import type { GlAccountRow } from "../db/gl-account.row.types";
 
 import { toDto, toInsertRow, toPatchRow, toUpdateRow } from "./gl-account.mapper";
 
-async function getAuditActor(
-  repo: UserRepo,
-  userId: string | null,
-): Promise<GlAccountResponseDto["audit"]["created"]["user"]> {
-  if (!userId) return null;
-  const parsed = Number(userId);
-  if (!Number.isInteger(parsed)) return null;
-  const row = await repo.getById(parsed);
-  return row
-    ? {
-      id: row.id,
-      code: row.code,
-      displayName: row.display_name,
-    }
-    : null;
-}
-
 async function enrichRow(row: GlAccountRow): Promise<GlAccountResponseDto> {
-  const userRepo = new UserRepo(getDb());
-  const [creationUser, updatedUser] = await Promise.all([
-    getAuditActor(userRepo, row.creation_user_id),
-    getAuditActor(userRepo, row.updated_user_id),
-  ]);
-  const dto = toDto(row);
-  return {
-    ...dto,
-    audit: {
-      created: {
-        ...dto.audit.created,
-        user: creationUser,
-      },
-      updated: {
-        ...dto.audit.updated,
-        user: updatedUser,
-      },
-    },
-  };
+  return withAuditActors(toDto(row), row);
 }
 
 async function enrichRows(rows: GlAccountRow[]): Promise<GlAccountResponseDto[]> {
@@ -316,4 +281,3 @@ async function transitionGlAccountStatus(
     return results;
   });
 }
-

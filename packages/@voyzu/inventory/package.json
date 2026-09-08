@@ -92,9 +92,7 @@
     }
   },
   "peerDependencies": {
-    "@voyzu/audit": "^0.1.0",
     "@voyzu/capability": "^0.1.0",
-    "@voyzu/erp-core": "^0.1.0",
     "@voyzu/types": "^0.1.0",
     "@voyzu/ui-components": "^0.1.0",
     "@voyzu/ui-layout": "^0.1.0",

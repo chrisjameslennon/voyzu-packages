@@ -4,7 +4,7 @@ import {
   withAuditActors,
   withCreationAudit,
   withUpdateAudit,
-} from "@voyzu/audit/stamps";
+} from "@voyzu/capability/audit";
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, ConflictError, DataError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
 import type {
@@ -311,4 +311,3 @@ export interface BankCashJournalDetailsDto {
   tx_details?: string | null;
   payment_ref?: string | null;
 }
-

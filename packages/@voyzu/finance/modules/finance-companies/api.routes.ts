@@ -1,8 +1,8 @@
 import Type from "typebox";
 import { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
 import { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
-import { OrganizationSelectionResponseDto, OrganizationSelectionUpdateResponseDto } from "@voyzu/erp-core/types/modules/organization-switcher";
-import { OrganizationSelectionUpdateRequestDto } from "@voyzu/erp-core/organization-switcher/types";
+import { OrganizationSelectionResponseDto, OrganizationSelectionUpdateResponseDto } from "@voyzu/finance/types/modules/finance-companies/organization-selection.dto";
+import { OrganizationSelectionUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies/organization-selection.dto";
 
 const codePath = { code: { description: "ERP company business code.", schema: Type.String() } };
 

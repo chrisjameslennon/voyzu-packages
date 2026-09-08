@@ -1,12 +1,7 @@
 import "server-only";
 
-import { cookies } from "next/headers";
 
-import { listOrganizations } from "@voyzu/erp-core/organizations/server";
-import {
-  SELECTED_ORGANIZATION_COOKIE,
-  parseSelectedOrganizationId,
-} from "@voyzu/erp-core/organization-switcher/server";
+import { capabilities, masterData } from "@voyzu/capability/contracts";
 import { listFinancialYears } from "@voyzu/finance/financial-years/server";
 import { listPeriods } from "@voyzu/finance/financial-years/server";
 import { resolveCompanySettingsScope } from "@voyzu/finance/common/server";
@@ -42,13 +37,10 @@ function previous90DaysRange(fiscalYearStartDate?: string): { fromDate: string; 
 }
 
 export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
-  const cookieStore = await cookies();
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedOrganizationId = parseSelectedOrganizationId(
-    cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value,
-  );
-  const companies = await listOrganizations();
+  const selectedOrganizationId = (await capabilities.use("erp.organization-context").requested({})).organizationId;
+  const companies = await masterData.list("erp.organization");
   const company = companies.find((item) => item.id === queryCompanyId)
     ?? companies.find((item) => item.id === selectedOrganizationId)
     ?? companies[0]

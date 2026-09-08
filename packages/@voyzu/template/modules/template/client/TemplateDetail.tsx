@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { AuditPanel } from "@voyzu/audit/client";
+import { clientComponent } from "@voyzu/ui-surface/client";
+const AuditPanel = clientComponent.use("audit.panel");
 import { Badge, Breadcrumbs, Button, ConfirmDialog, Input, Toast, ValidationAlert, maxLength, useFormValidation } from "@voyzu/ui-components";
 import { detailLinkWithBackContext, DetailBackButton } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";

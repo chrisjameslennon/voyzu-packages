@@ -77,7 +77,6 @@
     }
   },
   "peerDependencies": {
-    "@voyzu/erp-core": "^0.1.0",
     "@voyzu/ui-surface": "^0.1.0",
     "@voyzu/types": "^0.1.0",
     "@voyzu/ui-components": "^0.1.0",

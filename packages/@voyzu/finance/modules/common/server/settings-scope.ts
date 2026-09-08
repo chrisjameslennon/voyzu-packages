@@ -1,12 +1,8 @@
-import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 
 import { getDb, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError } from "@voyzu/capability/errors";
-import {
-  listSelectableOrganizationsForCurrentUser,
-  SELECTED_ORGANIZATION_COOKIE,
-} from "@voyzu/erp-core/organization-switcher/server";
+import { capabilities } from "@voyzu/capability/contracts";
 
 import { SettingsScopeRepo } from "./db/settings-scope.repo";
 
@@ -100,10 +96,9 @@ export async function assertCompanySettingsWritable(
 export async function resolveServerSettingsScope(
   db: DbExecutor = getDb(),
 ): Promise<CompanySettingsScope> {
-  const cookieStore = await cookies();
-  const raw = cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value;
-  const companyId = raw ? Number.parseInt(raw, 10) : NaN;
-  const accessibleCompanies = await listSelectableOrganizationsForCurrentUser();
+  const context = capabilities.use("erp.organization-context");
+  const { organizationId: companyId } = await context.requested({});
+  const { organizations: accessibleCompanies } = await context.selectable({});
   const financeCompanyIds = new Set(
     await new SettingsScopeRepo(db).listFinanceOrganizationIds(),
   );

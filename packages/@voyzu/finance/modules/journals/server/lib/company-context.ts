@@ -1,15 +1,8 @@
-import { cookies } from "next/headers";
-import {
-  SELECTED_ORGANIZATION_COOKIE,
-  parseSelectedOrganizationId,
-  resolveOrganizationSelectionForCurrentUser,
-} from "@voyzu/erp-core/organization-switcher/server";
+import { capabilities } from "@voyzu/capability/contracts";
 import { findCompanySettingsScope } from "../../../common/server/settings-scope";
 
 export async function getSelectedCompany() {
-  const cookieStore = await cookies();
-  const selectedOrganizationId = parseSelectedOrganizationId(cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value);
-  const { selectedOrganization } = await resolveOrganizationSelectionForCurrentUser(selectedOrganizationId);
+  const { selectedOrganization } = await capabilities.use("erp.organization-context").current({});
   if (!selectedOrganization) return null;
   const financeScope = await findCompanySettingsScope(selectedOrganization.id);
   if (!financeScope) return null;

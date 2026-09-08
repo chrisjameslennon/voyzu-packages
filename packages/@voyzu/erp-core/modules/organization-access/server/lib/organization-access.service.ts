@@ -1,4 +1,4 @@
-import { currentUserCanManageUsers, getUser, listUsers } from "@voyzu/auth/users/server";
+import { capabilities, masterData } from "@voyzu/capability/contracts";
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
 import type {
@@ -10,7 +10,7 @@ import { listOrganizations } from "@voyzu/erp-core/organizations/server";
 import { OrganizationAccessRepo } from "../db/organization-access.repo";
 
 async function requireAdmin(): Promise<void> {
-  if (!(await currentUserCanManageUsers())) {
+  if (!(await capabilities.use("platform.identity").current({})).permissions.includes("users.manage")) {
     throw new BusinessRuleError("Only admin users can manage organization access");
   }
 }
@@ -18,7 +18,7 @@ async function requireAdmin(): Promise<void> {
 export async function listOrganizationAccess(): Promise<OrganizationAccessPage> {
   await requireAdmin();
   const [users, organizations, organizationIdsByUser] = await Promise.all([
-    listUsers(),
+    masterData.list("platform.user"),
     listOrganizations(),
     new OrganizationAccessRepo(getDb()).listOrganizationIdsByUser(),
   ]);
@@ -49,7 +49,7 @@ export async function replaceUserOrganizationAccess(
 ): Promise<OrganizationAccessUser> {
   await requireAdmin();
   const normalizedCode = userCode.trim().toUpperCase();
-  const user = await getUser(normalizedCode);
+  const user = await masterData.get("platform.user", normalizedCode);
   if (!user) throw new NotFoundError(`User ${normalizedCode} not found`);
   if (user.role !== "STANDARD") {
     throw new BusinessRuleError("Organization access can only be assigned to standard users");

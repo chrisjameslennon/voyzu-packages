@@ -724,8 +724,6 @@
   },
   "peerDependencies": {
     "@voyzu/api": "^0.1.0",
-    "@voyzu/audit": "^0.1.0",
-    "@voyzu/auth": "^0.1.0",
     "@voyzu/capability": "^0.1.0",
     "@voyzu/localization": "^0.1.0",
     "@voyzu/types": "^0.1.0",

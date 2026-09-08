@@ -1,6 +1,6 @@
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
-import { createUpdateAuditStamp, withAuditActors, withUpdateAudit } from "@voyzu/audit/stamps";
+import { createUpdateAuditStamp, withAuditActors, withUpdateAudit } from "@voyzu/capability/audit";
 import { FinancialActivityRepo } from "../db/financial-activity.repo";
 import { MarkProcessed } from "../../domain/operation-policy";
 

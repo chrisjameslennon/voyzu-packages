@@ -1,8 +1,7 @@
 import "server-only";
 
 import { listOrganizations } from "@voyzu/erp-core/organizations/server";
-import { listCountries } from "@voyzu/localization/countries/server";
-import { listCurrencies } from "@voyzu/localization/currencies/server";
+import { masterData } from "@voyzu/capability/contracts";
 
 import { OrganizationListReport, type OrganizationListReportColumn } from "./OrganizationListReport";
 import { OrganizationListReportShell } from "../../client/OrganizationListReportShell";
@@ -114,7 +113,7 @@ export async function OrganizationsReportPage(props?: ReportPageProps) {
 }
 
 export async function CountriesReportPage(props?: ReportPageProps) {
-  const rows = await listCountries();
+  const rows = await masterData.list("platform.country");
   return report("Countries", "/organization/reports/lists/countries/printable", rowsOf(rows), [
     column("code", "Code"),
     column("name", "Name"),
@@ -124,7 +123,7 @@ export async function CountriesReportPage(props?: ReportPageProps) {
 }
 
 export async function CurrenciesReportPage(props?: ReportPageProps) {
-  const rows = await listCurrencies();
+  const rows = await masterData.list("platform.currency");
   return report("Currencies", "/organization/reports/lists/currencies/printable", rowsOf(rows), [
     column("code", "Code"),
     column("name", "Name"),

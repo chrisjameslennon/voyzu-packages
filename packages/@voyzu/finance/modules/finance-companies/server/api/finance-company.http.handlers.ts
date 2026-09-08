@@ -5,13 +5,9 @@ import {
 } from "@voyzu/capability/http";
 import type { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types/errors";
 import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
-import type { OrganizationSelectionResponseDto, OrganizationSelectionUpdateResponseDto } from "@voyzu/erp-core/types/modules/organization-switcher";
-import type { OrganizationSelectionUpdateRequestDto } from "@voyzu/erp-core/organization-switcher/types";
-import {
-  SELECTED_ORGANIZATION_COOKIE,
-  SELECTED_ORGANIZATION_COOKIE_MAX_AGE_SECONDS,
-  parseSelectedOrganizationId,
-} from "@voyzu/erp-core/organization-switcher/server";
+import type { OrganizationSelectionResponseDto, OrganizationSelectionUpdateResponseDto } from "@voyzu/finance/types/modules/finance-companies/organization-selection.dto";
+import type { OrganizationSelectionUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies/organization-selection.dto";
+import { capabilities } from "@voyzu/capability/contracts";
 import {
   activateFinanceCompany,
   listSelectableFinanceCompaniesForCurrentUser,
@@ -21,20 +17,11 @@ import {
 
 type ErrorResponse = InputValidationErrorResponseDto | EntityNotFoundErrorResponseDto | BusinessRuleErrorResponseDto | InternalServerErrorResponseDto;
 
-function applySelectedCompanyCookie(response: NextResponse, organizationId: number) {
-  response.cookies.set(SELECTED_ORGANIZATION_COOKIE, String(organizationId), {
-    httpOnly: true,
-    maxAge: SELECTED_ORGANIZATION_COOKIE_MAX_AGE_SECONDS,
-    path: "/",
-    sameSite: "lax",
-  });
-}
-
 export async function handleGetFinanceCompanySelection(
-  request: NextRequest,
+  _request: NextRequest,
 ): Promise<NextResponse<OrganizationSelectionResponseDto | InternalServerErrorResponseDto>> {
   try {
-    const requestedOrganizationId = parseSelectedOrganizationId(request.cookies.get(SELECTED_ORGANIZATION_COOKIE)?.value);
+    const { organizationId: requestedOrganizationId } = await capabilities.use("erp.organization-context").requested({});
     const { organizations, selectedOrganization } = await resolveFinanceCompanySelectionForCurrentUser(requestedOrganizationId);
     return ok({ organizations, selectedOrganization, selectedOrganizationId: selectedOrganization?.id ?? null });
   } catch (error) {
@@ -47,16 +34,15 @@ export async function handleSetFinanceCompanySelection(
 ): Promise<NextResponse<OrganizationSelectionUpdateResponseDto | ErrorResponse>> {
   try {
     const body = await parseBody<OrganizationSelectionUpdateRequestDto>(request);
-    const organizationId = parseSelectedOrganizationId(String(body.organizationId));
-    if (!organizationId) return inputValidationError("A valid organizationId is required");
+    const organizationId = body.organizationId;
+    if (!Number.isInteger(organizationId) || organizationId < 1) return inputValidationError("A valid organizationId is required");
     const selectedOrganization = (await listSelectableFinanceCompaniesForCurrentUser())
       .find((organization) => organization.id === organizationId);
     if (!selectedOrganization) return notFoundError("Finance company was not found");
-    const response = ok({ selectedOrganizationId: selectedOrganization.id });
-    applySelectedCompanyCookie(response, selectedOrganization.id);
-    return response;
+    return ok(await capabilities.use("erp.organization-context").select({ organizationId: selectedOrganization.id }));
   } catch (error) {
     if (error instanceof SyntaxError) return inputValidationError(error.message);
+    if (error instanceof NotFoundError) return notFoundError(error.message);
     return serverError(error);
   }
 }

@@ -1,11 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
-import { listOrganizations } from "@voyzu/erp-core/organizations/server";
-import {
-  SELECTED_ORGANIZATION_COOKIE,
-  parseSelectedOrganizationId,
-} from "@voyzu/erp-core/organization-switcher/server";
+import { capabilities, masterData } from "@voyzu/capability/contracts";
 
 import { BalanceSheetReport } from "../../client";
 import { BalanceSheetReportTemplate } from "../../templates/BalanceSheetReportTemplate";
@@ -27,11 +22,10 @@ function todayIso(): string {
 }
 
 export async function BalanceSheetReportPage({ surface }: ReportPageProps = {}) {
-  const cookieStore = await cookies();
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || parseSelectedOrganizationId(cookieStore.get(SELECTED_ORGANIZATION_COOKIE)?.value);
-  const companies = await listOrganizations();
+  const selectedCompanyId = queryCompanyId || (await capabilities.use("erp.organization-context").requested({})).organizationId;
+  const companies = await masterData.list("erp.organization");
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
   const today = todayIso();
 

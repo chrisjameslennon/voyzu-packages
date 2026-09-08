@@ -5,7 +5,7 @@ import { resolveExternalUrl } from "@voyzu/ui-surface";
 import { ComponentSlot, component } from "@voyzu/ui-surface/server";
 
 import { getDb } from "@voyzu/capability/db";
-import { listCurrencies } from "@voyzu/localization/currencies/server";
+import { masterData } from "@voyzu/capability/contracts";
 
 import { OrganizationDetail } from "../../client";
 import { getOrganization } from "../lib/organization.service";
@@ -34,7 +34,7 @@ export async function OrganizationDetailPage({ code, surface }: OrganizationDeta
   const [organization, countries, currencies] = await Promise.all([
     getOrganization(decodeURIComponent(code)),
     listActiveCountries(),
-    listCurrencies(),
+    masterData.list("platform.currency"),
   ]);
 
   if (!organization) notFound();

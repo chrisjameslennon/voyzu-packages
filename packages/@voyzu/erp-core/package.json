@@ -34,6 +34,7 @@
     "./organizations/domain/operation-policy": "./modules/organizations/domain/operation-policy.ts",
     "./organization-switcher": "./modules/organization-switcher/module.ts",
     "./organization-switcher/api.routes": "./modules/organization-switcher/api.routes.ts",
+    "./organization-switcher/client-components": "./modules/organization-switcher/client-components.ts",
     "./organization-switcher/server": "./modules/organization-switcher/server/index.ts",
     "./organization-switcher/types": "./modules/organization-switcher/types/index.ts",
     "./organization-access": "./modules/organization-access/module.ts",
@@ -52,10 +53,7 @@
     "./types/modules/*.dto": "./types/modules/*.dto.ts"
   },
   "peerDependencies": {
-    "@voyzu/audit": "^0.1.0",
-    "@voyzu/auth": "^0.1.0",
     "@voyzu/capability": "^0.1.0",
-    "@voyzu/localization": "^0.1.0",
     "@voyzu/types": "^0.1.0",
     "@voyzu/ui-components": "^0.1.0",
     "@voyzu/ui-layout": "^0.1.0",

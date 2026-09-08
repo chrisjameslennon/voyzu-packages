@@ -1,2 +1,6 @@
 import { organizationFinanceCapability } from "./organization-finance";
-export const capabilityContracts = { "erp.organization-finance": organizationFinanceCapability } as const;
+import { organizationContextCapability } from "./organization-context";
+export const capabilityContracts = {
+  "erp.organization-finance": organizationFinanceCapability,
+  "erp.organization-context": organizationContextCapability,
+} as const;
