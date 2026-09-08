@@ -1,3 +1,4 @@
+import { FinanceSampleDataRepo } from "../../db/sample-data.repo";
 import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
@@ -9,9 +10,7 @@ async function main() {
   const client = await pool.connect();
 
   try {
-    const companyRes = await client.query<{ id: number; code: string }>(
-      `SELECT id, code FROM organization WHERE code LIKE 'SAMP-%' ORDER BY code`,
-    );
+    const companyRes = await new FinanceSampleDataRepo(client).listSampleOrganizations();
 
     if (!companyRes.rows.length) {
       console.log("No SAMP- companies found — nothing to tear down.");
@@ -22,141 +21,59 @@ async function main() {
     console.log(`Tearing down ${companyIds.length} sample companies: ${companyRes.rows.map((r) => r.code).join(", ")}`);
 
     const deleteOptionalCompanyRows = async (table: string): Promise<number> => {
-      const tableRes = await client.query<{ exists: boolean }>(
-        `SELECT to_regclass($1) IS NOT NULL AS exists`,
-        [`public.${table}`],
-      );
+      const tableRes = await new FinanceSampleDataRepo(client).tableExists(`public.${table}`);
       if (!tableRes.rows[0]?.exists) return 0;
-      const { rowCount } = await client.query(`DELETE FROM ${table} WHERE finance_organization_id = ANY($1)`, [companyIds]);
+      const { rowCount } = await new FinanceSampleDataRepo(client).deleteOptionalCompanyRows(companyIds, table);
       return rowCount ?? 0;
     };
 
-    await client.query("BEGIN");
-    await client.query("SET session_replication_role = replica");
+    await new FinanceSampleDataRepo(client).begin();
+    await new FinanceSampleDataRepo(client).disableTriggers();
 
     // Clear self-referential journal reversal FKs before deleting journal_header rows
-    await client.query(
-      `UPDATE journal_header
-       SET reversal_of_journal_id = NULL, reversed_by_journal_id = NULL
-       WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    await new FinanceSampleDataRepo(client).clearJournalReversals(companyIds);
 
     // audit_change → audit_event (no cascade defined)
-    const { rowCount: auditChanges } = await client.query(
-      `DELETE FROM audit_change
-       WHERE audit_event_id IN (SELECT id FROM audit_event WHERE organization_id = ANY($1))`,
-      [companyIds],
-    );
+    const { rowCount: auditChanges } = await new FinanceSampleDataRepo(client).deleteAuditChanges(companyIds);
 
     // Subledger entries (reference journal_header, ar_counterparty, fiscal_year, fiscal_period)
-    const { rowCount: taxEntries } = await client.query(
-      `DELETE FROM tax_ledger_entry_header WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: inventoryLedgerEntries } = await client.query(
-      `DELETE FROM inventory_ledger_entry_header WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: taxEntries } = await new FinanceSampleDataRepo(client).deleteTaxHeaders(companyIds);
+    const { rowCount: inventoryLedgerEntries } = await new FinanceSampleDataRepo(client).deleteInventoryHeaders(companyIds);
     const taxSubledgerEntries = await deleteOptionalCompanyRows("tax_subledger_entry");
-    const { rowCount: arEntries } = await client.query(
-      `DELETE FROM ar_subledger_entry_header WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: apEntries } = await client.query(
-      `DELETE FROM ap_subledger_entry_header WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: arEntries } = await new FinanceSampleDataRepo(client).deleteArHeaders(companyIds);
+    const { rowCount: apEntries } = await new FinanceSampleDataRepo(client).deleteApHeaders(companyIds);
 
     // journal_line (journal_line_dimension cascades automatically via ON DELETE CASCADE)
-    const { rowCount: journalLines } = await client.query(
-      `DELETE FROM journal_line
-       WHERE journal_header_id IN (SELECT id FROM journal_header WHERE finance_organization_id = ANY($1))`,
-      [companyIds],
-    );
-    const { rowCount: journalHeaders } = await client.query(
-      `DELETE FROM journal_header WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: journalLines } = await new FinanceSampleDataRepo(client).deleteJournalLines(companyIds);
+    const { rowCount: journalHeaders } = await new FinanceSampleDataRepo(client).deleteJournalHeaders(companyIds);
 
-    const { rowCount: counterparties } = await client.query(
-      `DELETE FROM ar_counterparty WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: apCounterparties } = await client.query(
-      `DELETE FROM ap_counterparty WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: counterparties } = await new FinanceSampleDataRepo(client).deleteArCounterparties(companyIds);
+    const { rowCount: apCounterparties } = await new FinanceSampleDataRepo(client).deleteApCounterparties(companyIds);
     const counterpartiesGeneric = await deleteOptionalCompanyRows("counterparty");
-    const { rowCount: auditEvents } = await client.query(
-      `DELETE FROM audit_event WHERE organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: auditEvents } = await new FinanceSampleDataRepo(client).deleteAuditEvents(companyIds);
 
-    const { rowCount: periods } = await client.query(
-      `DELETE FROM fiscal_period WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: years } = await client.query(
-      `DELETE FROM fiscal_year WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: periods } = await new FinanceSampleDataRepo(client).deletePeriods(companyIds);
+    const { rowCount: years } = await new FinanceSampleDataRepo(client).deleteYears(companyIds);
 
-    const { rowCount: itemPostingProfiles } = await client.query(
-      `DELETE FROM item_posting_profile WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: itemPostingProfiles } = await new FinanceSampleDataRepo(client).deletePostingProfiles(companyIds);
 
-    const { rowCount: financialDocumentDefaults } = await client.query(
-      `DELETE FROM financial_document_default WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: financialDocumentDefaults } = await new FinanceSampleDataRepo(client).deleteDocumentDefaults(companyIds);
 
-    const { rowCount: dimensionValues } = await client.query(
-      `DELETE FROM dimension_value WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: dimensions } = await client.query(
-      `DELETE FROM dimension WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: dimensionValues } = await new FinanceSampleDataRepo(client).deleteDimensionValues(companyIds);
+    const { rowCount: dimensions } = await new FinanceSampleDataRepo(client).deleteDimensions(companyIds);
 
-    const { rowCount: bankCashAccounts } = await client.query(
-      `DELETE FROM bank_cash_control_account WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: inventoryControlAccounts } = await client.query(
-      `DELETE FROM inventory_control_account WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: taxControlAccounts } = await client.query(
-      `DELETE FROM tax_control_account WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: apControlAccountsSettings } = await client.query(
-      `DELETE FROM ap_control_account WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: arControlAccountsSettings } = await client.query(
-      `DELETE FROM ar_control_account WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: glAccounts } = await client.query(
-      `DELETE FROM gl_account WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
-    const { rowCount: glAccountCategories } = await client.query(
-      `DELETE FROM gl_account_category WHERE finance_organization_id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: bankCashAccounts } = await new FinanceSampleDataRepo(client).deleteBankControls(companyIds);
+    const { rowCount: inventoryControlAccounts } = await new FinanceSampleDataRepo(client).deleteInventoryControls(companyIds);
+    const { rowCount: taxControlAccounts } = await new FinanceSampleDataRepo(client).deleteTaxControls(companyIds);
+    const { rowCount: apControlAccountsSettings } = await new FinanceSampleDataRepo(client).deleteApControls(companyIds);
+    const { rowCount: arControlAccountsSettings } = await new FinanceSampleDataRepo(client).deleteArControls(companyIds);
+    const { rowCount: glAccounts } = await new FinanceSampleDataRepo(client).deleteGlAccounts(companyIds);
+    const { rowCount: glAccountCategories } = await new FinanceSampleDataRepo(client).deleteGlCategories(companyIds);
 
-    const { rowCount: companies } = await client.query(
-      `DELETE FROM organization WHERE id = ANY($1)`,
-      [companyIds],
-    );
+    const { rowCount: companies } = await new FinanceSampleDataRepo(client).deleteOrganizations(companyIds);
 
-    await client.query("SET session_replication_role = DEFAULT");
-    await client.query("COMMIT");
+    await new FinanceSampleDataRepo(client).enableTriggers();
+    await new FinanceSampleDataRepo(client).commit();
 
     console.log(`Deleted:`);
     console.log(`  ${companies} companies`);
@@ -175,7 +92,7 @@ async function main() {
     console.log(`  ${glAccounts} GL accounts, ${glAccountCategories} GL account categories`);
     console.log(`  ${auditEvents} audit events, ${auditChanges} audit changes`);
   } catch (err) {
-    await client.query("ROLLBACK");
+    await new FinanceSampleDataRepo(client).rollback();
     throw err;
   } finally {
     client.release();

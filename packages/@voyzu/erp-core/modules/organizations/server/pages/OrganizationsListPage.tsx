@@ -1,4 +1,6 @@
 import "server-only";
+import { OrganizationRepo } from "../db/organization.repo";
+
 
 import { headers } from "next/headers";
 
@@ -34,9 +36,7 @@ async function fetchOrganizationOptions(): Promise<{
   activeCountries: SelectOption[];
   countryDefaultCurrencies: Record<string, string>;
 }> {
-  const countries = await getDb().query(
-    "SELECT code, name, currency_code FROM country WHERE status = 'ACTIVE' ORDER BY name ASC",
-  );
+  const countries = await new OrganizationRepo(getDb()).listActiveCountryDefaults();
 
   return {
     activeCountries: countries.rows.map((row) => ({

@@ -1,3 +1,4 @@
+import { FinanceSampleDataRepo } from "../db/sample-data.repo";
 import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
@@ -122,30 +123,11 @@ function localDateString(d: Date): string {
 
 async function ensureOpenFiscalPeriodFor(companyCode: string, date: string): Promise<void> {
   const pool = getPool();
-  const { rows } = await pool.query<{
-    finance_organization_id: number;
-    fiscal_year_id: number;
-    start_date: string;
-    end_date: string;
-  }>(
-    `SELECT fc.id AS finance_organization_id, fy.id AS fiscal_year_id, fy.start_date::text, fy.end_date::text
-       FROM organization c
-       JOIN finance_organization fc ON fc.organization_id = c.id
-       JOIN fiscal_year fy ON fy.finance_organization_id = fc.id
-      WHERE c.code = $1
-        AND $2::date BETWEEN fy.start_date AND fy.end_date
-      LIMIT 1`,
-    [companyCode, date],
-  );
+  const { rows } = await new FinanceSampleDataRepo(pool).findFiscalYear(companyCode, date);
   const year = rows[0];
   if (!year) throw new Error(`No fiscal year found for ${companyCode} on ${date}`);
 
-  await pool.query(
-    `UPDATE fiscal_year
-        SET status = 'OPEN', updated_date = now(), updated_actor_type = 'SYSTEM'
-      WHERE id = $1`,
-    [year.fiscal_year_id],
-  );
+  await new FinanceSampleDataRepo(pool).openFiscalYear(year.fiscal_year_id);
 
   const fyStart = new Date(`${year.start_date}T00:00:00`);
   const fyEnd = new Date(`${year.end_date}T00:00:00`);
@@ -158,25 +140,10 @@ async function ensureOpenFiscalPeriodFor(companyCode: string, date: string): Pro
     const name = MONTH_NAMES[monthIndex];
     const startDate = localDateString(new Date(calendarYear, monthIndex, 1));
     const endDate = localDateString(new Date(calendarYear, monthIndex + 1, 0));
-    const updated = await pool.query(
-      `UPDATE fiscal_period
-          SET start_date = $3,
-              end_date = $4,
-              status = 'OPEN',
-              updated_date = now(),
-              updated_actor_type = 'SYSTEM'
-        WHERE fiscal_year_id = $1
-          AND code = $2`,
-      [year.fiscal_year_id, code, startDate, endDate],
-    );
+    const updated = await new FinanceSampleDataRepo(pool).updateOpenFiscalPeriod(year.fiscal_year_id, code, startDate, endDate);
 
     if (updated.rowCount === 0) {
-      await pool.query(
-        `INSERT INTO fiscal_period
-           (finance_organization_id, fiscal_year_id, code, name, start_date, end_date, status, creation_date, creation_actor_type, updated_actor_type)
-         VALUES ($1, $2, $3, $4, $5, $6, 'OPEN', now(), 'SYSTEM', 'SYSTEM')`,
-        [year.finance_organization_id, year.fiscal_year_id, code, name, startDate, endDate],
-      );
+      await new FinanceSampleDataRepo(pool).insertOpenFiscalPeriod(year.finance_organization_id, year.fiscal_year_id, code, name, startDate, endDate);
     }
     current = new Date(calendarYear, monthIndex + 1, 1);
   }

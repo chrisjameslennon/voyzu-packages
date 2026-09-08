@@ -1,3 +1,4 @@
+import { InventorySampleDataRepo } from "./db/sample-data.repo";
 import { getDb } from "@voyzu/capability/db";
 
 import { addOptionValue as addInventoryOptionValue, createConfiguration as createInventoryConfiguration, deleteOptionValue as deleteInventoryOptionValue, getConfiguration as getInventoryConfiguration, listConfiguration as listInventoryConfiguration, patchConfiguration as patchInventoryConfiguration, patchOptionValue as patchInventoryOptionValue, transitionConfiguration as transitionInventoryConfiguration } from "../modules/configuration/server/lib/configuration.service";
@@ -133,12 +134,7 @@ const stockTargets = [
 type Organization = { id: number; code: string; name: string };
 
 async function sampleOrganization(): Promise<Organization> {
-  const result = await getDb().query<Organization>(
-    `SELECT id::int, code, name
-       FROM organization
-      WHERE status = 'ACTIVE'
-        AND code = 'TESTCO'`,
-  );
+  const result = await new InventorySampleDataRepo(getDb()).findSampleOrganization();
   const organization = result.rows[0];
   if (!organization) {
     throw new Error(
@@ -338,14 +334,7 @@ async function seedOrganization(organization: Organization): Promise<void> {
     });
   }
 
-  const existingReservation = await getDb().query(
-    `SELECT 1
-       FROM inventory_reservation
-      WHERE organization_id = $1
-        AND reference = 'SAMPLE-RESERVATION'
-      LIMIT 1`,
-    [organization.id],
-  );
+  const existingReservation = await new InventorySampleDataRepo(getDb()).findSampleReservation(organization.id);
   if (!existingReservation.rows.length) {
     await reserveInventoryStock(organization.id, {
       itemId: itemIds.get("SAMPLE-BEANS")!,

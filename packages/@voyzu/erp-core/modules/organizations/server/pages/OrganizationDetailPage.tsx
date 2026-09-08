@@ -1,4 +1,6 @@
 import "server-only";
+import { OrganizationRepo } from "../db/organization.repo";
+
 
 import { notFound } from "next/navigation";
 import { resolveExternalUrl } from "@voyzu/ui-surface";
@@ -18,9 +20,7 @@ interface OrganizationDetailPageProps {
 type SelectOption = { value: string; label: string; code?: string };
 
 async function listActiveCountries(): Promise<SelectOption[]> {
-  const { rows } = await getDb().query(
-    `SELECT code, name FROM country WHERE status = 'ACTIVE' ORDER BY name ASC`,
-  );
+  const { rows } = await new OrganizationRepo(getDb()).listActiveCountryNames();
   return rows.map((row) => ({
     value: String(row.code),
     label: String(row.name),

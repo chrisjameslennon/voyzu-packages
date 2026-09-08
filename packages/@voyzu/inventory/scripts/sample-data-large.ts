@@ -1,3 +1,4 @@
+import { InventorySampleDataRepo } from "./db/sample-data.repo";
 import { getDb } from "@voyzu/capability/db";
 
 import { listConfiguration as listInventoryConfiguration } from "../modules/configuration/server/lib/configuration.service";
@@ -10,12 +11,7 @@ const ITEM_COUNT = 100;
 type Organization = { id: number; code: string; name: string };
 
 async function sampleOrganization(): Promise<Organization> {
-  const result = await getDb().query<Organization>(
-    `SELECT id::int, code, name
-       FROM organization
-      WHERE status = 'ACTIVE'
-        AND code = 'TESTCO'`,
-  );
+  const result = await new InventorySampleDataRepo(getDb()).findSampleOrganization();
   const organization = result.rows[0];
   if (!organization) {
     throw new Error(

@@ -1,3 +1,4 @@
+import { OrganizationRepo } from "../../modules/organizations/server/db/organization.repo";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { test } from "node:test";
@@ -59,7 +60,7 @@ test("organization, Finance capability and composed master data share a transact
       assert.equal((await masterData.get("erp.organization.finance", automatic.id))?.financeEnabled, true);
       throw rollback;
     }), (error) => error === rollback);
-    const { rows } = await getDb().query("SELECT id FROM organization WHERE code = $1", [code]);
+    const { rows } = await new OrganizationRepo(getDb()).findIdByCode(code);
     assert.equal(rows.length, 0, "outer rollback must include organization and Finance writes");
   } finally { registerContracts([...identityPackages, ...packages]); }
 });

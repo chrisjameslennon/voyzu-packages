@@ -49,7 +49,6 @@ export const erpCorePackage = {
       "./install/db/objects/table.organization.create.sql",
       "./install/db/objects/table.organization-user-access.create.sql",
       "./install/db/objects/table.document-link.create.sql",
-      "./install/db/objects/audit-organization-reference.attach.sql",
       "./install/db/objects/audit-triggers.attach.sql"
     ],
     seedSql: [

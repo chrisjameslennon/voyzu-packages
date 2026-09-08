@@ -195,4 +195,16 @@ export class OrganizationRepo {
       updated_date: row.updated_date instanceof Date ? row.updated_date.toISOString() : String(row.updated_date),
     } as OrganizationRow;
   }
+
+  listActiveCountryNames() {
+    return this.db.query(`SELECT code, name FROM country WHERE status = 'ACTIVE' ORDER BY name ASC`);
+  }
+
+  listActiveCountryDefaults() {
+    return this.db.query("SELECT code, name, currency_code FROM country WHERE status = 'ACTIVE' ORDER BY name ASC");
+  }
+
+  findIdByCode(code: string) {
+    return this.db.query("SELECT id FROM organization WHERE code = $1", [code]);
+  }
 }

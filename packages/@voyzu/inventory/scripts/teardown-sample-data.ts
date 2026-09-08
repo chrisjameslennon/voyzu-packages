@@ -1,3 +1,4 @@
+import { InventorySampleDataRepo } from "./db/sample-data.repo";
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 
 const SAMPLE_ORGANIZATION_CODE = "TESTCO";
@@ -7,29 +8,17 @@ async function deleteRows(
   table: string,
   organizationId: number,
 ): Promise<number> {
-  const result = await db.query(
-    `DELETE FROM ${table} WHERE organization_id = $1`,
-    [organizationId],
-  );
+  const result = await new InventorySampleDataRepo(db).deleteOrganizationRows(organizationId, table);
   return result.rowCount ?? 0;
 }
 
 async function resetDocumentSequence(db: DbExecutor, table: string): Promise<void> {
-  await db.query(
-    `SELECT setval(
-       pg_get_serial_sequence('${table}', 'id'),
-       GREATEST(COALESCE((SELECT MAX(id) FROM ${table}), 9999), 9999),
-       true
-     )`,
-  );
+  await new InventorySampleDataRepo(db).resetDocumentSequence(table);
 }
 
 /** Removes Inventory demonstration data for the shared TESTCO organization. */
 export async function teardownSampleData(): Promise<void> {
-  const organizationResult = await getDb().query<{ id: number }>(
-    `SELECT id::int FROM organization WHERE code = $1`,
-    [SAMPLE_ORGANIZATION_CODE],
-  );
+  const organizationResult = await new InventorySampleDataRepo(getDb()).findOrganizationId(SAMPLE_ORGANIZATION_CODE);
   const organizationId = organizationResult.rows[0]?.id;
   if (!organizationId) {
     console.log("TESTCO was not found; no Inventory sample data to tear down.");
@@ -37,19 +26,9 @@ export async function teardownSampleData(): Promise<void> {
   }
 
   const deleted = await withTransaction(async (db) => {
-    const documentLinkTable = await db.query<{ exists: boolean }>(
-      "SELECT to_regclass('public.document_link') IS NOT NULL AS exists",
-    );
+    const documentLinkTable = await new InventorySampleDataRepo(db).documentLinksExist();
     const documentLinks = documentLinkTable.rows[0]?.exists
-      ? await db.query(
-          `DELETE FROM document_link
-            WHERE organization_id = $1
-              AND (
-                upstream_document_type LIKE 'STOCK_%'
-                OR downstream_document_type LIKE 'STOCK_%'
-              )`,
-          [organizationId],
-        )
+      ? await new InventorySampleDataRepo(db).deleteStockDocumentLinks(organizationId)
       : null;
 
     const counts = {

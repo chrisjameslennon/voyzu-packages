@@ -1,3 +1,4 @@
+import { FinanceSampleDataRepo } from "../db/sample-data.repo";
 import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
@@ -24,9 +25,7 @@ function pad(n: number): string {
 async function main() {
   const pool = getPool();
 
-  const countryRes = await pool.query<{ code: string; currency_code: string }>(
-    `SELECT code, currency_code FROM country WHERE status = 'ACTIVE' ORDER BY code`,
-  );
+  const countryRes = await new FinanceSampleDataRepo(pool).listActiveCountries();
   if (!countryRes.rows.length) throw new Error("No active countries found — run seed-country.ts first");
   const countries = countryRes.rows;
 
@@ -56,20 +55,7 @@ async function main() {
       }
     }
 
-    await pool.query(
-      `INSERT INTO finance_organization (
-         id, organization_id, tax_filing_anchor_month, tax_filing_interval_months,
-         creation_actor_type, updated_actor_type
-       )
-       SELECT
-         c.id, c.id, fc.tax_filing_anchor_month, fc.tax_filing_interval_months,
-         'SYSTEM', 'SYSTEM'
-       FROM organization c
-       JOIN finance_country fc ON fc.code = c.country_code
-       WHERE c.code = $1
-       ON CONFLICT (organization_id) DO NOTHING`,
-      [code],
-    );
+    await new FinanceSampleDataRepo(pool).insertFinancialEntity(code);
   }
 
   console.log(`Generated sample companies: ${created} created, ${skipped} already existed`);

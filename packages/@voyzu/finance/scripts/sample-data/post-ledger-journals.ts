@@ -1,3 +1,4 @@
+import { FinanceSampleDataRepo } from "../db/sample-data.repo";
 import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
@@ -64,15 +65,7 @@ async function postForCompany(config: SampleCompanyConfig) {
   for (const journal of JOURNALS) {
     if (await skipExistingSampleDocument(config.companyCode, journal.document_id)) {
       if (journal.document_id === "SAMP-GLJ-001") {
-        const existing = await getPool().query<{ code: string }>(
-          `SELECT h.code
-             FROM journal_header h
-             JOIN finance_organization fc ON fc.id = h.finance_organization_id
-             JOIN organization c ON c.id = fc.organization_id
-            WHERE c.code = $1 AND h.document_id = $2
-            LIMIT 1`,
-          [config.companyCode, journal.document_id],
-        );
+        const existing = await new FinanceSampleDataRepo(getPool()).findDocumentJournalCode(config.companyCode, journal.document_id);
         sourceJournalCode = existing.rows[0]?.code ?? null;
       }
       continue;

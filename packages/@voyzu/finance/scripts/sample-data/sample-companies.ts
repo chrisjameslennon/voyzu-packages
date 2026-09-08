@@ -1,3 +1,4 @@
+import { FinanceSampleDataRepo } from "../db/sample-data.repo";
 import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
@@ -10,17 +11,8 @@ async function main(): Promise<void> {
   const pool = getPool();
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-    const organizationResult = await client.query<{
-      id: number;
-      country_code: string;
-      status: string;
-    }>(
-      `SELECT id::int, country_code, status
-         FROM organization
-        WHERE code = $1`,
-      [SAMPLE_ORGANIZATION_CODE],
-    );
+    await new FinanceSampleDataRepo(client).begin();
+    const organizationResult = await new FinanceSampleDataRepo(client).findOrganization(SAMPLE_ORGANIZATION_CODE);
     const organization = organizationResult.rows[0];
     if (!organization || organization.status !== "ACTIVE") {
       throw new Error(
@@ -28,23 +20,7 @@ async function main(): Promise<void> {
       );
     }
 
-    const result = await client.query<{ id: number }>(
-      `INSERT INTO finance_organization (
-         id, organization_id, tax_filing_anchor_month, tax_filing_interval_months,
-         creation_actor_type, updated_actor_type
-       )
-       SELECT
-         $1, $1, fc.tax_filing_anchor_month, fc.tax_filing_interval_months,
-         'SYSTEM', 'SYSTEM'
-       FROM finance_country fc
-       WHERE fc.code = $2
-       ON CONFLICT (organization_id) DO UPDATE SET
-         tax_filing_anchor_month = EXCLUDED.tax_filing_anchor_month,
-         tax_filing_interval_months = EXCLUDED.tax_filing_interval_months,
-         updated_date = NOW(), updated_actor_type = 'SYSTEM'
-       RETURNING id::int`,
-      [organization.id, organization.country_code],
-    );
+    const result = await new FinanceSampleDataRepo(client).upsertFinancialEntity(organization.id, organization.country_code);
     if (!result.rowCount) {
       throw new Error(
         `Finance country configuration ${organization.country_code} was not found for TESTCO.`,
@@ -59,22 +35,7 @@ async function main(): Promise<void> {
       { table: "ap_control_account", ledger: "ACCOUNTS_PAYABLE", code: "AP_UNAPPLIED_PAYMENTS", name: "Supplier Payments Awaiting Allocation", glAccountCode: "201000" },
     ];
     for (const mapping of mappings) {
-      const restored = await client.query(
-        `INSERT INTO ${mapping.table} (
-           finance_organization_id, code, ledger, name, status, gl_account_id,
-           creation_actor_type, updated_actor_type
-         )
-         SELECT $1, $2, $5, $3, 'ACTIVE', ga.id, 'SYSTEM', 'SYSTEM'
-         FROM gl_account ga
-         WHERE ga.finance_organization_id = $1 AND ga.code = $4
-         ON CONFLICT (finance_organization_id, code) DO UPDATE SET
-           ledger = EXCLUDED.ledger,
-           name = EXCLUDED.name,
-           status = EXCLUDED.status,
-           gl_account_id = EXCLUDED.gl_account_id,
-           updated_date = NOW(), updated_actor_type = 'SYSTEM'`,
-        [financeOrganizationId, mapping.code, mapping.name, mapping.glAccountCode, mapping.ledger],
-      );
+      const restored = await new FinanceSampleDataRepo(client).restoreControlMapping(financeOrganizationId, mapping.code, mapping.name, mapping.glAccountCode, mapping.ledger, mapping.table);
       if (!restored.rowCount) {
         throw new Error(
           `TESTCO GL account ${mapping.glAccountCode} is required for sample control account ${mapping.code}.`,
@@ -82,11 +43,11 @@ async function main(): Promise<void> {
       }
     }
 
-    await client.query("COMMIT");
+    await new FinanceSampleDataRepo(client).commit();
     console.log("Restored TESTCO AR and AP control-account mappings (110000, 111000, 200000 and 201000).");
     console.log("Finance sample company TESTCO is ready.");
   } catch (error) {
-    await client.query("ROLLBACK");
+    await new FinanceSampleDataRepo(client).rollback();
     throw error;
   } finally {
     client.release();

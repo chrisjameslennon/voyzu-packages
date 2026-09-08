@@ -1,3 +1,4 @@
+import { FinanceSampleDataRepo } from "../db/sample-data.repo";
 import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
@@ -39,53 +40,26 @@ const SAMPLE_DOCUMENT_IDS = [
 
 async function cleanupInventoryScenario(): Promise<void> {
   const pool = getPool();
-  const directJournalIds = await pool.query<{ id: number }>(
-    `SELECT h.id
-       FROM journal_header h
-       JOIN finance_organization fc ON fc.id = h.finance_organization_id
-       JOIN organization c ON c.id = fc.organization_id
-      WHERE c.code = $1
-        AND h.document_id = ANY($2::text[])`,
-    [COMPANY_CODE, SAMPLE_DOCUMENT_IDS],
-  );
-  const generatedInventoryJournalIds = await pool.query<{ id: number }>(
-    `SELECT h.id
-       FROM journal_header h
-       JOIN finance_organization fc ON fc.id = h.finance_organization_id
-       JOIN organization c ON c.id = fc.organization_id
-      WHERE c.code = $1
-        AND h.document_type_code IN ('INVENTORY_RECEIPT', 'INVENTORY_ISSUE', 'INVENTORY_ADJUSTMENT')
-        AND h.document_snapshot_json->'source'->>'source_document_id' = ANY($2::text[])`,
-    [COMPANY_CODE, SAMPLE_DOCUMENT_IDS],
-  );
+  const directJournalIds = await new FinanceSampleDataRepo(pool).findDocumentJournals(COMPANY_CODE, SAMPLE_DOCUMENT_IDS);
+  const generatedInventoryJournalIds = await new FinanceSampleDataRepo(pool).findGeneratedInventoryJournals(COMPANY_CODE, SAMPLE_DOCUMENT_IDS);
   const ids = [...new Set([
     ...directJournalIds.rows.map((row) => Number(row.id)),
     ...generatedInventoryJournalIds.rows.map((row) => Number(row.id)),
   ])];
 
   if (ids.length) {
-    await pool.query(`SET session_replication_role = replica`);
+    await new FinanceSampleDataRepo(pool).disableTriggers();
     try {
-      await pool.query(
-        `DELETE FROM inventory_ledger_entry_line
-          WHERE inventory_ledger_entry_header_id IN (
-            SELECT id FROM inventory_ledger_entry_header WHERE journal_header_id = ANY($1::bigint[])
-          )`,
-        [ids],
-      );
-      await pool.query(`DELETE FROM inventory_ledger_entry_header WHERE journal_header_id = ANY($1::bigint[])`, [ids]);
-      await pool.query(`DELETE FROM tax_ledger_entry_header WHERE journal_header_id = ANY($1::bigint[])`, [ids]);
-      await pool.query(`DELETE FROM ar_subledger_entry_header WHERE journal_header_id = ANY($1::bigint[])`, [ids]);
-      await pool.query(`DELETE FROM ap_subledger_entry_header WHERE journal_header_id = ANY($1::bigint[])`, [ids]);
-      await pool.query(
-        `DELETE FROM journal_line_dimension
-          WHERE journal_line_id IN (SELECT id FROM journal_line WHERE journal_header_id = ANY($1::bigint[]))`,
-        [ids],
-      );
-      await pool.query(`DELETE FROM journal_line WHERE journal_header_id = ANY($1::bigint[])`, [ids]);
-      await pool.query(`DELETE FROM journal_header WHERE id = ANY($1::bigint[])`, [ids]);
+      await new FinanceSampleDataRepo(pool).deleteInventoryLinesForJournals(ids);
+      await new FinanceSampleDataRepo(pool).deleteInventoryHeadersForJournals(ids);
+      await new FinanceSampleDataRepo(pool).deleteTaxHeadersForJournals(ids);
+      await new FinanceSampleDataRepo(pool).deleteArHeadersForJournals(ids);
+      await new FinanceSampleDataRepo(pool).deleteApHeadersForJournals(ids);
+      await new FinanceSampleDataRepo(pool).deleteDimensionsForJournals(ids);
+      await new FinanceSampleDataRepo(pool).deleteLinesForJournals(ids);
+      await new FinanceSampleDataRepo(pool).deleteJournals(ids);
     } finally {
-      await pool.query(`SET session_replication_role = DEFAULT`);
+      await new FinanceSampleDataRepo(pool).enableTriggers();
     }
   }
 }
