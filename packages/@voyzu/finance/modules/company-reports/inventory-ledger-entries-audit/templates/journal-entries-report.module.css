@@ -51,7 +51,7 @@
 }
 
 .dateControl {
-  width: 180px;
+  width: max-content;
 }
 
 .rangeSeparator {
@@ -148,4 +148,3 @@
   padding: 24px 0;
   color: var(--gray-500);
 }
-

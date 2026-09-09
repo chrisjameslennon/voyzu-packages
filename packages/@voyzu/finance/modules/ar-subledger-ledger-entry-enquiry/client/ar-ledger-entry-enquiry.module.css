@@ -10,7 +10,7 @@
 }
 
 .dateControl {
-  width: 11.25rem;
+  width: max-content;
 }
 
 .rangeSeparator {
