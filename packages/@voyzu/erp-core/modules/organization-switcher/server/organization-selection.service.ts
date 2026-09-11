@@ -5,7 +5,7 @@ import { capabilities } from "@voyzu/capability/contracts";
 import { listOrganizationIdsForUser } from "@voyzu/erp-core/organization-access/server";
 
 async function getCurrentIdentityUser(): Promise<CurrentIdentityUser | null> {
-  return (await capabilities.use("platform.identity").current({})).user;
+  return (await capabilities.use("platform.identity").getCurrentIdentity({})).user;
 }
 
 function hasUiAccess(user: CurrentIdentityUser | null): user is CurrentIdentityUser {

@@ -1,9 +1,7 @@
 import Type from "typebox";
-import { OrganizationMasterData } from "./organization";
-// Canonical finance exchange shape, faithful to the current Finance company DTO.
+// Finance contribution only; the root contract supplies the shared identifier.
 export const OrganizationFinanceMasterData = Type.Object({
-  ...OrganizationMasterData.properties,
-  financeCompanyId: Type.Union([OrganizationMasterData.properties.id, Type.Null()]),
+  financeCompanyId: Type.Union([Type.Integer({ minimum: 1 }), Type.Null()]),
   financeEnabled: Type.Boolean(),
   taxFilingAnchorMonth: Type.Integer({ minimum: 1, maximum: 12 }),
   taxFilingIntervalMonths: Type.Union([Type.Literal(1), Type.Literal(2), Type.Literal(3), Type.Literal(6), Type.Literal(12)]),

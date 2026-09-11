@@ -1,6 +1,6 @@
 import { getDb } from "@voyzu/capability/db";
-import type { MasterDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = MasterDataValue<"erp.organization">;
+import type { SemanticDataValue } from "@voyzu/capability/contracts";
+type OrganizationResponseDto = SemanticDataValue<"organization">;
 import type {
   ApCounterpartyStatementApplicationDto,
   ApCounterpartyStatementGroupDto,

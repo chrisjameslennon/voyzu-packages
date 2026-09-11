@@ -27,6 +27,11 @@ function normalizeItem(row: Record<string, unknown>): ItemRow {
 export class ItemRepo {
   constructor(private readonly db: DbExecutor) {}
 
+  async getById(id: number): Promise<ItemRow | null> {
+    const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.id = $1`, [id]);
+    return rows[0] ? normalizeItem(rows[0]) : null;
+  }
+
   async list(organizationId: number): Promise<ItemListRow[]> {
     const { rows } = await this.db.query(`${SELECT_ITEM} WHERE item.organization_id = $1 ORDER BY item.sku`, [organizationId]);
     const customFields = await this.listCustomFieldsForItems(

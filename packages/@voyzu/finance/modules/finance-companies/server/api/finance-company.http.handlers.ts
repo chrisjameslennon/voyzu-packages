@@ -21,7 +21,7 @@ export async function handleGetFinanceCompanySelection(
   _request: NextRequest,
 ): Promise<NextResponse<OrganizationSelectionResponseDto | InternalServerErrorResponseDto>> {
   try {
-    const { organizationId: requestedOrganizationId } = await capabilities.use("erp.organization-context").requested({});
+    const { organizationId: requestedOrganizationId } = await capabilities.use("erp.organization-context").getSavedOrganizationId({});
     const { organizations, selectedOrganization } = await resolveFinanceCompanySelectionForCurrentUser(requestedOrganizationId);
     return ok({ organizations, selectedOrganization, selectedOrganizationId: selectedOrganization?.id ?? null });
   } catch (error) {
@@ -39,7 +39,7 @@ export async function handleSetFinanceCompanySelection(
     const selectedOrganization = (await listSelectableFinanceCompaniesForCurrentUser())
       .find((organization) => organization.id === organizationId);
     if (!selectedOrganization) return notFoundError("Finance company was not found");
-    return ok(await capabilities.use("erp.organization-context").select({ organizationId: selectedOrganization.id }));
+    return ok(await capabilities.use("erp.organization-context").setActiveOrganization({ organizationId: selectedOrganization.id }));
   } catch (error) {
     if (error instanceof SyntaxError) return inputValidationError(error.message);
     if (error instanceof NotFoundError) return notFoundError(error.message);

@@ -5,19 +5,19 @@ import { OrganizationMasterData } from "../master-data/organization";
 const id = OrganizationMasterData.properties.id;
 /** Request-scoped organization selection. Cookie representation remains provider-private. */
 export const organizationContextCapability = {
-  requested: {
+  getSavedOrganizationId: {
     input: StrictObject({}),
     output: StrictObject({ organizationId: Type.Union([id, Type.Null()]) }),
   },
-  selectable: {
+  getAvailableOrganizations: {
     input: StrictObject({}),
     output: StrictObject({ organizations: Type.Array(OrganizationMasterData) }),
   },
-  current: {
+  getActiveOrganization: {
     input: StrictObject({}),
     output: StrictObject({ selectedOrganization: Type.Union([OrganizationMasterData, Type.Null()]) }),
   },
-  select: {
+  setActiveOrganization: {
     input: StrictObject({ organizationId: id }),
     output: StrictObject({ selectedOrganizationId: id }),
   },

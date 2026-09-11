@@ -1,13 +1,24 @@
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
 import { OrganizationMasterData } from "./organization";
 import { OrganizationFinanceMasterData } from "./organization-extension-finance";
-import Type from "typebox";
 import { CountryFinanceMasterData } from "./country-extension-finance";
-export const masterDataContracts = {
-  "erp.country.finance": {
-    id: Type.String({ pattern: "^[A-Z0-9][A-Z0-9_-]*$" }),
-    data: CountryFinanceMasterData,
-    extends: { root: "platform.country", key: "finance" },
+import { inventoryDataContracts } from "./inventory";
+export const semanticDataContracts = {
+  "country.finance": {
+    extends: "country",
+    dataDefinition: CountryFinanceMasterData,
   },
-  "erp.organization": { id: OrganizationMasterData.properties.id, data: OrganizationMasterData, key: "organization", list: true },
-  "erp.organization.finance": { id: OrganizationMasterData.properties.id, data: OrganizationFinanceMasterData, extends: { root: "erp.organization", key: "finance" } },
+  organization: {
+    identifier: "id", identifierDataDefinition: OrganizationMasterData.properties.id,
+    dataDefinition: Type.Omit(OrganizationMasterData, ["id"]),
+    queries: { all: { inputDataDefinition: StrictObject({}) } },
+  },
+  "organization.finance": {
+    extends: "organization",
+    dataDefinition: OrganizationFinanceMasterData,
+  },
+  "country.withFinance": { extends: "country", extensions: ["country.finance"] },
+  "organization.withFinance": { extends: "organization", extensions: ["organization.finance"] },
+  ...inventoryDataContracts,
 } as const;

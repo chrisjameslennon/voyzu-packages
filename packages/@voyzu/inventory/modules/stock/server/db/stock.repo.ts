@@ -124,6 +124,11 @@ export class StockRepo {
       reference: row.reference == null ? null : String(row.reference),
     }));
   }
+  async activityKeyById(id: number): Promise<{ organizationId: number; code: string } | null> {
+    const { rows } = await this.db.query("SELECT organization_id, code FROM inventory_transaction WHERE id=$1", [id]);
+    return rows[0] ? { organizationId: Number(rows[0].organization_id), code: String(rows[0].code) } : null;
+  }
+
   async activityDetail(
     organizationId: number,
     code: string,

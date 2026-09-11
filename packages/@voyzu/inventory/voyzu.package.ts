@@ -14,13 +14,19 @@ import { uninstall } from "./uninstall/manifest";
 
 export const inventoryPackage = {
   contracts: {
-    implements: {
-      capabilities: {
-        "erp.inventory-catalog": {
-          load: () => import("./modules/items/server/lib/inventory-catalog.provider"),
+    semanticDataDefinition: {
+      implements: {
+        inventoryItem: {
+          get: (id: number) => import("./modules/items/server/lib/inventory-catalog.provider").then(m => m.get(id)),
+          queries: { byOrganization: (input: { organizationId: number }) => import("./modules/items/server/lib/inventory-catalog.provider").then(m => m.byOrganization(input)) },
         },
-        "erp.inventory-activity": {
-          load: () => import("./modules/stock/server/lib/inventory-activity.provider"),
+        "inventoryItem.operational": {
+          get: (id: number) => import("./modules/items/server/lib/inventory-catalog.provider").then(m => m.getOperational(id)),
+          queries: { bySkus: (input: { organizationId: number; skus: string[] }) => import("./modules/items/server/lib/inventory-catalog.provider").then(m => m.bySkus(input)) },
+        },
+        stockActivity: {
+          get: (id: number) => import("./modules/stock/server/lib/inventory-activity.provider").then(m => m.get(id)),
+          queries: { byCode: (input: { organizationId: number; code: string }) => import("./modules/stock/server/lib/inventory-activity.provider").then(m => m.byCode(input)) },
         },
       },
     },

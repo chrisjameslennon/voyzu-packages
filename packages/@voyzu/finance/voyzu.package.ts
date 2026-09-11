@@ -81,28 +81,38 @@ export const financeServiceModules = [
 
 export const financePackage = {
   contracts: {
-   implements: {
-    masterData: {
-      "erp.country.finance": {
-        get: (code: string) => import("./modules/country-tax-settings/server/lib/country-tax-setting.service").then((module) => module.getCountryTaxSetting(code)),
-      },
-      "erp.organization.finance": {
-        get: (id: number) => import("./modules/finance-companies/server/lib/finance-company.service").then((module) => module.getOrganizationFinanceMasterData(id)),
+    semanticDataDefinition: {
+      implements: {
+        "country.finance": {
+          get: (code: string) => import("./modules/country-tax-settings/server/lib/country-tax-setting.service").then(async m => {
+            const value = await m.getCountryTaxSetting(code);
+            if (!value) return null;
+            const { financialPeriodStartMonth, taxFilingAnchorMonth, taxFilingIntervalMonths, taxAuthorities, taxRules, taxComponents } = value;
+            return { code: value.code, financialPeriodStartMonth, taxFilingAnchorMonth, taxFilingIntervalMonths, taxAuthorities, taxRules, taxComponents };
+          }),
+        },
+        "organization.finance": {
+          get: (id: number) => import("./modules/finance-companies/server/lib/finance-company.service").then(async m => {
+            const value = await m.getOrganizationFinanceMasterData(id);
+            if (!value) return null;
+            const { financeCompanyId, financeEnabled, taxFilingAnchorMonth, taxFilingIntervalMonths, reportLine1, reportLine2, reportFooter, hasPostings } = value;
+            return { id, financeCompanyId, financeEnabled, taxFilingAnchorMonth, taxFilingIntervalMonths, reportLine1, reportLine2, reportFooter, hasPostings };
+          }),
+        },
       },
     },
-
-    capabilities: {
-      "erp.inventory-finance": {
-        load: () => import("./modules/inventory-processing/server/lib/inventory-finance.provider").then((module) => ({
-          processInventoryMovement: module.processInventoryMovementCapability,
-        })),
-      },
-      "erp.organization-finance": {
-        load: () => import("./modules/finance-companies/server/lib/finance-company.service").then((module) => ({ createFinancialEntity: module.createFinancialEntity })),
+    semanticCapabilityDefinition: {
+      implements: {
+        "erp.inventory-finance": {
+          processInventoryMovement: (input: Parameters<typeof import("./modules/inventory-processing/server/lib/inventory-finance.provider").processInventoryMovementCapability>[0]) =>
+            import("./modules/inventory-processing/server/lib/inventory-finance.provider").then(m => m.processInventoryMovementCapability(input)),
+        },
+        "erp.organization-finance": {
+          createFinancialEntity: (input: { organizationId: number }) => import("./modules/finance-companies/server/lib/finance-company.service").then(m => m.createFinancialEntity(input)),
+        },
       },
     },
-  }
-},
+  },
   modules: [
     financeCompaniesModule,
     countryTaxSettingsModule,

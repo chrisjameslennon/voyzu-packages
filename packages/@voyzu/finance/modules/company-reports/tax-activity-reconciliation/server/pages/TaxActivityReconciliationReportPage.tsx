@@ -4,7 +4,7 @@ import "server-only";
 import { getDb } from "@voyzu/capability/db";
 import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
 
-import { capabilities, masterData } from "@voyzu/capability/contracts";
+import { capabilities, semanticData } from "@voyzu/capability/contracts";
 import { listFinancialYears } from "@voyzu/finance/financial-years/server";
 
 import { TaxActivityReconciliationReport } from "../../client";
@@ -88,8 +88,8 @@ function deriveFilingPeriods(
 export async function TaxActivityReconciliationReportPage({ surface }: ReportPageProps = {}) {
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || (await capabilities.use("erp.organization-context").requested({})).organizationId;
-  const companies = await masterData.list("erp.organization");
+  const selectedCompanyId = queryCompanyId || (await capabilities.use("erp.organization-context").getSavedOrganizationId({})).organizationId;
+  const companies = await semanticData.query("organization", "all", {});
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
 
   if (!company) {

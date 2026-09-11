@@ -158,3 +158,12 @@ installation dependencies remain, because they require ERP-provided contracts/UI
 Finance retains its peer dependency while the sample-data import exists.
 This completes application-code import decoupling, not HTTP, installation or
 database decoupling.
+
+
+## Follow-up: final semantic contract APIs
+
+The runtime now uses `semanticData.get/getOptional/query/queryOptional` and the
+new manifest sections. Earlier API names in this document are historical snapshots.
+The five retrieval capabilities are migrated as recorded in
+[Semantic Data Contract migration](SEMANTIC-DATA-MIGRATION-TODO.md).
+Production consumers still import the platform contract API, not provider packages.

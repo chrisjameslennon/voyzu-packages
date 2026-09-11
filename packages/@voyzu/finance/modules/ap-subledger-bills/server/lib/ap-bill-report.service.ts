@@ -7,8 +7,8 @@ import type {
   ApLedgerEntryDocumentReportTotalDto,
   ApSubledgerEntryResponseDto,
 } from "@voyzu/finance/types/modules/ap-subledger";
-import type { MasterDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = MasterDataValue<"erp.organization">;
+import type { SemanticDataValue } from "@voyzu/capability/contracts";
+type OrganizationResponseDto = SemanticDataValue<"organization">;
 
 import { ApBillReportRepo, type ApDocumentLineRow } from "../db/ap-bill-report.repo";
 

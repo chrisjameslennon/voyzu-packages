@@ -1,13 +1,13 @@
 import "server-only";
 
-import { capabilities } from "@voyzu/capability/contracts";
+import { semanticData } from "@voyzu/capability/contracts";
 import { getSelectedCompany } from "@voyzu/finance/journals/server";
 import { IntegrationUnavailablePage } from "../../../common/server/IntegrationUnavailablePage";
 import { InventoryTransactionsList } from "../../client";
 import { listFinanceInventoryActivities } from "../lib/inventory-processing.service";
 
 export async function InventoryTransactionsListPage() {
-  if (!capabilities.optional("erp.inventory-activity")) {
+  if (!semanticData.isImplemented("stockActivity")) {
     return <IntegrationUnavailablePage pageTitle="Inventory Transactions" packageName="Inventory" message="Install the Inventory package to receive and view financially relevant stock transactions." icon="inventory_2" />;
   }
   const company = await getSelectedCompany();

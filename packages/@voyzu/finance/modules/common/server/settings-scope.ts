@@ -97,8 +97,8 @@ export async function resolveServerSettingsScope(
   db: DbExecutor = getDb(),
 ): Promise<CompanySettingsScope> {
   const context = capabilities.use("erp.organization-context");
-  const { organizationId: companyId } = await context.requested({});
-  const { organizations: accessibleCompanies } = await context.selectable({});
+  const { organizationId: companyId } = await context.getSavedOrganizationId({});
+  const { organizations: accessibleCompanies } = await context.getAvailableOrganizations({});
   const financeCompanyIds = new Set(
     await new SettingsScopeRepo(db).listFinanceOrganizationIds(),
   );

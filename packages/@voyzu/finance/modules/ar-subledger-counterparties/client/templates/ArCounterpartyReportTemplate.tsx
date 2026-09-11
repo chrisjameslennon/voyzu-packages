@@ -1,6 +1,6 @@
 import type { ArCounterpartyResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
-import type { MasterDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = MasterDataValue<"erp.organization">;
+import type { SemanticDataValue } from "@voyzu/capability/contracts";
+type OrganizationResponseDto = SemanticDataValue<"organization">;
 
 import { arCounterpartyReportCss, arCounterpartyReportStyles as styles } from "./ar-counterparty-report.css";
 

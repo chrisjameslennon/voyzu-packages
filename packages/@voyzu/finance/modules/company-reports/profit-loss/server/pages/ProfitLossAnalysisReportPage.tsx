@@ -3,7 +3,7 @@ import "server-only";
 
 import type { ProfitLossBreakdownDto, ProfitLossDimensionSelectionDto } from "@voyzu/finance/types/modules/company-reports";
 
-import { capabilities, masterData } from "@voyzu/capability/contracts";
+import { capabilities, semanticData } from "@voyzu/capability/contracts";
 import { listDimensions } from "@voyzu/finance/common/dimensions/server";
 import { listFinancialYears } from "@voyzu/finance/financial-years/server";
 import { listPeriods } from "@voyzu/finance/financial-years/server";
@@ -50,8 +50,8 @@ function parseJsonParam<T>(value: string | undefined, fallback: T): T {
 export async function ProfitLossAnalysisReportPage({ surface }: ReportPageProps = {}) {
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || (await capabilities.use("erp.organization-context").requested({})).organizationId;
-  const companies = await masterData.list("erp.organization");
+  const selectedCompanyId = queryCompanyId || (await capabilities.use("erp.organization-context").getSavedOrganizationId({})).organizationId;
+  const companies = await semanticData.query("organization", "all", {});
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
   const fallbackFromDate = previous90DaysStartIso();
   const fallbackToDate = todayIso();

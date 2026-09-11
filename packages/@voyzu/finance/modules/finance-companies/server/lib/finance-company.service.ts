@@ -3,8 +3,8 @@ import "server-only";
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import { capabilities } from "@voyzu/capability/contracts";
-import type { MasterDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = MasterDataValue<"erp.organization">;
+import type { SemanticDataValue } from "@voyzu/capability/contracts";
+type OrganizationResponseDto = SemanticDataValue<"organization">;
 import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
 import { createCreationAuditStamp } from "../../../common/server";
 import { FinanceCompanyRepo, type FinanceCompanyRow } from "../db/finance-company.repo";
@@ -69,7 +69,7 @@ export async function createFinancialEntity({ organizationId }: { organizationId
 }
 
 export async function listSelectableFinanceCompaniesForCurrentUser(): Promise<OrganizationResponseDto[]> {
-  const { organizations: accessibleOrganizations } = await capabilities.use("erp.organization-context").selectable({});
+  const { organizations: accessibleOrganizations } = await capabilities.use("erp.organization-context").getAvailableOrganizations({});
   if (accessibleOrganizations.length === 0) return [];
   const financeOrganizationIds = new Set(await new FinanceCompanyRepo(getDb()).listOrganizationIds());
   return accessibleOrganizations.filter((organization) => financeOrganizationIds.has(organization.id));

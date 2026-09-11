@@ -5,8 +5,8 @@ import type {
   ArLedgerEntryDocumentReportResponseDto,
   ArLedgerEntryDocumentReportTotalDto,
 } from "@voyzu/finance/types/modules/ar-subledger";
-import type { MasterDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = MasterDataValue<"erp.organization">;
+import type { SemanticDataValue } from "@voyzu/capability/contracts";
+type OrganizationResponseDto = SemanticDataValue<"organization">;
 import { getDb } from "@voyzu/capability/db";
 import { getAuditActors } from "@voyzu/finance/common/server";
 

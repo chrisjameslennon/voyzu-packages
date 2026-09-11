@@ -35,12 +35,6 @@ export const CountryTaxComponentResponseDto = StrictObject({
 });
 
 export const CountryFinanceMasterData = StrictObject({
-  id: Type.String(),
-  code: Type.String(),
-  name: Type.String(),
-  currencyCode: Type.String(),
-  currencyName: Type.String(),
-  status: Status,
   financialPeriodStartMonth: Type.Union([Type.String(), Type.Null()]),
   taxFilingAnchorMonth: Type.Integer({ minimum: 1, maximum: 12 }),
   taxFilingIntervalMonths: Type.Union([

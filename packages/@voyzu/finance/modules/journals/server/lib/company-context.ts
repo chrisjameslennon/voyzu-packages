@@ -2,7 +2,7 @@ import { capabilities } from "@voyzu/capability/contracts";
 import { findCompanySettingsScope } from "../../../common/server/settings-scope";
 
 export async function getSelectedCompany() {
-  const { selectedOrganization } = await capabilities.use("erp.organization-context").current({});
+  const { selectedOrganization } = await capabilities.use("erp.organization-context").getActiveOrganization({});
   if (!selectedOrganization) return null;
   const financeScope = await findCompanySettingsScope(selectedOrganization.id);
   if (!financeScope) return null;
