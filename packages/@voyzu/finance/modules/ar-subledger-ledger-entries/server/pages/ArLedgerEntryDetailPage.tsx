@@ -2,10 +2,10 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { ArLedgerEntryDocumentReport } from "../../client";
+import { ArLedgerEntryDocumentReport } from "../../client/index";
 import { ArLedgerEntryDocumentReportTemplate } from "../../client/templates/ArLedgerEntryDocumentReportTemplate";
-import { normalizeDetailBackSource } from "@voyzu/finance/common/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { normalizeDetailBackSource } from "../../../common/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { getArLedgerEntryDocumentReport, getArSubledgerEntry } from "../lib/ar-subledger-ledger-entries.service";
 
 export async function ArLedgerEntryDetailPage({

@@ -1,4 +1,4 @@
-import type { TaxPaymentRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/tax-processing.request.dto";
+import type { TaxPaymentRequestDto } from "../../types/tax-processing.request.dto";
 import { processTaxDocument } from "../../core/tax_processing/tax-processing.service";
 
 export function processTaxPayment(input: TaxPaymentRequestDto, options: { preview?: boolean } = {}) {

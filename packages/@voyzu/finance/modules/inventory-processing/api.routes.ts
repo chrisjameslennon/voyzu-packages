@@ -5,7 +5,7 @@ import {
   InputValidationErrorResponseDto,
   InternalServerErrorResponseDto,
 } from "@voyzu/types";
-import { FinanceInventoryActivityDto, FinanceInventoryProcessingRuleDto, FinanceInventoryProcessingRulePatchDto } from "@voyzu/finance/types/modules/inventory-processing";
+import { FinanceInventoryActivityDto, FinanceInventoryProcessingRuleDto, FinanceInventoryProcessingRulePatchDto } from "./types/index";
 
 const load = () => import("./server/api/inventory-processing.http.handlers");
 const companyCode = {

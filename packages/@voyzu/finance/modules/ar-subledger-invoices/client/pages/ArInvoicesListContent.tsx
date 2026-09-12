@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CompanyPageTitleBadges } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges } from "../../../common/client/index";
 
-import type { ArSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import type { ArSubledgerEntryResponseDto } from "../../../ar-subledger-ledger-entries/types/ar-subledger-entry.response.dto";
 import { Badge, Breadcrumbs, Button, DataTable, FilterChips, FilterPanel, Input, type DataTableColumn, type FilterState, type FilterTab } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";

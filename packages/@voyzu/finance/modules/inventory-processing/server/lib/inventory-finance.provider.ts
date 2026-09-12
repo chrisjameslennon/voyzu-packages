@@ -1,4 +1,4 @@
-import type { ProcessInventoryMovementRequest } from "@voyzu/finance/types/modules/inventory-processing";
+import type { ProcessInventoryMovementRequest } from "../../types/index";
 import { processInventoryMovement } from "./processing-rules-engine";
 
 export async function processInventoryMovementCapability(input: {

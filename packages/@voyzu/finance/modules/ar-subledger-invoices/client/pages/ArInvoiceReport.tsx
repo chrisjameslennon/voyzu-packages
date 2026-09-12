@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 
-import { CompanyPageTitleBadges, type DetailBackSource } from "@voyzu/finance/common/client";
-import type { ArInvoiceStatementResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import { CompanyPageTitleBadges, type DetailBackSource } from "../../../common/client/index";
+import type { ArInvoiceStatementResponseDto } from "../../types/ar-invoice-statement.response.dto";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/report.layout.module.css";

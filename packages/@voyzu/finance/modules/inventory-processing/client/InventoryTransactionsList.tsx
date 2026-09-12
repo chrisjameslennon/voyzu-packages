@@ -1,6 +1,6 @@
 "use client";
 
-import type { FinanceInventoryActivity } from "@voyzu/finance/types/modules/inventory-processing";
+import type { FinanceInventoryActivity } from "../types/index";
 import {
   Badge,
   Breadcrumbs,

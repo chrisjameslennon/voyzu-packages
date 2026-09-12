@@ -1,5 +1,5 @@
-import type { ApBillCancellationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-bill-cancellation.request.dto";
-import type { ApProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-processing.response.dto";
+import type { ApBillCancellationRequestDto } from "../../types/ap-bill-cancellation.request.dto";
+import type { ApProcessingPostingResponseDto } from "../../types/ap-processing.response.dto";
 
 import { processApDocument } from "../../core/ap_processing/ap-processing.service";
 

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { CountryTaxSetting } from "@voyzu/finance/types/modules/country-tax-settings";
+import type { CountryTaxSetting } from "../types/index";
 import { Badge, Breadcrumbs, Button, DataTable, Input, type DataTableColumn } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import list from "@voyzu/ui-style/css-modules/list.module.css";

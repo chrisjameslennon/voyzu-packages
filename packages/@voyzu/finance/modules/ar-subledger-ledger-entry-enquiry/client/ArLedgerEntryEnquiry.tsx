@@ -1,12 +1,12 @@
 "use client";
 
-import { CompanyPageTitleBadges, financeApiUrl, getDrCrColor, getStatusSemanticColor } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges, financeApiUrl, getDrCrColor, getStatusSemanticColor } from "../../common/client/index";
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { ArSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
-import type { FinancialPeriodResponseDto } from "@voyzu/finance/types/modules/financial-periods";
-import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
+import type { ArSubledgerEntryResponseDto } from "../../ar-subledger-ledger-entries/types/ar-subledger-entry.response.dto";
+import type { FinancialPeriodResponseDto } from "../../financial-years/types/financial-period.response.dto";
+import type { FinancialYearResponseDto } from "../../financial-years/types/index";
 import {
   Badge,
   Breadcrumbs,

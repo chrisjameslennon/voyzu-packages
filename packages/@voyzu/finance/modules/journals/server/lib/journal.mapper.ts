@@ -3,8 +3,8 @@ import type {
   JournalLineResponseDto,
   JournalResponseDto,
   JournalStatus,
-} from "@voyzu/finance/types/modules/journals";
-import type { DrCr } from "@voyzu/finance/types/modules/core";
+} from "../../types/index";
+import type { DrCr } from "../../../common/types/index";
 
 import type { JournalHeaderRow, JournalLineDimensionRow, JournalLineRow } from "../db/journal.row.types";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import type { CountryTaxSetting } from "@voyzu/finance/types/modules/country-tax-settings";
+import type { CountryTaxSetting } from "../types/index";
 import { Badge, Breadcrumbs, Input } from "@voyzu/ui-components";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";

@@ -8,7 +8,9 @@
   "voyzu": {
     "voyzu-package": true,
     "allowInstall": true,
-    "dependencies": ["@voyzu/erp-core"],
+    "dependencies": [
+      "@voyzu/erp-core"
+    ],
     "pageRootPaths": [
       "/commercial"
     ],
@@ -83,6 +85,7 @@
     "@voyzu/ui-layout": "^0.1.0",
     "@voyzu/ui-style": "^0.1.0",
     "react": "^19",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "@voyzu/erp-core": "^0.1.0"
   }
 }

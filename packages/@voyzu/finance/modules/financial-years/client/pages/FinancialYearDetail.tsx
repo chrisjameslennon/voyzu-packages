@@ -1,14 +1,14 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/finance/common/client";
+import { CompanyAuditPanel as AuditPanel } from "../../../common/client/index";
 import { Close, Delete, Open, Reopen, type FinancialYearOperationState } from "../../domain/operation-policy";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { CompanyPageTitleBadges, financeApiUrl, getHasPostingsColor, getStatusSemanticColor } from "@voyzu/finance/common/client";
-import type { FinancialPeriodResponseDto } from "@voyzu/finance/types/modules/financial-periods";
-import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
+import { CompanyPageTitleBadges, financeApiUrl, getHasPostingsColor, getStatusSemanticColor } from "../../../common/client/index";
+import type { FinancialPeriodResponseDto } from "../../types/financial-period.response.dto";
+import type { FinancialYearResponseDto } from "../../types/index";
 import { Badge, Breadcrumbs, Button, Checkbox, ConfirmDialog, Input, ValidationAlert } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";

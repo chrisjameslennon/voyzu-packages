@@ -1,7 +1,7 @@
 import "server-only";
 
-import { TaxLedgerEntriesListContent } from "../../client";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { TaxLedgerEntriesListContent } from "../../client/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { listTaxSubledgerEntries } from "../lib/tax-ledger.service";
 
 export async function TaxLedgerEntriesListPage() {

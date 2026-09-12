@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import { parseBody } from "@voyzu/capability/http";
-import type { ArOpeningBalanceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-opening-balance.request.dto";
-import type { ArAdjustmentPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
+import type { ArOpeningBalanceRequestDto } from "../../types/ar-opening-balance.request.dto";
+import type { ArAdjustmentPostingResponseDto } from "../../types/ar-adjustment.response.dto";
 
 import { processArOpeningBalance } from "../lib/ar-opening-balance.service";
 

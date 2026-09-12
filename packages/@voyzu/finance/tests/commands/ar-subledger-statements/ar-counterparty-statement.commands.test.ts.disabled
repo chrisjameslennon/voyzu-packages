@@ -2,9 +2,9 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
 
-import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
-import type { ArReceiptApplicationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt-application.request.dto";
-import type { ArReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
+import type { ArInvoiceRequestDto } from "../../../modules/financial-document-processing-engine/types/ar-invoice.request.dto";
+import type { ArReceiptApplicationRequestDto } from "../../../modules/financial-document-processing-engine/types/ar-receipt-application.request.dto";
+import type { ArReceiptRequestDto } from "../../../modules/financial-document-processing-engine/types/ar-receipt.request.dto";
 import type { OrganizationResponseDto } from "@voyzu/erp-core/types/modules/organizations/organization.response.dto";
 import { getPool } from "@voyzu/capability/db";
 import { getArCounterpartyStatement } from "../../../modules/ar-subledger-statements/commands";

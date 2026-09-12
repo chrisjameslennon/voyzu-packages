@@ -1,5 +1,5 @@
 import domains from "./domains";
-import settingsLeftNav from "./settings.left-nav";
 
-export const navigation = { domains, leftNav: settingsLeftNav } as const;
+
+export const navigation = { domains } as const;
 export default navigation;

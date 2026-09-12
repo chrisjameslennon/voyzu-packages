@@ -1,6 +1,6 @@
 "use client";
 
-import type { ApLedgerEntryDocumentReportResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
+import type { ApLedgerEntryDocumentReportResponseDto } from "../../../ap-subledger-ledger-entries/types/ap-ledger-entry-document-report.response.dto";
 
 import {
   arStatementReportCss as apDocumentReportCss,

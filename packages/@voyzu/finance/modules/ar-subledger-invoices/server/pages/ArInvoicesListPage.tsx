@@ -1,9 +1,9 @@
 import "server-only";
 
-import { listArSubledgerEntries } from "@voyzu/finance/ar-subledger-ledger-entries/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { listArSubledgerEntries } from "../../../ar-subledger-ledger-entries/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 
-import { ArInvoicesListContent } from "../../client";
+import { ArInvoicesListContent } from "../../client/index";
 
 export async function ArInvoicesListPage() {
   const company = await getSelectedCompany();

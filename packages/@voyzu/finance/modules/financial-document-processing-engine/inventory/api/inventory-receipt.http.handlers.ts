@@ -1,7 +1,7 @@
 import { type NextRequest, type NextResponse } from "next/server";
 
-import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
-import type { InventoryProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-processing.response.dto";
+import type { InventoryReceiptRequestDto } from "../../types/inventory-receipt.request.dto";
+import type { InventoryProcessingPostingResponseDto } from "../../types/inventory-processing.response.dto";
 import { businessRuleError, notFoundError, serverError, inputValidationError } from "@voyzu/capability/http";
 import { parseBody } from "@voyzu/capability/http";
 import { ok } from "@voyzu/capability/http";

@@ -1,6 +1,6 @@
 "use client";
 
-import type { FinanceInventoryProcessingRule } from "@voyzu/finance/types/modules/inventory-processing";
+import type { FinanceInventoryProcessingRule } from "../types/index";
 import { Breadcrumbs, Button, DataTable, DropdownMenu, Input, type DataTableColumn, type DropdownMenuItem } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";

@@ -1,4 +1,4 @@
-import type { InventoryProcessingRuleAction, InventoryProcessingRuleDirection } from "@voyzu/finance/inventory-processing/domain";
+import type { InventoryProcessingRuleAction, InventoryProcessingRuleDirection } from "../../domain/index";
 
 export interface FinanceInventoryActivityRow {
   id: number;

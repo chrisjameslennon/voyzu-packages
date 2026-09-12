@@ -2,9 +2,9 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { ApCounterpartyDetail } from "../../client";
+import { ApCounterpartyDetail } from "../../client/index";
 import { ApCounterpartyReportTemplate } from "../../client/templates/ApCounterpartyReportTemplate";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { getApCounterparty } from "../lib/ap-subledger-counterparty.service";
 
 export async function ApCounterpartyDetailPage({ code, surface }: { code?: string; surface?: { unframed?: boolean } }) {

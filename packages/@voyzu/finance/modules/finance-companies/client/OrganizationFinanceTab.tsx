@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
+import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "../types/index";
 import { Badge, Button, Input, SearchableSelect, Toast, ValidationAlert } from "@voyzu/ui-components";
 import detail from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";

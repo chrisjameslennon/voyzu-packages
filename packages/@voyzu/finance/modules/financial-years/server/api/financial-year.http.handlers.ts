@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { resolveApiCompanyIdFromPath } from "@voyzu/finance/common/server";
+import { resolveApiCompanyIdFromPath } from "../../../finance-companies/server/lib/settings-scope";
 
 import type {
   BusinessRuleErrorResponseDto,
@@ -8,10 +8,10 @@ import type {
   InternalServerErrorResponseDto,
   InputValidationErrorResponseDto,
 } from "@voyzu/types/errors";
-import type { FinancialYearsExportRequestDto } from "@voyzu/finance/financial-years/types";
-import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years";
-import type { FinancialYearCreateRequestDto } from "@voyzu/finance/types/modules/financial-years";
-import type { FinancialYearPatchRequestDto } from "@voyzu/finance/types/modules/financial-years";
+import type { FinancialYearsExportRequestDto } from "../../types/index";
+import type { FinancialYearResponseDto } from "../../types/index";
+import type { FinancialYearCreateRequestDto } from "../../types/index";
+import type { FinancialYearPatchRequestDto } from "../../types/index";
 
 import { businessRuleError, conflictError, notFoundError, serverError, inputValidationError } from "@voyzu/capability/http";
 import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";

@@ -1,5 +1,5 @@
 import { ComponentType } from "../core/journal-posting-components";
-import type { AccountType } from "@voyzu/finance/types/modules/core";
+import type { AccountType } from "../../common/types/index";
 
 export const AP_BILL_JOURNAL_POSTING_COMPONENTS = {
   description: "Supplier bills debit purchase, expense, asset, and recoverable tax accounts and credit AP trade payables.",

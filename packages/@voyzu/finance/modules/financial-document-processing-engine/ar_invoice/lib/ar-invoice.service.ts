@@ -1,6 +1,6 @@
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
+import type { ArInvoiceRequestDto } from "../../types/ar-invoice.request.dto";
 import type {
   ArInvoiceArCounterpartyDetailsDto,
   ArInvoiceArSubledgerDetailsDto,
@@ -11,11 +11,11 @@ import type {
   ArInvoicePostingDetailsDto,
   ArInvoicePostingResponseDto,
   ArInvoiceTaxLedgerDetailDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
-import type { InventoryIssueRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
+} from "../../types/ar-invoice.response.dto";
+import type { InventoryIssueRequestDto } from "../../types/inventory-issue.request.dto";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
-import { getOperationalInventoryItems } from "../../../common/server/operational-inventory";
+import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { getOperationalInventoryItems } from "../../../inventory-item-posting-profile-assignments/server/lib/operational-inventory";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { processInventoryIssue } from "../../inventory/lib/inventory-processing.service";

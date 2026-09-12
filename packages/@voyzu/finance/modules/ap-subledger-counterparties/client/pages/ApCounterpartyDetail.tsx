@@ -1,11 +1,11 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/finance/common/client";
+import { CompanyAuditPanel as AuditPanel } from "../../../common/client/index";
 
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
-import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/finance/common/client";
-import type { ApCounterpartyResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
+import { CompanyPageTitleBadges, getStatusSemanticColor } from "../../../common/client/index";
+import type { ApCounterpartyResponseDto } from "../../types/ap-counterparty.response.dto";
 import type { SemanticDataValue } from "@voyzu/capability/contracts";
 type OrganizationResponseDto = SemanticDataValue<"organization">;
 import { Badge, Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";

@@ -1,4 +1,4 @@
-import type { ApSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
+import type { ApSubledgerEntryResponseDto } from "../../types/ap-subledger-entry.response.dto";
 import { getDb } from "@voyzu/capability/db";
 
 import { ApSubledgerRepo } from "../db/ap-subledger-ledger-entries.repo";

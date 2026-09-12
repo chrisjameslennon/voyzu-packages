@@ -1,3 +1,4 @@
+import type { EntryType } from "../../../common/types";
 export interface ReceiptApplicationCompanyContextRow {
   id: number;
   code: string;

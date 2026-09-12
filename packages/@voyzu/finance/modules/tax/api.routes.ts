@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
-import { TaxAuthorityResponseDto } from "../../types/modules/tax/tax.response.dto";
+import { TaxAuthorityResponseDto } from "./types/tax.response.dto";
 
 
 

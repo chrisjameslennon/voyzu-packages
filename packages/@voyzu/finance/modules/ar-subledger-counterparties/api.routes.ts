@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
-import { ArCounterpartyResponseDto } from "../../types/modules/ar-subledger/ar-counterparty.response.dto";
+import { ArCounterpartyResponseDto } from "./types/ar-counterparty.response.dto";
 
 
 

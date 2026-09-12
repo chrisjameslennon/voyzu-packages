@@ -1,10 +1,10 @@
 import "server-only";
 
 import { notFound } from "next/navigation";
-import { listGlAccounts } from "../../../common/gl-accounts/server";
-import { getCompanySettingsUiState } from "../../../common/server/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../common/server/settings-scope";
-import { InventoryProcessingRuleDetail } from "../../client";
+import { listGlAccounts } from "../../../gl-accounts/server/index";
+import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { InventoryProcessingRuleDetail } from "../../client/index";
 import { getFinanceInventoryProcessingRule } from "../lib/inventory-processing.service";
 
 export async function InventoryProcessingRuleDetailPage({ id }: { id?: string }) {

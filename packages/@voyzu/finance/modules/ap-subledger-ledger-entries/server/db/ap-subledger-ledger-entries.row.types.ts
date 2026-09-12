@@ -1,4 +1,4 @@
-import type { EntryType } from "@voyzu/finance/types/modules/core";
+import type { EntryType } from "../../../common/types/index";
 export interface ApSubledgerEntryRow {
   id: number;
   code: string;

@@ -1,11 +1,11 @@
 "use client";
 
-import { CompanyPageTitleBadges } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges } from "../../../common/client/index";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { ArCounterpartySummaryResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import type { ArCounterpartySummaryResponseDto } from "../../../ar-subledger-counterparties/types/ar-counterparty-summary.response.dto";
 import { Breadcrumbs, Button, DataTable, DropdownMenu, FilterChips, FilterPanel, Input, type DataTableColumn, type DropdownMenuItem, type FilterState, type FilterTab } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";

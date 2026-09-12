@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 
-import { type DetailBackSource } from "@voyzu/finance/common/client";
-import type { ApCounterpartyStatementResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
+import { type DetailBackSource } from "../../../common/client/index";
+import type { ApCounterpartyStatementResponseDto } from "../../types/ap-counterparty-statement.response.dto";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/report.layout.module.css";

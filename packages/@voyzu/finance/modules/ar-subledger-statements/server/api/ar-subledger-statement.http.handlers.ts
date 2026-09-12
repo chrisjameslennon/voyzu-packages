@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { resolveApiCompanyIdFromPath } from "@voyzu/finance/common/server";
+import { resolveApiCompanyIdFromPath } from "../../../finance-companies/server/lib/settings-scope";
 
 import { ok, serverError } from "@voyzu/capability/http";
 import type { InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types/errors";
-import type { ArCounterpartySummaryResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import type { ArCounterpartySummaryResponseDto } from "../../../ar-subledger-counterparties/types/ar-counterparty-summary.response.dto";
 
 import { listArCounterpartySummaries } from "../lib/ar-subledger-statement.service";
 

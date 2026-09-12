@@ -1,6 +1,6 @@
 "use client";
 
-import type { ArCounterpartyStatementResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import type { ArCounterpartyStatementResponseDto } from "../../types/ar-counterparty-statement.response.dto";
 
 import {
   arStatementReportCss,

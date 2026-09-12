@@ -2,8 +2,8 @@ import type {
   TaxAuthorityResponseDto,
   TaxComponentResponseDto,
   TaxRuleResponseDto,
-} from "@voyzu/finance/types/modules/tax";
-import type { ActorType, Status } from "@voyzu/finance/types/modules/core";
+} from "../../types/index";
+import type { ActorType, Status } from "../../../common/types/index";
 
 import type {
   TaxAuthorityRow,

@@ -1,9 +1,9 @@
 "use client";
 
-import { CompanyAuditPanel } from "@voyzu/finance/common/client";
-import { InventoryProcessingRuleAction, inventoryProcessingRuleActionsFor } from "@voyzu/finance/inventory-processing/domain";
-import type { GlAccountResponseDto } from "@voyzu/finance/types/modules/gl-accounts";
-import type { FinanceInventoryProcessingRule } from "@voyzu/finance/types/modules/inventory-processing";
+import { CompanyAuditPanel } from "../../common/client/index";
+import { InventoryProcessingRuleAction, inventoryProcessingRuleActionsFor } from "../domain/index";
+import type { GlAccountResponseDto } from "../../gl-accounts/types/index";
+import type { FinanceInventoryProcessingRule } from "../types/index";
 import { Breadcrumbs, Button, Input, SearchableSelect, Toast, ValidationAlert } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detail from "@voyzu/ui-style/css-modules/detail.module.css";

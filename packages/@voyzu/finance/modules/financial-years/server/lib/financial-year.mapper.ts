@@ -1,5 +1,5 @@
-import type { FinancialYearResponseDto, FinancialYearStatus } from "@voyzu/finance/types/modules/financial-years";
-import type { FinancialYearCreateRequestDto } from "@voyzu/finance/types/modules/financial-years";
+import type { FinancialYearResponseDto, FinancialYearStatus } from "../../types/index";
+import type { FinancialYearCreateRequestDto } from "../../types/index";
 import type { FinancialYearRow, InsertFinancialYearRow } from "../db/financial-year.row.types";
 
 export function toDto(row: FinancialYearRow): FinancialYearResponseDto {

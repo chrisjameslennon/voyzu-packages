@@ -1,6 +1,6 @@
 import { getDb } from "@voyzu/capability";
-import { withAuditActors } from "@voyzu/finance/common/server";
-import type { JournalResponseDto } from "@voyzu/finance/types/modules/journals";
+import { withAuditActors } from "../../../common/server/index";
+import type { JournalResponseDto } from "../../types/index";
 
 import { JournalRepo } from "../db/journal.repo";
 import { toDto } from "./journal.mapper";

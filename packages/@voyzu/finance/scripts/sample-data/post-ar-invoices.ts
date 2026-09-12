@@ -4,8 +4,8 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import { processArInvoice } from "@voyzu/finance/financial-document-processing-engine/server";
+import type { ArInvoiceRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import { processArInvoice } from "../../modules/financial-document-processing-engine/server/index";
 import { skipExistingSampleDocument } from "./sample-document";
 import { localizeCounterpartyName, localizeTaxRule, SAMPLE_POSTING_COMPANIES, type SampleCompanyConfig } from "./sample-company-config";
 

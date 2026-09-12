@@ -1,4 +1,4 @@
-import type { ActorType } from "@voyzu/finance/types/modules/core";
+import type { ActorType } from "../../../../common/types/index";
 export interface FinancialPeriodRow {
   id: number;
   finance_organization_id: number;

@@ -1,7 +1,7 @@
 import "server-only";
 
-import { JournalDetail } from "../../client";
-import { normalizeDetailBackSource } from "@voyzu/finance/common/server";
+import { JournalDetail } from "../../client/index";
+import { normalizeDetailBackSource } from "../../../common/server/index";
 import { getSelectedCompany } from "../lib/company-context";
 import { getJournal } from "../lib/journal.service";
 

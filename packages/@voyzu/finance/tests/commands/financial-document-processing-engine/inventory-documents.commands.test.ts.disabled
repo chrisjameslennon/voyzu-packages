@@ -2,11 +2,11 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
 
-import type { InventoryAdjustmentRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-adjustment.request.dto";
-import type { InventoryIssueRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
-import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
+import type { InventoryAdjustmentRequestDto } from "../../../modules/financial-document-processing-engine/types/inventory-adjustment.request.dto";
+import type { InventoryIssueRequestDto } from "../../../modules/financial-document-processing-engine/types/inventory-issue.request.dto";
+import type { InventoryReceiptRequestDto } from "../../../modules/financial-document-processing-engine/types/inventory-receipt.request.dto";
 import { getDb, getPool } from "@voyzu/capability/db";
-import { InventoryProcessingRepo } from "@voyzu/finance/financial-document-processing-engine/server";
+import { InventoryProcessingRepo } from "../../../modules/financial-document-processing-engine/server/index";
 import { processInventoryAdjustment, processInventoryIssue, processInventoryReceipt } from "../../../modules/financial-document-processing-engine/commands";
 
 const createdDocumentIds: string[] = [];

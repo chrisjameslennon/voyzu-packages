@@ -1,6 +1,6 @@
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { DrCr, EntryType } from "@voyzu/finance/types/modules/core";
+import type { DrCr, EntryType } from "../../../../common/types/index";
 import type {
   ArAdjustmentArSubledgerDetailDto,
   ArAdjustmentDetailedDocumentDto,
@@ -9,16 +9,16 @@ import type {
   ArAdjustmentPostingResponseDto,
   ArAdjustmentTaxLedgerDetailDto,
   ArCreditNoteDetailedLineDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-adjustment.response.dto";
-import type { ArCreditNoteRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
-import type { ArInvoiceDetailedTaxComponentDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
-import type { ArOpeningBalanceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-opening-balance.request.dto";
-import type { ArRefundRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-refund.request.dto";
-import type { ArWriteOffRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-write-off.request.dto";
-import type { BankCashJournalDetailsDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/bank-cash-details.dto";
+} from "../../../types/ar-adjustment.response.dto";
+import type { ArCreditNoteRequestDto } from "../../../types/ar-credit-note.request.dto";
+import type { ArInvoiceDetailedTaxComponentDto } from "../../../types/ar-invoice.response.dto";
+import type { ArOpeningBalanceRequestDto } from "../../../types/ar-opening-balance.request.dto";
+import type { ArRefundRequestDto } from "../../../types/ar-refund.request.dto";
+import type { ArWriteOffRequestDto } from "../../../types/ar-write-off.request.dto";
+import type { BankCashJournalDetailsDto } from "../../../types/bank-cash-details.dto";
 
-import { resolveBankCashDetails, toJournalBankCashFields } from "../../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
-import { resolveEffectiveSettingsCompanyId } from "../../../../common/server/settings-scope";
+import { resolveBankCashDetails, toJournalBankCashFields } from "../../../../bank-cash-accounts/server/lib/bank-cash-account.service";
+import { resolveEffectiveSettingsCompanyId } from "../../../../finance-companies/server/lib/settings-scope";
 import { JournalRepo } from "../../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../../journals/server/db/journal.row.types";
 import { ArAdjustmentPostingRepo } from "../db/ar-adjustment-posting.repo";

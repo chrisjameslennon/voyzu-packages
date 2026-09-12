@@ -1,12 +1,6 @@
 import { getDb } from "@voyzu/capability/db";
-import type {
-  ApLedgerEntryDocumentReportApplicationDto,
-  ApLedgerEntryDocumentReportLineDto,
-  ApLedgerEntryDocumentReportResponseDto,
-  ApLedgerEntryDocumentReportTaxSummaryDto,
-  ApLedgerEntryDocumentReportTotalDto,
-  ApSubledgerEntryResponseDto,
-} from "@voyzu/finance/types/modules/ap-subledger";
+import type { ApLedgerEntryDocumentReportApplicationDto, ApLedgerEntryDocumentReportLineDto, ApLedgerEntryDocumentReportResponseDto, ApLedgerEntryDocumentReportTaxSummaryDto, ApLedgerEntryDocumentReportTotalDto } from "../../../ap-subledger-ledger-entries/types/ap-ledger-entry-document-report.response.dto";
+import type { ApSubledgerEntryResponseDto } from "../../../ap-subledger-ledger-entries/types/ap-subledger-entry.response.dto";
 import type { SemanticDataValue } from "@voyzu/capability/contracts";
 type OrganizationResponseDto = SemanticDataValue<"organization">;
 

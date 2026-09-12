@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
-import { TaxSubledgerEntryResponseDto } from "../../types/modules/tax-ledger/index";
+import { TaxSubledgerEntryResponseDto } from "./types/index";
 
 
 

@@ -1,4 +1,4 @@
-import type { ArInvoiceCancellationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto";
+import type { ArInvoiceCancellationRequestDto } from "../../types/ar-invoice-cancellation.request.dto";
 import { InputValidationError } from "@voyzu/capability/errors";
 
 const BUSINESS_CODE_RE = /^[A-Z0-9_-]+$/;

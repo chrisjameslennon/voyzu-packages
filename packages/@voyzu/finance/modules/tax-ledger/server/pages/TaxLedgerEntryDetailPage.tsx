@@ -2,9 +2,9 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { TaxLedgerEntryDetail } from "../../client";
-import { normalizeDetailBackSource } from "@voyzu/finance/common/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { TaxLedgerEntryDetail } from "../../client/index";
+import { normalizeDetailBackSource } from "../../../common/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { getTaxSubledgerEntry } from "../lib/tax-ledger.service";
 
 export async function TaxLedgerEntryDetailPage({

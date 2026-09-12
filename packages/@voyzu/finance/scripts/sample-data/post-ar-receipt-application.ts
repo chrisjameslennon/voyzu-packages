@@ -2,8 +2,8 @@ import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
 
-import type { ArReceiptApplicationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import { processArReceiptApplication } from "@voyzu/finance/financial-document-processing-engine/server";
+import type { ArReceiptApplicationRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import { processArReceiptApplication } from "../../modules/financial-document-processing-engine/server/index";
 import { skipExistingSampleDocument } from "./sample-document";
 import { SAMPLE_POSTING_COMPANIES, type SampleCompanyConfig } from "./sample-company-config";
 

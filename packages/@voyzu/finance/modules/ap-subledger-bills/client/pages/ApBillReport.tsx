@@ -2,11 +2,9 @@
 
 import { useMemo } from "react";
 
-import { CompanyPageTitleBadges, type DetailBackSource } from "@voyzu/finance/common/client";
-import type {
-  ApLedgerEntryDocumentReportResponseDto,
-  ApSubledgerEntryResponseDto,
-} from "@voyzu/finance/types/modules/ap-subledger";
+import { CompanyPageTitleBadges, type DetailBackSource } from "../../../common/client/index";
+import type { ApLedgerEntryDocumentReportResponseDto } from "../../../ap-subledger-ledger-entries/types/ap-ledger-entry-document-report.response.dto";
+import type { ApSubledgerEntryResponseDto } from "../../../ap-subledger-ledger-entries/types/ap-subledger-entry.response.dto";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { Breadcrumbs, Button, Input, TabGroup, type TabDef } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/report.layout.module.css";

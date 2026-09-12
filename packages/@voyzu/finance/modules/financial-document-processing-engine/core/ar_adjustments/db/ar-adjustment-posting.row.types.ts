@@ -1,5 +1,5 @@
-import type { DrCr } from "@voyzu/finance/types/modules/core";
-import type { ArInvoiceDetailedInvoiceDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
+import type { DrCr } from "../../../../common/types/index";
+import type { ArInvoiceDetailedInvoiceDto } from "../../../types/ar-invoice.response.dto";
 import type { DbExecutor } from "@voyzu/capability/db";
 
 export type ArAdjustmentDocumentType = "AR_CREDIT_NOTE" | "AR_OPENING_BALANCE" | "AR_REFUND" | "AR_WRITE_OFF";

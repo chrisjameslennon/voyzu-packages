@@ -1,7 +1,7 @@
-import type { FinancialPeriodResponseDto } from "@voyzu/finance/types/modules/financial-periods";
+import type { FinancialPeriodResponseDto } from "../../../types/financial-period.response.dto";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import { getDb } from "@voyzu/capability/db";
-import { createUpdateAuditStamp } from "../../../../common/server";
+import { createUpdateAuditStamp } from "../../../../common/server/index";
 
 import { FinancialYearRepo } from "../../db/financial-year.repo";
 import { FinancialPeriodRepo } from "../db/financial-period.repo";

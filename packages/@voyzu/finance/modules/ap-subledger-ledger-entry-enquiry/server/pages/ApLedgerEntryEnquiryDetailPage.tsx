@@ -1,6 +1,6 @@
 import "server-only";
 
-import { ApLedgerEntryDetailPage } from "@voyzu/finance/ap-subledger-ledger-entries/server";
+import { ApLedgerEntryDetailPage } from "../../../ap-subledger-ledger-entries/server/index";
 
 export function ApLedgerEntryEnquiryDetailPage({
   code,

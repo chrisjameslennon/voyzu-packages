@@ -1,7 +1,7 @@
 import "server-only";
 
-import { ApCounterpartiesListContent } from "../../client";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { ApCounterpartiesListContent } from "../../client/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { listApCounterparties } from "../lib/ap-subledger-counterparty.service";
 
 export async function ApCounterpartiesListPage() {

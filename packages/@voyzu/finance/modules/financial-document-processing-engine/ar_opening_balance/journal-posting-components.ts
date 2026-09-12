@@ -1,5 +1,5 @@
 import { ComponentType } from "../core/journal-posting-components";
-import type { AccountType } from "@voyzu/finance/types/modules/core";
+import type { AccountType } from "../../common/types/index";
 
 export default {
   description: "AR opening balances debit the AR control account and credit opening balance equity.",

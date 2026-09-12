@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { getPostingCodeAllowedAccountTypes } from "@voyzu/finance/financial-document-processing-engine/posting-code-metadata";
+import { getPostingCodeAllowedAccountTypes } from "../../../modules/financial-document-processing-engine/posting-code-metadata";
 
 describe("financial document posting code metadata", () => {
   const expected = [

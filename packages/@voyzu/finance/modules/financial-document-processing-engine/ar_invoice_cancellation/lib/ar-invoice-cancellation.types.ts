@@ -1,4 +1,5 @@
-import type { ArInvoiceCancellationDetailedDocumentDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice-cancellation.response.dto";
+import type { DrCr } from "../../../common/types";
+import type { ArInvoiceCancellationDetailedDocumentDto } from "../../types/ar-invoice-cancellation.response.dto";
 
 import type {
   InvoiceCancellationCompanyContextRow,

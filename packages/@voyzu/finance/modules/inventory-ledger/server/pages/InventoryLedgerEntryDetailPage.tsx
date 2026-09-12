@@ -2,9 +2,9 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { InventoryLedgerEntryDetail } from "../../client";
-import { normalizeDetailBackSource } from "@voyzu/finance/common/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { InventoryLedgerEntryDetail } from "../../client/index";
+import { normalizeDetailBackSource } from "../../../common/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { getInventoryLedgerEntry } from "../lib/inventory-ledger.service";
 
 export async function InventoryLedgerEntryDetailPage({

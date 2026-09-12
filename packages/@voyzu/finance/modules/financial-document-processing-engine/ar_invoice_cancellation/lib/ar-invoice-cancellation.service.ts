@@ -1,7 +1,7 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { DrCr } from "@voyzu/finance/types/modules/core";
-import type { ArInvoiceCancellationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice-cancellation.request.dto";
+import type { DrCr } from "../../../common/types/index";
+import type { ArInvoiceCancellationRequestDto } from "../../types/ar-invoice-cancellation.request.dto";
 import type {
   ArInvoiceCancellationArSubledgerDetailDto,
   ArInvoiceCancellationDetailedDocumentDto,
@@ -9,10 +9,10 @@ import type {
   ArInvoiceCancellationPostingDetailsDto,
   ArInvoiceCancellationPostingResponseDto,
   ArInvoiceCancellationTaxLedgerDetailDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice-cancellation.response.dto";
-import type { ArInvoiceDetailedInvoiceDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
+} from "../../types/ar-invoice-cancellation.response.dto";
+import type { ArInvoiceDetailedInvoiceDto } from "../../types/ar-invoice.response.dto";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import arInvoiceCancellationPosting from "../journal-posting-components";

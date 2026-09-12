@@ -1,5 +1,5 @@
-import type { ApPaymentRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-payment.request.dto";
-import type { ApProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-processing.response.dto";
+import type { ApPaymentRequestDto } from "../../types/ap-payment.request.dto";
+import type { ApProcessingPostingResponseDto } from "../../types/ap-processing.response.dto";
 
 import { processApDocument } from "../../core/ap_processing/ap-processing.service";
 

@@ -2,10 +2,10 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { normalizeDetailBackSource } from "@voyzu/finance/common/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { normalizeDetailBackSource } from "../../../common/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 
-import { ArInvoiceReport } from "../../client";
+import { ArInvoiceReport } from "../../client/index";
 import { ArInvoiceReportTemplate } from "../../client/templates/ArInvoiceReportTemplate";
 import { getArInvoiceStatement } from "../lib/ar-invoice-statement.service";
 

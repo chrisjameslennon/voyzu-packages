@@ -3,8 +3,8 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import type { ApBillRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import { processApBill } from "@voyzu/finance/financial-document-processing-engine/server";
+import type { ApBillRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import { processApBill } from "../../modules/financial-document-processing-engine/server/index";
 import { skipExistingSampleDocument } from "./sample-document";
 import { localizeCounterpartyName, localizeTaxRule, SAMPLE_POSTING_COMPANIES, standardGross, type SampleCompanyConfig } from "./sample-company-config";
 
@@ -14,7 +14,7 @@ const BILLS: Array<{
   documentId?: string;
   billDate: string;
   dimensions?: ApBillRequestDto["dimensions"];
-  lines: ApBillRequestDto["lines"];
+  lines: Array<ApBillRequestDto["lines"][number] & { net_amount: number }>;
 }> = [
     {
       counterpartyCode: "SAMP-SUPP-001",

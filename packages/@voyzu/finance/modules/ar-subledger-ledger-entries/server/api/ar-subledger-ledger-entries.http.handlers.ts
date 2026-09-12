@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { resolveApiCompanyIdFromPath } from "@voyzu/finance/common/server";
+import { resolveApiCompanyIdFromPath } from "../../../finance-companies/server/lib/settings-scope";
 
 import type { EntityNotFoundErrorResponseDto, InternalServerErrorResponseDto, InputValidationErrorResponseDto } from "@voyzu/types/errors";
-import type { ArSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import type { ArSubledgerEntryResponseDto } from "../../types/ar-subledger-entry.response.dto";
 import { serverError, notFoundError } from "@voyzu/capability/http";
 import { ok } from "@voyzu/capability/http";
 

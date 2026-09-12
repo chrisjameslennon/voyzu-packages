@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import { parseBody } from "@voyzu/capability/http";
-import type { TaxPaymentRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/tax-processing.request.dto";
-import type { TaxProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/tax-processing.response.dto";
+import type { TaxPaymentRequestDto } from "../../types/tax-processing.request.dto";
+import type { TaxProcessingPostingResponseDto } from "../../types/tax-processing.response.dto";
 
 import { processTaxPayment } from "../lib/tax-payment.service";
 

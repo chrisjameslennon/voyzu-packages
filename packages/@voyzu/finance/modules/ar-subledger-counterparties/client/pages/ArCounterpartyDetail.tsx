@@ -2,9 +2,9 @@
 
 import { useMemo } from "react";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/finance/common/client";
-import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/finance/common/client";
-import type { ArCounterpartyResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import { CompanyAuditPanel as AuditPanel } from "../../../common/client/index";
+import { CompanyPageTitleBadges, getStatusSemanticColor } from "../../../common/client/index";
+import type { ArCounterpartyResponseDto } from "../../types/ar-counterparty.response.dto";
 import type { SemanticDataValue } from "@voyzu/capability/contracts";
 type OrganizationResponseDto = SemanticDataValue<"organization">;
 import { DetailBackButton } from "@voyzu/ui-surface/client";

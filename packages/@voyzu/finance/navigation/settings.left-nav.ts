@@ -1,5 +1,5 @@
 import type { VoyzuPackageNavigationGroup } from "@voyzu/types/framework";
-import { pageRoutes as countryTaxSettingsPageRoutes } from "@voyzu/finance/country-tax-settings/pages.routes";
+import { pageRoutes as countryTaxSettingsPageRoutes } from "../modules/country-tax-settings/pages.routes";
 
 export const settingsLeftNav = [{
   slotId: "settings.integration",

@@ -1,0 +1,24 @@
+// Finance-owned HTTP/report projection; not an ERP schema import.
+import Type from "typebox";
+import { StrictObject } from "@voyzu/types/api";
+import { AuditMetadataDto, Status } from "@voyzu/types/modules/core";
+import { BusinessCode, CountryCode, CurrencyCode, NonBlankText, PositiveId } from "../../common/types/constraints";
+
+export const OrganizationResponseDto = StrictObject({
+  id: PositiveId,
+  code: BusinessCode,
+  name: NonBlankText,
+  countryCode: CountryCode,
+  country: Type.Optional(StrictObject({
+    code: BusinessCode,
+    name: NonBlankText,
+  })),
+  baseCurrencyCode: CurrencyCode,
+  baseCurrency: Type.Optional(StrictObject({
+    code: BusinessCode,
+    name: NonBlankText,
+  })),
+  status: Status,
+  audit: AuditMetadataDto,
+});
+export type OrganizationResponseDto = Type.Static<typeof OrganizationResponseDto>;

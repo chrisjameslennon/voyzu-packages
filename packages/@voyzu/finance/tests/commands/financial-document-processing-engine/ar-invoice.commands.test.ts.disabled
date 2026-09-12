@@ -2,13 +2,13 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
 
-import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
+import type { ArInvoiceRequestDto } from "../../../modules/financial-document-processing-engine/types/ar-invoice.request.dto";
 import { getPool } from "@voyzu/capability/db";
-import type { ArInvoiceDataValidationContext } from "@voyzu/finance/financial-document-processing-engine/server";
+import type { ArInvoiceDataValidationContext } from "../../../modules/financial-document-processing-engine/server/index";
 import {
   validateArInvoiceData as validateData,
   validateArInvoiceRequest as validateRequest,
-} from "@voyzu/finance/financial-document-processing-engine/server";
+} from "../../../modules/financial-document-processing-engine/server/index";
 import { processArInvoice } from "../../../modules/financial-document-processing-engine/commands";
 
 const createdDocumentIds: string[] = [];

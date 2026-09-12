@@ -2,10 +2,10 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { normalizeDetailBackSource } from "@voyzu/finance/common/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { normalizeDetailBackSource } from "../../../common/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 
-import { ArCounterpartyStatementReport } from "../../client";
+import { ArCounterpartyStatementReport } from "../../client/index";
 import { ArCounterpartyStatementReportTemplate } from "../../client/templates/ArCounterpartyStatementReportTemplate";
 import { getArCounterpartyStatement } from "../lib/ar-subledger-statement.service";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ArInvoiceStatementResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import type { ArInvoiceStatementResponseDto } from "../../types/ar-invoice-statement.response.dto";
 
 import {
   arInvoiceReportCss,

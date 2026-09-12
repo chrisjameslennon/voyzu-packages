@@ -1,6 +1,6 @@
 import { getDb } from "@voyzu/capability/db";
-import { getAuditActors } from "@voyzu/finance/common/server";
-import type { ApCounterpartyResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
+import { getAuditActors } from "../../../common/server/index";
+import type { ApCounterpartyResponseDto } from "../../types/ap-counterparty.response.dto";
 
 import { ApSubledgerCounterpartyRepo } from "../db/ap-subledger-counterparty.repo";
 

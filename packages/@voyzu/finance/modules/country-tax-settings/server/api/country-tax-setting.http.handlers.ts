@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { notFoundError, ok, serverError } from "@voyzu/capability/http";
 import type { EntityNotFoundErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types/errors";
-import type { CountryTaxSetting } from "@voyzu/finance/types/modules/country-tax-settings";
+import type { CountryTaxSetting } from "../../types/index";
 import { getCountryTaxSetting, listCountryTaxSettings } from "../lib/country-tax-setting.service";
 
 export async function handleList(): Promise<NextResponse<CountryTaxSetting[] | InternalServerErrorResponseDto>> {

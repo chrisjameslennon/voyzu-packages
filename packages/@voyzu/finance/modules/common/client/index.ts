@@ -22,7 +22,7 @@ export {
   getHasPostingsColor,
   getStatusSemanticColor,
 } from "./util/colors";
-export { ledgerName } from "../ledger";
+export { ledgerName } from "../ledger/index";
 export { financeApiUrl } from "./finance-api";
 export { ScopedAuditPanel, type ScopedAuditPanelProps } from "./ScopedAuditPanel";
 export { CompanyAuditPanel, OrganizationAuditPanel } from "./AuditPanels";

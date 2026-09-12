@@ -1,8 +1,8 @@
 import "server-only";
 
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { getSelectedCompany } from "../../../journals/server/index";
 
-import { ArStatementsListContent } from "../../client";
+import { ArStatementsListContent } from "../../client/index";
 import { listArCounterpartySummaries } from "../lib/ar-subledger-statement.service";
 
 export async function ArStatementsListPage() {

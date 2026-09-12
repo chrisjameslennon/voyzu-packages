@@ -1,10 +1,10 @@
 "use client";
 
-import { CompanyPageTitleBadges, getDrCrColor, getStatusSemanticColor } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges, getDrCrColor, getStatusSemanticColor } from "../../../common/client/index";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { ApSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
+import type { ApSubledgerEntryResponseDto } from "../../types/ap-subledger-entry.response.dto";
 import { Badge, Breadcrumbs, Button, DataTable, DropdownMenu, FilterChips, FilterPanel, Input, type DataTableColumn, type DropdownMenuItem, type FilterState, type FilterTab } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";

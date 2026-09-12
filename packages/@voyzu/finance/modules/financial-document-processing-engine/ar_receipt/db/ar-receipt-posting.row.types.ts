@@ -1,4 +1,4 @@
-import type { AccountType } from "@voyzu/finance/types/modules/core";
+import type { AccountType } from "../../../common/types/index";
 export interface ReceiptCompanyContextRow {
   id: number;
   code: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import type { VoyzuSurfaceLeftNavHeaderProps } from "@voyzu/ui-surface/types";
-import { FinanceCompanySwitcher } from "@voyzu/finance/finance-companies/client";
+import { FinanceCompanySwitcher } from "../modules/finance-companies/client/index";
 
 export const leftNavHeaderRootPaths = ["/finance"] as const;
 

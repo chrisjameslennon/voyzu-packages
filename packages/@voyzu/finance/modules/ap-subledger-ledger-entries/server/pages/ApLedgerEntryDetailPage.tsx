@@ -2,11 +2,11 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { ApLedgerEntryDetail } from "../../client";
+import { ApLedgerEntryDetail } from "../../client/index";
 import { ApLedgerEntryDocumentReportTemplate } from "../../../ap-subledger-bills/client/templates/ApLedgerEntryDocumentReportTemplate";
-import { getApLedgerEntryDocumentReport } from "@voyzu/finance/ap-subledger-bills/server";
-import { normalizeDetailBackSource } from "@voyzu/finance/common/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { getApLedgerEntryDocumentReport } from "../../../ap-subledger-bills/server/index";
+import { normalizeDetailBackSource } from "../../../common/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { getApSubledgerEntry } from "../lib/ap-subledger-ledger-entries.service";
 
 export async function ApLedgerEntryDetailPage({

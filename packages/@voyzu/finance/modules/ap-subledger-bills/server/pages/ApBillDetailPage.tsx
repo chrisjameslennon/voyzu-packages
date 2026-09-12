@@ -2,11 +2,11 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { normalizeDetailBackSource } from "@voyzu/finance/common/server";
-import { listApSubledgerEntries } from "@voyzu/finance/ap-subledger-ledger-entries/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { normalizeDetailBackSource } from "../../../common/server/index";
+import { listApSubledgerEntries } from "../../../ap-subledger-ledger-entries/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 
-import { ApBillReport } from "../../client";
+import { ApBillReport } from "../../client/index";
 import { ApLedgerEntryDocumentReportTemplate } from "../../client/templates/ApLedgerEntryDocumentReportTemplate";
 import { getApLedgerEntryDocumentReport } from "../lib/ap-bill-report.service";
 

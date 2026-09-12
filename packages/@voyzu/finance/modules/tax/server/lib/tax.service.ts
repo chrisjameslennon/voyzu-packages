@@ -3,10 +3,10 @@ import type {
   TaxAuthorityResponseDto,
   TaxComponentResponseDto,
   TaxRuleResponseDto,
-} from "@voyzu/finance/types/modules/tax";
+} from "../../types/index";
 import { ConflictError, DataError, NotFoundError } from "@voyzu/capability/errors";
 import { getDb } from "@voyzu/capability/db";
-import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../common/server";
+import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../common/server/index";
 
 import type {
   InsertTaxAuthorityRow,

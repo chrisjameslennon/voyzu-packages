@@ -1,16 +1,16 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { EntryType } from "@voyzu/finance/types/modules/core";
-import type { ArReceiptApplicationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt-application.request.dto";
+import type { EntryType } from "../../../common/types/index";
+import type { ArReceiptApplicationRequestDto } from "../../types/ar-receipt-application.request.dto";
 import type {
   ArReceiptApplicationArSubledgerDetailDto,
   ArReceiptApplicationDetailedDto,
   ArReceiptApplicationDetailedLineDto,
   ArReceiptApplicationPostingDetailsDto,
   ArReceiptApplicationPostingResponseDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt-application.response.dto";
+} from "../../types/ar-receipt-application.response.dto";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import arReceiptApplicationPosting from "../journal-posting-components";

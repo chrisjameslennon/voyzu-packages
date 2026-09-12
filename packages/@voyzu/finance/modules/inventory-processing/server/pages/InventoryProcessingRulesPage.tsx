@@ -1,7 +1,7 @@
 import "server-only";
 
-import { resolveServerSettingsScope } from "../../../common/server/settings-scope";
-import { InventoryProcessingRulesList } from "../../client";
+import { resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { InventoryProcessingRulesList } from "../../client/index";
 import { listFinanceInventoryProcessingRules } from "../lib/inventory-processing.service";
 
 export async function InventoryProcessingRulesPage() {

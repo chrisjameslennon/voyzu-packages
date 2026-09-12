@@ -1,4 +1,4 @@
-import type { LedgerJournalReversalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal-reversal.request.dto";
+import type { LedgerJournalReversalRequestDto } from "../../types/ledger-journal-reversal.request.dto";
 import { InputValidationError } from "@voyzu/capability/errors";
 
 import type {

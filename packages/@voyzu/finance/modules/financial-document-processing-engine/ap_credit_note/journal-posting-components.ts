@@ -1,5 +1,5 @@
 import { ComponentType } from "../core/journal-posting-components";
-import type { AccountType } from "@voyzu/finance/types/modules/core";
+import type { AccountType } from "../../common/types/index";
 
 export default {
   description: "Supplier credit notes debit AP control accounts and credit purchase, expense, asset, and recoverable tax accounts.",

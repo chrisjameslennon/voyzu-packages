@@ -1,6 +1,6 @@
 import "server-only";
 import { notFound } from "next/navigation";
-import { CountryTaxSettingDetail } from "../../client";
+import { CountryTaxSettingDetail } from "../../client/index";
 import { getCountryTaxSetting } from "../lib/country-tax-setting.service";
 
 export async function CountryTaxSettingDetailPage({ code }: { code?: string }) {

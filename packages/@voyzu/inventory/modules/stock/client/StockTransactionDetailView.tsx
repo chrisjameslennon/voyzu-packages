@@ -5,8 +5,7 @@ import { Textarea } from "@voyzu/ui-components";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { clientComponent } from "@voyzu/ui-surface/client";
-const AuditPanel = clientComponent.use("audit.panel");
+import { AuditPanel } from "@voyzu/components/audit-panel";
 import {
   Badge,
   Breadcrumbs,

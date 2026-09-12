@@ -16,19 +16,18 @@ import { operationsInvoicesModule } from "./modules/operations-invoices/module";
 import { arSubledgerLedgerEntriesModule } from "./modules/ar-subledger-ledger-entries/module";
 import { arSubledgerLedgerEntryEnquiryModule } from "./modules/ar-subledger-ledger-entry-enquiry/module";
 import { arSubledgerStatementsModule } from "./modules/ar-subledger-statements/module";
-import { companyApControlAccountsModule } from "./modules/company-ap-control-accounts/module";
-import { companyArControlAccountsModule } from "./modules/company-ar-control-accounts/module";
-import { companyBankCashAccountsModule } from "./modules/company-bank-cash-accounts/module";
-import { companyDimensionsModule } from "./modules/company-dimensions/module";
-import { companyFinancialDocumentDefaultsModule } from "./modules/company-financial-document-defaults/module";
-import { companyFinancialDocumentTypesModule } from "./modules/company-financial-document-types/module";
-import { companyGlAccountCategoriesModule } from "./modules/company-gl-account-categories/module";
-import { companyGlAccountsModule } from "./modules/company-gl-accounts/module";
-import { companyInventoryControlAccountsModule } from "./modules/company-inventory-control-accounts/module";
-import { companyInventoryItemPostingProfilesModule } from "./modules/company-inventory-item-posting-profiles/module";
-import { companyInventoryItemPostingProfileAssignmentsModule } from "./modules/company-inventory-item-posting-profile-assignments/module";
-import { companyReportsModule } from "./modules/company-reports/module";
-import { companyTaxControlAccountsModule } from "./modules/company-tax-control-accounts/module";
+import { controlAccountsModule } from "./modules/control-accounts/module";
+import { bankCashAccountsModule } from "./modules/bank-cash-accounts/module";
+import { dimensionsModule } from "./modules/dimensions/module";
+import { financialDocumentDefaultsModule } from "./modules/financial-document-defaults/module";
+import { financialDocumentTypesModule } from "./modules/financial-document-types/module";
+import { glAccountCategoriesModule } from "./modules/gl-account-categories/module";
+import { glAccountsModule } from "./modules/gl-accounts/module";
+import { inventoryControlAccountsModule } from "./modules/inventory-control-accounts/module";
+import { inventoryItemPostingProfilesModule } from "./modules/inventory-item-posting-profiles/module";
+import { inventoryItemPostingProfileAssignmentsModule } from "./modules/inventory-item-posting-profile-assignments/module";
+import { reportsModule } from "./modules/reports/module";
+import { taxControlAccountsModule } from "./modules/tax-control-accounts/module";
 import { financialDocumentProcessingEngineModule } from "./modules/financial-document-processing-engine/module";
 import { financialYearsModule } from "./modules/financial-years/module";
 import { financeCompaniesModule } from "./modules/finance-companies/module";
@@ -42,9 +41,9 @@ import { taxLedgerModule } from "./modules/tax-ledger/module";
 
 export const financeModules = [
   journalsModule,
-  companyReportsModule,
-  companyInventoryItemPostingProfilesModule,
-  companyInventoryItemPostingProfileAssignmentsModule,
+  reportsModule,
+  inventoryItemPostingProfilesModule,
+  inventoryItemPostingProfileAssignmentsModule,
   inventoryLedgerModule,
   inventoryProcessingModule,
   arIntegrationProcessingModule,
@@ -60,16 +59,15 @@ export const financeModules = [
   arSubledgerStatementsModule,
   arSubledgerInvoicesModule,
   operationsInvoicesModule,
-  companyInventoryControlAccountsModule,
-  companyGlAccountsModule,
-  companyGlAccountCategoriesModule,
-  companyApControlAccountsModule,
-  companyArControlAccountsModule,
-  companyBankCashAccountsModule,
-  companyDimensionsModule,
-  companyFinancialDocumentDefaultsModule,
-  companyFinancialDocumentTypesModule,
-  companyTaxControlAccountsModule,
+  inventoryControlAccountsModule,
+  glAccountsModule,
+  glAccountCategoriesModule,
+  controlAccountsModule,
+  bankCashAccountsModule,
+  dimensionsModule,
+  financialDocumentDefaultsModule,
+  financialDocumentTypesModule,
+  taxControlAccountsModule,
   financialYearsModule,
 ] as const;
 
@@ -117,9 +115,9 @@ export const financePackage = {
     financeCompaniesModule,
     countryTaxSettingsModule,
     journalsModule,
-    companyReportsModule,
-    companyInventoryItemPostingProfilesModule,
-    companyInventoryItemPostingProfileAssignmentsModule,
+    reportsModule,
+    inventoryItemPostingProfilesModule,
+    inventoryItemPostingProfileAssignmentsModule,
     inventoryLedgerModule,
     inventoryProcessingModule,
     arIntegrationProcessingModule,
@@ -135,16 +133,15 @@ export const financePackage = {
     arSubledgerStatementsModule,
     arSubledgerInvoicesModule,
     operationsInvoicesModule,
-    companyInventoryControlAccountsModule,
-    companyGlAccountsModule,
-    companyGlAccountCategoriesModule,
-    companyApControlAccountsModule,
-    companyArControlAccountsModule,
-    companyBankCashAccountsModule,
-    companyDimensionsModule,
-    companyFinancialDocumentDefaultsModule,
-    companyFinancialDocumentTypesModule,
-    companyTaxControlAccountsModule,
+    inventoryControlAccountsModule,
+    glAccountsModule,
+    glAccountCategoriesModule,
+    controlAccountsModule,
+    bankCashAccountsModule,
+    dimensionsModule,
+    financialDocumentDefaultsModule,
+    financialDocumentTypesModule,
+    taxControlAccountsModule,
     financialYearsModule,
     financialDocumentProcessingEngineModule,
     taxModule,

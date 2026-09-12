@@ -1,6 +1,6 @@
 import { DataError } from "@voyzu/capability/errors";
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { ActorType } from "@voyzu/finance/types/modules/core";
+import type { ActorType } from "../../../common/types/index";
 import type {
   JournalHeaderRow,
   InsertJournalHeaderRow,

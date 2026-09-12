@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import { parseBody } from "@voyzu/capability/http";
-import type { ApPaymentApplicationRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-payment-application.request.dto";
-import type { ApProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-processing.response.dto";
+import type { ApPaymentApplicationRequestDto } from "../../types/ap-payment-application.request.dto";
+import type { ApProcessingPostingResponseDto } from "../../types/ap-processing.response.dto";
 
 import { processApPaymentApplication } from "../lib/ap-payment-application.service";
 

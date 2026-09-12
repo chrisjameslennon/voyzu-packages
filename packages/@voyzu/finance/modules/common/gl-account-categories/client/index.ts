@@ -1,1 +1,0 @@
-export { GlAccountCategoryDetailsForm } from "./GlAccountCategoryDetailsForm";

@@ -4,9 +4,9 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import type { LedgerJournalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import type { LedgerJournalReversalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import { processLedgerJournal, processLedgerJournalReversal } from "@voyzu/finance/financial-document-processing-engine/server";
+import type { LedgerJournalRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import type { LedgerJournalReversalRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import { processLedgerJournal, processLedgerJournalReversal } from "../../modules/financial-document-processing-engine/server/index";
 import { skipExistingSampleDocument } from "./sample-document";
 import { SAMPLE_POSTING_COMPANIES, type SampleCompanyConfig } from "./sample-company-config";
 

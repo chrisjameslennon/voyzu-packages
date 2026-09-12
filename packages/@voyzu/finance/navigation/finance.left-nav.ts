@@ -1,32 +1,34 @@
 import type { VoyzuPackageNavigationGroup } from "@voyzu/types/framework";
-import { pageRoutes as journalsPageRoutes } from "@voyzu/finance/journals/pages.routes";
-import { pageRoutes as companyReportsPageRoutes } from "@voyzu/finance/company-reports/pages.routes";
-import { pageRoutes as arSubledgerLedgerEntriesPageRoutes } from "@voyzu/finance/ar-subledger-ledger-entries/pages.routes";
-import { pageRoutes as arSubledgerLedgerEntryEnquiryPageRoutes } from "@voyzu/finance/ar-subledger-ledger-entry-enquiry/pages.routes";
-import { pageRoutes as arSubledgerCounterpartiesPageRoutes } from "@voyzu/finance/ar-subledger-counterparties/pages.routes";
-import { pageRoutes as arSubledgerStatementsPageRoutes } from "@voyzu/finance/ar-subledger-statements/pages.routes";
-import { pageRoutes as arSubledgerInvoicesPageRoutes } from "@voyzu/finance/ar-subledger-invoices/pages.routes";
-import { pageRoutes as apSubledgerLedgerEntriesPageRoutes } from "@voyzu/finance/ap-subledger-ledger-entries/pages.routes";
-import { pageRoutes as apSubledgerLedgerEntryEnquiryPageRoutes } from "@voyzu/finance/ap-subledger-ledger-entry-enquiry/pages.routes";
-import { pageRoutes as apSubledgerCounterpartiesPageRoutes } from "@voyzu/finance/ap-subledger-counterparties/pages.routes";
-import { pageRoutes as apSubledgerStatementsPageRoutes } from "@voyzu/finance/ap-subledger-statements/pages.routes";
-import { pageRoutes as apSubledgerBillsPageRoutes } from "@voyzu/finance/ap-subledger-bills/pages.routes";
-import { pageRoutes as taxLedgerPageRoutes } from "@voyzu/finance/tax-ledger/pages.routes";
-import { pageRoutes as inventoryLedgerPageRoutes } from "@voyzu/finance/inventory-ledger/pages.routes";
-import { pageRoutes as financialYearsPageRoutes } from "@voyzu/finance/financial-years/pages.routes";
-import { pageRoutes as companyGlAccountsPageRoutes } from "@voyzu/finance/company-gl-accounts/pages.routes";
-import { pageRoutes as companyGlAccountCategoriesPageRoutes } from "@voyzu/finance/company-gl-account-categories/pages.routes";
-import { pageRoutes as companyApControlAccountsPageRoutes } from "@voyzu/finance/company-ap-control-accounts/pages.routes";
-import { pageRoutes as companyArControlAccountsPageRoutes } from "@voyzu/finance/company-ar-control-accounts/pages.routes";
-import { pageRoutes as companyBankCashAccountsPageRoutes } from "@voyzu/finance/company-bank-cash-accounts/pages.routes";
-import { pageRoutes as companyTaxControlAccountsPageRoutes } from "@voyzu/finance/company-tax-control-accounts/pages.routes";
-import { pageRoutes as companyInventoryControlAccountsPageRoutes } from "@voyzu/finance/company-inventory-control-accounts/pages.routes";
-import { pageRoutes as companyFinancialDocumentTypesPageRoutes } from "@voyzu/finance/company-financial-document-types/pages.routes";
-import { pageRoutes as companyFinancialDocumentDefaultsPageRoutes } from "@voyzu/finance/company-financial-document-defaults/pages.routes";
-import { pageRoutes as companyInventoryItemPostingProfilesPageRoutes } from "@voyzu/finance/company-inventory-item-posting-profiles/pages.routes";
-import { pageRoutes as companyInventoryItemPostingProfileAssignmentsPageRoutes } from "@voyzu/finance/company-inventory-item-posting-profile-assignments/pages.routes";
-import { pageRoutes as companyDimensionsPageRoutes } from "@voyzu/finance/company-dimensions/pages.routes";
-import { pageRoutes as inventoryProcessingPageRoutes } from "@voyzu/finance/inventory-processing/pages.routes";
+import { pageRoutes as journalsPageRoutes } from "../modules/journals/pages.routes";
+import { pageRoutes as companyReportsPageRoutes } from "../modules/reports/pages.routes";
+import { pageRoutes as arSubledgerLedgerEntriesPageRoutes } from "../modules/ar-subledger-ledger-entries/pages.routes";
+import { pageRoutes as arSubledgerLedgerEntryEnquiryPageRoutes } from "../modules/ar-subledger-ledger-entry-enquiry/pages.routes";
+import { pageRoutes as arSubledgerCounterpartiesPageRoutes } from "../modules/ar-subledger-counterparties/pages.routes";
+import { pageRoutes as arSubledgerStatementsPageRoutes } from "../modules/ar-subledger-statements/pages.routes";
+import { pageRoutes as arSubledgerInvoicesPageRoutes } from "../modules/ar-subledger-invoices/pages.routes";
+import { pageRoutes as apSubledgerLedgerEntriesPageRoutes } from "../modules/ap-subledger-ledger-entries/pages.routes";
+import { pageRoutes as apSubledgerLedgerEntryEnquiryPageRoutes } from "../modules/ap-subledger-ledger-entry-enquiry/pages.routes";
+import { pageRoutes as apSubledgerCounterpartiesPageRoutes } from "../modules/ap-subledger-counterparties/pages.routes";
+import { pageRoutes as apSubledgerStatementsPageRoutes } from "../modules/ap-subledger-statements/pages.routes";
+import { pageRoutes as apSubledgerBillsPageRoutes } from "../modules/ap-subledger-bills/pages.routes";
+import { pageRoutes as taxLedgerPageRoutes } from "../modules/tax-ledger/pages.routes";
+import { pageRoutes as inventoryLedgerPageRoutes } from "../modules/inventory-ledger/pages.routes";
+import { pageRoutes as financialYearsPageRoutes } from "../modules/financial-years/pages.routes";
+import { pageRoutes as companyGlAccountsPageRoutes } from "../modules/gl-accounts/pages.routes";
+import { pageRoutes as companyGlAccountCategoriesPageRoutes } from "../modules/gl-account-categories/pages.routes";
+import { pageRoutes as companyApControlAccountsPageRoutes } from "../modules/control-accounts/ap.pages.routes";
+import { pageRoutes as companyArControlAccountsPageRoutes } from "../modules/control-accounts/ar.pages.routes";
+import { pageRoutes as companyBankCashAccountsPageRoutes } from "../modules/bank-cash-accounts/pages.routes";
+import { pageRoutes as companyTaxControlAccountsPageRoutes } from "../modules/tax-control-accounts/pages.routes";
+import { pageRoutes as companyInventoryControlAccountsPageRoutes } from "../modules/inventory-control-accounts/pages.routes";
+import { pageRoutes as companyFinancialDocumentTypesPageRoutes } from "../modules/financial-document-types/pages.routes";
+import { pageRoutes as companyFinancialDocumentDefaultsPageRoutes } from "../modules/financial-document-defaults/pages.routes";
+import { pageRoutes as companyInventoryItemPostingProfilesPageRoutes } from "../modules/inventory-item-posting-profiles/pages.routes";
+import { pageRoutes as companyInventoryItemPostingProfileAssignmentsPageRoutes } from "../modules/inventory-item-posting-profile-assignments/pages.routes";
+import { pageRoutes as companyDimensionsPageRoutes } from "../modules/dimensions/pages.routes";
+import { pageRoutes as inventoryProcessingPageRoutes } from "../modules/inventory-processing/pages.routes";
+
+import { pageRoutes as countryTaxSettingsPageRoutes } from "../modules/country-tax-settings/pages.routes";
 
 export const financeLeftNav = [
   {
@@ -178,6 +180,12 @@ export const financeLeftNav = [
           },
           { label: "Dimensions", routeId: companyDimensionsPageRoutes.list.id },
         ],
+      },
+      {
+        label: "Global Settings",
+        icon: "public",
+        path: "#finance-global-settings",
+        children: [{ label: "Country Tax Settings", routeId: countryTaxSettingsPageRoutes.list.id }],
       },
     ],
   },

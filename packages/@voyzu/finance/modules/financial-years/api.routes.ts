@@ -1,10 +1,10 @@
 import Type from "typebox";
 import { BusinessRuleErrorResponseDto, ConflictErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
-import { FinancialPeriodResponseDto } from "../../types/modules/financial-periods/financial-period.response.dto";
-import { FinancialYearResponseDto } from "../../types/modules/financial-years/financial-year.response.dto";
-import { FinancialYearPatchRequestDto } from "../../types/modules/financial-years/financial-year.patch.request.dto";
+import { FinancialPeriodResponseDto } from "./types/financial-period.response.dto";
+import { FinancialYearResponseDto } from "./types/financial-year.response.dto";
+import { FinancialYearPatchRequestDto } from "./types/financial-year.patch.request.dto";
 import { FinancialYearsExportRequestDto } from "./types/financial-years-export.request.dto";
-import { FinancialYearCreateRequestDto } from "../../types/modules/financial-years/financial-year.create.request.dto";
+import { FinancialYearCreateRequestDto } from "./types/financial-year.create.request.dto";
 
 
 

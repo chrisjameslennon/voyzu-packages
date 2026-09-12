@@ -1,4 +1,4 @@
-import type { FinancialPeriodResponseDto, FinancialPeriodStatus } from "@voyzu/finance/types/modules/financial-periods";
+import type { FinancialPeriodResponseDto, FinancialPeriodStatus } from "../../../types/financial-period.response.dto";
 import type { FinancialPeriodRow } from "../db/financial-period.row.types";
 
 export function toDto(row: FinancialPeriodRow): FinancialPeriodResponseDto {

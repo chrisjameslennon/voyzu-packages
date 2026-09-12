@@ -3,18 +3,18 @@ import { BusinessRuleError, DataError, NotFoundError } from "@voyzu/capability/e
 import {
   InventoryProcessingRuleAction,
   InventoryProcessingRuleDirection,
-} from "@voyzu/finance/inventory-processing/domain";
-import type { FinanceInventoryActivity, ProcessInventoryMovementRequest } from "@voyzu/finance/types/modules/inventory-processing";
-import type { InventoryAdjustmentRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-adjustment.request.dto";
-import type { InventoryIssueRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
-import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
+} from "../../domain/index";
+import type { FinanceInventoryActivity, ProcessInventoryMovementRequest } from "../../types/index";
+import type { InventoryAdjustmentRequestDto } from "../../../financial-document-processing-engine/types/inventory-adjustment.request.dto";
+import type { InventoryIssueRequestDto } from "../../../financial-document-processing-engine/types/inventory-issue.request.dto";
+import type { InventoryReceiptRequestDto } from "../../../financial-document-processing-engine/types/inventory-receipt.request.dto";
 
 import {
   processInventoryAdjustment,
   processInventoryIssue,
   processInventoryReceipt,
 } from "../../../financial-document-processing-engine/inventory/lib/inventory-processing.service";
-import { createCreationAuditStamp, createUpdateAuditStamp } from "../../../common/server";
+import { createCreationAuditStamp, createUpdateAuditStamp } from "../../../common/server/index";
 import { InventoryProcessingRepo } from "../db/inventory-processing.repo";
 import { getFinanceInventoryActivity } from "./inventory-processing.service";
 

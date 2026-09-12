@@ -1,5 +1,5 @@
-import type { FinancialYearStatus } from "@voyzu/finance/types/modules/financial-years";
-import { CodeChange, Deletion, type OperationBlocker } from "@voyzu/finance/common/domain/operation-policy";
+import type { FinancialYearStatus } from "../types/index";
+import { CodeChange, Deletion, type OperationBlocker } from "../../common/domain/operation-policy";
 
 export interface FinancialYearOperationState {
   id: number;

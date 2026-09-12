@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { EntityNotFoundErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
-import { CountryTaxSettingResponseDto } from "@voyzu/finance/types/modules/country-tax-settings";
+import { CountryTaxSettingResponseDto } from "./types/index";
 
 export const apiDefinitions = {
   list: {

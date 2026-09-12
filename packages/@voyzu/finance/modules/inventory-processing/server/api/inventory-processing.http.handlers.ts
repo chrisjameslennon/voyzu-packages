@@ -1,7 +1,7 @@
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import { businessRuleError, notFoundError, ok, parseBody, serverError } from "@voyzu/capability/http";
-import { resolveApiCompanyIdFromPath } from "@voyzu/finance/common/server";
-import type { FinanceInventoryActivity, FinanceInventoryProcessingRule, FinanceInventoryProcessingRulePatch } from "@voyzu/finance/types/modules/inventory-processing";
+import { resolveApiCompanyIdFromPath } from "../../../finance-companies/server/lib/settings-scope";
+import type { FinanceInventoryActivity, FinanceInventoryProcessingRule, FinanceInventoryProcessingRulePatch } from "../../types/index";
 import type {
   BusinessRuleErrorResponseDto,
   EntityNotFoundErrorResponseDto,

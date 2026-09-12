@@ -1,4 +1,4 @@
-import type { DrCr, EntryType } from "@voyzu/finance/types/modules/core";
+import type { DrCr, EntryType } from "../../../common/types/index";
 export interface TaxSubledgerEntryRow {
   id: number;
   code: string;

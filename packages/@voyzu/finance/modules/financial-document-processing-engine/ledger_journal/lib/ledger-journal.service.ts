@@ -1,19 +1,19 @@
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { DrCr } from "@voyzu/finance/types/modules/core";
+import type { DrCr } from "../../../common/types/index";
 import type {
   BankCashJournalDetailsDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/bank-cash-details.dto";
-import type { LedgerJournalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal.request.dto";
+} from "../../types/bank-cash-details.dto";
+import type { LedgerJournalRequestDto } from "../../types/ledger-journal.request.dto";
 import type {
   LedgerJournalDetailedDocumentDto,
   LedgerJournalJournalLineDto,
   LedgerJournalPostingDetailsDto,
   LedgerJournalPostingResponseDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal.response.dto";
+} from "../../types/ledger-journal.response.dto";
 
-import { resolveBankCashDetails, toJournalBankCashFields } from "../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
+import { resolveBankCashDetails, toJournalBankCashFields } from "../../../bank-cash-accounts/server/lib/bank-cash-account.service";
+import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { LedgerJournalPostingRepo } from "../db/ledger-journal-posting.repo";

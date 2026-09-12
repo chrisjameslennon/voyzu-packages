@@ -3,7 +3,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { processTaxDocument } from "@voyzu/finance/financial-document-processing-engine/server";
+import { processTaxDocument } from "../../modules/financial-document-processing-engine/server/index";
 import { skipExistingSampleDocument } from "./sample-document";
 import { localizeBankText, SAMPLE_POSTING_COMPANIES, type SampleCompanyConfig } from "./sample-company-config";
 

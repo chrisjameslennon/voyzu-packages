@@ -1,7 +1,7 @@
 import { type NextRequest, type NextResponse } from "next/server";
 
-import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
-import type { ArInvoicePostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
+import type { ArInvoiceRequestDto } from "../../types/ar-invoice.request.dto";
+import type { ArInvoicePostingResponseDto } from "../../types/ar-invoice.response.dto";
 import { businessRuleError, notFoundError, serverError, inputValidationError } from "@voyzu/capability/http";
 import { parseBody } from "@voyzu/capability/http";
 import { ok } from "@voyzu/capability/http";

@@ -1,18 +1,18 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { DrCr } from "@voyzu/finance/types/modules/core";
-import type { BankCashJournalDetailsDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/bank-cash-details.dto";
-import type { LedgerJournalReversalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal-reversal.request.dto";
+import type { DrCr } from "../../../common/types/index";
+import type { BankCashJournalDetailsDto } from "../../types/bank-cash-details.dto";
+import type { LedgerJournalReversalRequestDto } from "../../types/ledger-journal-reversal.request.dto";
 import type {
   LedgerJournalReversalDetailedDocumentDto,
   LedgerJournalReversalPostingResponseDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal-reversal.response.dto";
+} from "../../types/ledger-journal-reversal.response.dto";
 import type {
   LedgerJournalJournalLineDto,
   LedgerJournalPostingDetailsDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal.response.dto";
+} from "../../types/ledger-journal.response.dto";
 
-import { resolveBankCashDetails, toJournalBankCashFields } from "../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
+import { resolveBankCashDetails, toJournalBankCashFields } from "../../../bank-cash-accounts/server/lib/bank-cash-account.service";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { LedgerJournalPostingRepo } from "../db/ledger-journal-posting.repo";

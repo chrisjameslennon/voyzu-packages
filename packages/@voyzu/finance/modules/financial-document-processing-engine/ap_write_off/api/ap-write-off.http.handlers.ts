@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import { parseBody } from "@voyzu/capability/http";
-import type { ApWriteOffRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-adjustment.request.dto";
-import type { ApProcessingPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-processing.response.dto";
+import type { ApWriteOffRequestDto } from "../../types/ap-adjustment.request.dto";
+import type { ApProcessingPostingResponseDto } from "../../types/ap-processing.response.dto";
 
 import { processApWriteOff } from "../lib/ap-write-off.service";
 

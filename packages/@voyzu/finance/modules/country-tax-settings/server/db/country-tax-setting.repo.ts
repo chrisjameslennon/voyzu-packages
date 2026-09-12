@@ -1,5 +1,5 @@
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { CountryTaxSetting } from "@voyzu/finance/types/modules/country-tax-settings";
+import type { CountryTaxSetting } from "../../types/index";
 
 type Row = Record<string, unknown>;
 

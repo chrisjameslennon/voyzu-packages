@@ -1,5 +1,5 @@
 import { DataError } from "@voyzu/capability/errors";
-import type { UpdateAuditStamp } from "../../../common/server";
+import type { UpdateAuditStamp } from "../../../common/server/index";
 
 function localDateString(d: Date): string {
   const y = d.getFullYear();

@@ -1,6 +1,6 @@
 import { DataError } from "@voyzu/capability/errors";
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { UpdateAuditStamp } from "../../../../common/server";
+import type { UpdateAuditStamp } from "../../../../common/server/index";
 import type { FinancialPeriodRow } from "./financial-period.row.types";
 
 const TABLE = "fiscal_period";

@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/finance/common/client";
+import { CompanyAuditPanel as AuditPanel } from "../../../common/client/index";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import {
   CompanyPageTitleBadges,
@@ -8,8 +8,8 @@ import {
   getDrCrColor,
   getStatusSemanticColor,
   type DetailBackSource,
-} from "@voyzu/finance/common/client";
-import type { TaxSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/tax-ledger";
+} from "../../../common/client/index";
+import type { TaxSubledgerEntryResponseDto } from "../../types/index";
 import {
   Badge,
   Breadcrumbs,

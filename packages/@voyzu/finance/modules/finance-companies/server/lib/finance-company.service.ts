@@ -5,8 +5,8 @@ import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import { capabilities } from "@voyzu/capability/contracts";
 import type { SemanticDataValue } from "@voyzu/capability/contracts";
 type OrganizationResponseDto = SemanticDataValue<"organization">;
-import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
-import { createCreationAuditStamp } from "../../../common/server";
+import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "../../types/index";
+import { createCreationAuditStamp } from "../../../common/server/index";
 import { FinanceCompanyRepo, type FinanceCompanyRow } from "../db/finance-company.repo";
 import { FinancialEntityInitializationRepo } from "../initialization/financial-entity-initialization.repo";
 

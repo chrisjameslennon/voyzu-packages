@@ -1,0 +1,36 @@
+export {
+  handleActivate,
+  handleBatchActivate,
+  handleBatchCreate,
+  handleBatchDeactivate,
+  handleBatchDelete,
+  handleBatchGet,
+  handleBatchPatch,
+  handleBatchUpdate,
+  handleCreate,
+  handleDeactivate,
+  handleDelete,
+  handleFilter,
+  handleGet,
+  handleList,
+  handlePatch,
+  handleSearch,
+  handleUpdate,
+} from "./api/item-posting-profile.http.handlers";
+export {
+  activateItemPostingProfile,
+  activateItemPostingProfiles,
+  batchCreateItemPostingProfiles,
+  batchDeleteItemPostingProfiles,
+  batchGetItemPostingProfiles,
+  batchPatchItemPostingProfiles,
+  batchUpdateItemPostingProfiles,
+  deactivateItemPostingProfile,
+  deactivateItemPostingProfiles,
+  filterItemPostingProfiles,
+  getItemPostingProfile,
+  listItemPostingProfiles,
+  searchItemPostingProfiles,
+} from "./lib/item-posting-profile.service";
+export { InventoryItemPostingProfileDetailPage } from "./pages/InventoryItemPostingProfileDetailPage";
+export { InventoryItemPostingProfilesListPage } from "./pages/InventoryItemPostingProfilesListPage";

@@ -1,0 +1,110 @@
+import "server-only";
+
+
+import { capabilities, semanticData } from "@voyzu/capability/contracts";
+import { listFinancialYears } from "../../../../financial-years/server/index";
+import { listPeriods } from "../../../../financial-years/server/index";
+import { resolveCompanySettingsScope } from "../../../../finance-companies/server/lib/settings-scope";
+
+import { ProfitLossReport } from "../../client/index";
+import { ProfitLossReportTemplate } from "../../templates/ProfitLossReportTemplate";
+import { getProfitLoss } from "../lib/profit-loss.service";
+
+interface ReportPageProps {
+  surface?: {
+    searchParams?: Record<string, string>;
+    unframed?: boolean;
+  };
+}
+
+function todayIso(): string {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+}
+
+function previous90DaysStartIso(): string {
+  const today = new Date();
+  const from = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90);
+  return `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, "0")}-${String(from.getDate()).padStart(2, "0")}`;
+}
+
+function previous90DaysRange(fiscalYearStartDate?: string): { fromDate: string; toDate: string } {
+  const today = new Date();
+  const from = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90);
+  const fromDate = `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, "0")}-${String(from.getDate()).padStart(2, "0")}`;
+  const toDate = todayIso();
+  return { fromDate: fiscalYearStartDate && fromDate < fiscalYearStartDate ? fiscalYearStartDate : fromDate, toDate };
+}
+
+export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
+  const query = surface?.searchParams ?? {};
+  const queryCompanyId = query.companyId ? Number(query.companyId) : null;
+  const selectedOrganizationId = (await capabilities.use("erp.organization-context").getSavedOrganizationId({})).organizationId;
+  const companies = await semanticData.query("organization", "all", {});
+  const company = companies.find((item) => item.id === queryCompanyId)
+    ?? companies.find((item) => item.id === selectedOrganizationId)
+    ?? companies[0]
+    ?? null;
+  const fallbackFromDate = previous90DaysStartIso();
+  const fallbackToDate = todayIso();
+
+  if (!company) {
+    return (
+      <ProfitLossReport
+        pageTitle="Profit & Loss"
+        initialData={null}
+        initialFromDate={fallbackFromDate}
+        initialToDate={fallbackToDate}
+        initialFinancialYears={[]}
+        initialPeriods={[]}
+        initialSelectedYearCode=""
+        selectedCompanyId={null}
+      />
+    );
+  }
+
+  const companyId = (await resolveCompanySettingsScope(company.id)).companyId;
+
+  const today = todayIso();
+  const allYears = await listFinancialYears(companyId);
+  const yearsWithPostings = allYears.filter((year) => year.hasPostings);
+  const currentYear = yearsWithPostings.find((year) => year.startDate <= today && today <= year.endDate);
+  const selectedYear = currentYear
+    ?? yearsWithPostings[0]
+    ?? allYears.find((year) => year.startDate <= today && today <= year.endDate)
+    ?? null;
+  const defaultRange = selectedYear
+    ? previous90DaysRange(selectedYear.startDate)
+    : { fromDate: fallbackFromDate, toDate: fallbackToDate };
+  const fromDate = query.fromDate ?? defaultRange.fromDate;
+  const toDate = query.toDate ?? defaultRange.toDate;
+  const periods = selectedYear ? await listPeriods(selectedYear.id) : [];
+  const initialData = await getProfitLoss(companyId, fromDate, toDate);
+
+  if (surface?.unframed) {
+    return (
+      <ProfitLossReportTemplate
+        data={initialData}
+        generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+        showAccountCode={query.showAccountCode === "true"}
+        showCompanyHeader={query.showCompanyHeader === "true"}
+        showCompanyFooter={query.showCompanyFooter === "true"}
+        showReportingCategories={query.showReportingCategories === "true"}
+        showDecimals={query.showDecimals === "true"}
+      />
+    );
+  }
+
+  return (
+    <ProfitLossReport
+      pageTitle="Profit & Loss"
+      initialData={initialData}
+      initialFromDate={fromDate}
+      initialToDate={toDate}
+      initialFinancialYears={yearsWithPostings}
+      initialPeriods={periods}
+      initialSelectedYearCode={selectedYear?.code ?? ""}
+      selectedCompanyId={companyId}
+    />
+  );
+}

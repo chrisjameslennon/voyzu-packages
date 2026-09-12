@@ -1,5 +1,5 @@
 import { ComponentType } from "../core/journal-posting-components";
-import type { AccountType } from "@voyzu/finance/types/modules/core";
+import type { AccountType } from "../../common/types/index";
 
 export default {
   description: "Payable write-offs debit AP trade payables and credit write-off income.",

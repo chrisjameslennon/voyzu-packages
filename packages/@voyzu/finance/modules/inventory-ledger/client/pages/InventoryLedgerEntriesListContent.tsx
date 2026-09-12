@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/finance/common/client";
-import type { InventoryLedgerControlAccountBalanceDto, InventoryLedgerEntryResponseDto } from "@voyzu/finance/types/modules/inventory-ledger";
+import { CompanyPageTitleBadges, getStatusSemanticColor } from "../../../common/client/index";
+import type { InventoryLedgerControlAccountBalanceDto, InventoryLedgerEntryResponseDto } from "../../types/index";
 import {
   Badge,
   Breadcrumbs,

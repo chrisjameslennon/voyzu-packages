@@ -1,5 +1,5 @@
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
+import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "../../types/index";
 
 export interface FinanceCompanyRow {
   id: number; code: string; name: string; country_code: string; country_name: string; base_currency_code: string; currency_name: string; status: FinanceCompanyResponseDto["status"];

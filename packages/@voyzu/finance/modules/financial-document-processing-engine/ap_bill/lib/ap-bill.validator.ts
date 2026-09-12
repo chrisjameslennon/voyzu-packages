@@ -1,4 +1,4 @@
-import type { ApBillRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-bill.request.dto";
+import type { ApBillRequestDto } from "../../types/ap-bill.request.dto";
 import { InputValidationError } from "@voyzu/capability/errors";
 
 import type {

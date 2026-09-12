@@ -2,10 +2,10 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
 
-import type { LedgerJournalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal.request.dto";
-import type { LedgerJournalReversalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal-reversal.request.dto";
+import type { LedgerJournalRequestDto } from "../../../modules/financial-document-processing-engine/types/ledger-journal.request.dto";
+import type { LedgerJournalReversalRequestDto } from "../../../modules/financial-document-processing-engine/types/ledger-journal-reversal.request.dto";
 import { getDb, getPool } from "@voyzu/capability/db";
-import { LedgerJournalPostingRepo } from "@voyzu/finance/financial-document-processing-engine/server";
+import { LedgerJournalPostingRepo } from "../../../modules/financial-document-processing-engine/server/index";
 import { processLedgerJournalReversal, processLedgerJournal } from "../../../modules/financial-document-processing-engine/commands";
 
 const createdDocumentIds: string[] = [];

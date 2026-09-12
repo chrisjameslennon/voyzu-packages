@@ -1,17 +1,17 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { DrCr } from "@voyzu/finance/types/modules/core";
-import type { ArReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
+import type { DrCr } from "../../../common/types/index";
+import type { ArReceiptRequestDto } from "../../types/ar-receipt.request.dto";
 import type {
   ArReceiptArSubledgerDetailDto,
   ArReceiptDetailedAllocationDto,
   ArReceiptDetailedReceiptDto,
   ArReceiptPostingDetailsDto,
   ArReceiptPostingResponseDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt.response.dto";
+} from "../../types/ar-receipt.response.dto";
 
-import { resolveBankCashDetails, toJournalBankCashFields } from "../../../common/bank-cash-accounts/server/lib/bank-cash-account.service";
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
+import { resolveBankCashDetails, toJournalBankCashFields } from "../../../bank-cash-accounts/server/lib/bank-cash-account.service";
+import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
 import { validateRequest } from "./ar-receipt.validator";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";

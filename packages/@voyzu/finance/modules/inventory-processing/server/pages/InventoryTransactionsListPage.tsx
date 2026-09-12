@@ -1,9 +1,9 @@
 import "server-only";
 
 import { semanticData } from "@voyzu/capability/contracts";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { IntegrationUnavailablePage } from "../../../common/server/IntegrationUnavailablePage";
-import { InventoryTransactionsList } from "../../client";
+import { InventoryTransactionsList } from "../../client/index";
 import { listFinanceInventoryActivities } from "../lib/inventory-processing.service";
 
 export async function InventoryTransactionsListPage() {

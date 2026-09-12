@@ -2,8 +2,8 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
 
-import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
-import type { ArReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
+import type { ArInvoiceRequestDto } from "../../../modules/financial-document-processing-engine/types/ar-invoice.request.dto";
+import type { ArReceiptRequestDto } from "../../../modules/financial-document-processing-engine/types/ar-receipt.request.dto";
 import { getPool } from "@voyzu/capability/db";
 import { processArInvoice, processArReceipt, processArAdjustment } from "../../../modules/financial-document-processing-engine/commands";
 

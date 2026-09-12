@@ -2,9 +2,9 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { ArCounterpartyDetail } from "../../client";
+import { ArCounterpartyDetail } from "../../client/index";
 import { ArCounterpartyReportTemplate } from "../../client/templates/ArCounterpartyReportTemplate";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { getArCounterparty } from "../lib/ar-subledger-counterparty.service";
 
 export async function ArCounterpartyDetailPage({

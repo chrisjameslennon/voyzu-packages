@@ -1,8 +1,8 @@
 import "server-only";
 
-import { FinancialYearsListContent } from "../../client";
-import { getCompanySettingsUiState } from "../../../common/server/company-standard-settings";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { FinancialYearsListContent } from "../../client/index";
+import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { listFinancialYears } from "../lib/financial-year.service";
 
 export async function FinancialYearsListPage() {

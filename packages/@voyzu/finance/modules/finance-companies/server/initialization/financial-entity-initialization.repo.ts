@@ -1,6 +1,6 @@
 import "server-only";
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { CreationAuditStamp } from "../../../common/server";
+import type { CreationAuditStamp } from "../../../common/server/index";
 
 /** One target entity; the caller must include this in the creation transaction. */
 export class FinancialEntityInitializationRepo {

@@ -1,4 +1,5 @@
-import type { ArReceiptApplicationDetailedDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt-application.response.dto";
+import type { DrCr } from "../../../common/types";
+import type { ArReceiptApplicationDetailedDto } from "../../types/ar-receipt-application.response.dto";
 
 import type {
   ReceiptApplicationCompanyContextRow,

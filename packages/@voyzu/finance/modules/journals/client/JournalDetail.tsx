@@ -1,14 +1,14 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/finance/common/client";
+import { CompanyAuditPanel as AuditPanel } from "../../common/client/index";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
-import type { DrCr } from "@voyzu/finance/types/modules/core";
-import type { JournalLineResponseDto, JournalResponseDto, JournalStatus } from "@voyzu/finance/types/modules/journals";
+import type { DrCr } from "../../common/types/index";
+import type { JournalLineResponseDto, JournalResponseDto, JournalStatus } from "../types/index";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { CompanyPageTitleBadges, detailLinkWithBackContext, getDrCrColor, getStatusSemanticColor, type DetailBackSource } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges, detailLinkWithBackContext, getDrCrColor, getStatusSemanticColor, type DetailBackSource } from "../../common/client/index";
 import { Badge, Breadcrumbs, Button, DropdownMenu, Input, type DropdownMenuItem } from "@voyzu/ui-components";
 import layoutStyles from "@voyzu/ui-layout/css-modules/detail.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { JournalsList } from "../../client";
+import { JournalsList } from "../../client/index";
 import { getSelectedCompany } from "../lib/company-context";
 import { listJournals } from "../lib/journal.service";
 

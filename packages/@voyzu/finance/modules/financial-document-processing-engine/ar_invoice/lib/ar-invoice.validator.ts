@@ -1,4 +1,4 @@
-import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.request.dto";
+import type { ArInvoiceRequestDto } from "../../types/ar-invoice.request.dto";
 import { InputValidationError } from "@voyzu/capability/errors";
 import type {
   CompanyPostingContextRow,

@@ -1,7 +1,7 @@
 import { type NextRequest, type NextResponse } from "next/server";
 
-import type { LedgerJournalRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal.request.dto";
-import type { LedgerJournalPostingResponseDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ledger-journal.response.dto";
+import type { LedgerJournalRequestDto } from "../../types/ledger-journal.request.dto";
+import type { LedgerJournalPostingResponseDto } from "../../types/ledger-journal.response.dto";
 import { businessRuleError, notFoundError, serverError, inputValidationError } from "@voyzu/capability/http";
 import { parseBody } from "@voyzu/capability/http";
 import { ok } from "@voyzu/capability/http";

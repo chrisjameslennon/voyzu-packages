@@ -1,4 +1,4 @@
-import type { DrCr } from "@voyzu/finance/types/modules/core";
+import type { DrCr } from "../../../common/types/index";
 import {
   AP_BILL_AP_PAYABLE_COMPONENT,
   AP_BILL_PURCHASE_COMPONENT,

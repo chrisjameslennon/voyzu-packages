@@ -2,8 +2,8 @@
 import assert from "node:assert/strict";
 import { describe, it, before, after } from "node:test";
 
-import type { FinancialYearCreateRequestDto } from "@voyzu/finance/types/modules/financial-years/financial-year.create.request.dto";
-import type { FinancialYearResponseDto } from "@voyzu/finance/types/modules/financial-years/financial-year.response.dto";
+import type { FinancialYearCreateRequestDto } from "../../../modules/financial-years/types/financial-year.create.request.dto";
+import type { FinancialYearResponseDto } from "../../../modules/financial-years/types/financial-year.response.dto";
 
 import { getPool } from "@voyzu/capability/db";
 import { listOrganizations } from "@voyzu/erp-core/organizations/commands";

@@ -1,4 +1,4 @@
-import type { AccountType } from "@voyzu/finance/types/modules/core";
+import type { AccountType } from "../common/types/index";
 
 import apBill from "./ap_bill/journal-posting-components";
 import apCreditNote from "./ap_credit_note/journal-posting-components";

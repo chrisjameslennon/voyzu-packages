@@ -1,5 +1,5 @@
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { ArInvoiceDetailedInvoiceDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
+import type { ArInvoiceDetailedInvoiceDto } from "../../types/ar-invoice.response.dto";
 
 type CompanyRow = { id: number; code: string; name: string; base_currency_code: string; status: string };
 type CounterpartyRow = { id: number; finance_organization_id: number; code: string; name: string; status: string };

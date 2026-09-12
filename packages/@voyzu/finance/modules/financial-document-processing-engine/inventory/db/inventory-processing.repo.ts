@@ -1,5 +1,5 @@
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { OperationalInventoryItem } from "../../../common/server/operational-inventory";
+import type { OperationalInventoryItem } from "../../../inventory-item-posting-profile-assignments/server/lib/operational-inventory";
 
 import type {
   CompanyPostingContextRow,

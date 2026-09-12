@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { inputValidationError, notFoundError, ok, serverError } from "@voyzu/capability/http";
 import type { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types/errors";
-import type { TaxAuthorityResponseDto } from "@voyzu/finance/types/modules/tax";
+import type { TaxAuthorityResponseDto } from "../../types/index";
 
 import { getTaxAuthority, listApplicableTaxAuthorities, listTaxAuthorities } from "../lib/tax.service";
 

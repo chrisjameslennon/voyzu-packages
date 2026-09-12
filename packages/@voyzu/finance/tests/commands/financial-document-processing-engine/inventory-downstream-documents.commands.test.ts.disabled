@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
 
-import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
+import type { InventoryReceiptRequestDto } from "../../../modules/financial-document-processing-engine/types/inventory-receipt.request.dto";
 import { getPool } from "@voyzu/capability/db";
 import { processApBill, processArInvoice, processInventoryReceipt } from "../../../modules/financial-document-processing-engine/commands";
 

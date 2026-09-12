@@ -1,7 +1,7 @@
-import type { ArCreditNoteRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-credit-note.request.dto";
-import type { ArOpeningBalanceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-opening-balance.request.dto";
-import type { ArRefundRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-refund.request.dto";
-import type { ArWriteOffRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-write-off.request.dto";
+import type { ArCreditNoteRequestDto } from "../../../types/ar-credit-note.request.dto";
+import type { ArOpeningBalanceRequestDto } from "../../../types/ar-opening-balance.request.dto";
+import type { ArRefundRequestDto } from "../../../types/ar-refund.request.dto";
+import type { ArWriteOffRequestDto } from "../../../types/ar-write-off.request.dto";
 import { InputValidationError } from "@voyzu/capability/errors";
 
 import type { ArAdjustmentDocumentType } from "../db/ar-adjustment-posting.row.types";

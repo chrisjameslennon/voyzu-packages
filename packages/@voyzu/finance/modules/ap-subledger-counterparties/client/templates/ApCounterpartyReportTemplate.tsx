@@ -1,4 +1,4 @@
-import type { ApCounterpartyResponseDto } from "@voyzu/finance/types/modules/ap-subledger";
+import type { ApCounterpartyResponseDto } from "../../types/ap-counterparty.response.dto";
 import type { SemanticDataValue } from "@voyzu/capability/contracts";
 type OrganizationResponseDto = SemanticDataValue<"organization">;
 

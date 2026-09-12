@@ -1,7 +1,7 @@
 import "server-only";
 
-import { ApLedgerEntriesListContent } from "../../client";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { ApLedgerEntriesListContent } from "../../client/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { listApSubledgerEntries } from "../lib/ap-subledger-ledger-entries.service";
 
 export async function ApLedgerEntriesListPage() {

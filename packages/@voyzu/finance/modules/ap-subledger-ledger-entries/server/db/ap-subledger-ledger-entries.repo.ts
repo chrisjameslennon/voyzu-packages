@@ -1,6 +1,6 @@
 import type { DbExecutor } from "@voyzu/capability/db";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
 import type {
   ApSubledgerEntryRow,
 } from "./ap-subledger-ledger-entries.row.types";

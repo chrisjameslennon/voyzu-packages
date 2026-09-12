@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { clientComponent } from "@voyzu/ui-surface/client";
-const AuditPanel = clientComponent.use("audit.panel");
+import { AuditPanel } from "@voyzu/components/audit-panel";
 import {
   Badge,
   Breadcrumbs,

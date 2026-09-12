@@ -4,10 +4,10 @@ import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import {
   InventoryProcessingRuleAction,
   isInventoryProcessingRuleActionAllowed,
-} from "@voyzu/finance/inventory-processing/domain";
-import type { FinanceInventoryActivity, FinanceInventoryProcessingRule, FinanceInventoryProcessingRulePatch } from "@voyzu/finance/types/modules/inventory-processing";
-import { createUpdateAuditStamp, withAuditActors } from "../../../common/server";
-import { assertCompanySettingsWritable } from "../../../common/server/settings-scope";
+} from "../../domain/index";
+import type { FinanceInventoryActivity, FinanceInventoryProcessingRule, FinanceInventoryProcessingRulePatch } from "../../types/index";
+import { createUpdateAuditStamp, withAuditActors } from "../../../common/server/index";
+import { assertCompanySettingsWritable } from "../../../finance-companies/server/lib/settings-scope";
 
 import { InventoryProcessingRepo } from "../db/inventory-processing.repo";
 import type { FinanceInventoryActivityRow, FinanceInventoryProcessingRuleRow } from "../db/inventory-processing.row.types";

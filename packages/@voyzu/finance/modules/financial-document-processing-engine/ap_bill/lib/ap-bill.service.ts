@@ -1,6 +1,6 @@
 import { getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { ApBillRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-bill.request.dto";
+import type { ApBillRequestDto } from "../../types/ap-bill.request.dto";
 import type {
   ApBillApCounterpartyDetailsDto,
   ApBillApSubledgerDetailsDto,
@@ -11,11 +11,11 @@ import type {
   ApBillPostingDetailsDto,
   ApBillPostingResponseDto,
   ApBillTaxLedgerDetailDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-bill.response.dto";
-import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
+} from "../../types/ap-bill.response.dto";
+import type { InventoryReceiptRequestDto } from "../../types/inventory-receipt.request.dto";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
-import { getOperationalInventoryItems } from "../../../common/server/operational-inventory";
+import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { getOperationalInventoryItems } from "../../../inventory-item-posting-profile-assignments/server/lib/operational-inventory";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { processInventoryReceipt } from "../../inventory/lib/inventory-processing.service";

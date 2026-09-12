@@ -1,4 +1,4 @@
-import type { ArReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-receipt.request.dto";
+import type { ArReceiptRequestDto } from "../../types/ar-receipt.request.dto";
 import { InputValidationError } from "@voyzu/capability/errors";
 
 const BUSINESS_CODE_RE = /^[A-Z0-9_-]+$/;

@@ -1,11 +1,11 @@
 import "server-only";
 
 import { semanticData } from "@voyzu/capability/contracts";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { notFound } from "next/navigation";
 
 import { IntegrationUnavailablePage } from "../../../common/server/IntegrationUnavailablePage";
-import { InventoryTransactionDetail } from "../../client";
+import { InventoryTransactionDetail } from "../../client/index";
 import { InventoryTransactionReportTemplate } from "../../client/InventoryTransactionReportTemplate";
 import { getFinanceInventoryActivity } from "../lib/inventory-processing.service";
 

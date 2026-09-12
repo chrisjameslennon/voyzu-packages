@@ -4,9 +4,9 @@ import {
   businessRuleError, inputValidationError, notFoundError, ok, parseBody, serverError,
 } from "@voyzu/capability/http";
 import type { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types/errors";
-import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies";
-import type { OrganizationSelectionResponseDto, OrganizationSelectionUpdateResponseDto } from "@voyzu/finance/types/modules/finance-companies/organization-selection.dto";
-import type { OrganizationSelectionUpdateRequestDto } from "@voyzu/finance/types/modules/finance-companies/organization-selection.dto";
+import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "../../types/index";
+import type { OrganizationSelectionResponseDto, OrganizationSelectionUpdateResponseDto } from "../../types/organization-selection.dto";
+import type { OrganizationSelectionUpdateRequestDto } from "../../types/organization-selection.dto";
 import { capabilities } from "@voyzu/capability/contracts";
 import {
   activateFinanceCompany,

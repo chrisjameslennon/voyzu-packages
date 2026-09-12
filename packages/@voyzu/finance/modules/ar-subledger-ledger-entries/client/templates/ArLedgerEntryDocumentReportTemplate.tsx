@@ -1,6 +1,6 @@
 "use client";
 
-import type { ArLedgerEntryDocumentReportResponseDto } from "@voyzu/finance/types/modules/ar-subledger";
+import type { ArLedgerEntryDocumentReportResponseDto } from "../../types/ar-ledger-entry-document-report.response.dto";
 
 import {
   arDocumentReportCss,

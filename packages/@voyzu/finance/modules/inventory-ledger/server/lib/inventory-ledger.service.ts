@@ -2,7 +2,7 @@ import type {
   InventoryLedgerEntryDetailResponseDto,
   InventoryLedgerEntryResponseDto,
   InventoryValuationResponseDto,
-} from "@voyzu/finance/types/modules/inventory-ledger";
+} from "../../types/index";
 import { getDb } from "@voyzu/capability/db";
 import { InventoryLedgerRepo } from "../db/inventory-ledger.repo";
 import type { InventoryLedgerEntryRow } from "../db/inventory-ledger.row.types";

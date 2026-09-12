@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import type { FinancialYearStatus } from "@voyzu/finance/types/modules/financial-years";
+import type { FinancialYearStatus } from "../../../modules/financial-years/types/index";
 import {
   ChangeCode,
   Close,

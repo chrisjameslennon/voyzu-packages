@@ -1,5 +1,5 @@
-import type { DrCr } from "@voyzu/finance/types/modules/core";
-import type { ArInvoiceDetailedInvoiceDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ar-invoice.response.dto";
+import type { DrCr } from "../../../common/types/index";
+import type { ArInvoiceDetailedInvoiceDto } from "../../types/ar-invoice.response.dto";
 import {
   AR_INVOICE_AR_RECEIVABLE_COMPONENT,
   AR_INVOICE_REVENUE_COMPONENT,

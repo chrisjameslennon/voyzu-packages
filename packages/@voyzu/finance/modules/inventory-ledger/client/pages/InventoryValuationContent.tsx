@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import type { InventoryValuationResponseDto } from "@voyzu/finance/types/modules/inventory-ledger";
+import type { InventoryValuationResponseDto } from "../../types/index";
 import { Breadcrumbs, DataTable, Input, type DataTableColumn } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";

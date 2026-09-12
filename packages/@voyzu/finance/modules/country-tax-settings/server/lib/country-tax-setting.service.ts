@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getDb } from "@voyzu/capability/db";
-import type { CountryTaxSetting } from "@voyzu/finance/types/modules/country-tax-settings";
+import type { CountryTaxSetting } from "../../types/index";
 import { CountryTaxSettingRepo } from "../db/country-tax-setting.repo";
 
 export async function listCountryTaxSettings(): Promise<CountryTaxSetting[]> {

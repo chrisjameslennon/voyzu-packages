@@ -1,8 +1,8 @@
 import "server-only";
 
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { getSelectedCompany } from "../../../journals/server/index";
 
-import { ApStatementsListContent } from "../../client";
+import { ApStatementsListContent } from "../../client/index";
 import { listApCounterpartySummaries } from "../lib/ap-subledger-statement.service";
 
 export async function ApStatementsListPage() {

@@ -1,11 +1,11 @@
 "use client";
 
-import { CompanyPageTitleBadges, financeApiUrl, getStatusSemanticColor } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges, financeApiUrl, getStatusSemanticColor } from "../../../common/client/index";
 import { Close, Delete, Open, Reopen, type FinancialYearOperationState } from "../../domain/operation-policy";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import type { FinancialYearCreateRequestDto, FinancialYearResponseDto, FinancialYearStatus } from "@voyzu/finance/types/modules/financial-years";
+import type { FinancialYearCreateRequestDto, FinancialYearResponseDto, FinancialYearStatus } from "../../types/index";
 import { Badge, Breadcrumbs, Button, ConfirmDialog, DataTable, DatePicker, DropdownMenu, FilterChips, FilterPanel, Input, SearchableSelect, Toast, ValidationAlert, type DataTableColumn, type DropdownMenuItem, type FilterState, type FilterTab } from "@voyzu/ui-components";
 import { pattern, required, useFormValidation } from "@voyzu/ui-components";
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";

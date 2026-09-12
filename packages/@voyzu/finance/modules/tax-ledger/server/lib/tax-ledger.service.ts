@@ -1,4 +1,4 @@
-import type { TaxSubledgerEntryResponseDto } from "@voyzu/finance/types/modules/tax-ledger";
+import type { TaxSubledgerEntryResponseDto } from "../../types/index";
 import { getDb } from "@voyzu/capability/db";
 import { TaxLedgerRepo } from "../db/tax-ledger.repo";
 

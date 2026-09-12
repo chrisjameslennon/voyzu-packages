@@ -1,4 +1,4 @@
-import type { AccountType } from "@voyzu/finance/types/modules/core";
+import type { AccountType } from "../../types/index";
 import { getRandomDeterministicColor, type AvatarColor } from "@voyzu/ui-style";
 import type { BadgeColor, BadgeCustomColors } from "@voyzu/ui-components";
 

@@ -1,5 +1,5 @@
 import "server-only";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { InventoryValuationContent } from "../../client/pages/InventoryValuationContent";
 import { listInventoryValuations } from "../lib/inventory-ledger.service";
 

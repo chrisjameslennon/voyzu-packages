@@ -1,7 +1,7 @@
 import "server-only";
 
-import { InventoryLedgerEntriesListContent } from "../../client";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { InventoryLedgerEntriesListContent } from "../../client/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 import { listInventoryLedgerEntries } from "../lib/inventory-ledger.service";
 
 export async function InventoryLedgerEntriesListPage() {

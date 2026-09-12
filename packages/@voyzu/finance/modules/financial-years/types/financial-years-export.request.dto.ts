@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
-import { NonBlankText, PositiveId } from "@voyzu/finance/types/constraints";
+import { NonBlankText, PositiveId } from "../../common/types/constraints";
 
 export const FinancialYearsExportRequestDto = StrictObject({
   companyId: PositiveId,

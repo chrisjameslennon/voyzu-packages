@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { JournalResponseDto, JournalStatus } from "@voyzu/finance/types/modules/journals";
+import type { JournalResponseDto, JournalStatus } from "../types/index";
 
-import { CompanyPageTitleBadges, getStatusSemanticColor } from "@voyzu/finance/common/client";
+import { CompanyPageTitleBadges, getStatusSemanticColor } from "../../common/client/index";
 import {
   Badge,
   Breadcrumbs,

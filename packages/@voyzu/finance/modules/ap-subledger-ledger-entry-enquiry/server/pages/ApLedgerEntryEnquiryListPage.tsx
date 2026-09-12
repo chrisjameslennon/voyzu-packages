@@ -1,8 +1,8 @@
 import "server-only";
 
-import { listApSubledgerEntries } from "@voyzu/finance/ap-subledger-ledger-entries/server";
-import { listFinancialYears, listPeriods } from "@voyzu/finance/financial-years/server";
-import { getSelectedCompany } from "@voyzu/finance/journals/server";
+import { listApSubledgerEntries } from "../../../ap-subledger-ledger-entries/server/index";
+import { listFinancialYears, listPeriods } from "../../../financial-years/server/index";
+import { getSelectedCompany } from "../../../journals/server/index";
 
 import { ApLedgerEntryEnquiry } from "../../client/ApLedgerEntryEnquiry";
 

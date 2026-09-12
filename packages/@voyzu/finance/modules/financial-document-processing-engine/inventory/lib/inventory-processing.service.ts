@@ -1,8 +1,8 @@
 import { type DbExecutor, getDb, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
-import type { DrCr } from "@voyzu/finance/types/modules/core";
-import type { InventoryAdjustmentRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-adjustment.request.dto";
-import type { InventoryIssueRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-issue.request.dto";
+import type { DrCr } from "../../../common/types/index";
+import type { InventoryAdjustmentRequestDto } from "../../types/inventory-adjustment.request.dto";
+import type { InventoryIssueRequestDto } from "../../types/inventory-issue.request.dto";
 import type {
   InventoryLedgerDetailsDto,
   InventoryLedgerLineDetailDto,
@@ -11,11 +11,11 @@ import type {
   InventoryProcessingJournalLineDto,
   InventoryProcessingPostingDetailsDto,
   InventoryProcessingPostingResponseDto,
-} from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-processing.response.dto";
-import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/inventory-receipt.request.dto";
+} from "../../types/inventory-processing.response.dto";
+import type { InventoryReceiptRequestDto } from "../../types/inventory-receipt.request.dto";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../common/server/settings-scope";
-import { getOperationalInventoryItems } from "../../../common/server/operational-inventory";
+import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { getOperationalInventoryItems } from "../../../inventory-item-posting-profile-assignments/server/lib/operational-inventory";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import {

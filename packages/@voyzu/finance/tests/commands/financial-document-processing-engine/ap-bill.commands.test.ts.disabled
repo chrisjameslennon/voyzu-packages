@@ -2,13 +2,13 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
 
-import type { ApBillRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine/ap-bill.request.dto";
+import type { ApBillRequestDto } from "../../../modules/financial-document-processing-engine/types/ap-bill.request.dto";
 import { getPool } from "@voyzu/capability/db";
-import type { ApBillDataValidationContext } from "@voyzu/finance/financial-document-processing-engine/server";
+import type { ApBillDataValidationContext } from "../../../modules/financial-document-processing-engine/server/index";
 import {
   validateApBillData as validateData,
   validateApBillRequest as validateRequest,
-} from "@voyzu/finance/financial-document-processing-engine/server";
+} from "../../../modules/financial-document-processing-engine/server/index";
 import { processApBill } from "../../../modules/financial-document-processing-engine/commands";
 
 const createdDocumentIds: string[] = [];

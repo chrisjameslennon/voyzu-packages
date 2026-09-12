@@ -1,6 +1,6 @@
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { AccountType } from "@voyzu/finance/types/modules/core";
-import type { OperationalInventoryItem } from "../../../common/server/operational-inventory";
+import type { AccountType } from "../../../common/types/index";
+import type { OperationalInventoryItem } from "../../../inventory-item-posting-profile-assignments/server/lib/operational-inventory";
 
 import type {
   ApSubledgerEntryRow,

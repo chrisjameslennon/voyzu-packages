@@ -1,8 +1,8 @@
 import type { DbExecutor } from "@voyzu/capability/db";
-import type { InventoryProcessingRuleAction } from "@voyzu/finance/inventory-processing/domain";
-import type { ProcessInventoryMovementRequest } from "@voyzu/finance/types/modules/inventory-processing";
+import type { InventoryProcessingRuleAction } from "../../domain/index";
+import type { ProcessInventoryMovementRequest } from "../../types/index";
 
-import type { CreationAuditStamp, UpdateAuditStamp } from "../../../common/server";
+import type { CreationAuditStamp, UpdateAuditStamp } from "../../../common/server/index";
 import type { FinanceInventoryActivityRow, FinanceInventoryProcessingRuleRow } from "./inventory-processing.row.types";
 
 const COLUMNS = `

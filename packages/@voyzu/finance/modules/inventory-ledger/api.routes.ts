@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
-import { InventoryLedgerEntryDetailResponseDto, InventoryLedgerEntryResponseDto } from "../../types/modules/inventory-ledger/index";
+import { InventoryLedgerEntryDetailResponseDto, InventoryLedgerEntryResponseDto } from "./types/index";
 
 
 

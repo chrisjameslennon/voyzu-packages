@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
-import { ArCounterpartySummaryResponseDto } from "../../types/modules/ar-subledger/ar-counterparty-summary.response.dto";
+import { ArCounterpartySummaryResponseDto } from "../ar-subledger-counterparties/types/ar-counterparty-summary.response.dto";
 
 
 

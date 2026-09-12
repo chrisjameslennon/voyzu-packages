@@ -3,18 +3,18 @@ import { config } from "dotenv";
 const envFile = process.argv.includes("--production") ? ".env.production" : ".env.local";
 config({ path: `apps/web/${envFile}` });
 
-import type { ApBillRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import type { ArInvoiceRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import type { InventoryAdjustmentRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import type { InventoryIssueRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
-import type { InventoryReceiptRequestDto } from "@voyzu/finance/types/modules/financial-document-processing-engine";
+import type { ApBillRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import type { ArInvoiceRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import type { InventoryAdjustmentRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import type { InventoryIssueRequestDto } from "../../modules/financial-document-processing-engine/types/index";
+import type { InventoryReceiptRequestDto } from "../../modules/financial-document-processing-engine/types/index";
 import { getPool } from "@voyzu/capability/db";
-import { processApBill, processArInvoice } from "@voyzu/finance/financial-document-processing-engine/server";
+import { processApBill, processArInvoice } from "../../modules/financial-document-processing-engine/server/index";
 import {
   processInventoryAdjustment,
   processInventoryIssue,
   processInventoryReceipt,
-} from "@voyzu/finance/financial-document-processing-engine/server";
+} from "../../modules/financial-document-processing-engine/server/index";
 
 const COMPANY_CODE = "TESTCO";
 const INVENTORY_ITEM_BILL_ID = "SAMP-BILL-ITEM-001";

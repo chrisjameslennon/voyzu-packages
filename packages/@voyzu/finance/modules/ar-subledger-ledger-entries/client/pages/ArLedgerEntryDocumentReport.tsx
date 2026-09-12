@@ -1,16 +1,14 @@
 "use client";
 
-import { CompanyAuditPanel as AuditPanel } from "@voyzu/finance/common/client";
+import { CompanyAuditPanel as AuditPanel } from "../../../common/client/index";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-import { detailLinkWithBackContext, getStatusSemanticColor, type DetailBackSource } from "@voyzu/finance/common/client";
-import type {
-    ArLedgerEntryDocumentReportResponseDto,
-    ArSubledgerEntryResponseDto,
-} from "@voyzu/finance/types/modules/ar-subledger";
+import { detailLinkWithBackContext, getStatusSemanticColor, type DetailBackSource } from "../../../common/client/index";
+import type { ArLedgerEntryDocumentReportResponseDto } from "../../types/ar-ledger-entry-document-report.response.dto";
+import type { ArSubledgerEntryResponseDto } from "../../types/ar-subledger-entry.response.dto";
 import {
     Badge,
     Breadcrumbs,
