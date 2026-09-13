@@ -7,8 +7,16 @@ import { productsModule } from "./modules/products/module";
 import { settingsModule } from "./modules/settings/module";
 
 export const commercialPackage = {
-  internalApi: [...customersModule.internalApi],
+  contracts: {
+    defines: { ...customersModule.defines },
+    implements: { ...customersModule.implements },
+  },
   modules: [customersModule, suppliersModule, salesModule, purchasingModule, productsModule, settingsModule],
-} as const satisfies VoyzuPackageDefinition;
+} as const satisfies Omit<VoyzuPackageDefinition, "contracts"> & {
+  contracts: {
+    defines: typeof customersModule.defines;
+    implements: typeof customersModule.implements;
+  };
+};
 
 export default commercialPackage;

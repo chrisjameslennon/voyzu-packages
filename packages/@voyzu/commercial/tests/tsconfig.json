@@ -1,15 +1,8 @@
 {
-  "extends": "../business-objects/tsconfig.json",
+  "extends": "../modules/customers/contracts/tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "lib": ["esnext", "dom"],
-    "paths": {
-      "@voyzu/types/business-objects/*": ["../../../../../voyzu/lib/types/src/business-objects/*"],
-      "@voyzu/capability/internal-api": ["../../../../.run/voyzu/lib/capability/src/internal-api/index.ts"],
-      "typebox": ["../../../../../voyzu/node_modules/typebox"]
-    },
     "types": ["node"],
     "typeRoots": ["../../../../../voyzu/node_modules/@types"]
   },
-  "include": ["*.ts", "../../../../.run/node_modules/next/types/global.d.ts"]
+  "include": ["*.ts"]
 }

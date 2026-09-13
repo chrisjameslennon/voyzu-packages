@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@voyzu/types/internal-api": ["../../../../../../../voyzu/lib/types/src/internal-api.ts"],
+      "@voyzu/types/business-objects/*": [
+        "../../../../../../../voyzu/lib/types/src/business-objects/*.definition.ts"
+      ],
+      "typebox": ["../../../../../../../voyzu/node_modules/typebox"]
+    }
+  },
+  "include": ["*.ts", "../server/lib/*.ts"]
+}
