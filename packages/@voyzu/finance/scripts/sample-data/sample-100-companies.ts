@@ -4,7 +4,7 @@ const envFile = process.argv.includes("--production") ? ".env.production" : ".en
 config({ path: `apps/web/${envFile}` });
 
 import { getPool } from "@voyzu/capability/db";
-import { createOrganization } from "@voyzu/erp-core/organizations/server";
+import { internalApi } from "@voyzu/capability/internal-api";
 import { ConflictError } from "@voyzu/capability/errors";
 
 const PREFIXES = [
@@ -40,7 +40,7 @@ async function main() {
     const name = `${prefix} ${suffix} ${pad(i)}`;
 
     try {
-      await createOrganization({
+      await internalApi.call("@core/organization", "create", {
         code,
         name,
         countryCode: country.code,

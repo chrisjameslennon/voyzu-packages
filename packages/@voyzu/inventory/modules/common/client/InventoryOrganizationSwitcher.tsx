@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { OrganizationSwitcher } from "@voyzu/erp-core/exports/components";
+import { OrganizationSwitcher } from "@voyzu/organization/exports/components";
 
 export function InventoryOrganizationSwitcher({ isCollapsed }: { isCollapsed: boolean; }) {
   const router = useRouter();

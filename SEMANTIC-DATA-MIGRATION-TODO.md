@@ -1,5 +1,23 @@
 # Semantic Data Contract migration
 
+## Current status
+
+Superseded: semantic data and semantic capabilities have both been removed. All active callers now use the internal API. ERP Core has moved to the preinstalled Platform package `@voyzu/organization`.
+
+| Previous retrieval | Current internal API |
+| --- | --- |
+| `userSummary.byIds` | `@core/user.getSummaries` |
+| `organizationDirectory.all` | `@core/organization.getDirectory` |
+| `inventoryItem.byOrganization` | `@erp/inventory-item.byOrganization` |
+| `inventoryItem.operational.bySkus` | `@erp/inventory-item-operational.bySkus` |
+| `stockActivity.byCode` | `@erp/stock-activity.byCode` |
+
+Identity, organization context, financial provisioning and inventory processing also use internal API implementations. Shared Finance compositions return a nested `finance` property. Method-only contracts may omit `dataDefinition`. Historical command tests remain disabled; migrated contract tests have been typechecked, not executed during this migration.
+
+See [Internal API](../voyzu/docs/public/platform-contracts/internal-api.md).
+
+## Previous migration (historical)
+
 The five retrieval capabilities have been migrated. The old capability definitions
 and registrations are removed; callers use full-record queries and adapt results
 to existing application DTOs.

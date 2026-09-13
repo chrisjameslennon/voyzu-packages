@@ -1,7 +1,7 @@
 import "server-only";
 
 
-import { capabilities, semanticData } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 import { listFinancialYears } from "../../../../financial-years/server/index";
 import { listPeriods } from "../../../../financial-years/server/index";
 
@@ -41,8 +41,8 @@ function previous90DaysRange(fiscalYearStartDate?: string): { fromDate: string; 
 export async function JournalEntriesReportPage({ surface }: ReportPageProps = {}) {
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || (await capabilities.use("erp.organization-context").getSavedOrganizationId({})).organizationId;
-  const companies = await semanticData.query("organization", "all", {});
+  const selectedCompanyId = queryCompanyId || (await internalApi.call("@core/organization-context", "getSavedOrganizationId", {})).organization_id;
+  const companies = await internalApi.call("@core/organization", "list", {}).then(rows => rows.map(({ organization_id, ...row }) => ({ id: organization_id, ...row })));
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
   const fallbackFromDate = previous90DaysStartIso();
   const fallbackToDate = todayIso();

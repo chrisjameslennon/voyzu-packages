@@ -1,12 +1,10 @@
 import Type, { type Static } from "typebox";
+import { InventoryItemOperationalSchema } from "@voyzu/types/business-objects/inventory-item-operational";
 
 export const OperationalItemDto = Type.Object({
+  ...InventoryItemOperationalSchema.properties,
+  // Preserve this DTO's existing numeric ID and additional-property policy.
   id: Type.Number(),
-  sku: Type.String(),
-  name: Type.String(),
-  description: Type.String(),
-  quantityTracked: Type.Boolean(),
-  status: Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]),
 });
 
 export type OperationalItemDto = Static<typeof OperationalItemDto>;

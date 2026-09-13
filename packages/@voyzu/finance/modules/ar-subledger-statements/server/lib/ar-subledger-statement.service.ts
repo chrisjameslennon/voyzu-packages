@@ -1,8 +1,7 @@
 import { getDb } from "@voyzu/capability/db";
 import type { ArCounterpartyStatementApplicationDto, ArCounterpartyStatementGroupDto, ArCounterpartyStatementResponseDto } from "../../types/ar-counterparty-statement.response.dto";
 import type { ArCounterpartySummaryResponseDto } from "../../../ar-subledger-counterparties/types/ar-counterparty-summary.response.dto";
-import type { SemanticDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = SemanticDataValue<"organization">;
+import type { OrganizationResponseDto } from "@voyzu/types/business-objects/organization";
 
 import { ArSubledgerStatementRepo } from "../db/ar-subledger-statement.repo";
 

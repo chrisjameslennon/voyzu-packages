@@ -1,6 +1,6 @@
 import "server-only";
 
-import { semanticData } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 import { getSelectedCompany } from "../../../journals/server/index";
 import { notFound } from "next/navigation";
 
@@ -10,7 +10,7 @@ import { InventoryTransactionReportTemplate } from "../../client/InventoryTransa
 import { getFinanceInventoryActivity } from "../lib/inventory-processing.service";
 
 export async function InventoryTransactionDetailPage({ id, surface }: { id?: string; surface?: { unframed?: boolean } }) {
-  const inventory = semanticData.isImplemented("stockActivity");
+  const inventory = internalApi.has("@erp/stock-activity");
   if (!inventory) {
     return <IntegrationUnavailablePage pageTitle="Inventory Transaction" packageName="Inventory" message="Install the Inventory package to view the source stock document." icon="inventory_2" />;
   }
@@ -18,8 +18,8 @@ export async function InventoryTransactionDetailPage({ id, surface }: { id?: str
   if (!company || !id) notFound();
   const activity = await getFinanceInventoryActivity(company.id, Number(id));
   if (!activity) notFound();
-  const [record] = await semanticData.query("stockActivity", "byCode", {
-    organizationId: company.organizationId,
+  const [record] = await internalApi.call("@erp/stock-activity", "byCode", {
+    organization_id: company.organizationId,
     code: activity.inventoryDocumentCode,
   });
   if (!record) notFound();

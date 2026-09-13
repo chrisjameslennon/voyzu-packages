@@ -1,7 +1,6 @@
 import type { ArSubledgerEntryResponseDto } from "../../types/ar-subledger-entry.response.dto";
 import type { ArLedgerEntryDocumentReportApplicationDto, ArLedgerEntryDocumentReportLineDto, ArLedgerEntryDocumentReportResponseDto, ArLedgerEntryDocumentReportTotalDto } from "../../types/ar-ledger-entry-document-report.response.dto";
-import type { SemanticDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = SemanticDataValue<"organization">;
+import type { OrganizationResponseDto } from "@voyzu/types/business-objects/organization";
 import { getDb } from "@voyzu/capability/db";
 import { getAuditActors } from "../../../common/server/index";
 

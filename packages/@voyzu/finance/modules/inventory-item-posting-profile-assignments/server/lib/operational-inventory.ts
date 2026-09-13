@@ -3,7 +3,7 @@ import { OperationalInventoryRepo } from "../db/operational-inventory.repo";
 
 
 import { getDb } from "@voyzu/capability/db";
-import { semanticData } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 import { BusinessRuleError } from "@voyzu/capability/errors";
 
 export interface OperationalInventoryItem {
@@ -21,7 +21,7 @@ export async function getOperationalInventoryItems(
   skus: string[],
 ): Promise<OperationalInventoryItem[]> {
   if (skus.length === 0) return [];
-  const items = await semanticData.queryOptional("inventoryItem.operational", "bySkus", { organizationId, skus });
+  const items = await internalApi.callOptional("@erp/inventory-item-operational", "bySkus", { organization_id: organizationId, skus });
   if (items === null) return [];
   const { rows } = await new OperationalInventoryRepo(getDb()).listAssignmentsForItems(organizationId, items.map(({ id }) => id));
   const profileByItem = new Map(rows.map((row: Record<string, unknown>) => [Number(row.inventory_item_id), Number(row.item_posting_profile_id)]));
@@ -37,7 +37,7 @@ export async function getItemPostingProfileUsages(
   const usages: Array<{ itemPostingProfileId: number; sku: string }> = [];
   const organizationIds = [...new Set(rows.map((row) => Number(row.organization_id)))];
   for (const organizationId of organizationIds) {
-    const items = await semanticData.queryOptional("inventoryItem", "byOrganization", { organizationId });
+    const items = await internalApi.callOptional("@erp/inventory-item", "byOrganization", { organization_id: organizationId });
     if (items === null) throw new BusinessRuleError("Cannot check posting-profile usage: Inventory is unavailable.");
     const byId = new Map(items.map((item) => [item.id, item.sku]));
     for (const row of rows.filter((row) => Number(row.organization_id) === organizationId)) {

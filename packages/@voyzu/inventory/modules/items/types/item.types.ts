@@ -2,6 +2,7 @@ import Type, { type Static } from "typebox";
 import { StrictObject } from "@voyzu/types/api";
 import { AuditMetadataDto, Status } from "@voyzu/types/modules/core";
 import { Unit } from "../../core/types";
+import { InventoryItemSchema } from "@voyzu/types/business-objects/inventory-item";
 
 const PositiveId = Type.Integer({ minimum: 1 });
 const ItemSku = Type.String({ pattern: "^[A-Z0-9][A-Z0-9_-]*$" });
@@ -45,9 +46,9 @@ export const ItemPatchRequestDto = StrictObject({
 });
 export type ItemPatchRequestDto = Static<typeof ItemPatchRequestDto>;
 export const ItemResponseDto = StrictObject({
+  ...InventoryItemSchema.properties,
   id: PositiveId, sku: ItemSku, name: NonBlankText, description: Type.String(),
   category: Type.Union([ItemCategoryOptionDto, Type.Null()]), unit: Type.Union([Unit, Type.Null()]),
-  quantityTracked: Type.Boolean(),
   dimensionUnit: Type.Union([DimensionUnitDto, Type.Null()]),
   dimensionHeight: Type.Union([Type.Number(), Type.Null()]), dimensionWidth: Type.Union([Type.Number(), Type.Null()]), dimensionDepth: Type.Union([Type.Number(), Type.Null()]),
   weightUnit: Type.Union([WeightUnitDto, Type.Null()]), weight: Type.Union([Type.Number(), Type.Null()]),
@@ -68,8 +69,9 @@ export const ItemListCustomFieldDto = StrictObject({
 });
 export type ItemListCustomFieldDto = Static<typeof ItemListCustomFieldDto>;
 export const ItemListRowDto = StrictObject({
+  ...InventoryItemSchema.properties,
   id: PositiveId, sku: ItemSku, name: NonBlankText, category: Type.Union([Type.String(), Type.Null()]),
-  unit: Type.Union([Unit, Type.Null()]), quantityTracked: Type.Boolean(),
+  unit: Type.Union([Unit, Type.Null()]),
   unitsOnHand: Type.Number(),
   customFields: Type.Array(ItemListCustomFieldDto),
   status: Status,

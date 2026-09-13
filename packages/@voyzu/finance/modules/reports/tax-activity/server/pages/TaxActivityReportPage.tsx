@@ -4,7 +4,7 @@ import "server-only";
 import { getDb } from "@voyzu/capability/db";
 import type { FinancialYearResponseDto } from "../../../../financial-years/types/index";
 
-import { capabilities, semanticData } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 import { listFinancialYears } from "../../../../financial-years/server/index";
 
 import { TaxActivityReport } from "../../client/index";
@@ -88,8 +88,8 @@ function deriveFilingPeriods(
 export async function TaxActivityReportPage({ surface }: ReportPageProps = {}) {
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || (await capabilities.use("erp.organization-context").getSavedOrganizationId({})).organizationId;
-  const companies = await semanticData.query("organization", "all", {});
+  const selectedCompanyId = queryCompanyId || (await internalApi.call("@core/organization-context", "getSavedOrganizationId", {})).organization_id;
+  const companies = await internalApi.call("@core/organization", "list", {}).then(rows => rows.map(({ organization_id, ...row }) => ({ id: organization_id, ...row })));
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
 
   if (!company) {

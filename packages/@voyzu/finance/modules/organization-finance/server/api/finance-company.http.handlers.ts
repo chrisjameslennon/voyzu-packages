@@ -7,7 +7,7 @@ import type { BusinessRuleErrorResponseDto, EntityNotFoundErrorResponseDto, Inpu
 import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "../../types/index";
 import type { OrganizationSelectionResponseDto, OrganizationSelectionUpdateResponseDto } from "../../types/organization-selection.dto";
 import type { OrganizationSelectionUpdateRequestDto } from "../../types/organization-selection.dto";
-import { capabilities } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 import {
   activateFinanceCompany,
   listSelectableFinanceCompaniesForCurrentUser,
@@ -21,7 +21,7 @@ export async function handleGetFinanceCompanySelection(
   _request: NextRequest,
 ): Promise<NextResponse<OrganizationSelectionResponseDto | InternalServerErrorResponseDto>> {
   try {
-    const { organizationId: requestedOrganizationId } = await capabilities.use("erp.organization-context").getSavedOrganizationId({});
+    const { organization_id: requestedOrganizationId } = await internalApi.call("@core/organization-context", "getSavedOrganizationId", {});
     const { organizations, selectedOrganization } = await resolveFinanceCompanySelectionForCurrentUser(requestedOrganizationId);
     return ok({ organizations, selectedOrganization, selectedOrganizationId: selectedOrganization?.id ?? null });
   } catch (error) {
@@ -39,7 +39,8 @@ export async function handleSetFinanceCompanySelection(
     const selectedOrganization = (await listSelectableFinanceCompaniesForCurrentUser())
       .find((organization) => organization.id === organizationId);
     if (!selectedOrganization) return notFoundError("Finance company was not found");
-    return ok(await capabilities.use("erp.organization-context").setActiveOrganization({ organizationId: selectedOrganization.id }));
+    const result = await internalApi.call("@core/organization-context", "setActiveOrganization", { organization_id: selectedOrganization.id });
+    return ok({ selectedOrganizationId: result.organization_id });
   } catch (error) {
     if (error instanceof SyntaxError) return inputValidationError(error.message);
     if (error instanceof NotFoundError) return notFoundError(error.message);

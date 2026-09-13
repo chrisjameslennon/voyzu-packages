@@ -138,7 +138,7 @@ async function sampleOrganization(): Promise<Organization> {
   const organization = result.rows[0];
   if (!organization) {
     throw new Error(
-      "Active organization TESTCO was not found. Run @voyzu/erp-core:sampleData first.",
+      "Active organization TESTCO was not found. Run @voyzu/organization:sampleData first.",
     );
   }
   return organization;

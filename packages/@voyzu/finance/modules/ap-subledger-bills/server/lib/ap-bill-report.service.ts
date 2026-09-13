@@ -1,8 +1,7 @@
 import { getDb } from "@voyzu/capability/db";
 import type { ApLedgerEntryDocumentReportApplicationDto, ApLedgerEntryDocumentReportLineDto, ApLedgerEntryDocumentReportResponseDto, ApLedgerEntryDocumentReportTaxSummaryDto, ApLedgerEntryDocumentReportTotalDto } from "../../../ap-subledger-ledger-entries/types/ap-ledger-entry-document-report.response.dto";
 import type { ApSubledgerEntryResponseDto } from "../../../ap-subledger-ledger-entries/types/ap-subledger-entry.response.dto";
-import type { SemanticDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = SemanticDataValue<"organization">;
+import type { OrganizationResponseDto } from "@voyzu/types/business-objects/organization";
 
 import { ApBillReportRepo, type ApDocumentLineRow } from "../db/ap-bill-report.repo";
 

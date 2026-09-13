@@ -1,5 +1,5 @@
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
-import { capabilities } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import {
   createCreationAuditStamp,
@@ -145,13 +145,12 @@ async function processFinancialActivities(
   organizationId: number,
   transactionId: number,
 ): Promise<void> {
-  const finance = capabilities.optional("erp.inventory-finance");
-  if (!finance) return;
+  if (!internalApi.has("@erp/inventory-finance")) return;
   const repo = new StockRepo(db);
   const activities = await repo.financialActivitiesForTransaction(organizationId, transactionId);
   const financialActivityRepo = new FinancialActivityRepo(db);
   for (const activity of activities) {
-    await finance.processInventoryMovement({ organizationId, movement: activity });
+    await internalApi.call("@erp/inventory-finance", "processInventoryMovement", { organization_id: organizationId, movement: activity });
     // Successful handoff, including Finance waiting for a matched document.
     // Contract errors propagate and roll back the enclosing stock transaction.
     await financialActivityRepo.markProcessed(

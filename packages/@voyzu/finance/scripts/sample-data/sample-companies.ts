@@ -16,7 +16,7 @@ async function main(): Promise<void> {
     const organization = organizationResult.rows[0];
     if (!organization || organization.status !== "ACTIVE") {
       throw new Error(
-        "Active organization TESTCO was not found. Run @voyzu/erp-core:sampleData first.",
+        "Active organization TESTCO was not found. Run @voyzu/organization:sampleData first.",
       );
     }
 

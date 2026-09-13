@@ -1,11 +1,11 @@
 import type { ProcessInventoryMovementRequest } from "../../types/index";
-import { processInventoryMovement } from "./processing-rules-engine";
+import { processInventoryMovement as processMovement } from "./processing-rules-engine";
 
-export async function processInventoryMovementCapability(input: {
+export async function processInventoryMovement(input: {
   organizationId: number;
   movement: ProcessInventoryMovementRequest;
 }) {
-  const activity = await processInventoryMovement(input.organizationId, input.movement);
+  const activity = await processMovement(input.organizationId, input.movement);
   return {
     financeInventoryActivityId: activity.id,
     processingStatus: activity.processingStatus,

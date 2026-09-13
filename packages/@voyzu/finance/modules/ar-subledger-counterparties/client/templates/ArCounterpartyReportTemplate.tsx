@@ -1,6 +1,5 @@
 import type { ArCounterpartyResponseDto } from "../../types/ar-counterparty.response.dto";
-import type { SemanticDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = SemanticDataValue<"organization">;
+import type { OrganizationResponseDto } from "@voyzu/types/business-objects/organization";
 
 import { arCounterpartyReportCss, arCounterpartyReportStyles as styles } from "./ar-counterparty-report.css";
 

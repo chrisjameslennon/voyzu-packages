@@ -14,22 +14,8 @@ import { uninstall } from "./uninstall/manifest";
 
 export const inventoryPackage = {
   contracts: {
-    semanticDataDefinition: {
-      implements: {
-        inventoryItem: {
-          get: (id: number) => import("./modules/items/server/lib/inventory-catalog.provider").then(m => m.get(id)),
-          queries: { byOrganization: (input: { organizationId: number }) => import("./modules/items/server/lib/inventory-catalog.provider").then(m => m.byOrganization(input)) },
-        },
-        "inventoryItem.operational": {
-          get: (id: number) => import("./modules/items/server/lib/inventory-catalog.provider").then(m => m.getOperational(id)),
-          queries: { bySkus: (input: { organizationId: number; skus: string[] }) => import("./modules/items/server/lib/inventory-catalog.provider").then(m => m.bySkus(input)) },
-        },
-        stockActivity: {
-          get: (id: number) => import("./modules/stock/server/lib/inventory-activity.provider").then(m => m.get(id)),
-          queries: { byCode: (input: { organizationId: number; code: string }) => import("./modules/stock/server/lib/inventory-activity.provider").then(m => m.byCode(input)) },
-        },
-      },
-    },
+    internalApi: { implements: { ...itemsModule.implements, ...stockModule.implements } },
+    
   },
   modules: [
     coreModule,

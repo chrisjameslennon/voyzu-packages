@@ -15,11 +15,23 @@ const definition = {
   },
 };
 
+test("internal API: operation-only contracts do not require dataDefinition", async () => {
+  const operation = { methods: definition.methods };
+  const packages = [{ name: "@example", contracts: { internalApi: {
+    defines: { "@example/operation": operation },
+    implements: { "@example/operation": async () => ({ methods: { get: async ({ id }: { id: number }) => ({ id }) } }) },
+  } } }];
+  const config = resolveInternalApiContracts(packages);
+  const api = createInternalApi([createLazyInternalApiResource("@example/operation", operation, config.providers.get("@example/operation")!.load)]) as InternalApiInvoker;
+  assert.deepEqual(await api.call("@example/operation", "get", { id: 1 }), { id: 1 });
+  await assert.rejects(api.call("@example/operation", "get", { id: "wrong" }), /Invalid .* input/);
+});
+
 test("internal API: providers are lazy and cached across concurrent calls", async () => {
   let loads = 0;
   const resource = createLazyInternalApiResource("@example/record", definition, async () => {
     loads++;
-    return { get: async ({ id }) => ({ id }) };
+    return { methods: { get: async ({ id }) => ({ id }) } };
   });
   const api = createInternalApi([resource]) as InternalApiInvoker;
   assert.equal(loads, 0);
@@ -31,7 +43,7 @@ test("internal API: input rejected before loading; output rejects extra fields",
   let loads = 0;
   const api = createInternalApi([createLazyInternalApiResource("@example/record", definition, async () => {
     loads++;
-    return { get: async ({ id }) => ({ id, extra: true }) };
+    return { methods: { get: async ({ id }) => ({ id, extra: true }) } };
   })]) as InternalApiInvoker;
   await assert.rejects(api.call("@example/record", "get", { id: "wrong" }), /Invalid .* input/);
   assert.equal(loads, 0);
@@ -42,13 +54,13 @@ test("internal API: absent providers and missing methods fail explicitly", async
   const missing = createInternalApi([createLazyInternalApiResource("@example/record", definition)]) as InternalApiInvoker;
   await assert.rejects(missing.call("@example/record", "get", { id: 1 }), /No implementation/);
   await assert.rejects(missing.call("@example/record", "constructor", {}), /Unknown method/);
-  const incomplete = createInternalApi([createLazyInternalApiResource("@example/record", definition, async () => ({}))]) as InternalApiInvoker;
+  const incomplete = createInternalApi([createLazyInternalApiResource("@example/record", definition, async () => ({ methods: {} }))]) as InternalApiInvoker;
   await assert.rejects(incomplete.call("@example/record", "get", { id: 1 }), /Missing implementation/);
 });
 
 test("internal API: composition rejects duplicate definitions, providers and unknown contracts", () => {
   const owner = { name: "@example", contracts: { internalApi: { defines: { "@example/record": definition } } } };
-  const provider = { name: "@provider", contracts: { internalApi: { implements: { "@example/record": async () => ({ get: async ({ id }: { id: number }) => ({ id }) }) } } } };
+  const provider = { name: "@provider", contracts: { internalApi: { implements: { "@example/record": async () => ({ methods: { get: async ({ id }: { id: number }) => ({ id }) } }) } } } };
   assert.throws(() => resolveInternalApiContracts([owner, owner]), /Duplicate definition/);
   assert.throws(() => resolveInternalApiContracts([owner, provider, provider]), /Duplicate implementation/);
   assert.throws(() => resolveInternalApiContracts([provider]), /Undefined resource/);
@@ -56,7 +68,7 @@ test("internal API: composition rejects duplicate definitions, providers and unk
 });
 
 test("internal API: namespace ownership distinguishes implementation and composition", () => {
-  const load = async () => ({ get: async ({ id }: { id: number }) => ({ id }) });
+  const load = async () => ({ methods: { get: async ({ id }: { id: number }) => ({ id }) } });
   const platform = { name: "@voyzu/business-objects", isPlatform: true };
   const shared = { defines: { "@erp/example": definition } };
   assert.throws(() => resolveInternalApiContracts([{ ...platform, contracts: { internalApi: { ...shared, implements: { "@erp/example": load } } } }]), /ownership/);
@@ -80,7 +92,7 @@ test("internal API: has checks registration without loading providers", () => {
   const api = createInternalApi([
     createLazyInternalApiResource("@example/record", definition, async () => {
       loads++;
-      return { get: async ({ id }) => ({ id }) };
+      return { methods: { get: async ({ id }) => ({ id }) } };
     }),
     createLazyInternalApiResource("@example/unimplemented", definition),
   ]);
@@ -101,7 +113,7 @@ test("internal API: optional retrieval returns null only for absent resources/pr
 
 test("internal API: optional calls preserve results and validation errors", async () => {
   const api = createInternalApi([createLazyInternalApiResource("@example/record", definition, async () => ({
-    get: async ({ id }) => id === 2 ? { id, extra: true } : { id },
+    methods: { get: async ({ id }) => id === 2 ? { id, extra: true } : { id } },
   }))]) as InternalApiInvoker;
   assert.deepEqual(await api.callOptional("@example/record", "get", { id: 1 }), { id: 1 });
   await assert.rejects(api.callOptional("@example/record", "get", { id: "wrong" }), /Invalid .* input/);
@@ -113,12 +125,27 @@ test("internal API: optional calls do not hide loader or handler failures", asyn
   const failure = new Error("Provider failed");
   for (const load of [
     async () => { throw failure; },
-    async () => ({ get: async () => { throw failure; } }),
-    async () => ({}),
+    async () => ({ methods: { get: async () => { throw failure; } } }),
+    async () => ({ methods: {} }),
   ]) {
     const api = createInternalApi([createLazyInternalApiResource("@example/record", definition, load)]) as InternalApiInvoker;
     await assert.rejects(api.callOptional("@example/record", "get", { id: 1 }));
   }
+});
+
+test("internal API: accepting missing implementations does not create providers", async () => {
+  const packages = [{ name: "@voyzu/example", isPlatform: true, contracts: {
+    internalApi: { defines: { "@core/example": definition } },
+  } }];
+  assert.throws(() => resolveInternalApiContracts(packages), /requires a Platform implementation/);
+  const result = resolveInternalApiContracts(packages, { acceptMissingImplementations: true });
+  assert.equal(result.definitions.has("@core/example"), true);
+  assert.equal(result.providers.has("@core/example"), false);
+  assert.throws(() => resolveInternalApiContracts([...packages, ...packages], { acceptMissingImplementations: true }), /Duplicate definition/);
+  const api = createInternalApi([createLazyInternalApiResource("@core/example", definition)]) as InternalApiInvoker;
+  assert.equal(api.has("@core/example"), false);
+  assert.equal(await api.callOptional("@core/example", "get", { id: 1 }), null);
+  await assert.rejects(api.call("@core/example", "get", { id: 1 }), /No implementation/);
 });
 
 test("internal API: composed registry exposes has and typed optional calls", async () => {
@@ -128,4 +155,26 @@ test("internal API: composed registry exposes has and typed optional calls", asy
   const customer = await internalApi.callOptional("@erp/customer", "get", { party_id: 1 });
   assert.equal(customer?.account.creditLimit, 5000);
   assert.equal(await internalApi.callOptional("@erp/customer", "get", { party_id: 999 }), null);
+});
+
+test("internal API: transactions are implementation metadata, not definition metadata", async () => {
+  const api = createInternalApi([]) as InternalApiInvoker;
+  const resource = createLazyInternalApiResource("@example/record", definition, async () => ({
+    methods: { get: async ({ id }) => ({ id }) },
+    transactionalMethods: ["get"],
+  }));
+  const loaded = await resource.methods.get.loadHandler(api);
+  assert.equal(loaded.transactional, true);
+  assert.deepEqual(await loaded.handler({ id: 1 }), { id: 1 });
+  assert.equal(Object.hasOwn(definition.methods.get, "transactional"), false);
+
+  const invalid = createLazyInternalApiResource("@example/record", definition, async () => ({
+    methods: { get: async ({ id }) => ({ id }) },
+    transactionalMethods: ["missing"],
+  }));
+  await assert.rejects(invalid.methods.get.loadHandler(api), /Invalid transactionalMethods/);
+  const legacyDefinition = { ...definition, methods: { get: { ...definition.methods.get, transactional: true } } };
+  assert.throws(() => resolveInternalApiContracts([{ name: "@example", contracts: { internalApi: { defines: {
+    "@example/record": legacyDefinition,
+  } } } }]), /Transaction settings belong to the implementation/);
 });

@@ -2,7 +2,7 @@ import "server-only";
 import { PostingProfileAssignmentRepo } from "../db/posting-profile-assignment.repo";
 
 import { getDb } from "@voyzu/capability/db";
-import { semanticData } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
 import type { AssignPostingProfileRequest, PostingAssignments } from "../../types";
 
@@ -14,7 +14,7 @@ async function organizationId(companyId: number): Promise<number> {
 
 export async function listPostingProfileAssignments(companyId: number): Promise<PostingAssignments> {
   const orgId = await organizationId(companyId);
-  const result = await semanticData.queryOptional("inventoryItem", "byOrganization", { organizationId: orgId });
+  const result = await internalApi.callOptional("@erp/inventory-item", "byOrganization", { organization_id: orgId });
   const items = result ?? [];
   const { rows: profileRows } = await new PostingProfileAssignmentRepo(getDb()).listProfiles(companyId);
   const profiles = profileRows.map((row: Record<string, unknown>) => ({ id: Number(row.id), code: String(row.code), name: String(row.name), status: row.status === "INACTIVE" ? "INACTIVE" as const : "ACTIVE" as const }));

@@ -1,8 +1,7 @@
 import { getDb } from "@voyzu/capability/db";
 import type { ArInvoiceStatementResponseDto } from "../../types/ar-invoice-statement.response.dto";
 import type { ArSubledgerEntryResponseDto } from "../../../ar-subledger-ledger-entries/types/ar-subledger-entry.response.dto";
-import type { SemanticDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = SemanticDataValue<"organization">;
+import type { OrganizationResponseDto } from "@voyzu/types/business-objects/organization";
 import type { ArInvoiceDetailedInvoiceDto } from "../../../financial-document-processing-engine/types/ar-invoice.response.dto";
 import { listArSubledgerEntries } from "../../../ar-subledger-ledger-entries/server/index";
 import { ArInvoiceStatementRepo } from "../db/ar-invoice-statement.repo";

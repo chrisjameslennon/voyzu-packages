@@ -8,9 +8,9 @@ export const defines = {
 
 export const implementations = {
   "@erp/CustomerAccount": () => import("./server/lib/customer-account.implementation")
-    .then(module => module.customerAccountMethods),
+    .then(module => ({ methods: module.customerAccountMethods })),
   "@voyzu/commercial/customer-price-lists": () => import("./server/lib/customer-price-list.implementation")
-    .then(module => module.customerPriceListMethods),
+    .then(module => ({ methods: module.customerPriceListMethods })),
   "@voyzu/commercial/customer-price-list-items": () => import("./server/lib/customer-price-list-item.implementation")
-    .then(module => module.customerPriceListItemMethods),
+    .then(module => ({ methods: module.customerPriceListItemMethods })),
 } as const;

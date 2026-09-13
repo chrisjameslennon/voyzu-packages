@@ -1,6 +1,8 @@
-import { capabilities } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 
 export async function getSelectedOrganization() {
-  const { selectedOrganization } = await capabilities.use("erp.organization-context").getActiveOrganization({});
-  return selectedOrganization;
+  const { selectedOrganization } = await internalApi.call("@core/organization-context", "getActiveOrganization", {});
+  if (!selectedOrganization) return null;
+  const { organization_id, ...record } = selectedOrganization;
+  return { id: organization_id, ...record };
 }

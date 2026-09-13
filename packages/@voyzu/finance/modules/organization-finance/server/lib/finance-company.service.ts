@@ -2,9 +2,8 @@ import "server-only";
 
 import { getDb, withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError, NotFoundError } from "@voyzu/capability/errors";
-import { capabilities } from "@voyzu/capability/contracts";
-import type { SemanticDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = SemanticDataValue<"organization">;
+import { internalApi } from "@voyzu/capability/internal-api";
+import type { OrganizationResponseDto } from "@voyzu/types/business-objects/organization";
 import type { FinanceCompanyResponseDto, FinanceCompanyUpdateRequestDto } from "../../types/index";
 import { createCreationAuditStamp } from "../../../common/server/index";
 import { FinanceCompanyRepo, type FinanceCompanyRow } from "../db/finance-company.repo";
@@ -54,7 +53,7 @@ export function getFinanceCompany(code: string): Promise<FinanceCompanyResponseD
   return findByCode(code, getDb());
 }
 
-export async function getOrganizationFinanceMasterData(organizationId: number): Promise<FinanceCompanyResponseDto | null> {
+export async function getOrganizationFinance(organizationId: number): Promise<FinanceCompanyResponseDto | null> {
   const row = await new FinanceCompanyRepo(getDb()).getByOrganizationId(organizationId);
   return row?.finance_organization_id != null ? toDto(row) : null;
 }
@@ -62,17 +61,18 @@ export async function getOrganizationFinanceMasterData(organizationId: number): 
 export async function createFinancialEntity({ organizationId }: { organizationId: number }): Promise<{ financialEntityId: number }> {
   return withTransaction(async () => {
     await createFinanceCompanyForErpOrganization(organizationId);
-    const company = await getOrganizationFinanceMasterData(organizationId);
+    const company = await getOrganizationFinance(organizationId);
     if (company?.financeCompanyId == null) throw new BusinessRuleError(`Unable to create financial entity for organization ${organizationId}`);
     return { financialEntityId: company.financeCompanyId };
   });
 }
 
 export async function listSelectableFinanceCompaniesForCurrentUser(): Promise<OrganizationResponseDto[]> {
-  const { organizations: accessibleOrganizations } = await capabilities.use("erp.organization-context").getAvailableOrganizations({});
+  const { organizations: accessibleOrganizations } = await internalApi.call("@core/organization-context", "getAvailableOrganizations", {});
   if (accessibleOrganizations.length === 0) return [];
   const financeOrganizationIds = new Set(await new FinanceCompanyRepo(getDb()).listOrganizationIds());
-  return accessibleOrganizations.filter((organization) => financeOrganizationIds.has(organization.id));
+  return accessibleOrganizations.filter((organization) => financeOrganizationIds.has(organization.organization_id))
+    .map(({ organization_id, ...organization }) => ({ id: organization_id, ...organization }));
 }
 
 export async function resolveFinanceCompanySelectionForCurrentUser(requestedOrganizationId: number | null) {

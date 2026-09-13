@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 
 import { getDb, type DbExecutor } from "@voyzu/capability/db";
 import { BusinessRuleError } from "@voyzu/capability/errors";
-import { capabilities } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 
 import { SettingsScopeRepo } from "../db/settings-scope.repo";
 
@@ -96,9 +96,9 @@ export async function assertCompanySettingsWritable(
 export async function resolveServerSettingsScope(
   db: DbExecutor = getDb(),
 ): Promise<CompanySettingsScope> {
-  const context = capabilities.use("erp.organization-context");
-  const { organizationId: companyId } = await context.getSavedOrganizationId({});
-  const { organizations: accessibleCompanies } = await context.getAvailableOrganizations({});
+  const { organization_id: companyId } = await internalApi.call("@core/organization-context", "getSavedOrganizationId", {});
+  const { organizations: available } = await internalApi.call("@core/organization-context", "getAvailableOrganizations", {});
+  const accessibleCompanies = available.map(({ organization_id, ...organization }) => ({ id: organization_id, ...organization }));
   const financeCompanyIds = new Set(
     await new SettingsScopeRepo(db).listFinanceOrganizationIds(),
   );

@@ -1,14 +1,6 @@
-import Type, { type Static } from "typebox";
-
-export const CustomerPriceListItemSchema = Type.Object(
-  {
-    id: Type.Number(),
-    code: Type.String(),
-    name: Type.String(),
-    price: Type.Number(),
-  },
-  { additionalProperties: false },
-);
+import { CustomerPriceListItemSchema, CustomerPriceListItemGetRequestDto, CustomerPriceListItemGetResponseDto, CustomerPriceListItemUpdateRequestDto } from "../types/customer-price-list-item.internal-api.dto";
+export { CustomerPriceListItemSchema } from "../types/customer-price-list-item.internal-api.dto";
+import type { Static } from "typebox";
 
 export interface CustomerPriceListItem
   extends Static<typeof CustomerPriceListItemSchema> {}
@@ -22,11 +14,11 @@ export const CustomerPriceListItemDefinition = {
   dataDefinition: CustomerPriceListItemSchema,
   methods: {
     get: {
-      input: Type.Object({ id: Type.Number() }, { additionalProperties: false }),
-      output: Type.Union([CustomerPriceListItemSchema, Type.Null()]),
+      input: CustomerPriceListItemGetRequestDto,
+      output: CustomerPriceListItemGetResponseDto,
     },
     update: {
-      input: Type.Object({ id: Type.Number(), price: Type.Number() }, { additionalProperties: false }),
+      input: CustomerPriceListItemUpdateRequestDto,
       output: CustomerPriceListItemSchema,
     },
   },

@@ -1,6 +1,7 @@
 import Type, { type Static } from "typebox";
 import { StrictObject } from "@voyzu/types/api";
 import { AuditMetadataDto, Status } from "@voyzu/types/modules/core";
+import { StockActivitySchema } from "@voyzu/types/business-objects/stock-activity";
 import { StockAdjustmentReasonCode, StockIssueReasonCode, StockReceiptReasonCode, StockReasonCode } from "../../core/types";
 const Id = Type.Integer({ minimum: 1 });
 const Qty = Type.Number({ exclusiveMinimum: 0 });
@@ -51,15 +52,12 @@ export const LinkedDocumentDto = StrictObject({
 });
 export type LinkedDocument = Static<typeof LinkedDocumentDto>;
 export const StockActivityDetailDto = StrictObject({
-  id: Id,
+  ...StockActivitySchema.properties,
+  // Retain Inventory's stricter labels and reason codes.
   code: Text,
-  date: Type.String(),
   type: Text,
-  reference: Type.Union([Type.String(), Type.Null()]),
-  notes: Type.String(),
   linkedDocuments: Type.Array(LinkedDocumentDto),
   lines: Type.Array(StockTransactionLineDto),
-  audit: AuditMetadataDto,
 });
 export type StockActivityDetail = Static<typeof StockActivityDetailDto>;
 export const StockOptionDto = StrictObject({

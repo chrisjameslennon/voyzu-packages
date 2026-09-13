@@ -1,7 +1,6 @@
 "use client";
 
-import type { SemanticDataValue } from "@voyzu/capability/contracts";
-type OrganizationResponseDto = SemanticDataValue<"organization">;
+import type { OrganizationResponseDto } from "@voyzu/types/business-objects/organization";
 import type { StockCountDetail } from "../types/stock.types";
 import { printableDocumentCss, printableDocumentStyles as documentStyles } from "@voyzu/ui-style";
 import { stockCountReportCss, stockCountReportStyles as localStyles } from "./stock-count-report-template.css";

@@ -1,14 +1,14 @@
-import { capabilities } from "@voyzu/capability/contracts";
+import { internalApi } from "@voyzu/capability/internal-api";
 import { findCompanySettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function getSelectedCompany() {
-  const { selectedOrganization } = await capabilities.use("erp.organization-context").getActiveOrganization({});
+  const { selectedOrganization } = await internalApi.call("@core/organization-context", "getActiveOrganization", {});
   if (!selectedOrganization) return null;
-  const financeScope = await findCompanySettingsScope(selectedOrganization.id);
+  const financeScope = await findCompanySettingsScope(selectedOrganization.organization_id);
   if (!financeScope) return null;
   return {
     ...selectedOrganization,
-    organizationId: selectedOrganization.id,
+    organizationId: selectedOrganization.organization_id,
     id: financeScope.companyId,
   };
 }
