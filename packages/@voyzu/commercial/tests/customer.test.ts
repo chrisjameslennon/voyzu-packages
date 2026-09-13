@@ -1,10 +1,10 @@
 // ============================================================================
-// Customer examples using JSON-backed mocks, not the platform dispatcher.
+// Customer examples using the composed platform dispatcher and JSON-backed data.
 // ============================================================================
 
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
-import { internalApi, resetMockData } from "./internal-api.mock";
+import { internalApi, resetMockData } from "./internal-api.setup";
 
 beforeEach(resetMockData);
 

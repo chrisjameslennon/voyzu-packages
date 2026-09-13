@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
-import { internalApi, resetMockData } from "./internal-api.mock";
+import { internalApi, resetMockData } from "./internal-api.setup";
 
-// JSON-backed prototype examples, not platform-dispatcher validation tests.
+// JSON-backed data exercised through the composed platform dispatcher.
 beforeEach(resetMockData);
 
 test("price lists: get a list and its items", async () => {

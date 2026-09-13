@@ -20,3 +20,23 @@ export interface CustomerPriceListMethods {
     changes: { name?: string; items?: CustomerPriceListItem[] };
   }): Promise<CustomerPriceList>;
 }
+
+export const CustomerPriceListDefinition = {
+  dataDefinition: CustomerPriceListSchema,
+  methods: {
+    get: {
+      input: Type.Object({ id: Type.Number() }, { additionalProperties: false }),
+      output: Type.Union([CustomerPriceListSchema, Type.Null()]),
+    },
+    update: {
+      input: Type.Object({
+        id: Type.Number(),
+        changes: Type.Object({
+          name: Type.Optional(Type.String()),
+          items: Type.Optional(Type.Array(CustomerPriceListItemSchema)),
+        }, { additionalProperties: false }),
+      }, { additionalProperties: false }),
+      output: CustomerPriceListSchema,
+    },
+  },
+} as const;

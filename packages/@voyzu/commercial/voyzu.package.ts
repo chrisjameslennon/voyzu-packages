@@ -12,11 +12,6 @@ export const commercialPackage = {
     implements: { ...customersModule.implements },
   },
   modules: [customersModule, suppliersModule, salesModule, purchasingModule, productsModule, settingsModule],
-} as const satisfies Omit<VoyzuPackageDefinition, "contracts"> & {
-  contracts: {
-    defines: typeof customersModule.defines;
-    implements: typeof customersModule.implements;
-  };
-};
+} as const satisfies VoyzuPackageDefinition;
 
 export default commercialPackage;

@@ -1,8 +1,26 @@
 {
-  "extends": "../modules/customers/contracts/tsconfig.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "paths": {
+      "@voyzu/types/business-objects/*": ["../../../../.run/voyzu/lib/types/src/business-objects/*.definition.ts"],
+      "@voyzu/types/*": ["../../../../.run/voyzu/lib/types/src/*"],
+      "@voyzu/capability/*": ["../../../../.run/voyzu/lib/capability/src/*"],
+      "@voyzu/ui-components/*": ["../../../../.run/voyzu/lib/ui-components/src/*"],
+      "@voyzu/ui-layout/*": ["../../../../.run/voyzu/lib/ui-layout/src/*"],
+      "@voyzu/ui-style/*": ["../../../../.run/voyzu/lib/ui-style/src/*"],
+      "@voyzu/ui-surface/*": ["../../../../.run/voyzu/lib/ui-surface/src/*"],
+      "typebox": ["../../../../../voyzu/node_modules/typebox"]
+    },
     "types": ["node"],
     "typeRoots": ["../../../../../voyzu/node_modules/@types"]
   },
-  "include": ["*.ts"]
+  "include": ["*.ts", "../../../../../voyzu/node_modules/next/types/global.d.ts"]
 }
