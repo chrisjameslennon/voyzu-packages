@@ -5,7 +5,7 @@
     "lib": ["esnext", "dom"],
     "paths": {
       "@voyzu/types/business-objects/*": ["../../../../../voyzu/lib/types/src/business-objects/*"],
-      "@voyzu/capability/cross-package-api": ["../../../../.run/voyzu/lib/capability/src/cross-package-api/index.ts"],
+      "@voyzu/capability/internal-api": ["../../../../.run/voyzu/lib/capability/src/internal-api/index.ts"],
       "typebox": ["../../../../../voyzu/node_modules/typebox"]
     },
     "types": ["node"],
