@@ -8,8 +8,10 @@ import { settingsModule } from "./modules/settings/module";
 
 export const commercialPackage = {
   contracts: {
-    defines: { ...customersModule.defines },
-    implements: { ...customersModule.implements },
+    internalApi: {
+      defines: { ...customersModule.defines },
+      implements: { ...customersModule.implements },
+    },
   },
   modules: [customersModule, suppliersModule, salesModule, purchasingModule, productsModule, settingsModule],
 } as const satisfies VoyzuPackageDefinition;

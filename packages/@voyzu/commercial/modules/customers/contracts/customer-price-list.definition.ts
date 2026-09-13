@@ -40,3 +40,6 @@ export const CustomerPriceListDefinition = {
     },
   },
 } as const;
+
+/** The complete schema definition, including data and method contracts. */
+export type CustomerPriceListContract = typeof CustomerPriceListDefinition;

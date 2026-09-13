@@ -10,16 +10,17 @@ beforeEach(resetMockData);
 
 test("business objects: get a full customer", async () => {
   const customer = await internalApi.call(
-    "@core/customer",
+    "@erp/customer",
     "get",
     {
-      id: 1,
+      party_id: 1,
     },
   );
 
   assert.ok(customer);
 
-  assert.equal(customer.id, 1);
+  assert.equal(customer.party_id, 1);
+  assert.equal(customer.account.party_id, 1);
   assert.equal(customer.code, "CUSTOMER-001");
   assert.equal(customer.name, "Example Customer");
 
@@ -27,21 +28,32 @@ test("business objects: get a full customer", async () => {
   assert.equal(customer.account.purchaseOrderRequired, false);
 });
 
+test("customer account uses party_id, not its private row id", async () => {
+  const account = await internalApi.call("@erp/CustomerAccount", "get", { party_id: 1 });
+  assert.ok(account);
+  assert.equal(account.party_id, 1);
+  assert.equal(Object.hasOwn(account, "id"), false);
+  assert.equal(await internalApi.call("@erp/CustomerAccount", "get", { party_id: 101 }), null);
+  // @ts-expect-error Party-linked methods do not accept the ambiguous id field.
+  await assert.rejects(internalApi.call("@erp/CustomerAccount", "get", { id: 1 }), /Invalid .* input/);
+  assert.equal(internalApi.has("@core/customer/account"), false);
+});
+
 test("business objects: adjust customer credit limit", async () => {
   await internalApi.call(
-    "@core/customer/account",
+    "@erp/CustomerAccount",
     "adjustCreditLimit",
     {
-      id: 1,
+      party_id: 1,
       amount: 2500,
     },
   );
 
   const customer = await internalApi.call(
-    "@core/customer",
+    "@erp/customer",
     "get",
     {
-      id: 1,
+      party_id: 1,
     },
   );
 
@@ -51,10 +63,10 @@ test("business objects: adjust customer credit limit", async () => {
 
 test("business objects: update customer account fields", async () => {
   await internalApi.call(
-    "@core/customer/account",
+    "@erp/CustomerAccount",
     "update",
     {
-      id: 1,
+      party_id: 1,
       changes: {
         purchaseOrderRequired: true,
       },
@@ -62,10 +74,10 @@ test("business objects: update customer account fields", async () => {
   );
 
   const customer = await internalApi.call(
-    "@core/customer",
+    "@erp/customer",
     "get",
     {
-      id: 1,
+      party_id: 1,
     },
   );
 
@@ -75,10 +87,10 @@ test("business objects: update customer account fields", async () => {
 
 test("business objects: update customer name", async () => {
   await internalApi.call(
-    "@core/customer",
+    "@erp/customer",
     "update",
     {
-      id: 1,
+      party_id: 1,
       changes: {
         name: "Renamed Customer",
       },
@@ -86,10 +98,10 @@ test("business objects: update customer name", async () => {
   );
 
   const customer = await internalApi.call(
-    "@core/customer",
+    "@erp/customer",
     "get",
     {
-      id: 1,
+      party_id: 1,
     },
   );
 
