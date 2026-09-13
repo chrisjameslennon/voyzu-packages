@@ -18,7 +18,7 @@ import type { ArWriteOffRequestDto } from "../../../types/ar-write-off.request.d
 import type { BankCashJournalDetailsDto } from "../../../types/bank-cash-details.dto";
 
 import { resolveBankCashDetails, toJournalBankCashFields } from "../../../../bank-cash-accounts/server/lib/bank-cash-account.service";
-import { resolveEffectiveSettingsCompanyId } from "../../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../../organization-finance/server/lib/settings-scope";
 import { JournalRepo } from "../../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../../journals/server/db/journal.row.types";
 import { ArAdjustmentPostingRepo } from "../db/ar-adjustment-posting.repo";

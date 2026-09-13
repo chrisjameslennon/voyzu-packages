@@ -21,7 +21,7 @@ import { businessRuleError, conflictError, notFoundError, serverError, inputVali
 import { BusinessRuleError, ConflictError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
 import { created, noContent, ok } from "@voyzu/capability/http";
 import { parseBody } from "@voyzu/capability/http";
-import { resolveApiSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveApiSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 import {
   activateDimensions,

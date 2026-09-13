@@ -3,7 +3,7 @@ import type { DbExecutor } from "@voyzu/capability/db";
 import type { TaxActivityAuthorityColumnDto, TaxActivityLineDto } from "../../types/tax-activity.response.dto";
 
 import { TrialBalanceSnapshotRepo } from "../../../server/db/trial-balance-snapshot.repo";
-import { resolveEffectiveSettingsCompanyId } from "../../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../../organization-finance/server/lib/settings-scope";
 
 interface TaxActivityRawLine {
   tax_authority_code: string;

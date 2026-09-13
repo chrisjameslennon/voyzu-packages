@@ -29,7 +29,7 @@ import type {
   GlAccountCategoryUpdateRequestDto,
 } from "../../types/index";
 
-import { resolveApiSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveApiSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import {
   activateGlAccountCategories,
   activateGlAccountCategory,

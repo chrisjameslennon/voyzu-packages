@@ -7,6 +7,7 @@ import { productsModule } from "./modules/products/module";
 import { settingsModule } from "./modules/settings/module";
 
 export const commercialPackage = {
+  crossPackageApi: [...customersModule.crossPackageApi],
   modules: [customersModule, suppliersModule, salesModule, purchasingModule, productsModule, settingsModule],
 } as const satisfies VoyzuPackageDefinition;
 

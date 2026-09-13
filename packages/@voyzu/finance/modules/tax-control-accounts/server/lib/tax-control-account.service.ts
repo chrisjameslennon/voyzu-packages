@@ -8,7 +8,7 @@ import { createUpdateAuditStamp, withAuditActors } from "../../../common/server/
 
 import { TaxControlAccountRepo } from "../db/tax-control-account.repo";
 import type { TaxControlAccountRow } from "../db/tax-control-account.row.types";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 const REQUIRED_ACCOUNT_TYPE: Record<string, AccountType | null> = {
   TAX_ON_SALES: "LIABILITY",
   TAX_ON_PURCHASES: "ASSET",

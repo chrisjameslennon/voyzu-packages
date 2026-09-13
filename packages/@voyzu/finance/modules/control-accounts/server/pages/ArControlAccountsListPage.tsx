@@ -8,8 +8,8 @@ import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 
 import { ArControlAccountSummaryPanels } from "../../client/ArControlAccountSummaryPanels";
 import { listControlAccountSettingsByLedger } from "../index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function ArControlAccountsListPage() {
   const scope = await resolveServerSettingsScope();

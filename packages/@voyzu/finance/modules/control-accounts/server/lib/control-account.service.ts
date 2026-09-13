@@ -10,7 +10,7 @@ import type { AccountType } from "../../../common/types/index";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createUpdateAuditStamp, withAuditActors } from "../../../common/server/index";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { ControlAccountRepo } from "../db/control-account.repo";
 import type { ControlAccountRow } from "../db/control-account.row.types";
 

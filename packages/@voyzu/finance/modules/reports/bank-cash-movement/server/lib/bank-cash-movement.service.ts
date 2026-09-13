@@ -1,6 +1,6 @@
 import type { BankCashMovementResponseDto } from "../../types/bank-cash-movement.response.dto";
 import { getDb } from "@voyzu/capability/db";
-import { resolveEffectiveSettingsCompanyId } from "../../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../../organization-finance/server/lib/settings-scope";
 import { BankCashMovementRepo } from "../db/bank-cash-movement.repo";
 import { getCompanyReportContext } from "../../../server/lib/company-report.service";
 

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { FinancialYearsListContent } from "../../client/index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
 import { getSelectedCompany } from "../../../journals/server/index";
 import { listFinancialYears } from "../lib/financial-year.service";
 

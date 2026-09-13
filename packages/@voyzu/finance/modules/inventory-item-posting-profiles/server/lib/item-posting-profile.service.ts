@@ -4,7 +4,7 @@ import { AssignGLAccount, ConfigurePostingAccounts, Deactivate, Delete } from ".
 import type { ItemPostingProfileBatchPatchRequestDto, ItemPostingProfileBatchUpdateRequestDto, ItemPostingProfileCreateRequestDto, ItemPostingProfilePatchRequestDto, ItemPostingProfileResponseDto, ItemPostingProfileUpdateRequestDto } from "../../types/index";
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../common/server/index";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { getItemPostingProfileUsages } from "../../../inventory-item-posting-profile-assignments/server/lib/operational-inventory";
 
 import { ItemPostingProfileRepo } from "../db/item-posting-profile.repo";

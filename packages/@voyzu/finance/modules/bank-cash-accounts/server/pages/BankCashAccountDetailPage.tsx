@@ -5,8 +5,8 @@ import { notFound } from "next/navigation";
 import { BankCashAccountDetail } from "../../client/index";
 import { getBankCashAccount } from "../index";
 import { listGlAccounts } from "../../../gl-accounts/server/index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { normalizeDetailBackSource } from "../../../common/server/index";
 
 interface CompanyBankCashAccountDetailPageProps {

@@ -1,5 +1,5 @@
 import "server-only";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { PostingProfileAssignmentsView } from "../../client/PostingProfileAssignmentsView";
 import { listPostingProfileAssignments } from "../lib/posting-profile-assignment.service";
 

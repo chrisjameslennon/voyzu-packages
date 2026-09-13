@@ -1,9 +1,9 @@
 import "server-only";
 
 import { GlAccountsListContent } from "../../client/index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
 import { listGlAccountCategories } from "../../../gl-account-categories/server/index";
-import { resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { listGlAccounts } from "../index";
 
 export async function GlAccountsListPage() {

@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 
 import { DimensionDetail } from "../../client/index";
 import { getDimension } from "../index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 interface CompanyDimensionDetailPageProps {
   code?: string;

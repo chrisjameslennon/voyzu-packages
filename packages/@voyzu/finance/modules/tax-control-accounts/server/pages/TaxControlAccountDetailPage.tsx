@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import { TaxControlAccountDetail } from "../../client/index";
 import { getTaxControlAccount } from "../index";
 import { listGlAccounts } from "../../../gl-accounts/server/index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function TaxControlAccountDetailPage({ code }: { code?: string }) {
   if (!code) notFound();

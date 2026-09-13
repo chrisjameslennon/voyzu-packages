@@ -1,5 +1,5 @@
 import { type NextRequest } from "next/server";
-import { resolveApiCompanyIdFromPath } from "../../../../finance-companies/server/lib/settings-scope";
+import { resolveApiCompanyIdFromPath } from "../../../../organization-finance/server/lib/settings-scope";
 import { ok } from "@voyzu/capability/http";
 import { serverError, inputValidationError } from "@voyzu/capability/http";
 import { NotFoundError, InputValidationError } from "@voyzu/capability/errors";

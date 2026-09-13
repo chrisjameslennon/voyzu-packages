@@ -30,7 +30,7 @@ import { reportsModule } from "./modules/reports/module";
 import { taxControlAccountsModule } from "./modules/tax-control-accounts/module";
 import { financialDocumentProcessingEngineModule } from "./modules/financial-document-processing-engine/module";
 import { financialYearsModule } from "./modules/financial-years/module";
-import { financeCompaniesModule } from "./modules/finance-companies/module";
+import { organizationFinanceModule } from "./modules/organization-finance/module";
 import { countryTaxSettingsModule } from "./modules/country-tax-settings/module";
 import { inventoryLedgerModule } from "./modules/inventory-ledger/module";
 import { inventoryProcessingModule } from "./modules/inventory-processing/module";
@@ -90,7 +90,7 @@ export const financePackage = {
           }),
         },
         "organization.finance": {
-          get: (id: number) => import("./modules/finance-companies/server/lib/finance-company.service").then(async m => {
+          get: (id: number) => import("./modules/organization-finance/server/lib/finance-company.service").then(async m => {
             const value = await m.getOrganizationFinanceMasterData(id);
             if (!value) return null;
             const { financeCompanyId, financeEnabled, taxFilingAnchorMonth, taxFilingIntervalMonths, reportLine1, reportLine2, reportFooter, hasPostings } = value;
@@ -106,13 +106,13 @@ export const financePackage = {
             import("./modules/inventory-processing/server/lib/inventory-finance.provider").then(m => m.processInventoryMovementCapability(input)),
         },
         "erp.organization-finance": {
-          createFinancialEntity: (input: { organizationId: number }) => import("./modules/finance-companies/server/lib/finance-company.service").then(m => m.createFinancialEntity(input)),
+          createFinancialEntity: (input: { organizationId: number }) => import("./modules/organization-finance/server/lib/finance-company.service").then(m => m.createFinancialEntity(input)),
         },
       },
     },
   },
   modules: [
-    financeCompaniesModule,
+    organizationFinanceModule,
     countryTaxSettingsModule,
     journalsModule,
     reportsModule,

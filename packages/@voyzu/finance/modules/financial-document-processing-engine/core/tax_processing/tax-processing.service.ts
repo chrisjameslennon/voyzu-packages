@@ -18,7 +18,7 @@ import { getDb, type DbExecutor, withTransaction } from "@voyzu/capability/db";
 import { BusinessRuleError, InputValidationError } from "@voyzu/capability/errors";
 import { TaxProcessingRepo } from "./db/tax-processing.repo";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { resolveBankCashDetails, toJournalBankCashFields } from "../../../bank-cash-accounts/server/lib/bank-cash-account.service";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { InsertJournalLineRow, JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";

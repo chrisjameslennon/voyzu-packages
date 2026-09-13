@@ -8,7 +8,7 @@ import { createUpdateAuditStamp, withAuditActors } from "../../../common/server/
 
 import { InventoryControlAccountRepo } from "../db/inventory-control-account.repo";
 import type { InventoryControlAccountRow } from "../db/inventory-control-account.row.types";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 const REQUIRED_ACCOUNT_TYPE: Record<string, AccountType | null> = {
   INVENTORY_CONTROL: "ASSET",
 };

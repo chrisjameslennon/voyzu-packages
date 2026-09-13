@@ -6,8 +6,8 @@ import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 
 import { CompanySettingsTitleBadges } from "../../../common/client/index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { listFinancialDocumentTypes } from "../index";
 import { FinancialDocumentTypesListContent } from "../../client/index";
 

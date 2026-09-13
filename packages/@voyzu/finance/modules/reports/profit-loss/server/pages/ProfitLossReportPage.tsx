@@ -4,7 +4,7 @@ import "server-only";
 import { capabilities, semanticData } from "@voyzu/capability/contracts";
 import { listFinancialYears } from "../../../../financial-years/server/index";
 import { listPeriods } from "../../../../financial-years/server/index";
-import { resolveCompanySettingsScope } from "../../../../finance-companies/server/lib/settings-scope";
+import { resolveCompanySettingsScope } from "../../../../organization-finance/server/lib/settings-scope";
 
 import { ProfitLossReport } from "../../client/index";
 import { ProfitLossReportTemplate } from "../../templates/ProfitLossReportTemplate";

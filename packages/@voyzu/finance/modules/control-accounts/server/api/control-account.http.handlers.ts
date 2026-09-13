@@ -17,7 +17,7 @@ import { businessRuleError, notFoundError, serverError, inputValidationError } f
 import { ok } from "@voyzu/capability/http";
 import { parseBody } from "@voyzu/capability/http";
 import { BusinessRuleError, NotFoundError, InputValidationError } from "@voyzu/capability/errors";
-import { resolveApiSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveApiSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 import {
   filterControlAccounts,

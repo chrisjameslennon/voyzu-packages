@@ -2,9 +2,9 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
 import { listGlAccountCategories } from "../../../gl-account-categories/server/index";
-import { resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { getGlAccount } from "../index";
 import { GlAccountDetail } from "../../client/GlAccountDetail";
 

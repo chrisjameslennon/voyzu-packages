@@ -48,7 +48,7 @@ export const financeInstall = {
     "./install/db/objects/trigger.journal_line_validate.create.sql",
     "./install/db/objects/triggers.business.attach.sql",
     "./install/db/objects/audit-triggers.attach.sql",
-    "./modules/finance-companies/server/initialization/initialize-financial-entity.sql",
+    "./modules/organization-finance/server/initialization/initialize-financial-entity.sql",
   ],
   seedSql: [
     "./install/db/seed/finance-country.seed.sql",

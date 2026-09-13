@@ -1,7 +1,7 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
 import { EntryType } from "../../common/types/index";
-import { OrganizationResponseDto } from "../../finance-companies/types/organization.response.dto";
+import { OrganizationResponseDto } from "../../organization-finance/types/organization.response.dto";
 import { BusinessCode, CurrencyCode, IsoDate, NonBlankText } from "../../common/types/constraints";
 
 export const ArCounterpartyStatementApplicationDto = StrictObject({

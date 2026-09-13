@@ -5,7 +5,7 @@ import type { GlAccountBatchPatchRequestDto, GlAccountBatchUpdateRequestDto, GlA
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withCreationAudit, withUpdateAudit } from "../../../common/server/index";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { ChangeCode, Deactivate, Delete } from "../../domain/operation-policy";
 import { GlAccountRepo } from "../db/gl-account.repo";
 import type { GlAccountRow } from "../db/gl-account.row.types";

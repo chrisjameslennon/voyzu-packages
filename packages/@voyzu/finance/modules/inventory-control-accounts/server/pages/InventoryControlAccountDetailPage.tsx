@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import { InventoryControlAccountDetail } from "../../client/index";
 import { getInventoryControlAccountSetting } from "../index";
 import { listGlAccounts } from "../../../gl-accounts/server/index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function InventoryControlAccountDetailPage({ code }: { code?: string }) {
   if (!code) notFound();

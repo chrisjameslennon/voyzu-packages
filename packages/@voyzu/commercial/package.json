@@ -79,6 +79,7 @@
     }
   },
   "peerDependencies": {
+    "typebox": "^1.3.7",
     "@voyzu/ui-surface": "^0.1.0",
     "@voyzu/types": "^0.1.0",
     "@voyzu/ui-components": "^0.1.0",

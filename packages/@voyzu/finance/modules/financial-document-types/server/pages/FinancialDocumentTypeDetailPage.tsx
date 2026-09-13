@@ -2,8 +2,8 @@ import "server-only";
 
 import { notFound } from "next/navigation";
 
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { buildFinancialDocumentTypePostingTemplate, getFinancialDocumentType } from "../index";
 import { FinancialDocumentTypeDetail } from "../../client/index";
 

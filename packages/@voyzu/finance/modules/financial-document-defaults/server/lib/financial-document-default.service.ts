@@ -5,7 +5,7 @@ import type { FinancialDocumentDefaultCreateRequestDto, FinancialDocumentDefault
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createUpdateAuditStamp, withAuditActors, withUpdateAudit } from "../../../common/server/index";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { FinancialDocumentDefaultRepo, type FinancialDocumentDefaultKey } from "../db/financial-document-default.repo";
 
 import { toDto, toPatchRow, toUpdateRow } from "./financial-document-default.mapper";

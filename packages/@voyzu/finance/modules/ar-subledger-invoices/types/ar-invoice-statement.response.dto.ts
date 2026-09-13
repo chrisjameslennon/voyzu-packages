@@ -1,6 +1,6 @@
 import Type from "typebox";
 import { StrictObject } from "@voyzu/types/api";
-import { OrganizationResponseDto } from "../../finance-companies/types/organization.response.dto";
+import { OrganizationResponseDto } from "../../organization-finance/types/organization.response.dto";
 import { ArInvoiceDetailedInvoiceDto } from "../../financial-document-processing-engine/types/ar-invoice.response.dto";
 import { BusinessCode, IsoDate, NonBlankText } from "../../common/types/constraints";
 

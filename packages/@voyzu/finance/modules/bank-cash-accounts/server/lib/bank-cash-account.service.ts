@@ -17,7 +17,7 @@ import type {
   BankCashAccountUpdateRequestDto,
 } from "../../types/index";
 import type { Filter, ListOptions } from "@voyzu/types/params";
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { AssignGLAccount, ChangeCode, ChangeType, Deactivate, Delete, UpdateGLAccount } from "../../domain/operation-policy";
 import { BankCashAccountRepo } from "../db/bank-cash-account.repo";
 import { toDto, toInsertRow, toPatchRow, updateToPatch } from "./bank-cash-account.mapper";

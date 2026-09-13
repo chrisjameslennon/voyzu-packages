@@ -10,7 +10,7 @@ import type {
   ArReceiptApplicationPostingResponseDto,
 } from "../../types/ar-receipt-application.response.dto";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import arReceiptApplicationPosting from "../journal-posting-components";

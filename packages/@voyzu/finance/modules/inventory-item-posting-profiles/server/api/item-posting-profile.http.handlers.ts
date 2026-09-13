@@ -15,7 +15,7 @@ import { businessRuleError, inputValidationError, notFoundError, serverError } f
 import { parseBody } from "@voyzu/capability/http";
 import { created, noContent, ok } from "@voyzu/capability/http";
 import { BusinessRuleError, DatabaseError, InputValidationError, NotFoundError } from "@voyzu/capability/errors";
-import { resolveApiSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveApiSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 import {
   activateItemPostingProfile,

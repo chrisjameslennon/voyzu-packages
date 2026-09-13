@@ -38,7 +38,7 @@ import {
   deactivateGlAccount,
   deactivateGlAccounts,
 } from "../lib/gl-account.service";
-import { resolveApiSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveApiSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 
 

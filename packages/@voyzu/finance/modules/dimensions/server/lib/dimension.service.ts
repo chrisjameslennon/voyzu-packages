@@ -5,7 +5,7 @@ import type { DimensionBatchPatchRequestDto, DimensionBatchUpdateRequestDto, Dim
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../common/server/index";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { DimensionValueRepo } from "../db/dimension-value.repo";
 import { DimensionRepo } from "../db/dimension.repo";
 

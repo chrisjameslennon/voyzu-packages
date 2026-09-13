@@ -11,7 +11,7 @@ import type {
 import type { Filter, ListOptions } from "@voyzu/types/params";
 import { createCreationAuditStamp, createUpdateAuditStamp, withAuditActors, withCreationAudit, withUpdateAudit } from "../../../common/server/index";
 
-import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable, resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { Deactivate, Delete } from "../../domain/operation-policy";
 import { GlAccountCategoryRepo } from "../db/gl-account-category.repo";
 import type { GlAccountCategoryRow } from "../db/gl-account-category.row.types";

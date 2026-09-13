@@ -27,7 +27,7 @@ Type-only imports do not load runtime code, but still create compile-time coupli
 
 ### Concrete examples
 
-- [Finance company service](packages/@voyzu/finance/modules/finance-companies/server/lib/finance-company.service.ts): directly imports ERP Core's organization-selection service and organization type.
+- [Finance company service](packages/@voyzu/finance/modules/organization-finance/server/lib/finance-company.service.ts): directly imports ERP Core's organization-selection service and organization type.
 - [Balance sheet report page](packages/@voyzu/finance/modules/company-reports/balance-sheet/server/pages/BalanceSheetReportPage.tsx): directly imports `listOrganizations`, the selected-organization cookie constant and ID parsing helper from ERP Core. Similar dependencies occur across Finance report pages.
 - [Inventory organization context](packages/@voyzu/inventory/modules/common/server/organization-context.ts): directly imports ERP Core's selection service and cookie helpers.
 - [Finance sample-data script](packages/@voyzu/finance/scripts/sample-data/sample-100-companies.ts): directly imports ERP Core's `createOrganization` function.

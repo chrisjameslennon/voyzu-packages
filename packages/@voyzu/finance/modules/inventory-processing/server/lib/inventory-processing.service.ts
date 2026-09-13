@@ -7,7 +7,7 @@ import {
 } from "../../domain/index";
 import type { FinanceInventoryActivity, FinanceInventoryProcessingRule, FinanceInventoryProcessingRulePatch } from "../../types/index";
 import { createUpdateAuditStamp, withAuditActors } from "../../../common/server/index";
-import { assertCompanySettingsWritable } from "../../../finance-companies/server/lib/settings-scope";
+import { assertCompanySettingsWritable } from "../../../organization-finance/server/lib/settings-scope";
 
 import { InventoryProcessingRepo } from "../db/inventory-processing.repo";
 import type { FinanceInventoryActivityRow, FinanceInventoryProcessingRuleRow } from "../db/inventory-processing.row.types";

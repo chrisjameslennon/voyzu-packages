@@ -31,7 +31,7 @@ import {
   searchBankCashAccounts,
   updateBankCashAccount,
 } from "../lib/bank-cash-account.service";
-import { resolveApiSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveApiSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function handleList(req: NextRequest): Promise<NextResponse<BankCashAccountResponseDto[] | InternalServerErrorResponseDto>> {
   try {

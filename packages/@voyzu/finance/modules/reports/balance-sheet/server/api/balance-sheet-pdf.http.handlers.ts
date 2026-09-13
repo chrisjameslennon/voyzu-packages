@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { resolveApiCompanyIdFromPath } from "../../../../finance-companies/server/lib/settings-scope";
+import { resolveApiCompanyIdFromPath } from "../../../../organization-finance/server/lib/settings-scope";
 import { renderHtmlToPdf } from "@voyzu/capability/pdf";
 import { NotFoundError } from "@voyzu/capability/errors";
 import { inputValidationError, serverError } from "@voyzu/capability/http";

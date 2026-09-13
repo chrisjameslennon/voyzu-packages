@@ -3,7 +3,7 @@ import "server-only";
 import { notFound } from "next/navigation";
 
 import { FinancialYearDetail } from "../../client/index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
 import { getSelectedCompany } from "../../../journals/server/index";
 import { getFinancialYear, listFinancialYears } from "../lib/financial-year.service";
 import { listPeriods } from "../periods/lib/financial-period.service";

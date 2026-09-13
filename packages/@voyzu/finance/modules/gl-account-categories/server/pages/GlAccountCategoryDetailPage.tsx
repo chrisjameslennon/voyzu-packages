@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 
 import { GlAccountCategoryDetail } from "../../client/index";
 import { getGlAccountCategory } from "../index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 interface CompanyGlAccountCategoryDetailPageProps {
   code?: string;

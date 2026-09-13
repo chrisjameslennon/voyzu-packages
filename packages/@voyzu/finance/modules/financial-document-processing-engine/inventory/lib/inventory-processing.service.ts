@@ -14,7 +14,7 @@ import type {
 } from "../../types/inventory-processing.response.dto";
 import type { InventoryReceiptRequestDto } from "../../types/inventory-receipt.request.dto";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { getOperationalInventoryItems } from "../../../inventory-item-posting-profile-assignments/server/lib/operational-inventory";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";

@@ -1,4 +1,4 @@
-import { companyFinancePageAuth } from "../finance-companies/server/lib/company-finance-page-auth";
+import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 
 export const pageRoutes = {
   rules: {

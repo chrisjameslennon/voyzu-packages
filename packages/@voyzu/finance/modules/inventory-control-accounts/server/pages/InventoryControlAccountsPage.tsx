@@ -7,8 +7,8 @@ import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { InventoryControlAccountsContent } from "../../client/index";
 import { listInventoryControlAccountSettings } from "../index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function InventoryControlAccountsPage() {
   const scope = await resolveServerSettingsScope();

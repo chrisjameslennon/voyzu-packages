@@ -6,8 +6,8 @@ import { decodeFinancialDocumentDefaultKey, getFinancialDocumentDefault } from "
 import { listBankCashAccounts } from "../../../bank-cash-accounts/server/index";
 import { listGlAccounts } from "../../../gl-accounts/server/index";
 import { normalizeDetailBackSource } from "../../../common/server/index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { FinancialDocumentDefaultDetail } from "../../client/index";
 
 export async function FinancialDocumentDefaultDetailPage({ code, surface }: { code?: string; surface?: { searchParams?: Record<string, string> } }) {

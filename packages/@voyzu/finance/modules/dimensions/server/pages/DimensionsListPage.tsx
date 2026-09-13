@@ -8,8 +8,8 @@ import { CompanySettingsTitleBadges } from "../../../common/client/index";
 
 import { DimensionsListContent } from "../../client/index";
 import { listDimensions } from "../index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function DimensionsListPage() {
   const scope = await resolveServerSettingsScope();

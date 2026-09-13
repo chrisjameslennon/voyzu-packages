@@ -1,6 +1,6 @@
 import type { DbExecutor } from "@voyzu/capability/db";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import type { ArSubledgerEntryRow } from "./ar-subledger-ledger-entries.row.types";
 
 export interface ArDocumentLineRow {

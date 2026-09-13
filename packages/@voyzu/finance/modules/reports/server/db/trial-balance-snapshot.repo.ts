@@ -1,7 +1,7 @@
 import { withTransaction, type DbExecutor } from "@voyzu/capability/db";
 import type { AccountType } from "../../../common/types/index";
 
-import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 
 const BASIS = "POSTED";
 

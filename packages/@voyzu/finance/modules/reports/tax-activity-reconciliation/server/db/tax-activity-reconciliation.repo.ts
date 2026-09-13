@@ -3,7 +3,7 @@ import type { DbExecutor } from "@voyzu/capability/db";
 import type { TaxActivityReconciliationAuthorityOptionDto, TaxActivityReconciliationLineDto } from "../../types/tax-activity-reconciliation.response.dto";
 
 import { TrialBalanceSnapshotRepo } from "../../../server/db/trial-balance-snapshot.repo";
-import { resolveEffectiveSettingsCompanyId } from "../../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../../organization-finance/server/lib/settings-scope";
 
 interface RawReconciliationLine {
   posting_date: string;

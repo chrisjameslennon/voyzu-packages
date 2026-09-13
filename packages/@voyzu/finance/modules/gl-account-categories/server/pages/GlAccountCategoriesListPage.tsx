@@ -8,8 +8,8 @@ import { CompanySettingsTitleBadges } from "../../../common/client/index";
 
 import { GlAccountCategoriesListContent } from "../../client/index";
 import { listGlAccountCategories } from "../index";
-import { getCompanySettingsUiState } from "../../../finance-companies/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../finance-companies/server/lib/settings-scope";
+import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
+import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function GlAccountCategoriesListPage() {
   const scope = await resolveServerSettingsScope();

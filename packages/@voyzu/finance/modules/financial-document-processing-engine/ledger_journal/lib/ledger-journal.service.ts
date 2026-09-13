@@ -13,7 +13,7 @@ import type {
 } from "../../types/ledger-journal.response.dto";
 
 import { resolveBankCashDetails, toJournalBankCashFields } from "../../../bank-cash-accounts/server/lib/bank-cash-account.service";
-import { resolveEffectiveSettingsCompanyId } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveEffectiveSettingsCompanyId } from "../../../organization-finance/server/lib/settings-scope";
 import { JournalRepo } from "../../../journals/server/db/journal.repo";
 import type { JournalHeaderRow, JournalLineRow } from "../../../journals/server/db/journal.row.types";
 import { LedgerJournalPostingRepo } from "../db/ledger-journal-posting.repo";

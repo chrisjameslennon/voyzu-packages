@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { ok, parseBody, serverError } from "@voyzu/capability/http";
-import { resolveApiCompanyIdFromPath } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveApiCompanyIdFromPath } from "../../../organization-finance/server/lib/settings-scope";
 import type { AssignPostingProfileRequest } from "../../types";
 import { assignPostingProfile, listPostingProfileAssignments } from "../lib/posting-profile-assignment.service";
 

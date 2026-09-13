@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { resolveApiCompanyIdFromPath } from "../../../finance-companies/server/lib/settings-scope";
+import { resolveApiCompanyIdFromPath } from "../../../organization-finance/server/lib/settings-scope";
 
 import type { EntityNotFoundErrorResponseDto, InternalServerErrorResponseDto, InputValidationErrorResponseDto } from "@voyzu/types/errors";
 import type { TaxSubledgerEntryResponseDto } from "../../types/index";
