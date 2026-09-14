@@ -9,9 +9,9 @@ export class ApSubledgerCounterpartyRepo {
     const { rows } = await this.db.query(
       `SELECT
          c.id::int AS id,
-         c.finance_organization_id::int AS finance_organization_id,
-         c.code,
-         c.name,
+         c.organization_id::int AS organization_id, c.party_id::int AS party_id,
+         p.code,
+         p.name,
          c.status,
          c.country_code,
          country.name AS country_name,
@@ -24,10 +24,10 @@ export class ApSubledgerCounterpartyRepo {
          c.updated_actor_type,
          c.updated_user_id,
          c.updated_mutation_id::text AS updated_mutation_id
-       FROM ap_counterparty c
+       FROM ap_counterparty c JOIN party p ON p.id = c.party_id
        LEFT JOIN country ON country.code = c.country_code
-       WHERE c.finance_organization_id = $1
-       ORDER BY c.code ASC`,
+       WHERE c.organization_id = $1
+       ORDER BY p.code ASC`,
       [companyId],
     );
     return rows as unknown as ApCounterpartyRow[];
@@ -37,9 +37,9 @@ export class ApSubledgerCounterpartyRepo {
     const { rows } = await this.db.query(
       `SELECT
          c.id::int AS id,
-         c.finance_organization_id::int AS finance_organization_id,
-         c.code,
-         c.name,
+         c.organization_id::int AS organization_id, c.party_id::int AS party_id,
+         p.code,
+         p.name,
          c.status,
          c.country_code,
          country.name AS country_name,
@@ -52,10 +52,10 @@ export class ApSubledgerCounterpartyRepo {
          c.updated_actor_type,
          c.updated_user_id,
          c.updated_mutation_id::text AS updated_mutation_id
-       FROM ap_counterparty c
+       FROM ap_counterparty c JOIN party p ON p.id = c.party_id
        LEFT JOIN country ON country.code = c.country_code
-       WHERE c.finance_organization_id = $1
-         AND c.code = $2
+       WHERE c.organization_id = $1
+         AND p.code = $2
        LIMIT 1`,
       [companyId, code],
     );

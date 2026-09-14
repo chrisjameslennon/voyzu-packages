@@ -5,6 +5,7 @@ import { BusinessCode, CountryCode, NonBlankText, PositiveId } from "../../commo
 
 export const ArCounterpartyResponseDto = StrictObject({
   id: PositiveId,
+  party_id: PositiveId,
   companyId: PositiveId,
   code: BusinessCode,
   name: NonBlankText,

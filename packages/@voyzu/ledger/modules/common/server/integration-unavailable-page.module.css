@@ -1,0 +1,37 @@
+.frame {
+  display: flex;
+  justify-content: center;
+  padding-block: 2rem;
+}
+
+.card {
+  width: min(100%, 44rem);
+  padding: 2.5rem;
+  text-align: center;
+  background: var(--voyzu-color-surface);
+  border: var(--voyzu-border-width) solid var(--voyzu-color-border);
+  border-radius: var(--voyzu-radius-card);
+  box-shadow: var(--voyzu-shadow-surface);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 1rem;
+  color: var(--voyzu-color-text-secondary);
+  background: var(--voyzu-color-surface-muted);
+  border-radius: 50%;
+}
+
+.icon span {
+  font-size: 1.75rem;
+}
+
+.message {
+  max-width: 34rem;
+  margin: 0.75rem auto 0;
+  color: var(--voyzu-color-text-secondary);
+}

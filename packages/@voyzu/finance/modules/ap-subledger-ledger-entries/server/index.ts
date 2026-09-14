@@ -1,12 +1,2 @@
-export {
-  getApSubledgerEntry,
-  listApSubledgerEntries,
-} from "./lib/ap-subledger-ledger-entries.service";
-
-export {
-  handleGetApEntry,
-  handleListApEntries,
-} from "./http-api/ap-subledger-ledger-entries.http.handlers";
-
-export { ApLedgerEntriesListPage } from "./pages/ApLedgerEntriesListPage";
-export { ApLedgerEntryDetailPage } from "./pages/ApLedgerEntryDetailPage";
+import { internalApi } from "@voyzu/capability/internal-api";
+export async function listApSubledgerEntries(organization_id: number) { return await internalApi.callOptional("@erp/ledger-documents", "listApEntries", { organization_id }) ?? []; }

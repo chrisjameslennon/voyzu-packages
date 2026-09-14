@@ -1,6 +1,7 @@
 export interface ArCounterpartyRow {
   id: number;
-  finance_organization_id: number;
+  party_id: number;
+  organization_id: number;
   code: string;
   name: string;
   status: "ACTIVE" | "INACTIVE";

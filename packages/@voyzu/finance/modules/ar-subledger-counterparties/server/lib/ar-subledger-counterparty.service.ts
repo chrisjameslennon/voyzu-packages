@@ -12,7 +12,8 @@ async function toCounterpartyDto(row: Awaited<ReturnType<ArSubledgerCounterparty
   const auditActors = await getAuditActors(row);
   const dto: ArCounterpartyResponseDto = {
     id: row.id,
-    companyId: row.finance_organization_id,
+    party_id: row.party_id,
+    companyId: row.organization_id,
     code: row.code,
     name: row.name,
     status: row.status,
@@ -21,14 +22,14 @@ async function toCounterpartyDto(row: Awaited<ReturnType<ArSubledgerCounterparty
     taxRegionOrProvince: row.tax_region_or_province,
     audit: {
       created: {
-        date: row.creation_date,
+        date: new Date(row.creation_date).toISOString(),
         actorType: row.creation_actor_type,
         userId: row.creation_user_id,
         user: auditActors.creationUser,
         mutationId: row.creation_mutation_id,
       },
       updated: {
-        date: row.updated_date,
+        date: new Date(row.updated_date).toISOString(),
         actorType: row.updated_actor_type,
         userId: row.updated_user_id,
         user: auditActors.updatedUser,

@@ -1,3 +1,5 @@
+import { internalApi } from "@voyzu/capability/internal-api";
+import { IntegrationUnavailablePage } from "../../../common/server/IntegrationUnavailablePage";
 import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
@@ -12,6 +14,7 @@ import { ApLedgerEntryDocumentReportTemplate } from "../../client/templates/ApLe
 import { getApLedgerEntryDocumentReport } from "../lib/ap-bill-report.service";
 
 export async function ApBillDetailPage({ context }: PageProps) {
+  if (!internalApi.has("@erp/ledger-documents")) return <IntegrationUnavailablePage pageTitle="Accounting document" packageName="Ledger" message="Install the Ledger package to view the accounting records for this document." icon="account_balance" />;
   const { documentId } = pageStringParameters(context.pathParams);
   if (!documentId) notFound();
   const company = await getSelectedCompany();

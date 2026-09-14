@@ -1,0 +1,39 @@
+"use client";
+
+import { useCallback } from "react";
+import { usePathname, useRouter } from "next/navigation";
+
+import { AuditPanel, type AuditPanelProps } from "@voyzu/ui-business-components";
+import { detailLinkWithBackContext } from "@voyzu/ui-surface/client";
+
+export interface ScopedAuditPanelProps extends Omit<AuditPanelProps, "onNavigate"> {
+  mutationId?: string | null;
+}
+
+function withMutationId(auditHref: string | undefined, mutationId: string | null | undefined) {
+  if (!auditHref || !mutationId) return auditHref;
+  const [path] = auditHref.split("?");
+  return `${path}?mutationId=${encodeURIComponent(mutationId)}`;
+}
+
+export function ScopedAuditPanel({
+  auditHref,
+  mutationId,
+  ...props
+}: ScopedAuditPanelProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const resolveHref = useCallback((href: string, resolvedMutationId?: string | null) => {
+    const target = withMutationId(href, resolvedMutationId);
+    return target ? detailLinkWithBackContext(target, "audit", pathname) : undefined;
+  }, [pathname]);
+
+  const targetHref = auditHref ? resolveHref(auditHref, mutationId) : undefined;
+
+  const navigateToAudit = useCallback((href: string) => {
+    router.push(href);
+  }, [router]);
+
+  return <AuditPanel {...props} auditHref={targetHref} onNavigate={navigateToAudit} />;
+}
