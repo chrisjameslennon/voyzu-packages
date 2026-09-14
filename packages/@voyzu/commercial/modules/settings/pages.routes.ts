@@ -1,11 +1,4 @@
 export const pageRoutes = {
-  "voyzu.commercial.settings.page.entities": {
-    path: "/commercial/settings/entities",
-    pageTitle: "Entities",
-    loadPage: () => import("./server/pages/EntitiesPage").then((module) => module.EntitiesPage),
-    breadcrumbBase: [{ label: "Commercial" }, { label: "Settings" }],
-    auth: { required: true, minRole: "STANDARD" },
-  },
   "voyzu.commercial.settings.page.customFields": {
     path: "/commercial/settings/custom-fields",
     pageTitle: "Custom Fields",

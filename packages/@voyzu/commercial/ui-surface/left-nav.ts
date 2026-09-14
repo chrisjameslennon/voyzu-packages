@@ -78,10 +78,6 @@ export default [
         "label": "Settings",
         "icon": "settings",
         "children": {
-          "commercial.menu1.settings.entities": {
-            "label": "Entities",
-            "routeId": "voyzu.commercial.settings.page.entities"
-          },
           "commercial.menu1.settings.custom-fields": {
             "label": "Custom Fields",
             "routeId": "voyzu.commercial.settings.page.customFields"

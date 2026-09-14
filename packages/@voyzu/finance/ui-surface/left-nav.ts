@@ -48,5 +48,15 @@ export default [
         }
       }
     }
+  },
+  {
+    "label": "Integration",
+    "items": {
+      "finance.menu2.financial-activity": {
+        "label": "Financial Activity",
+        "icon": "account_balance",
+        "path": "/finance/integration/financial-activity"
+      }
+    }
   }
 ] as const satisfies readonly UiSurfaceMenuGroup[];

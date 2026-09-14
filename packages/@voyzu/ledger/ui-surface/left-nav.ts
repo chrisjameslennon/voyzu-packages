@@ -1,34 +1,6 @@
 import type { UiSurfaceMenuGroup } from "@voyzu/types/ui-surface";
 export default [
   {
-    "label": "Integration",
-    "items": {
-      "ledger.menu2.financial-document-types": {
-        "label": "Financial Document Types",
-        "icon": "description",
-        "routeId": "voyzu.company-financial-document-types.page.list"
-      },
-      "ledger.menu2.inventory": {
-        "label": "Inventory",
-        "icon": "inventory_2",
-        "children": {
-          "ledger.menu2.inventory.item-valuation": {
-            "label": "Item Valuation",
-            "path": "/ledger/inventory/item-valuation"
-          },
-          "ledger.menu2.inventory.movement-processing-rules": {
-            "label": "Movement Processing Rules",
-            "routeId": "voyzu.inventory-processing.page.rules"
-          },
-          "ledger.menu2.inventory.inventory-transactions": {
-            "label": "Inventory Transactions",
-            "routeId": "voyzu.inventory-processing.page.inventory-transactions"
-          }
-        }
-      }
-    }
-  },
-  {
     "label": "Accounting",
     "items": {
       "ledger.menu3.company-general-ledger": {
@@ -98,12 +70,40 @@ export default [
             }
           }
         }
+      }
+    }
+  },
+  {
+    "label": "Integration",
+    "items": {
+      "ledger.menu2.financial-document-types": {
+        "label": "Financial Document Types",
+        "icon": "description",
+        "routeId": "voyzu.company-financial-document-types.page.list"
       },
-      "ledger.menu3.financial-periods": {
-        "label": "Financial Periods",
-        "icon": "calendar_month",
-        "routeId": "voyzu.financial-years.page.list"
-      },
+      "ledger.menu2.inventory": {
+        "label": "Inventory",
+        "icon": "inventory_2",
+        "children": {
+          "ledger.menu2.inventory.item-valuation": {
+            "label": "Item Valuation",
+            "path": "/ledger/inventory/item-valuation"
+          },
+          "ledger.menu2.inventory.movement-processing-rules": {
+            "label": "Movement Processing Rules",
+            "routeId": "voyzu.inventory-processing.page.rules"
+          },
+          "ledger.menu2.inventory.inventory-transactions": {
+            "label": "Inventory Transactions",
+            "routeId": "voyzu.inventory-processing.page.inventory-transactions"
+          }
+        }
+      }
+    }
+  },
+  {
+    "label": "SETTINGS",
+    "items": {
       "ledger.menu3.settings": {
         "label": "Settings",
         "icon": "settings",
@@ -166,6 +166,11 @@ export default [
           "ledger.menu3.settings.dimensions": {
             "label": "Dimensions",
             "routeId": "voyzu.company-dimensions.page.list"
+          },
+          "ledger.menu3.financial-periods": {
+            "label": "Financial Periods",
+            "icon": "calendar_month",
+            "routeId": "voyzu.financial-years.page.list"
           }
         }
       },
