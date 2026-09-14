@@ -8,6 +8,7 @@ import { ControlAccountSettingResponseDto } from "./types/control-account-settin
 
 export const httpApiRoutes = {
   "finance.control-accounts.ar-list": {
+    description: "List Company AR Control Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/ar-control-accounts",
     loadHandler: () => import("./server/http-api/control-account.http.handlers").then((module) => module.handleListAr),
@@ -24,6 +25,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.control-accounts.ar-get": {
+    description: "Get Company AR Control Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/ar-control-accounts/[code]",
     loadHandler: () => import("./server/http-api/control-account.http.handlers").then((module) => module.handleGet),
@@ -41,6 +43,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.control-accounts.ar-patch": {
+    description: "Patch Company AR Control Accounts.",
     method: "PATCH",
     path: "/finance/[companyCode]/ar-control-accounts/[code]",
     loadHandler: () => import("./server/http-api/control-account.http.handlers").then((module) => module.handlePatch),

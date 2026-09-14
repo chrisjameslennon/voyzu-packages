@@ -9,6 +9,7 @@ const loadHandlers = () => import("./server/http-api/raw-request-response.http.h
 
 export const httpApiRoutes = {
   "ugly-package.ugly.rawRequestResponse": {
+    description: "Returns a demonstration snapshot of the raw Next.js request and response.",
     method: "GET",
     path: "/ugly-package/raw-request-response",
     loadHandler: () => loadHandlers().then((module) => module.handleRawRequestResponse),

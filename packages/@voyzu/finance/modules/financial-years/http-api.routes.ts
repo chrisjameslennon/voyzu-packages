@@ -10,6 +10,7 @@ import { FinancialYearCreateRequestDto } from "./types/financial-year.create.req
 
 export const httpApiRoutes = {
   "finance.financial-years.list": {
+    description: "List Financial Years.",
     method: "GET",
     path: "/finance/[companyCode]/financial-years",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handleList),
@@ -27,6 +28,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.create": {
+    description: "Create Financial Years.",
     method: "POST",
     path: "/finance/[companyCode]/financial-years",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handleCreate),
@@ -46,6 +48,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.exportZip": {
+    description: "Export Zip Financial Years.",
     method: "POST",
     path: "/finance/[companyCode]/financial-years/export",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handleExportZip),
@@ -56,6 +59,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Generated financial years export archive.", contentType: "application/zip" }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.financial-years.get": {
+    description: "Get Financial Years.",
     method: "GET",
     path: "/finance/[companyCode]/financial-years/[code]",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handleGet),
@@ -74,6 +78,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.patch": {
+    description: "Patch Financial Years.",
     method: "PATCH",
     path: "/finance/[companyCode]/financial-years/[code]",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handlePatch),
@@ -94,6 +99,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.delete": {
+    description: "Delete Financial Years.",
     method: "DELETE",
     path: "/finance/[companyCode]/financial-years/[code]",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handleDelete),
@@ -111,6 +117,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.open": {
+    description: "Open Financial Years.",
     method: "POST",
     path: "/finance/[companyCode]/financial-years/[code]/open",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handleOpen),
@@ -131,6 +138,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.close": {
+    description: "Close Financial Years.",
     method: "POST",
     path: "/finance/[companyCode]/financial-years/[code]/close",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handleClose),
@@ -150,6 +158,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.reopen": {
+    description: "Reopen Financial Years.",
     method: "POST",
     path: "/finance/[companyCode]/financial-years/[code]/reopen",
     loadHandler: () => import("./server/http-api/financial-year.http.handlers").then((module) => module.handleReopen),
@@ -170,6 +179,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.periodsList": {
+    description: "Periods List Financial Years.",
     method: "GET",
     path: "/finance/[companyCode]/financial-years/[code]/periods",
     loadHandler: () => import("./server/periods/api/financial-period.http.handlers").then((module) => module.handleList),
@@ -188,6 +198,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.periodsClose": {
+    description: "Periods Close Financial Years.",
     method: "POST",
     path: "/finance/[companyCode]/financial-years/[code]/periods/[periodCode]/close",
     loadHandler: () => import("./server/periods/api/financial-period.http.handlers").then((module) => module.handleClose),
@@ -207,6 +218,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-years.periodsReopen": {
+    description: "Periods Reopen Financial Years.",
     method: "POST",
     path: "/finance/[companyCode]/financial-years/[code]/periods/[periodCode]/reopen",
     loadHandler: () => import("./server/periods/api/financial-period.http.handlers").then((module) => module.handleReopen),

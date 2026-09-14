@@ -38,11 +38,13 @@ const codePathParameter = {
 
 export const httpApiRoutes = {
   "template.template.list": {
+    description: "Lists all template records.",
     method: "GET", path: "/template", loadHandler: () => loadHandlers().then((module) => module.handleList),
     summary: "List",  
     responses: { "200": { description: "All template records.", body: Type.Array(TemplateResponseDto) }, ...commonResponses },
   },
   "template.template.create": {
+    description: "Creates a template record.",
     method: "POST", path: "/template", loadHandler: () => loadHandlers().then((module) => module.handleCreate),
     request: { contentType: "application/json", body: TemplateCreateRequestDto },
     summary: "Create",  
@@ -54,12 +56,14 @@ export const httpApiRoutes = {
     },
   },
   "template.template.filter": {
+    description: "Returns templates matching the supplied filter criteria.",
     method: "POST", path: "/template/filter", loadHandler: () => loadHandlers().then((module) => module.handleFilter),
     request: { contentType: "application/json", body: FilterRequestDto },
     summary: "Filter templates",  
     responses: { "200": { description: "Filtered templates.", body: Type.Array(TemplateResponseDto) }, ...validationResponse, ...commonResponses },
   },
   "template.template.search": {
+    description: "Searches template codes and descriptions.",
     method: "GET", path: "/template/search", loadHandler: () => loadHandlers().then((module) => module.handleSearch),
     request: {
       query: {
@@ -71,6 +75,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Matching templates.", body: Type.Array(TemplateResponseDto) }, ...validationResponse, ...commonResponses },
   },
   "template.template.batchCreate": {
+    description: "Creates multiple templates in one transaction.",
     method: "POST", path: "/template/batch/create", loadHandler: () => loadHandlers().then((module) => module.handleBatchCreate),
     request: { contentType: "application/json", body: Type.Array(TemplateCreateRequestDto, { minItems: 1 }) },
     summary: "Batch create templates",  
@@ -82,72 +87,84 @@ export const httpApiRoutes = {
     },
   },
   "template.template.batchGet": {
+    description: "Retrieves templates by business code.",
     method: "POST", path: "/template/batch/get", loadHandler: () => loadHandlers().then((module) => module.handleBatchGet),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch get templates",  
     responses: { "200": { description: "Requested templates.", body: Type.Array(TemplateResponseDto) }, ...validationResponse, ...commonResponses },
   },
   "template.template.batchUpdate": {
+    description: "Fully updates multiple templates in one transaction.",
     method: "PUT", path: "/template/batch/update", loadHandler: () => loadHandlers().then((module) => module.handleBatchUpdate),
     request: { contentType: "application/json", body: Type.Array(TemplateBatchUpdateRequestDto, { minItems: 1 }) },
     summary: "Batch update templates",  
     responses: { "200": { description: "Updated templates.", body: Type.Array(TemplateResponseDto) }, ...validationResponse, ...notFoundResponse, ...commonResponses },
   },
   "template.template.batchPatch": {
+    description: "Partially updates multiple templates in one transaction.",
     method: "PATCH", path: "/template/batch/patch", loadHandler: () => loadHandlers().then((module) => module.handleBatchPatch),
     request: { contentType: "application/json", body: Type.Array(TemplateBatchPatchRequestDto, { minItems: 1 }) },
     summary: "Batch patch templates",  
     responses: { "200": { description: "Patched templates.", body: Type.Array(TemplateResponseDto) }, ...validationResponse, ...notFoundResponse, ...commonResponses },
   },
   "template.template.batchDelete": {
+    description: "Deletes template records.",
     method: "POST", path: "/template/batch/delete", loadHandler: () => loadHandlers().then((module) => module.handleBatchDelete),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",  
     responses: { "204": { description: "Templates deleted." }, ...validationResponse, ...notFoundResponse, ...businessRuleResponse, ...commonResponses },
   },
   "template.template.batchActivate": {
+    description: "Activates template records.",
     method: "POST", path: "/template/batch/activate", loadHandler: () => loadHandlers().then((module) => module.handleBatchActivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Activate",  
     responses: { "200": { description: "Activated templates.", body: Type.Array(TemplateResponseDto) }, ...validationResponse, ...notFoundResponse, ...businessRuleResponse, ...commonResponses },
   },
   "template.template.batchDeactivate": {
+    description: "Deactivates template records.",
     method: "POST", path: "/template/batch/deactivate", loadHandler: () => loadHandlers().then((module) => module.handleBatchDeactivate),
     request: { contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Deactivate",  
     responses: { "200": { description: "Deactivated templates.", body: Type.Array(TemplateResponseDto) }, ...validationResponse, ...notFoundResponse, ...businessRuleResponse, ...commonResponses },
   },
   "template.template.get": {
+    description: "Gets a template by code.",
     method: "GET", path: "/template/[code]", loadHandler: () => loadHandlers().then((module) => module.handleGet),
     request: { path: codePathParameter },
     summary: "Get",  
     responses: { "200": { description: "Requested template.", body: TemplateResponseDto }, ...notFoundResponse, ...commonResponses },
   },
   "template.template.update": {
+    description: "Fully updates a template.",
     method: "PUT", path: "/template/[code]", loadHandler: () => loadHandlers().then((module) => module.handleUpdate),
     request: { path: codePathParameter, contentType: "application/json", body: TemplateUpdateRequestDto },
     summary: "Update template",  
     responses: { "200": { description: "Updated template.", body: TemplateResponseDto }, ...validationResponse, ...notFoundResponse, ...commonResponses },
   },
   "template.template.patch": {
+    description: "Updates a template description.",
     method: "PATCH", path: "/template/[code]", loadHandler: () => loadHandlers().then((module) => module.handlePatch),
     request: { path: codePathParameter, contentType: "application/json", body: TemplatePatchRequestDto },
     summary: "Patch",  
     responses: { "200": { description: "Updated template.", body: TemplateResponseDto }, ...validationResponse, ...notFoundResponse, ...commonResponses },
   },
   "template.template.delete": {
+    description: "Deletes a template.",
     method: "DELETE", path: "/template/[code]", loadHandler: () => loadHandlers().then((module) => module.handleDelete),
     request: { path: codePathParameter },
     summary: "Delete",  
     responses: { "204": { description: "Template deleted." }, ...notFoundResponse, ...businessRuleResponse, ...commonResponses },
   },
   "template.template.activate": {
+    description: "Activates a template.",
     method: "POST", path: "/template/[code]/activate", loadHandler: () => loadHandlers().then((module) => module.handleActivate),
     request: { path: codePathParameter },
     summary: "Activate",  
     responses: { "200": { description: "Activated template.", body: TemplateResponseDto }, ...notFoundResponse, ...businessRuleResponse, ...commonResponses },
   },
   "template.template.deactivate": {
+    description: "Deactivates a template.",
     method: "POST", path: "/template/[code]/deactivate", loadHandler: () => loadHandlers().then((module) => module.handleDeactivate),
     request: { path: codePathParameter },
     summary: "Deactivate",  

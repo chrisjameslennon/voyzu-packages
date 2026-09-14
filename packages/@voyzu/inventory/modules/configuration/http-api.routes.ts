@@ -44,6 +44,7 @@ const kindPath = {
 };
 export const httpApiRoutes = {
   "inventory.configuration.list": {
+    description: "Lists the selected inventory configuration record type for the active organization.",
     method: "GET",
     path: "/inventory/configuration/[kind]",
     loadHandler: () => load().then((m) => m.handleList),
@@ -60,6 +61,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.configuration.create": {
+    description: "Creates a category, warehouse, custom field, or option list in the active organization.",
     method: "POST",
     path: "/inventory/configuration/[kind]",
     loadHandler: () => load().then((m) => m.handleCreate),
@@ -77,6 +79,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.configuration.get": {
+    description: "Gets one inventory configuration record including audit and usage information.",
     method: "GET",
     path: "/inventory/configuration/[kind]/[id]",
     loadHandler: () => load().then((m) => m.handleGet),
@@ -93,6 +96,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.configuration.patch": {
+    description: "Updates writable details on an inventory configuration record.",
     method: "PATCH",
     path: "/inventory/configuration/[kind]/[id]",
     loadHandler: () => load().then((m) => m.handlePatch),
@@ -110,6 +114,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.configuration.transition": {
+    description: "Activates, deactivates, or deletes selected inventory configuration records. Item categories containing items cannot be deactivated or deleted, and warehouses holding stock cannot be deleted.",
     method: "POST",
     path: "/inventory/configuration/[kind]/transition",
     loadHandler: () => load().then((m) => m.handleTransition),
@@ -137,6 +142,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.configuration.addOption": {
+    description: "Adds a value to an inventory custom-field option list.",
     method: "POST",
     path: "/inventory/configuration/option-list/[id]/options",
     loadHandler: () => load().then((m) => m.handleAddOption),
@@ -157,6 +163,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.configuration.patchOption": {
+    description: "Renames, activates, or deactivates an option-list value.",
     method: "PATCH",
     path: "/inventory/configuration/option-list/[id]/options/[optionId]",
     loadHandler: () => load().then((m) => m.handlePatchOption),
@@ -180,6 +187,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.configuration.deleteOption": {
+    description: "Deletes an option-list value and permanently removes values that reference it.",
     method: "DELETE",
     path: "/inventory/configuration/option-list/[id]/options/[optionId]",
     loadHandler: () => load().then((m) => m.handleDeleteOption),

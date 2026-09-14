@@ -6,6 +6,7 @@ import { FinancialDocumentTypeResponseDto } from "./types/financial-document-typ
 
 export const httpApiRoutes = {
   "finance.financial-document-types.list": {
+    description: "List Company Financial Document Types.",
     method: "GET",
     path: "/finance/[companyCode]/financial-document-types",
     loadHandler: () => import("./server/http-api/financial-document-type.http.handlers").then((module) => module.handleList),
@@ -19,6 +20,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-types.filter": {
+    description: "Filter Company Financial Document Types.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-types/filter",
     loadHandler: () => import("./server/http-api/financial-document-type.http.handlers").then((module) => module.handleFilter),
@@ -32,6 +34,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-types.search": {
+    description: "Search Company Financial Document Types.",
     method: "GET",
     path: "/finance/[companyCode]/financial-document-types/search",
     loadHandler: () => import("./server/http-api/financial-document-type.http.handlers").then((module) => module.handleSearch),
@@ -46,6 +49,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-types.batchGet": {
+    description: "Batch Get Company Financial Document Types.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-types/batch/get",
     loadHandler: () => import("./server/http-api/financial-document-type.http.handlers").then((module) => module.handleBatchGet),
@@ -60,6 +64,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-types.get": {
+    description: "Get Company Financial Document Types.",
     method: "GET",
     path: "/finance/[companyCode]/financial-document-types/[code]",
     loadHandler: () => import("./server/http-api/financial-document-type.http.handlers").then((module) => module.handleGet),

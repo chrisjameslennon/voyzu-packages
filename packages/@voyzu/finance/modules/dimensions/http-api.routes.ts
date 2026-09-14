@@ -14,6 +14,7 @@ import { DimensionCreateRequestDto } from "./types/dimension.create.request.dto"
 
 export const httpApiRoutes = {
   "finance.dimensions.list": {
+    description: "List Company Dimensions.",
     method: "GET",
     path: "/finance/[companyCode]/dimensions",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleList),
@@ -24,6 +25,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(DimensionResponseDto) } }
   },
   "finance.dimensions.filter": {
+    description: "Filter Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/filter",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleFilter),
@@ -40,6 +42,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.search": {
+    description: "Search Company Dimensions.",
     method: "GET",
     path: "/finance/[companyCode]/dimensions/search",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleSearch),
@@ -57,6 +60,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.create": {
+    description: "Create Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleCreate),
@@ -76,6 +80,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.batchCreate": {
+    description: "Batch Create Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch/create",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleBatchCreate),
@@ -95,6 +100,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.batchGet": {
+    description: "Batch Get Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch/get",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleBatchGet),
@@ -112,6 +118,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.batchUpdate": {
+    description: "Batch Update Company Dimensions.",
     method: "PUT",
     path: "/finance/[companyCode]/dimensions/batch/update",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleBatchUpdate),
@@ -132,6 +139,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.batchPatch": {
+    description: "Batch Patch Company Dimensions.",
     method: "PATCH",
     path: "/finance/[companyCode]/dimensions/batch/patch",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleBatchPatch),
@@ -152,6 +160,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.batchDelete": {
+    description: "Batch Delete Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch/delete",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleBatchDelete),
@@ -166,6 +175,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.batchActivate": {
+    description: "Batch Activate Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch-activate",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleBatchActivate),
@@ -184,6 +194,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.batchDeactivate": {
+    description: "Batch Deactivate Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/batch-deactivate",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleBatchDeactivate),
@@ -203,6 +214,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.activate": {
+    description: "Activate Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/[code]/activate",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleActivate),
@@ -218,6 +230,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.deactivate": {
+    description: "Deactivate Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/[code]/deactivate",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleDeactivate),
@@ -233,6 +246,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.get": {
+    description: "Get Company Dimensions.",
     method: "GET",
     path: "/finance/[companyCode]/dimensions/[code]",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleGet),
@@ -243,6 +257,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: DimensionResponseDto }, "404": { description: "Entity not found.", body: EntityNotFoundErrorResponseDto } }
   },
   "finance.dimensions.update": {
+    description: "Update Company Dimensions.",
     method: "PUT",
     path: "/finance/[companyCode]/dimensions/[code]",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleUpdate),
@@ -263,6 +278,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.patch": {
+    description: "Patch Company Dimensions.",
     method: "PATCH",
     path: "/finance/[companyCode]/dimensions/[code]",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handlePatch),
@@ -283,6 +299,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.delete": {
+    description: "Delete Company Dimensions.",
     method: "DELETE",
     path: "/finance/[companyCode]/dimensions/[code]",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleDelete),
@@ -293,6 +310,7 @@ export const httpApiRoutes = {
     responses: { "204": { description: "Successful response." }, "404": { description: "Entity not found.", body: EntityNotFoundErrorResponseDto } }
   },
   "finance.dimensions.listValues": {
+    description: "List Values Company Dimensions.",
     method: "GET",
     path: "/finance/[companyCode]/dimensions/[code]/values",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleListValues),
@@ -303,6 +321,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(DimensionValueResponseDto) } }
   },
   "finance.dimensions.createValue": {
+    description: "Create Value Company Dimensions.",
     method: "POST",
     path: "/finance/[companyCode]/dimensions/[code]/values",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleCreateValue),
@@ -323,6 +342,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.patchValue": {
+    description: "Patch Value Company Dimensions.",
     method: "PATCH",
     path: "/finance/[companyCode]/dimensions/values/[id]",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handlePatchValue),
@@ -341,6 +361,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.dimensions.deleteValue": {
+    description: "Delete Value Company Dimensions.",
     method: "DELETE",
     path: "/finance/[companyCode]/dimensions/values/[id]",
     loadHandler: () => import("./server/http-api/dimension.http.handlers").then((module) => module.handleDeleteValue),

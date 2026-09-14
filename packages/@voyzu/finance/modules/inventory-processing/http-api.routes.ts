@@ -15,6 +15,7 @@ const companyCode = {
 
 export const httpApiRoutes = {
   "finance.inventory-processing.listRules": {
+    description: "Lists the Finance decision matrix for Inventory activity.",
     method: "GET",
     path: "/finance/[companyCode]/inventory-processing/rules",
     loadHandler: () => load().then((module) => module.handleListRules),
@@ -28,6 +29,7 @@ export const httpApiRoutes = {
     },
   },
   "finance.inventory-processing.getRule": {
+    description: "Gets one Finance Inventory processing rule.",
     method: "GET",
     path: "/finance/[companyCode]/inventory-processing/rules/[id]",
     loadHandler: () => load().then((module) => module.handleGetRule),
@@ -42,6 +44,7 @@ export const httpApiRoutes = {
     },
   },
   "finance.inventory-processing.patchRule": {
+    description: "Updates the action and offset GL account for an Inventory processing rule.",
     method: "PATCH",
     path: "/finance/[companyCode]/inventory-processing/rules/[id]",
     loadHandler: () => load().then((module) => module.handlePatchRule),
@@ -62,6 +65,7 @@ export const httpApiRoutes = {
     },
   },
   "finance.inventory-processing.listInventoryTransactions": {
+    description: "Lists Inventory financial activities received by Finance.",
     method: "GET",
     path: "/finance/[companyCode]/inventory-processing/inventory-transactions",
     loadHandler: () => load().then((module) => module.handleListInventoryTransactions),
@@ -76,6 +80,7 @@ export const httpApiRoutes = {
     },
   },
   "finance.inventory-processing.getInventoryTransaction": {
+    description: "Gets one Inventory financial activity received by Finance.",
     method: "GET",
     path: "/finance/[companyCode]/inventory-processing/inventory-transactions/[id]",
     loadHandler: () => load().then((module) => module.handleGetInventoryTransaction),

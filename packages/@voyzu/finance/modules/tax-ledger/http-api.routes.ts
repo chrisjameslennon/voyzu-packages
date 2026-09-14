@@ -6,6 +6,7 @@ import { TaxSubledgerEntryResponseDto } from "./types/index";
 
 export const httpApiRoutes = {
   "finance.tax-ledger.list": {
+    description: "List Tax Ledger.",
     method: "GET",
     path: "/finance/[companyCode]/tax-ledger/entries",
     loadHandler: () => import("./server/http-api/tax-ledger.http.handlers").then((module) => module.handleListTaxEntries),
@@ -23,6 +24,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.tax-ledger.get": {
+    description: "Get Tax Ledger.",
     method: "GET",
     path: "/finance/[companyCode]/tax-ledger/entries/[code]",
     loadHandler: () => import("./server/http-api/tax-ledger.http.handlers").then((module) => module.handleGetTaxEntry),

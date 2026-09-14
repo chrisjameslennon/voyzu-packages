@@ -17,6 +17,7 @@ const errors = {
 } as const;
 export const httpApiRoutes = {
   "inventory.financial-activity.list": {
+    description: "Lists financially significant inventory movement lines for consuming packages.",
     method: "GET",
     path: "/inventory/financial-activity",
     loadHandler: () => load().then((module) => module.handleList),
@@ -26,6 +27,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Financial activity", body: Type.Array(FinancialActivitySummaryDto) }, ...errors },
   },
   "inventory.financial-activity.get": {
+    description: "Gets one financial activity record and its inventory movement.",
     method: "GET",
     path: "/inventory/financial-activity/[id]",
     loadHandler: () => load().then((module) => module.handleGet),

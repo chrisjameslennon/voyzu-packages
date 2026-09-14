@@ -11,6 +11,7 @@ import { ItemPostingProfileBatchUpdateRequestDto } from "./types/item-posting-pr
 
 export const httpApiRoutes = {
   "finance.inventory-item-posting-profiles.list": {
+    description: "List Company Inventory Item Posting Profiles.",
     method: "GET",
     path: "/finance/[companyCode]/inventory/item-posting-profiles",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleList),
@@ -27,6 +28,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.inventory-item-posting-profiles.filter": {
+    description: "Filter Company Inventory Item Posting Profiles.",
     method: "POST",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/filter",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleFilter),
@@ -37,6 +39,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(ItemPostingProfileResponseDto) } }
   },
   "finance.inventory-item-posting-profiles.search": {
+    description: "Search Company Inventory Item Posting Profiles.",
     method: "GET",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/search",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleSearch),
@@ -47,6 +50,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(ItemPostingProfileResponseDto) } }
   },
   "finance.inventory-item-posting-profiles.batchGet": {
+    description: "Batch Get Company Inventory Item Posting Profiles.",
     method: "POST",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/batch/get",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleBatchGet),
@@ -57,6 +61,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(ItemPostingProfileResponseDto) } }
   },
   "finance.inventory-item-posting-profiles.batchCreate": {
+    description: "Batch Create Company Inventory Item Posting Profiles.",
     method: "POST",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/batch/create",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleBatchCreate),
@@ -67,6 +72,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(ItemPostingProfileResponseDto) } }
   },
   "finance.inventory-item-posting-profiles.batchUpdate": {
+    description: "Batch Update Company Inventory Item Posting Profiles.",
     method: "PUT",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/batch",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleBatchUpdate),
@@ -77,6 +83,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(ItemPostingProfileResponseDto) } }
   },
   "finance.inventory-item-posting-profiles.batchPatch": {
+    description: "Batch Patch Company Inventory Item Posting Profiles.",
     method: "PATCH",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/batch",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleBatchPatch),
@@ -87,6 +94,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(ItemPostingProfileResponseDto) } }
   },
   "finance.inventory-item-posting-profiles.batchDelete": {
+    description: "Batch Delete Company Inventory Item Posting Profiles.",
     method: "DELETE",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/batch",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleBatchDelete),
@@ -97,6 +105,7 @@ export const httpApiRoutes = {
     responses: { "204": { description: "Successful response." } }
   },
   "finance.inventory-item-posting-profiles.create": {
+    description: "Create Company Inventory Item Posting Profiles.",
     method: "POST",
     path: "/finance/[companyCode]/inventory/item-posting-profiles",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleCreate),
@@ -115,6 +124,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.inventory-item-posting-profiles.get": {
+    description: "Get Company Inventory Item Posting Profiles.",
     method: "GET",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/[code]",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleGet),
@@ -125,6 +135,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: ItemPostingProfileResponseDto } }
   },
   "finance.inventory-item-posting-profiles.update": {
+    description: "Update Company Inventory Item Posting Profiles.",
     method: "PUT",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/[code]",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleUpdate),
@@ -144,6 +155,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.inventory-item-posting-profiles.patch": {
+    description: "Patch Company Inventory Item Posting Profiles.",
     method: "PATCH",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/[code]",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handlePatch),
@@ -163,6 +175,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.inventory-item-posting-profiles.delete": {
+    description: "Delete Company Inventory Item Posting Profiles.",
     method: "DELETE",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/[code]",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleDelete),
@@ -178,6 +191,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.inventory-item-posting-profiles.activate": {
+    description: "Activate Company Inventory Item Posting Profiles.",
     method: "POST",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/[code]/activate",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleActivate),
@@ -188,6 +202,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: ItemPostingProfileResponseDto } }
   },
   "finance.inventory-item-posting-profiles.deactivate": {
+    description: "Deactivate Company Inventory Item Posting Profiles.",
     method: "POST",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/[code]/deactivate",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleDeactivate),
@@ -198,6 +213,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: ItemPostingProfileResponseDto } }
   },
   "finance.inventory-item-posting-profiles.batchActivate": {
+    description: "Batch Activate Company Inventory Item Posting Profiles.",
     method: "POST",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/batch-activate",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleBatchActivate),
@@ -217,6 +233,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.inventory-item-posting-profiles.batchDeactivate": {
+    description: "Batch Deactivate Company Inventory Item Posting Profiles.",
     method: "POST",
     path: "/finance/[companyCode]/inventory/item-posting-profiles/batch-deactivate",
     loadHandler: () => import("./server/http-api/item-posting-profile.http.handlers").then((module) => module.handleBatchDeactivate),

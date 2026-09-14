@@ -56,7 +56,6 @@ import { httpApiRoutes as routes22 } from "./modules/reports/http-api.routes";
 import { httpApiRoutes as routes23 } from "./modules/tax/http-api.routes";
 import { httpApiRoutes as routes24 } from "./modules/tax-control-accounts/http-api.routes";
 import { httpApiRoutes as routes25 } from "./modules/tax-ledger/http-api.routes";
-import { httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
 import { financeInstall } from "./install/manifest";
@@ -138,46 +137,445 @@ export const financeServiceModules = [
 export const financePackage = {
   contracts: {
     pageRouting: {
-      roots: ["/finance"],
-      routes: mergePageRoutes(
-        apSubledgerBillsPageRoutes,
-        apSubledgerCounterpartiesPageRoutes,
-        apSubledgerLedgerEntriesPageRoutes,
-        apSubledgerLedgerEntryEnquiryPageRoutes,
-        apSubledgerStatementsPageRoutes,
-        arIntegrationProcessingPageRoutes,
-        arSubledgerCounterpartiesPageRoutes,
-        arSubledgerInvoicesPageRoutes,
-        arSubledgerLedgerEntriesPageRoutes,
-        arSubledgerLedgerEntryEnquiryPageRoutes,
-        arSubledgerStatementsPageRoutes,
-        bankCashAccountsPageRoutes,
-        controlAccountsApPageRoutes,
-        controlAccountsArPageRoutes,
-        countryTaxSettingsPageRoutes,
-        dimensionsPageRoutes,
-        financialDocumentDefaultsPageRoutes,
-        financialDocumentTypesPageRoutes,
-        financialYearsPageRoutes,
-        glAccountCategoriesPageRoutes,
-        glAccountsPageRoutes,
-        inventoryControlAccountsPageRoutes,
-        inventoryItemPostingProfileAssignmentsPageRoutes,
-        inventoryItemPostingProfilesPageRoutes,
-        inventoryLedgerPageRoutes,
-        inventoryProcessingPageRoutes,
-        journalsPageRoutes,
-        operationsInvoicesPageRoutes,
-        reportsPageRoutes,
-        taxControlAccountsPageRoutes,
-        taxLedgerPageRoutes,
-      ),
+      roots: {
+        "/finance": {
+          routes: mergePageRoutes(
+            apSubledgerBillsPageRoutes,
+            apSubledgerCounterpartiesPageRoutes,
+            apSubledgerLedgerEntriesPageRoutes,
+            apSubledgerLedgerEntryEnquiryPageRoutes,
+            apSubledgerStatementsPageRoutes,
+            arIntegrationProcessingPageRoutes,
+            arSubledgerCounterpartiesPageRoutes,
+            arSubledgerInvoicesPageRoutes,
+            arSubledgerLedgerEntriesPageRoutes,
+            arSubledgerLedgerEntryEnquiryPageRoutes,
+            arSubledgerStatementsPageRoutes,
+            bankCashAccountsPageRoutes,
+            controlAccountsApPageRoutes,
+            controlAccountsArPageRoutes,
+            countryTaxSettingsPageRoutes,
+            dimensionsPageRoutes,
+            financialDocumentDefaultsPageRoutes,
+            financialDocumentTypesPageRoutes,
+            financialYearsPageRoutes,
+            glAccountCategoriesPageRoutes,
+            glAccountsPageRoutes,
+            inventoryControlAccountsPageRoutes,
+            inventoryItemPostingProfileAssignmentsPageRoutes,
+            inventoryItemPostingProfilesPageRoutes,
+            inventoryLedgerPageRoutes,
+            inventoryProcessingPageRoutes,
+            journalsPageRoutes,
+            operationsInvoicesPageRoutes,
+            reportsPageRoutes,
+            taxControlAccountsPageRoutes,
+            taxLedgerPageRoutes,
+          ),
+        },
+      },
     },
     httpApiRouting: {
       roots: ["/finance"],
       routes: { ...routes0, ...routes1, ...routes2, ...routes3, ...routes4, ...routes5, ...routes6, ...routes7, ...routes8, ...routes9, ...routes10, ...routes11, ...routes12, ...routes13, ...routes14, ...routes15, ...routes16, ...routes17, ...routes18, ...routes19, ...routes20, ...routes21, ...routes22, ...routes23, ...routes24, ...routes25 },
     },
-    httpApiDocumentation,
+    httpApiDocumentation: {
+      "sections": {
+        "finance.accounts-payable": {
+          "title": "Accounts Payable",
+          "description": "Accounts Payable HTTP operations for @voyzu/finance.",
+          "groups": {
+            "finance.ap-subledger-counterparties": {
+              "title": "Ap Subledger Counterparties",
+              "description": "Ap Subledger Counterparties operations.",
+              "routes": [
+                "finance.ap-subledger-counterparties.list",
+                "finance.ap-subledger-counterparties.get"
+              ]
+            },
+            "finance.ap-subledger-ledger-entries": {
+              "title": "Ap Subledger Ledger Entries",
+              "description": "Ap Subledger Ledger Entries operations.",
+              "routes": [
+                "finance.ap-subledger-ledger-entries.list",
+                "finance.ap-subledger-ledger-entries.get"
+              ]
+            },
+            "finance.ap-subledger-statements": {
+              "title": "Ap Subledger Statements",
+              "description": "Ap Subledger Statements operations.",
+              "routes": [
+                "finance.ap-subledger-statements.summariesList"
+              ]
+            }
+          }
+        },
+        "finance.accounts-receivable": {
+          "title": "Accounts Receivable",
+          "description": "Accounts Receivable HTTP operations for @voyzu/finance.",
+          "groups": {
+            "finance.ar-subledger-counterparties": {
+              "title": "Ar Subledger Counterparties",
+              "description": "Ar Subledger Counterparties operations.",
+              "routes": [
+                "finance.ar-subledger-counterparties.list",
+                "finance.ar-subledger-counterparties.get"
+              ]
+            },
+            "finance.ar-subledger-ledger-entries": {
+              "title": "Ar Subledger Ledger Entries",
+              "description": "Ar Subledger Ledger Entries operations.",
+              "routes": [
+                "finance.ar-subledger-ledger-entries.list",
+                "finance.ar-subledger-ledger-entries.get"
+              ]
+            },
+            "finance.ar-subledger-statements": {
+              "title": "Ar Subledger Statements",
+              "description": "Ar Subledger Statements operations.",
+              "routes": [
+                "finance.ar-subledger-statements.summariesList"
+              ]
+            }
+          }
+        },
+        "finance.configuration": {
+          "title": "Configuration",
+          "description": "Configuration HTTP operations for @voyzu/finance.",
+          "groups": {
+            "finance.bank-cash-accounts": {
+              "title": "Bank Cash Accounts",
+              "description": "Bank Cash Accounts operations.",
+              "routes": [
+                "finance.bank-cash-accounts.list",
+                "finance.bank-cash-accounts.filter",
+                "finance.bank-cash-accounts.search",
+                "finance.bank-cash-accounts.batchGet",
+                "finance.bank-cash-accounts.batchCreate",
+                "finance.bank-cash-accounts.batchUpdate",
+                "finance.bank-cash-accounts.batchPatch",
+                "finance.bank-cash-accounts.batchDelete",
+                "finance.bank-cash-accounts.create",
+                "finance.bank-cash-accounts.get",
+                "finance.bank-cash-accounts.patch",
+                "finance.bank-cash-accounts.update",
+                "finance.bank-cash-accounts.delete",
+                "finance.bank-cash-accounts.activate",
+                "finance.bank-cash-accounts.deactivate",
+                "finance.bank-cash-accounts.batchActivate",
+                "finance.bank-cash-accounts.batchDeactivate"
+              ]
+            },
+            "finance.control-accounts": {
+              "title": "Control Accounts",
+              "description": "Control Accounts operations.",
+              "routes": [
+                "finance.control-accounts.ap-list",
+                "finance.control-accounts.ap-get",
+                "finance.control-accounts.ap-patch",
+                "finance.control-accounts.ar-list",
+                "finance.control-accounts.ar-get",
+                "finance.control-accounts.ar-patch"
+              ]
+            },
+            "finance.financial-document-defaults": {
+              "title": "Financial Document Defaults",
+              "description": "Financial Document Defaults operations.",
+              "routes": [
+                "finance.financial-document-defaults.list",
+                "finance.financial-document-defaults.filter",
+                "finance.financial-document-defaults.search",
+                "finance.financial-document-defaults.create",
+                "finance.financial-document-defaults.batchCreate",
+                "finance.financial-document-defaults.batchGet",
+                "finance.financial-document-defaults.batchUpdate",
+                "finance.financial-document-defaults.batchPatch",
+                "finance.financial-document-defaults.batchDelete",
+                "finance.financial-document-defaults.batchActivate",
+                "finance.financial-document-defaults.batchDeactivate",
+                "finance.financial-document-defaults.get",
+                "finance.financial-document-defaults.update",
+                "finance.financial-document-defaults.patch",
+                "finance.financial-document-defaults.delete",
+                "finance.financial-document-defaults.activate",
+                "finance.financial-document-defaults.deactivate"
+              ]
+            },
+            "finance.financial-document-processing-engine": {
+              "title": "Financial Document Processing Engine",
+              "description": "Financial Document Processing Engine operations.",
+              "routes": [
+                "finance.financial-document-processing-engine.apBill",
+                "finance.financial-document-processing-engine.apBillCancellation",
+                "finance.financial-document-processing-engine.apCreditNote",
+                "finance.financial-document-processing-engine.apOpeningBalance",
+                "finance.financial-document-processing-engine.apPayment",
+                "finance.financial-document-processing-engine.apPaymentApplication",
+                "finance.financial-document-processing-engine.apRefund",
+                "finance.financial-document-processing-engine.apWriteOff",
+                "finance.financial-document-processing-engine.arCreditNote",
+                "finance.financial-document-processing-engine.arInvoice",
+                "finance.financial-document-processing-engine.arInvoiceCancellation",
+                "finance.financial-document-processing-engine.arOpeningBalance",
+                "finance.financial-document-processing-engine.arReceipt",
+                "finance.financial-document-processing-engine.arReceiptApplication",
+                "finance.financial-document-processing-engine.arRefund",
+                "finance.financial-document-processing-engine.arWriteOff",
+                "finance.financial-document-processing-engine.inventoryAdjustment",
+                "finance.financial-document-processing-engine.inventoryIssue",
+                "finance.financial-document-processing-engine.inventoryReceipt",
+                "finance.financial-document-processing-engine.ledgerJournal",
+                "finance.financial-document-processing-engine.ledgerJournalReversal",
+                "finance.financial-document-processing-engine.taxAdjustment",
+                "finance.financial-document-processing-engine.taxPayment",
+                "finance.financial-document-processing-engine.taxRefund"
+              ]
+            },
+            "finance.financial-document-types": {
+              "title": "Financial Document Types",
+              "description": "Financial Document Types operations.",
+              "routes": [
+                "finance.financial-document-types.list",
+                "finance.financial-document-types.filter",
+                "finance.financial-document-types.search",
+                "finance.financial-document-types.batchGet",
+                "finance.financial-document-types.get"
+              ]
+            },
+            "finance.organization-finance": {
+              "title": "Organization Finance",
+              "description": "Organization Finance operations.",
+              "routes": [
+                "finance.organization-finance.companySelection",
+                "finance.organization-finance.setOrganizationSelection",
+                "finance.organization-finance.update"
+              ]
+            },
+            "finance.reports": {
+              "title": "Reports",
+              "description": "Reports operations.",
+              "routes": [
+                "finance.reports.balanceSheet",
+                "finance.reports.balanceSheetPdf",
+                "finance.reports.financialYears",
+                "finance.reports.trialBalance",
+                "finance.reports.taxPosition",
+                "finance.reports.bankCashMovement",
+                "finance.reports.journalEntries",
+                "finance.reports.financialIntegrity",
+                "finance.reports.profitLoss",
+                "finance.reports.profitLossAnalysis",
+                "finance.reports.taxActivity",
+                "finance.reports.taxActivityReconciliation",
+                "finance.reports.arSubledgerEntriesAudit",
+                "finance.reports.apSubledgerEntriesAudit",
+                "finance.reports.inventoryLedgerEntriesAudit",
+                "finance.reports.taxLedgerEntriesAudit"
+              ]
+            }
+          }
+        },
+        "finance.tax": {
+          "title": "Tax",
+          "description": "Tax HTTP operations for @voyzu/finance.",
+          "groups": {
+            "finance.country-tax-settings": {
+              "title": "Country Tax Settings",
+              "description": "Country Tax Settings operations.",
+              "routes": [
+                "finance.country-tax-settings.list",
+                "finance.country-tax-settings.get"
+              ]
+            },
+            "finance.tax": {
+              "title": "Tax",
+              "description": "Tax operations.",
+              "routes": [
+                "finance.tax.authoritiesList",
+                "finance.tax.authoritiesGet"
+              ]
+            },
+            "finance.tax-control-accounts": {
+              "title": "Tax Control Accounts",
+              "description": "Tax Control Accounts operations.",
+              "routes": [
+                "finance.tax-control-accounts.list",
+                "finance.tax-control-accounts.patch"
+              ]
+            },
+            "finance.tax-ledger": {
+              "title": "Tax Ledger",
+              "description": "Tax Ledger operations.",
+              "routes": [
+                "finance.tax-ledger.list",
+                "finance.tax-ledger.get"
+              ]
+            }
+          }
+        },
+        "finance.general-ledger": {
+          "title": "General Ledger",
+          "description": "General Ledger HTTP operations for @voyzu/finance.",
+          "groups": {
+            "finance.dimensions": {
+              "title": "Dimensions",
+              "description": "Dimensions operations.",
+              "routes": [
+                "finance.dimensions.list",
+                "finance.dimensions.filter",
+                "finance.dimensions.search",
+                "finance.dimensions.create",
+                "finance.dimensions.batchCreate",
+                "finance.dimensions.batchGet",
+                "finance.dimensions.batchUpdate",
+                "finance.dimensions.batchPatch",
+                "finance.dimensions.batchDelete",
+                "finance.dimensions.batchActivate",
+                "finance.dimensions.batchDeactivate",
+                "finance.dimensions.activate",
+                "finance.dimensions.deactivate",
+                "finance.dimensions.get",
+                "finance.dimensions.update",
+                "finance.dimensions.patch",
+                "finance.dimensions.delete",
+                "finance.dimensions.listValues",
+                "finance.dimensions.createValue",
+                "finance.dimensions.patchValue",
+                "finance.dimensions.deleteValue"
+              ]
+            },
+            "finance.financial-years": {
+              "title": "Financial Years",
+              "description": "Financial Years operations.",
+              "routes": [
+                "finance.financial-years.list",
+                "finance.financial-years.create",
+                "finance.financial-years.exportZip",
+                "finance.financial-years.get",
+                "finance.financial-years.patch",
+                "finance.financial-years.delete",
+                "finance.financial-years.open",
+                "finance.financial-years.close",
+                "finance.financial-years.reopen",
+                "finance.financial-years.periodsList",
+                "finance.financial-years.periodsClose",
+                "finance.financial-years.periodsReopen"
+              ]
+            },
+            "finance.gl-account-categories": {
+              "title": "Gl Account Categories",
+              "description": "Gl Account Categories operations.",
+              "routes": [
+                "finance.gl-account-categories.list",
+                "finance.gl-account-categories.filter",
+                "finance.gl-account-categories.search",
+                "finance.gl-account-categories.create",
+                "finance.gl-account-categories.batchCreate",
+                "finance.gl-account-categories.batchGet",
+                "finance.gl-account-categories.batchUpdate",
+                "finance.gl-account-categories.batchPatch",
+                "finance.gl-account-categories.batchDelete",
+                "finance.gl-account-categories.batchActivate",
+                "finance.gl-account-categories.batchDeactivate",
+                "finance.gl-account-categories.activate",
+                "finance.gl-account-categories.deactivate",
+                "finance.gl-account-categories.get",
+                "finance.gl-account-categories.update",
+                "finance.gl-account-categories.patch",
+                "finance.gl-account-categories.delete"
+              ]
+            },
+            "finance.gl-accounts": {
+              "title": "Gl Accounts",
+              "description": "Gl Accounts operations.",
+              "routes": [
+                "finance.gl-accounts.list",
+                "finance.gl-accounts.filter",
+                "finance.gl-accounts.search",
+                "finance.gl-accounts.create",
+                "finance.gl-accounts.batchCreate",
+                "finance.gl-accounts.batchGet",
+                "finance.gl-accounts.batchUpdate",
+                "finance.gl-accounts.batchPatch",
+                "finance.gl-accounts.batchDelete",
+                "finance.gl-accounts.batchActivate",
+                "finance.gl-accounts.batchDeactivate",
+                "finance.gl-accounts.activate",
+                "finance.gl-accounts.deactivate",
+                "finance.gl-accounts.get",
+                "finance.gl-accounts.update",
+                "finance.gl-accounts.patch",
+                "finance.gl-accounts.delete"
+              ]
+            }
+          }
+        },
+        "finance.inventory": {
+          "title": "Inventory",
+          "description": "Inventory HTTP operations for @voyzu/finance.",
+          "groups": {
+            "finance.inventory-control-accounts": {
+              "title": "Inventory Control Accounts",
+              "description": "Inventory Control Accounts operations.",
+              "routes": [
+                "finance.inventory-control-accounts.list",
+                "finance.inventory-control-accounts.patch"
+              ]
+            },
+            "finance.inventory-item-posting-profile-assignments": {
+              "title": "Inventory Item Posting Profile Assignments",
+              "description": "Inventory Item Posting Profile Assignments operations.",
+              "routes": [
+                "finance.inventory-item-posting-profile-assignments.list",
+                "finance.inventory-item-posting-profile-assignments.assign"
+              ]
+            },
+            "finance.inventory-item-posting-profiles": {
+              "title": "Inventory Item Posting Profiles",
+              "description": "Inventory Item Posting Profiles operations.",
+              "routes": [
+                "finance.inventory-item-posting-profiles.list",
+                "finance.inventory-item-posting-profiles.filter",
+                "finance.inventory-item-posting-profiles.search",
+                "finance.inventory-item-posting-profiles.batchGet",
+                "finance.inventory-item-posting-profiles.batchCreate",
+                "finance.inventory-item-posting-profiles.batchUpdate",
+                "finance.inventory-item-posting-profiles.batchPatch",
+                "finance.inventory-item-posting-profiles.batchDelete",
+                "finance.inventory-item-posting-profiles.create",
+                "finance.inventory-item-posting-profiles.get",
+                "finance.inventory-item-posting-profiles.update",
+                "finance.inventory-item-posting-profiles.patch",
+                "finance.inventory-item-posting-profiles.delete",
+                "finance.inventory-item-posting-profiles.activate",
+                "finance.inventory-item-posting-profiles.deactivate",
+                "finance.inventory-item-posting-profiles.batchActivate",
+                "finance.inventory-item-posting-profiles.batchDeactivate"
+              ]
+            },
+            "finance.inventory-ledger": {
+              "title": "Inventory Ledger",
+              "description": "Inventory Ledger operations.",
+              "routes": [
+                "finance.inventory-ledger.list",
+                "finance.inventory-ledger.get"
+              ]
+            },
+            "finance.inventory-processing": {
+              "title": "Inventory Processing",
+              "description": "Inventory Processing operations.",
+              "routes": [
+                "finance.inventory-processing.listRules",
+                "finance.inventory-processing.getRule",
+                "finance.inventory-processing.patchRule",
+                "finance.inventory-processing.listInventoryTransactions",
+                "finance.inventory-processing.getInventoryTransaction"
+              ]
+            }
+          }
+        }
+      }
+    },
     internalApi: { implements: { ...organizationFinanceModule.implements, ...countryTaxSettingsModule.implements, ...inventoryProcessingModule.implements } },
 
   },

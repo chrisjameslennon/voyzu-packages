@@ -8,6 +8,7 @@ const codePath = { code: { description: "ERP company business code.", schema: Ty
 
 export const httpApiRoutes = {
   "finance.organization-finance.companySelection": {
+    description: "Lists Finance-enabled companies accessible to the current user and resolves the selected company.",
     method: "GET", path: "/finance/company-selection", loadHandler: () => import("./server/http-api/finance-company.http.handlers").then((module) => module.handleGetFinanceCompanySelection),
     summary: "Get selected Finance company",  
     responses: {
@@ -16,6 +17,7 @@ export const httpApiRoutes = {
     },
   },
   "finance.organization-finance.setOrganizationSelection": {
+    description: "Selects an accessible Finance-enabled company.",
     method: "PUT", path: "/finance/company-selection", loadHandler: () => import("./server/http-api/finance-company.http.handlers").then((module) => module.handleSetFinanceCompanySelection),
     request: { contentType: "application/json", body: OrganizationSelectionUpdateRequestDto },
     summary: "Select Finance company",  
@@ -27,6 +29,7 @@ export const httpApiRoutes = {
     },
   },
   "finance.organization-finance.update": {
+    description: "Updates Finance-owned tax, report and standard-setting fields; ERP identity remains read-only.",
     method: "PUT", path: "/finance/companies/[code]", loadHandler: () => import("./server/http-api/finance-company.http.handlers").then((module) => module.handleUpdate),
     request: { path: codePath, contentType: "application/json", body: FinanceCompanyUpdateRequestDto },
     summary: "Update Finance company settings",  

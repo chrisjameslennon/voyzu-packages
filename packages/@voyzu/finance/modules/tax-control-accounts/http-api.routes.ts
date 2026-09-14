@@ -7,6 +7,7 @@ import { TaxControlAccountPatchRequestDto } from "./types/tax-control-account.pa
 
 export const httpApiRoutes = {
   "finance.tax-control-accounts.list": {
+    description: "List Company Tax Control Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/tax-control-accounts",
     loadHandler: () => import("./server/http-api/tax-control-account.http.handlers").then((module) => module.handleListTaxControlAccounts),
@@ -23,6 +24,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.tax-control-accounts.patch": {
+    description: "Patch Company Tax Control Accounts.",
     method: "PATCH",
     path: "/finance/[companyCode]/tax-control-accounts/[code]",
     loadHandler: () => import("./server/http-api/tax-control-account.http.handlers").then((module) => module.handlePatchTaxControlAccount),

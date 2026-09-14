@@ -10,6 +10,7 @@ const loadHandlers = () => import("./server/http-api/template-report.http.handle
 
 export const httpApiRoutes = {
   "template.reports.all": {
+    description: "Returns every template for reporting.",
     method: "GET",
     path: "/template/reports/all-template",
     loadHandler: () => loadHandlers().then((module) => module.handleAllTemplatesReport),

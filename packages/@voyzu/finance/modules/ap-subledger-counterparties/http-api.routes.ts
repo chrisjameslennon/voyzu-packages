@@ -6,6 +6,7 @@ import { ApCounterpartyResponseDto } from "./types/ap-counterparty.response.dto"
 
 export const httpApiRoutes = {
   "finance.ap-subledger-counterparties.list": {
+    description: "List AP Subledger Counterparties.",
     method: "GET",
     path: "/finance/[companyCode]/ap-subledger/counterparties",
     loadHandler: () => import("./server/http-api/ap-subledger-counterparty.http.handlers").then((module) => module.handleListApCounterparties),
@@ -23,6 +24,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.ap-subledger-counterparties.get": {
+    description: "Get AP Subledger Counterparties.",
     method: "GET",
     path: "/finance/[companyCode]/ap-subledger/counterparties/[code]",
     loadHandler: () => import("./server/http-api/ap-subledger-counterparty.http.handlers").then((module) => module.handleGetApCounterparty),

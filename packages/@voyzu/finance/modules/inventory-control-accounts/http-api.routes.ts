@@ -7,6 +7,7 @@ import { InventoryControlAccountPatchRequestDto } from "./types/inventory-contro
 
 export const httpApiRoutes = {
   "finance.inventory-control-accounts.list": {
+    description: "List Company Inventory Control Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/inventory-control-accounts",
     loadHandler: () => import("./server/http-api/inventory-control-account.http.handlers").then((module) => module.handleListInventoryControlAccounts),
@@ -23,6 +24,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.inventory-control-accounts.patch": {
+    description: "Patch Company Inventory Control Accounts.",
     method: "PATCH",
     path: "/finance/[companyCode]/inventory-control-accounts/[code]",
     loadHandler: () => import("./server/http-api/inventory-control-account.http.handlers").then((module) => module.handlePatchInventoryControlAccount),

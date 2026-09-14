@@ -6,6 +6,7 @@ import { ApCounterpartySummaryResponseDto } from "../ap-subledger-counterparties
 
 export const httpApiRoutes = {
   "finance.ap-subledger-statements.summariesList": {
+    description: "Summaries List AP Subledger Statements.",
     method: "GET",
     path: "/finance/[companyCode]/ap-subledger/counterparty-summaries",
     loadHandler: () => import("./server/http-api/ap-subledger-statement.http.handlers").then((module) => module.handleListApCounterpartySummaries),

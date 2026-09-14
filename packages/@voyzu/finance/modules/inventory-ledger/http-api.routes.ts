@@ -6,6 +6,7 @@ import { InventoryLedgerEntryDetailResponseDto, InventoryLedgerEntryResponseDto 
 
 export const httpApiRoutes = {
   "finance.inventory-ledger.list": {
+    description: "List Inventory Ledger.",
     method: "GET",
     path: "/finance/[companyCode]/inventory/ledger",
     loadHandler: () => import("./server/http-api/inventory-ledger.http.handlers").then((module) => module.handleListInventoryEntries),
@@ -23,6 +24,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.inventory-ledger.get": {
+    description: "Get Inventory Ledger.",
     method: "GET",
     path: "/finance/[companyCode]/inventory/ledger/[code]",
     loadHandler: () => import("./server/http-api/inventory-ledger.http.handlers").then((module) => module.handleGetInventoryEntry),

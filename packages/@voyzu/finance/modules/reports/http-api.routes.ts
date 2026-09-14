@@ -20,6 +20,7 @@ import { BalanceSheetResponseDto } from "./balance-sheet/types/balance-sheet.res
 
 export const httpApiRoutes = {
   "finance.reports.balanceSheet": {
+    description: "Balance Sheet Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/balance-sheet",
     loadHandler: () => import("./balance-sheet/server/http-api/balance-sheet.http.handlers").then((module) => module.handleGetBalanceSheet),
@@ -30,6 +31,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: BalanceSheetResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.balanceSheetPdf": {
+    description: "Generates a balance sheet PDF for the selected company and reporting options.",
     method: "GET",
     path: "/finance/[companyCode]/reports/balance-sheet/pdf",
     loadHandler: () => import("./balance-sheet/server/http-api/balance-sheet-pdf.http.handlers").then((module) => module.handleGetBalanceSheetPdf),
@@ -40,6 +42,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Generated balance sheet PDF.", contentType: "application/pdf" }, "400": { description: "Required query parameters are missing or invalid.", body: InputValidationErrorResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.financialYears": {
+    description: "Financial Years Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/financial-years",
     loadHandler: () => import("./balance-sheet/server/http-api/balance-sheet.http.handlers").then((module) => module.handleListFinancialYears),
@@ -50,6 +53,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(FinancialYearResponseDto) }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.trialBalance": {
+    description: "Trial Balance Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/trial-balance",
     loadHandler: () => import("./trial-balance/server/http-api/trial-balance.http.handlers").then((module) => module.handleGetTrialBalance),
@@ -60,6 +64,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: TrialBalanceResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.taxPosition": {
+    description: "Tax Position Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/tax-position",
     loadHandler: () => import("./tax-position/server/http-api/tax-position.http.handlers").then((module) => module.handleGetTaxPosition),
@@ -70,6 +75,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: TaxPositionResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.bankCashMovement": {
+    description: "Bank Cash Movement Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/bank-cash-movement",
     loadHandler: () => import("./bank-cash-movement/server/http-api/bank-cash-movement.http.handlers").then((module) => module.handleGetBankCashMovement),
@@ -80,6 +86,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: BankCashMovementResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.journalEntries": {
+    description: "Journal Entries Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/journal-entries",
     loadHandler: () => import("./journal-entries/server/http-api/journal-entries.http.handlers").then((module) => module.handleGetJournalEntries),
@@ -90,6 +97,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: JournalEntriesResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.financialIntegrity": {
+    description: "Financial Integrity Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/financial-integrity",
     loadHandler: () => import("./financial-integrity/server/http-api/financial-integrity.http.handlers").then((module) => module.handleGetFinancialIntegrity),
@@ -100,6 +108,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: FinancialIntegrityResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.profitLoss": {
+    description: "Profit Loss Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/profit-loss",
     loadHandler: () => import("./profit-loss/server/http-api/profit-loss.http.handlers").then((module) => module.handleGetProfitLoss),
@@ -110,6 +119,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: ProfitLossResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.profitLossAnalysis": {
+    description: "Profit Loss Analysis Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/profit-loss-analysis",
     loadHandler: () => import("./profit-loss/server/http-api/profit-loss-analysis.http.handlers").then((module) => module.handleGetProfitLossAnalysis),
@@ -120,6 +130,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: ProfitLossAnalysisResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.taxActivity": {
+    description: "Tax Activity Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/tax-activity",
     loadHandler: () => import("./tax-activity/server/http-api/tax-activity.http.handlers").then((module) => module.handleGetTaxActivity),
@@ -130,6 +141,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: TaxActivityResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.taxActivityReconciliation": {
+    description: "Tax Activity Reconciliation Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/tax-activity-reconciliation",
     loadHandler: () => import("./tax-activity-reconciliation/server/http-api/tax-activity-reconciliation.http.handlers").then((module) => module.handleGetTaxActivityReconciliation),
@@ -140,6 +152,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: TaxActivityReconciliationResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.arSubledgerEntriesAudit": {
+    description: "AR Subledger Entries Audit Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/ar-subledger-entries-audit",
     loadHandler: () => import("./ar-subledger-entries-audit/server/http-api/ar-subledger-entries-audit.http.handlers").then((module) => module.handleGetArSubledgerEntriesAudit),
@@ -150,6 +163,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: ArSubledgerEntriesAuditResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.apSubledgerEntriesAudit": {
+    description: "AP Subledger Entries Audit Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/ap-subledger-entries-audit",
     loadHandler: () => import("./ap-subledger-entries-audit/server/http-api/ap-subledger-entries-audit.http.handlers").then((module) => module.handleGetApSubledgerEntriesAudit),
@@ -160,6 +174,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: ApSubledgerEntriesAuditResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.inventoryLedgerEntriesAudit": {
+    description: "Inventory Ledger Entries Audit Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/inventory-ledger-entries-audit",
     loadHandler: () => import("./inventory-ledger-entries-audit/server/http-api/inventory-ledger-entries-audit.http.handlers").then((module) => module.handleGetInventoryLedgerEntriesAudit),
@@ -170,6 +185,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: InventoryLedgerEntriesAuditResponseDto }, "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto } }
   },
   "finance.reports.taxLedgerEntriesAudit": {
+    description: "Tax Ledger Entries Audit Company Reports.",
     method: "GET",
     path: "/finance/[companyCode]/reports/tax-ledger-entries-audit",
     loadHandler: () => import("./tax-ledger-entries-audit/server/http-api/tax-ledger-entries-audit.http.handlers").then((module) => module.handleGetTaxLedgerEntriesAudit),

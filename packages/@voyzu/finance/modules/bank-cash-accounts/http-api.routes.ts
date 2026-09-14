@@ -11,6 +11,7 @@ import { BankCashAccountBatchUpdateRequestDto } from "./types/bank-cash-account.
 
 export const httpApiRoutes = {
   "finance.bank-cash-accounts.list": {
+    description: "List Company Bank Cash Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/bank-cash-accounts",
     loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleList),
@@ -27,6 +28,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.bank-cash-accounts.filter": {
+    description: "Filter Company Bank Cash Accounts.",
     method: "POST", path: "/finance/[companyCode]/bank-cash-accounts/filter", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleFilter),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } } }, contentType: "application/json", body: FilterRequestDto },
     summary: "Filter",
@@ -35,6 +37,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   "finance.bank-cash-accounts.search": {
+    description: "Search Company Bank Cash Accounts.",
     method: "GET", path: "/finance/[companyCode]/bank-cash-accounts/search", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleSearch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } } }, query: { parameters: { q: { description: "Search text used to match bank cash account records.", required: true } }, schema: Type.Object({ q: { type: "string" } }) } },
     summary: "Search",
@@ -43,6 +46,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   "finance.bank-cash-accounts.batchGet": {
+    description: "Batch Get Company Bank Cash Accounts.",
     method: "POST", path: "/finance/[companyCode]/bank-cash-accounts/batch/get", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleBatchGet),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Get",
@@ -51,6 +55,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   "finance.bank-cash-accounts.batchCreate": {
+    description: "Batch Create Company Bank Cash Accounts.",
     method: "POST", path: "/finance/[companyCode]/bank-cash-accounts/batch/create", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleBatchCreate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(BankCashAccountCreateRequestDto) },
     summary: "Batch Create",
@@ -59,6 +64,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   "finance.bank-cash-accounts.batchUpdate": {
+    description: "Batch Update Company Bank Cash Accounts.",
     method: "PUT", path: "/finance/[companyCode]/bank-cash-accounts/batch", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleBatchUpdate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(BankCashAccountBatchUpdateRequestDto) },
     summary: "Batch Update",
@@ -67,6 +73,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   "finance.bank-cash-accounts.batchPatch": {
+    description: "Batch Patch Company Bank Cash Accounts.",
     method: "PATCH", path: "/finance/[companyCode]/bank-cash-accounts/batch", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleBatchPatch),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } } }, contentType: "application/json", body: Type.Array(BankCashAccountBatchPatchRequestDto) },
     summary: "Batch Patch",
@@ -75,6 +82,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(BankCashAccountResponseDto) } }
   },
   "finance.bank-cash-accounts.batchDelete": {
+    description: "Batch Delete Company Bank Cash Accounts.",
     method: "DELETE", path: "/finance/[companyCode]/bank-cash-accounts/batch", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleBatchDelete),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } } }, contentType: "application/json", body: CodesRequestDto },
     summary: "Batch Delete",
@@ -83,6 +91,7 @@ export const httpApiRoutes = {
     responses: { "204": { description: "Successful response." } }
   },
   "finance.bank-cash-accounts.create": {
+    description: "Create Company Bank Cash Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/bank-cash-accounts",
     loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleCreate),
@@ -102,6 +111,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.bank-cash-accounts.get": {
+    description: "Get Company Bank Cash Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/bank-cash-accounts/[code]",
     loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleGet),
@@ -119,6 +129,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.bank-cash-accounts.patch": {
+    description: "Patch Company Bank Cash Accounts.",
     method: "PATCH",
     path: "/finance/[companyCode]/bank-cash-accounts/[code]",
     loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handlePatch),
@@ -138,6 +149,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.bank-cash-accounts.update": {
+    description: "Update Company Bank Cash Accounts.",
     method: "PUT", path: "/finance/[companyCode]/bank-cash-accounts/[code]", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleUpdate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } }, contentType: "application/json", body: BankCashAccountUpdateRequestDto },
     summary: "Update",
@@ -146,6 +158,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: BankCashAccountResponseDto } }
   },
   "finance.bank-cash-accounts.delete": {
+    description: "Delete Company Bank Cash Accounts.",
     method: "DELETE",
     path: "/finance/[companyCode]/bank-cash-accounts/[code]",
     loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleDelete),
@@ -162,6 +175,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.bank-cash-accounts.activate": {
+    description: "Activate Company Bank Cash Accounts.",
     method: "POST", path: "/finance/[companyCode]/bank-cash-accounts/[code]/activate", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleActivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Activate",
@@ -170,6 +184,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: BankCashAccountResponseDto } }
   },
   "finance.bank-cash-accounts.deactivate": {
+    description: "Deactivate Company Bank Cash Accounts.",
     method: "POST", path: "/finance/[companyCode]/bank-cash-accounts/[code]/deactivate", loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleDeactivate),
     request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
     summary: "Deactivate",
@@ -178,6 +193,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: BankCashAccountResponseDto } }
   },
   "finance.bank-cash-accounts.batchActivate": {
+    description: "Batch Activate Company Bank Cash Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/bank-cash-accounts/batch-activate",
     loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleBatchActivate),
@@ -196,6 +212,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.bank-cash-accounts.batchDeactivate": {
+    description: "Batch Deactivate Company Bank Cash Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/bank-cash-accounts/batch-deactivate",
     loadHandler: () => import("./server/http-api/bank-cash-account.http.handlers").then((module) => module.handleBatchDeactivate),

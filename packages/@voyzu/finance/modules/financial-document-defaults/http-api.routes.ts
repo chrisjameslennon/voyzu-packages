@@ -12,6 +12,7 @@ import { FinancialDocumentDefaultCreateRequestDto } from "./types/financial-docu
 
 export const httpApiRoutes = {
   "finance.financial-document-defaults.list": {
+    description: "List Company Financial Document Defaults.",
     method: "GET",
     path: "/finance/[companyCode]/financial-document-defaults",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleList),
@@ -22,6 +23,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(FinancialDocumentDefaultResponseDto) } }
   },
   "finance.financial-document-defaults.filter": {
+    description: "Filter Company Financial Document Defaults.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/filter",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleFilter),
@@ -38,6 +40,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.search": {
+    description: "Search Company Financial Document Defaults.",
     method: "GET",
     path: "/finance/[companyCode]/financial-document-defaults/search",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleSearch),
@@ -55,6 +58,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.create": {
+    description: "Create Company Financial Document Defaults.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleCreate),
@@ -74,6 +78,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.batchCreate": {
+    description: "Batch Create Company Financial Document Defaults.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/batch",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleBatchCreate),
@@ -93,6 +98,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.batchGet": {
+    description: "Batch Get Company Financial Document Defaults.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/batch/get",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleBatchGet),
@@ -110,6 +116,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.batchUpdate": {
+    description: "Batch Update Company Financial Document Defaults.",
     method: "PUT",
     path: "/finance/[companyCode]/financial-document-defaults/batch",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleBatchUpdate),
@@ -130,6 +137,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.batchPatch": {
+    description: "Batch Patch Company Financial Document Defaults.",
     method: "PATCH",
     path: "/finance/[companyCode]/financial-document-defaults/batch",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleBatchPatch),
@@ -150,6 +158,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.batchDelete": {
+    description: "Batch Delete Company Financial Document Defaults.",
     method: "DELETE",
     path: "/finance/[companyCode]/financial-document-defaults/batch",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleBatchDelete),
@@ -165,6 +174,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.batchActivate": {
+    description: "Batch Activate Company Financial Document Defaults.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/batch/activate",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleBatchActivate),
@@ -180,6 +190,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.batchDeactivate": {
+    description: "Batch Deactivate Company Financial Document Defaults.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/batch/deactivate",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleBatchDeactivate),
@@ -195,6 +206,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.get": {
+    description: "Get Company Financial Document Defaults.",
     method: "GET",
     path: "/finance/[companyCode]/financial-document-defaults/[code]",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleGet),
@@ -205,6 +217,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: FinancialDocumentDefaultResponseDto }, "404": { description: "Entity not found.", body: EntityNotFoundErrorResponseDto } }
   },
   "finance.financial-document-defaults.update": {
+    description: "Update Company Financial Document Defaults.",
     method: "PUT",
     path: "/finance/[companyCode]/financial-document-defaults/[code]",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleUpdate),
@@ -225,6 +238,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.patch": {
+    description: "Patch Company Financial Document Defaults.",
     method: "PATCH",
     path: "/finance/[companyCode]/financial-document-defaults/[code]",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handlePatch),
@@ -245,6 +259,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.delete": {
+    description: "Delete Company Financial Document Defaults.",
     method: "DELETE",
     path: "/finance/[companyCode]/financial-document-defaults/[code]",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleDelete),
@@ -255,6 +270,7 @@ export const httpApiRoutes = {
     responses: { "204": { description: "Successful response." }, "404": { description: "Entity not found.", body: EntityNotFoundErrorResponseDto } }
   },
   "finance.financial-document-defaults.activate": {
+    description: "Activate Company Financial Document Defaults.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/[code]/activate",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleActivate),
@@ -270,6 +286,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-defaults.deactivate": {
+    description: "Deactivate Company Financial Document Defaults.",
     method: "POST",
     path: "/finance/[companyCode]/financial-document-defaults/[code]/deactivate",
     loadHandler: () => import("./server/http-api/financial-document-default.http.handlers").then((module) => module.handleDeactivate),

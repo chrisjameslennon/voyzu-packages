@@ -47,6 +47,7 @@ const codePathParameter = {
 
 export const httpApiRoutes = {
   "ice-creams.ice-creams.list": {
+    description: "Lists all ice creams.",
     method: "GET",
     path: "/ice-creams",
     loadHandler: () => loadHandlers().then((module) => module.handleList),
@@ -59,6 +60,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.create": {
+    description: "Creates an active ice cream.",
     method: "POST",
     path: "/ice-creams",
     loadHandler: () => loadHandlers().then((module) => module.handleCreate),
@@ -76,6 +78,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.flavors": {
+    description: "Lists reference flavours available to ice creams.",
     method: "GET",
     path: "/ice-creams/flavors",
     loadHandler: () => loadHandlers().then((module) => module.handleListFlavors),
@@ -88,6 +91,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.filter": {
+    description: "Filters ice creams using the shared filter contract.",
     method: "POST",
     path: "/ice-creams/queries",
     loadHandler: () => loadHandlers().then((module) => module.handleFilter),
@@ -102,6 +106,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.search": {
+    description: "Searches code, name, flavour and supplier.",
     method: "GET",
     path: "/ice-creams/search-results",
     loadHandler: () => loadHandlers().then((module) => module.handleSearch),
@@ -123,6 +128,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.batchGet": {
+    description: "Gets ice creams by business code.",
     method: "POST",
     path: "/ice-creams/selections",
     loadHandler: () => loadHandlers().then((module) => module.handleBatchGet),
@@ -137,6 +143,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.batchCreate": {
+    description: "Creates ice creams atomically with one audit mutation.",
     method: "POST",
     path: "/ice-creams/batches",
     loadHandler: () => loadHandlers().then((module) => module.handleBatchCreate),
@@ -154,6 +161,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.batchUpdate": {
+    description: "Fully updates ice creams atomically.",
     method: "PUT",
     path: "/ice-creams/batches",
     loadHandler: () => loadHandlers().then((module) => module.handleBatchUpdate),
@@ -170,6 +178,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.batchPatch": {
+    description: "Partially updates ice creams atomically.",
     method: "PATCH",
     path: "/ice-creams/batches",
     loadHandler: () => loadHandlers().then((module) => module.handleBatchPatch),
@@ -186,6 +195,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.batchDelete": {
+    description: "Deletes ice creams atomically after stamping deletion audit metadata.",
     method: "DELETE",
     path: "/ice-creams/batches",
     loadHandler: () => loadHandlers().then((module) => module.handleBatchDelete),
@@ -202,6 +212,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.batchActivate": {
+    description: "Activates ice creams atomically.",
     method: "PUT",
     path: "/ice-creams/batches/activation",
     loadHandler: () => loadHandlers().then((module) => module.handleBatchActivate),
@@ -218,6 +229,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.batchDeactivate": {
+    description: "Deactivates ice creams atomically.",
     method: "DELETE",
     path: "/ice-creams/batches/activation",
     loadHandler: () => loadHandlers().then((module) => module.handleBatchDeactivate),
@@ -234,6 +246,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.get": {
+    description: "Gets an ice cream by business code.",
     method: "GET",
     path: "/ice-creams/[code]",
     loadHandler: () => loadHandlers().then((module) => module.handleGet),
@@ -248,6 +261,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.update": {
+    description: "Fully updates the writable fields of an ice cream.",
     method: "PUT",
     path: "/ice-creams/[code]",
     loadHandler: () => loadHandlers().then((module) => module.handleUpdate),
@@ -264,6 +278,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.patch": {
+    description: "Partially updates the writable fields of an ice cream.",
     method: "PATCH",
     path: "/ice-creams/[code]",
     loadHandler: () => loadHandlers().then((module) => module.handlePatch),
@@ -280,6 +295,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.delete": {
+    description: "Deletes an ice cream after stamping deletion audit metadata.",
     method: "DELETE",
     path: "/ice-creams/[code]",
     loadHandler: () => loadHandlers().then((module) => module.handleDelete),
@@ -295,6 +311,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.activate": {
+    description: "Activates an ice cream.",
     method: "PUT",
     path: "/ice-creams/[code]/activation",
     loadHandler: () => loadHandlers().then((module) => module.handleActivate),
@@ -310,6 +327,7 @@ export const httpApiRoutes = {
     }
   },
   "ice-creams.ice-creams.deactivate": {
+    description: "Deactivates an ice cream.",
     method: "DELETE",
     path: "/ice-creams/[code]/activation",
     loadHandler: () => loadHandlers().then((module) => module.handleDeactivate),

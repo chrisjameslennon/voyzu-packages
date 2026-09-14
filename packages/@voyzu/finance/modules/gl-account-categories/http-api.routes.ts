@@ -11,6 +11,7 @@ import { GlAccountCategoryCreateRequestDto } from "./types/gl-account-category.c
 
 export const httpApiRoutes = {
   "finance.gl-account-categories.list": {
+    description: "List Company GL Account Categories.",
     method: "GET",
     path: "/finance/[companyCode]/gl-account-categories",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleList),
@@ -21,6 +22,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(GlAccountCategoryResponseDto) } }
   },
   "finance.gl-account-categories.filter": {
+    description: "Filter Company GL Account Categories.",
     method: "POST",
     path: "/finance/[companyCode]/gl-account-categories/filter",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleFilter),
@@ -37,6 +39,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.search": {
+    description: "Search Company GL Account Categories.",
     method: "GET",
     path: "/finance/[companyCode]/gl-account-categories/search",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleSearch),
@@ -54,6 +57,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.create": {
+    description: "Create Company GL Account Categories.",
     method: "POST",
     path: "/finance/[companyCode]/gl-account-categories",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleCreate),
@@ -72,6 +76,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.batchCreate": {
+    description: "Batch Create Company GL Account Categories.",
     method: "POST",
     path: "/finance/[companyCode]/gl-account-categories/batch",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleBatchCreate),
@@ -90,6 +95,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.batchGet": {
+    description: "Batch Get Company GL Account Categories.",
     method: "POST",
     path: "/finance/[companyCode]/gl-account-categories/batch/get",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleBatchGet),
@@ -107,6 +113,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.batchUpdate": {
+    description: "Batch Update Company GL Account Categories.",
     method: "PUT",
     path: "/finance/[companyCode]/gl-account-categories/batch",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleBatchUpdate),
@@ -123,6 +130,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.batchPatch": {
+    description: "Batch Patch Company GL Account Categories.",
     method: "PATCH",
     path: "/finance/[companyCode]/gl-account-categories/batch",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleBatchPatch),
@@ -139,6 +147,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.batchDelete": {
+    description: "Batch Delete Company GL Account Categories.",
     method: "DELETE",
     path: "/finance/[companyCode]/gl-account-categories/batch",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleBatchDelete),
@@ -155,6 +164,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.batchActivate": {
+    description: "Batch Activate Company GL Account Categories.",
     method: "POST",
     path: "/finance/[companyCode]/gl-account-categories/batch-activate",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleBatchActivate),
@@ -173,6 +183,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.batchDeactivate": {
+    description: "Batch Deactivate Company GL Account Categories.",
     method: "POST",
     path: "/finance/[companyCode]/gl-account-categories/batch-deactivate",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleBatchDeactivate),
@@ -192,6 +203,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.activate": {
+    description: "Activate Company GL Account Categories.",
     method: "POST",
     path: "/finance/[companyCode]/gl-account-categories/[code]/activate",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleActivate),
@@ -207,6 +219,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.deactivate": {
+    description: "Deactivate Company GL Account Categories.",
     method: "POST",
     path: "/finance/[companyCode]/gl-account-categories/[code]/deactivate",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleDeactivate),
@@ -222,6 +235,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.get": {
+    description: "Get Company GL Account Categories.",
     method: "GET",
     path: "/finance/[companyCode]/gl-account-categories/[code]",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleGet),
@@ -232,6 +246,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: GlAccountCategoryResponseDto }, "404": { description: "Entity not found.", body: EntityNotFoundErrorResponseDto } }
   },
   "finance.gl-account-categories.update": {
+    description: "Update Company GL Account Categories.",
     method: "PUT",
     path: "/finance/[companyCode]/gl-account-categories/[code]",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleUpdate),
@@ -252,6 +267,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.patch": {
+    description: "Patch Company GL Account Categories.",
     method: "PATCH",
     path: "/finance/[companyCode]/gl-account-categories/[code]",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handlePatch),
@@ -272,6 +288,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-account-categories.delete": {
+    description: "Delete Company GL Account Categories.",
     method: "DELETE",
     path: "/finance/[companyCode]/gl-account-categories/[code]",
     loadHandler: () => import("./server/http-api/gl-account-category.http.handlers").then((module) => module.handleDelete),

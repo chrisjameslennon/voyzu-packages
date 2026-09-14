@@ -11,6 +11,7 @@ import { GlAccountCreateRequestDto } from "./types/gl-account.create.request.dto
 
 export const httpApiRoutes = {
   "finance.gl-accounts.list": {
+    description: "List Company GL Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/gl-accounts",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleList),
@@ -21,6 +22,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: Type.Array(GlAccountResponseDto) } }
   },
   "finance.gl-accounts.filter": {
+    description: "Filter Company GL Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/filter",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleFilter),
@@ -37,6 +39,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.search": {
+    description: "Search Company GL Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/gl-accounts/search",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleSearch),
@@ -54,6 +57,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.create": {
+    description: "Create Company GL Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleCreate),
@@ -73,6 +77,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.batchCreate": {
+    description: "Batch Create Company GL Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/batch",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleBatchCreate),
@@ -92,6 +97,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.batchGet": {
+    description: "Batch Get Company GL Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/batch/get",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleBatchGet),
@@ -109,6 +115,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.batchUpdate": {
+    description: "Batch Update Company GL Accounts.",
     method: "PUT",
     path: "/finance/[companyCode]/gl-accounts/batch",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleBatchUpdate),
@@ -129,6 +136,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.batchPatch": {
+    description: "Batch Patch Company GL Accounts.",
     method: "PATCH",
     path: "/finance/[companyCode]/gl-accounts/batch",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleBatchPatch),
@@ -149,6 +157,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.batchDelete": {
+    description: "Batch Delete Company GL Accounts.",
     method: "DELETE",
     path: "/finance/[companyCode]/gl-accounts/batch",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleBatchDelete),
@@ -163,6 +172,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.batchActivate": {
+    description: "Batch Activate Company GL Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/batch-activate",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleBatchActivate),
@@ -181,6 +191,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.batchDeactivate": {
+    description: "Batch Deactivate Company GL Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/batch-deactivate",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleBatchDeactivate),
@@ -200,6 +211,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.activate": {
+    description: "Activate Company GL Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/[code]/activate",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleActivate),
@@ -215,6 +227,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.deactivate": {
+    description: "Deactivate Company GL Accounts.",
     method: "POST",
     path: "/finance/[companyCode]/gl-accounts/[code]/deactivate",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleDeactivate),
@@ -231,6 +244,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.get": {
+    description: "Get Company GL Accounts.",
     method: "GET",
     path: "/finance/[companyCode]/gl-accounts/[code]",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleGet),
@@ -241,6 +255,7 @@ export const httpApiRoutes = {
     responses: { "200": { description: "Successful response.", body: GlAccountResponseDto }, "404": { description: "Entity not found.", body: EntityNotFoundErrorResponseDto } }
   },
   "finance.gl-accounts.update": {
+    description: "Update Company GL Accounts.",
     method: "PUT",
     path: "/finance/[companyCode]/gl-accounts/[code]",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleUpdate),
@@ -261,6 +276,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.patch": {
+    description: "Patch Company GL Accounts.",
     method: "PATCH",
     path: "/finance/[companyCode]/gl-accounts/[code]",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handlePatch),
@@ -281,6 +297,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.gl-accounts.delete": {
+    description: "Delete Company GL Accounts.",
     method: "DELETE",
     path: "/finance/[companyCode]/gl-accounts/[code]",
     loadHandler: () => import("./server/http-api/gl-account.http.handlers").then((module) => module.handleDelete),

@@ -6,6 +6,7 @@ import { ArCounterpartyResponseDto } from "./types/ar-counterparty.response.dto"
 
 export const httpApiRoutes = {
   "finance.ar-subledger-counterparties.list": {
+    description: "List AR Subledger Counterparties.",
     method: "GET",
     path: "/finance/[companyCode]/ar-subledger/counterparties",
     loadHandler: () => import("./server/http-api/ar-subledger-counterparty.http.handlers").then((module) => module.handleListArCounterparties),
@@ -23,6 +24,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.ar-subledger-counterparties.get": {
+    description: "Get AR Subledger Counterparties.",
     method: "GET",
     path: "/finance/[companyCode]/ar-subledger/counterparties/[code]",
     loadHandler: () => import("./server/http-api/ar-subledger-counterparty.http.handlers").then((module) => module.handleGetArCounterparty),

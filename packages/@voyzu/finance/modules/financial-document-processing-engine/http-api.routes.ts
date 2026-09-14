@@ -34,6 +34,7 @@ import { ApBillRequestDto } from "./types/ap-bill.request.dto";
 
 export const httpApiRoutes = {
   "finance.financial-document-processing-engine.apBill": {
+    description: "AP Bill Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_BILL",
     loadHandler: () => import("./ap_bill/api/ap-bill.http.handlers").then((module) => module.handleProcess),
@@ -49,6 +50,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.apBillCancellation": {
+    description: "AP Bill Cancellation Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_BILL_CANCELLATION",
     loadHandler: () => import("./ap_bill_cancellation/api/ap-bill-cancellation.http.handlers").then((module) => module.handleProcess),
@@ -64,6 +66,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.apCreditNote": {
+    description: "AP Credit Note Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_CREDIT_NOTE",
     loadHandler: () => import("./ap_credit_note/api/ap-credit-note.http.handlers").then((module) => module.handleProcess),
@@ -79,6 +82,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.apOpeningBalance": {
+    description: "AP Opening Balance Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_OPENING_BALANCE",
     loadHandler: () => import("./ap_opening_balance/api/ap-opening-balance.http.handlers").then((module) => module.handleProcess),
@@ -94,6 +98,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.apPayment": {
+    description: "AP Payment Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_PAYMENT",
     loadHandler: () => import("./ap_payment/api/ap-payment.http.handlers").then((module) => module.handleProcess),
@@ -109,6 +114,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.apPaymentApplication": {
+    description: "AP Payment Application Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_PAYMENT_APPLICATION",
     loadHandler: () => import("./ap_payment_application/api/ap-payment-application.http.handlers").then((module) => module.handleProcess),
@@ -124,6 +130,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.apRefund": {
+    description: "AP Refund Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_REFUND",
     loadHandler: () => import("./ap_refund/api/ap-refund.http.handlers").then((module) => module.handleProcess),
@@ -139,6 +146,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.apWriteOff": {
+    description: "AP Write Off Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AP_WRITE_OFF",
     loadHandler: () => import("./ap_write_off/api/ap-write-off.http.handlers").then((module) => module.handleProcess),
@@ -154,6 +162,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.arCreditNote": {
+    description: "AR Credit Note Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_CREDIT_NOTE",
     loadHandler: () => import("./ar_credit_note/api/ar-credit-note.http.handlers").then((module) => module.handleProcess),
@@ -169,6 +178,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.arInvoice": {
+    description: "AR Invoice Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_INVOICE",
     loadHandler: () => import("./ar_invoice/api/ar-invoice.http.handlers").then((module) => module.handleProcess),
@@ -184,6 +194,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.arInvoiceCancellation": {
+    description: "AR Invoice Cancellation Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_INVOICE_CANCELLATION",
     loadHandler: () => import("./ar_invoice_cancellation/api/ar-invoice-cancellation.http.handlers").then((module) => module.handleProcess),
@@ -199,6 +210,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.arOpeningBalance": {
+    description: "AR Opening Balance Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_OPENING_BALANCE",
     loadHandler: () => import("./ar_opening_balance/api/ar-opening-balance.http.handlers").then((module) => module.handleProcess),
@@ -214,6 +226,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.arReceipt": {
+    description: "AR Receipt Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_RECEIPT",
     loadHandler: () => import("./ar_receipt/api/ar-receipt.http.handlers").then((module) => module.handleProcess),
@@ -229,6 +242,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.arReceiptApplication": {
+    description: "AR Receipt Application Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_RECEIPT_APPLICATION",
     loadHandler: () => import("./ar_receipt_application/api/ar-receipt-application.http.handlers").then((module) => module.handleProcess),
@@ -244,6 +258,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.arRefund": {
+    description: "AR Refund Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_REFUND",
     loadHandler: () => import("./ar_refund/api/ar-refund.http.handlers").then((module) => module.handleProcess),
@@ -259,6 +274,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.arWriteOff": {
+    description: "AR Write Off Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/AR_WRITE_OFF",
     loadHandler: () => import("./ar_write_off/api/ar-write-off.http.handlers").then((module) => module.handleProcess),
@@ -274,6 +290,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.inventoryAdjustment": {
+    description: "Inventory Adjustment Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/INVENTORY_ADJUSTMENT",
     loadHandler: () => import("./inventory/api/inventory-adjustment.http.handlers").then((module) => module.handleProcess),
@@ -289,6 +306,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.inventoryIssue": {
+    description: "Inventory Issue Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/INVENTORY_ISSUE",
     loadHandler: () => import("./inventory/api/inventory-issue.http.handlers").then((module) => module.handleProcess),
@@ -304,6 +322,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.inventoryReceipt": {
+    description: "Inventory Receipt Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/INVENTORY_RECEIPT",
     loadHandler: () => import("./inventory/api/inventory-receipt.http.handlers").then((module) => module.handleProcess),
@@ -319,6 +338,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.ledgerJournal": {
+    description: "Ledger Journal Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/LEDGER_JOURNAL",
     loadHandler: () => import("./ledger_journal/api/ledger-journal.http.handlers").then((module) => module.handleProcess),
@@ -334,6 +354,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.ledgerJournalReversal": {
+    description: "Ledger Journal Reversal Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/LEDGER_JOURNAL_REVERSAL",
     loadHandler: () => import("./ledger_journal/api/ledger-journal-reversal.http.handlers").then((module) => module.handleProcess),
@@ -349,6 +370,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.taxAdjustment": {
+    description: "Tax Adjustment Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/TAX_ADJUSTMENT",
     loadHandler: () => import("./tax_adjustment/api/tax-adjustment.http.handlers").then((module) => module.handleProcess),
@@ -364,6 +386,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.taxPayment": {
+    description: "Tax Payment Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/TAX_PAYMENT",
     loadHandler: () => import("./tax_payment/api/tax-payment.http.handlers").then((module) => module.handleProcess),
@@ -379,6 +402,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.financial-document-processing-engine.taxRefund": {
+    description: "Tax Refund Financial Document Processing Engine.",
     method: "POST",
     path: "/finance/[companyCode]/process-document/TAX_REFUND",
     loadHandler: () => import("./tax_refund/api/tax-refund.http.handlers").then((module) => module.handleProcess),

@@ -37,6 +37,7 @@ const errors = {
 const id = { id: { schema: Type.String({ pattern: "^[1-9][0-9]*$" }) } };
 export const httpApiRoutes = {
   "inventory.stock.positions": {
+    description: "Lists derived on-hand, reserved, and available positions by item and warehouse.",
     method: "GET",
     path: "/inventory/stock",
     loadHandler: () => load().then((m) => m.handlePositions),
@@ -52,6 +53,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.activity": {
+    description: "Lists stock movements and reservation activity for the active organization.",
     method: "GET",
     path: "/inventory/stock/activity",
     loadHandler: () => load().then((m) => m.handleActivity),
@@ -67,6 +69,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.options": {
+    description: "Returns active quantity-tracked items and warehouses, including warehouse status, for stock workflows.",
     method: "GET",
     path: "/inventory/stock/options",
     loadHandler: () => load().then((m) => m.handleOptions),
@@ -85,6 +88,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.receive": {
+    description: "Records positive inventory ledger movements for stock received into a warehouse.",
     method: "POST",
     path: "/inventory/stock/receive",
     loadHandler: () => load().then((m) => m.handleReceive),
@@ -98,6 +102,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.issue": {
+    description: "Records inventory ledger movements for stock issued from a warehouse.",
     method: "POST",
     path: "/inventory/stock/issue",
     loadHandler: () => load().then((m) => m.handleIssue),
@@ -111,6 +116,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.transfer": {
+    description: "Records paired negative and positive ledger movements between warehouses.",
     method: "POST",
     path: "/inventory/stock/transfer",
     loadHandler: () => load().then((m) => m.handleTransfer),
@@ -124,6 +130,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.reserve": {
+    description: "Creates active reservations against available stock without moving physical quantity.",
     method: "POST",
     path: "/inventory/stock/reserve",
     loadHandler: () => load().then((m) => m.handleReserve),
@@ -134,6 +141,7 @@ export const httpApiRoutes = {
     responses: { "204": { description: "Stock reserved" }, ...errors },
   },
   "inventory.stock.adjust": {
+    description: "Records exceptional inventory quantity adjustments in the stock ledger.",
     method: "POST",
     path: "/inventory/stock/adjust",
     loadHandler: () => load().then((m) => m.handleAdjust),
@@ -147,6 +155,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.counts": {
+    description: "Lists physical stocktake records and their adjustment counts.",
     method: "GET",
     path: "/inventory/stock-counts",
     loadHandler: () => load().then((m) => m.handleCounts),
@@ -159,6 +168,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.createCount": {
+    description: "Creates a draft stocktake from current quantities for an active warehouse.",
     method: "POST",
     path: "/inventory/stock-counts",
     loadHandler: () => load().then((m) => m.handleCreateCount),
@@ -172,6 +182,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.count": {
+    description: "Gets a stocktake with expected, counted, and variance quantities and audit metadata.",
     method: "GET",
     path: "/inventory/stock-counts/[id]",
     loadHandler: () => load().then((m) => m.handleCount),
@@ -185,6 +196,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.saveCount": {
+    description: "Saves draft or in-progress counted quantities for a stocktake.",
     method: "PATCH",
     path: "/inventory/stock-counts/[id]",
     loadHandler: () => load().then((m) => m.handleSaveCount),
@@ -210,6 +222,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.completeCount": {
+    description: "Completes a stocktake and posts ledger adjustments for non-zero variances.",
     method: "POST",
     path: "/inventory/stock-counts/[id]/complete",
     loadHandler: () => load().then((m) => m.handleCompleteCount),
@@ -223,6 +236,7 @@ export const httpApiRoutes = {
     },
   },
   "inventory.stock.deleteCount": {
+    description: "Deletes a draft or in-progress stocktake; completed stocktakes are retained.",
     method: "DELETE",
     path: "/inventory/stock-counts/[id]",
     loadHandler: () => load().then((m) => m.handleDeleteCount),

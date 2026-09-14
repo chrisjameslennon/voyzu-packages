@@ -5,6 +5,7 @@ import {
 } from "./types/report.types";
 export const httpApiRoutes = {
   "inventory.reports.report": {
+    description: "Builds the selected Inventory report for the active organization.",
     method: "GET",
     path: "/inventory/reports/[report]",
     loadHandler: () =>

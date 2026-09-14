@@ -6,6 +6,7 @@ import { TaxAuthorityResponseDto } from "./types/tax.response.dto";
 
 export const httpApiRoutes = {
   "finance.tax.authoritiesList": {
+    description: "Authorities List Tax.",
     method: "GET",
     path: "/finance/tax/authorities",
     loadHandler: () => import("./server/http-api/tax.http.handlers").then((module) => module.handleListTaxAuthorities),
@@ -22,6 +23,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.tax.authoritiesGet": {
+    description: "Authorities Get Tax.",
     method: "GET",
     path: "/finance/tax/authorities/[code]",
     loadHandler: () => import("./server/http-api/tax.http.handlers").then((module) => module.handleGetTaxAuthority),

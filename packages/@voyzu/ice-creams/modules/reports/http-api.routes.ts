@@ -25,6 +25,7 @@ const commonResponses = {
 
 export const httpApiRoutes = {
   "ice-creams.reports.all": {
+    description: "Returns every ice cream for reporting.",
     method: "GET",
     path: "/ice-creams/reports/all-ice-creams",
     loadHandler: () => loadHandlers().then((module) => module.handleAllIceCreamsReport),

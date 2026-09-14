@@ -6,6 +6,7 @@ import { ArSubledgerEntryResponseDto } from "./types/ar-subledger-entry.response
 
 export const httpApiRoutes = {
   "finance.ar-subledger-ledger-entries.list": {
+    description: "List AR Subledger Ledger Entries.",
     method: "GET",
     path: "/finance/[companyCode]/ar-subledger/entries",
     loadHandler: () => import("./server/http-api/ar-subledger-ledger-entries.http.handlers").then((module) => module.handleListArEntries),
@@ -23,6 +24,7 @@ export const httpApiRoutes = {
     }
   },
   "finance.ar-subledger-ledger-entries.get": {
+    description: "Get AR Subledger Ledger Entries.",
     method: "GET",
     path: "/finance/[companyCode]/ar-subledger/entries/[code]",
     loadHandler: () => import("./server/http-api/ar-subledger-ledger-entries.http.handlers").then((module) => module.handleGetArEntry),
