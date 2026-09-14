@@ -68,7 +68,7 @@ export async function createFinancialEntity({ organizationId }: { organizationId
 }
 
 export async function listSelectableFinanceCompaniesForCurrentUser(): Promise<OrganizationResponseDto[]> {
-  const { organizations: accessibleOrganizations } = await internalApi.call("@core/organization-context", "getAvailableOrganizations", {});
+  const { organizations: accessibleOrganizations } = await internalApi.call("@core/organization-context", "get", {});
   if (accessibleOrganizations.length === 0) return [];
   const financeOrganizationIds = new Set(await new FinanceCompanyRepo(getDb()).listOrganizationIds());
   return accessibleOrganizations.filter((organization) => financeOrganizationIds.has(organization.organization_id))

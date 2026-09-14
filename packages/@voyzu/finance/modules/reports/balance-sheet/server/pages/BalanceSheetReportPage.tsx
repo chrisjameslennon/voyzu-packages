@@ -1,3 +1,4 @@
+import { listReportOrganizations } from "../../../organization-directory.repo";
 import "server-only";
 
 import { internalApi } from "@voyzu/capability/internal-api";
@@ -24,8 +25,8 @@ function todayIso(): string {
 export async function BalanceSheetReportPage({ surface }: ReportPageProps = {}) {
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedCompanyId = queryCompanyId || (await internalApi.call("@core/organization-context", "getSavedOrganizationId", {})).organization_id;
-  const companies = await internalApi.call("@core/organization", "list", {}).then(rows => rows.map(({ organization_id, ...row }) => ({ id: organization_id, ...row })));
+  const selectedCompanyId = queryCompanyId || (await internalApi.call("@core/organization-context", "get", {})).organization_id;
+  const companies = await listReportOrganizations();
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
   const today = todayIso();
 

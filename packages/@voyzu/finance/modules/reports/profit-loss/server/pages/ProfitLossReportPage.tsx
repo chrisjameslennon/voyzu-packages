@@ -1,3 +1,4 @@
+import { listReportOrganizations } from "../../../organization-directory.repo";
 import "server-only";
 
 
@@ -39,8 +40,8 @@ function previous90DaysRange(fiscalYearStartDate?: string): { fromDate: string; 
 export async function ProfitLossReportPage({ surface }: ReportPageProps = {}) {
   const query = surface?.searchParams ?? {};
   const queryCompanyId = query.companyId ? Number(query.companyId) : null;
-  const selectedOrganizationId = (await internalApi.call("@core/organization-context", "getSavedOrganizationId", {})).organization_id;
-  const companies = await internalApi.call("@core/organization", "list", {}).then(rows => rows.map(({ organization_id, ...row }) => ({ id: organization_id, ...row })));
+  const selectedOrganizationId = (await internalApi.call("@core/organization-context", "get", {})).organization_id;
+  const companies = await listReportOrganizations();
   const company = companies.find((item) => item.id === queryCompanyId)
     ?? companies.find((item) => item.id === selectedOrganizationId)
     ?? companies[0]

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { OrganizationSwitcher } from "@voyzu/organization/exports/components";
+import { OrganizationSwitcher } from "@voyzu/ui-business-components";
 
 export function FinanceCompanySwitcher({ isCollapsed, companyPath = "/finance/journals" }: { isCollapsed: boolean; companyPath?: string; }) {
   const router = useRouter();

@@ -96,8 +96,7 @@ export async function assertCompanySettingsWritable(
 export async function resolveServerSettingsScope(
   db: DbExecutor = getDb(),
 ): Promise<CompanySettingsScope> {
-  const { organization_id: companyId } = await internalApi.call("@core/organization-context", "getSavedOrganizationId", {});
-  const { organizations: available } = await internalApi.call("@core/organization-context", "getAvailableOrganizations", {});
+  const { organization_id: companyId, organizations: available } = await internalApi.call("@core/organization-context", "get", {});
   const accessibleCompanies = available.map(({ organization_id, ...organization }) => ({ id: organization_id, ...organization }));
   const financeCompanyIds = new Set(
     await new SettingsScopeRepo(db).listFinanceOrganizationIds(),

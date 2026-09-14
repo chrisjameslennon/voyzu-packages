@@ -21,7 +21,7 @@ export async function handleGetFinanceCompanySelection(
   _request: NextRequest,
 ): Promise<NextResponse<OrganizationSelectionResponseDto | InternalServerErrorResponseDto>> {
   try {
-    const { organization_id: requestedOrganizationId } = await internalApi.call("@core/organization-context", "getSavedOrganizationId", {});
+    const { organization_id: requestedOrganizationId } = await internalApi.call("@core/organization-context", "get", {});
     const { organizations, selectedOrganization } = await resolveFinanceCompanySelectionForCurrentUser(requestedOrganizationId);
     return ok({ organizations, selectedOrganization, selectedOrganizationId: selectedOrganization?.id ?? null });
   } catch (error) {
