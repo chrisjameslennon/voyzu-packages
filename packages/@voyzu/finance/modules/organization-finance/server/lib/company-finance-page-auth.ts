@@ -9,7 +9,7 @@ export const companyFinancePageAuth = {
     if ((await listSelectableFinanceCompaniesForCurrentUser()).length > 0) return "allow" as const;
     if (user?.role === "ADMIN") {
       const { redirect } = await import("next/navigation");
-      redirect("/finance");
+      redirect("/organization/organizations");
     }
     return "denied" as const;
   },
