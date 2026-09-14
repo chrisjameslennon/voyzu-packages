@@ -1,35 +1,3 @@
-import { httpApiRoutes as routes0 } from "./modules/ap-subledger-counterparties/http-api.routes";
-import { httpApiRoutes as routes1 } from "./modules/ap-subledger-ledger-entries/http-api.routes";
-import { httpApiRoutes as routes2 } from "./modules/ap-subledger-statements/http-api.routes";
-import { httpApiRoutes as routes3 } from "./modules/ar-subledger-counterparties/http-api.routes";
-import { httpApiRoutes as routes4 } from "./modules/ar-subledger-ledger-entries/http-api.routes";
-import { httpApiRoutes as routes5 } from "./modules/ar-subledger-statements/http-api.routes";
-import { httpApiRoutes as routes6 } from "./modules/bank-cash-accounts/http-api.routes";
-import { httpApiRoutes as routes7 } from "./modules/control-accounts/http-api.routes";
-import { httpApiRoutes as routes8 } from "./modules/country-tax-settings/http-api.routes";
-import { httpApiRoutes as routes9 } from "./modules/dimensions/http-api.routes";
-import { httpApiRoutes as routes10 } from "./modules/financial-document-defaults/http-api.routes";
-import { httpApiRoutes as routes11 } from "./modules/financial-document-processing-engine/http-api.routes";
-import { httpApiRoutes as routes12 } from "./modules/financial-document-types/http-api.routes";
-import { httpApiRoutes as routes13 } from "./modules/financial-years/http-api.routes";
-import { httpApiRoutes as routes14 } from "./modules/gl-account-categories/http-api.routes";
-import { httpApiRoutes as routes15 } from "./modules/gl-accounts/http-api.routes";
-import { httpApiRoutes as routes16 } from "./modules/inventory-control-accounts/http-api.routes";
-import { httpApiRoutes as routes17 } from "./modules/inventory-item-posting-profile-assignments/http-api.routes";
-import { httpApiRoutes as routes18 } from "./modules/inventory-item-posting-profiles/http-api.routes";
-import { httpApiRoutes as routes19 } from "./modules/inventory-ledger/http-api.routes";
-import { httpApiRoutes as routes20 } from "./modules/inventory-processing/http-api.routes";
-import { httpApiRoutes as routes21 } from "./modules/organization-finance/http-api.routes";
-import { httpApiRoutes as routes22 } from "./modules/reports/http-api.routes";
-import { httpApiRoutes as routes23 } from "./modules/tax/http-api.routes";
-import { httpApiRoutes as routes24 } from "./modules/tax-control-accounts/http-api.routes";
-import { httpApiRoutes as routes25 } from "./modules/tax-ledger/http-api.routes";
-
-export const httpApiRouting = {
-  roots: ["/finance"],
-  routes: { ...routes0, ...routes1, ...routes2, ...routes3, ...routes4, ...routes5, ...routes6, ...routes7, ...routes8, ...routes9, ...routes10, ...routes11, ...routes12, ...routes13, ...routes14, ...routes15, ...routes16, ...routes17, ...routes18, ...routes19, ...routes20, ...routes21, ...routes22, ...routes23, ...routes24, ...routes25 },
-} as const;
-
 export const httpApiDocumentation = {
   "sections": {
     "finance.accounts-payable": {
