@@ -26,7 +26,6 @@
     "./navigation/left-nav-header": "./navigation/left-nav-header.tsx",
     "./organization-finance": "./modules/organization-finance/module.ts",
     "./organization-finance/client": "./modules/organization-finance/client/index.ts",
-    "./organization-finance/components": "./modules/organization-finance/components.tsx",
     "./organization-finance/server": "./modules/organization-finance/server/index.ts",
     "./country-tax-settings": "./modules/country-tax-settings/module.ts",
     "./country-tax-settings/client": "./modules/country-tax-settings/client/index.ts",
@@ -312,8 +311,7 @@
     "server-only": "^0.0.1",
     "typebox": "^1.3.7",
     "@voyzu/ui-business-components": "^0.1.0",
-    "@voyzu/inventory": "^0.1.0",
-    "@voyzu/components": "^0.1.0"
+    "@voyzu/inventory": "^0.1.0"
   },
   "devDependencies": {
     "@types/archiver": "^8.0.0",

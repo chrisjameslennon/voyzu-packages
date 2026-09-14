@@ -9,7 +9,6 @@ import type { OrganizationSelectionResponseDto, OrganizationSelectionUpdateRespo
 import type { OrganizationSelectionUpdateRequestDto } from "../../types/organization-selection.dto";
 import { internalApi } from "@voyzu/capability/internal-api";
 import {
-  activateFinanceCompany,
   listSelectableFinanceCompaniesForCurrentUser,
   resolveFinanceCompanySelectionForCurrentUser,
   updateFinanceCompany,
@@ -44,20 +43,6 @@ export async function handleSetFinanceCompanySelection(
   } catch (error) {
     if (error instanceof SyntaxError) return inputValidationError(error.message);
     if (error instanceof NotFoundError) return notFoundError(error.message);
-    return serverError(error);
-  }
-}
-
-export async function handleActivate(
-  _request: NextRequest,
-  { params }: { params: Promise<{ code: string }> },
-): Promise<NextResponse<FinanceCompanyResponseDto | ErrorResponse>> {
-  try {
-    const { code } = await params;
-    return ok(await activateFinanceCompany(code));
-  } catch (error) {
-    if (error instanceof NotFoundError) return notFoundError(error.message);
-    if (error instanceof BusinessRuleError) return businessRuleError(error.message);
     return serverError(error);
   }
 }

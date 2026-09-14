@@ -10,6 +10,7 @@ import { FinanceCompanyRepo, type FinanceCompanyRow } from "../db/finance-compan
 import { FinancialEntityInitializationRepo } from "../initialization/financial-entity-initialization.repo";
 
 function toDto(row: FinanceCompanyRow): FinanceCompanyResponseDto {
+  if (row.finance_organization_id == null) throw new BusinessRuleError(`Organization ${row.id} is missing its financial entity`);
   return {
     id: Number(row.id),
     code: row.code,
@@ -33,8 +34,7 @@ function toDto(row: FinanceCompanyRow): FinanceCompanyResponseDto {
         mutationId: row.updated_mutation_id,
       },
     },
-    financeCompanyId: row.finance_organization_id == null ? null : Number(row.finance_organization_id),
-    financeEnabled: row.finance_organization_id != null,
+    financeCompanyId: Number(row.finance_organization_id),
     taxFilingAnchorMonth: Number(row.tax_filing_anchor_month),
     taxFilingIntervalMonths: Number(row.tax_filing_interval_months) as 1 | 2 | 3 | 6 | 12,
     ...(row.report_line_1 != null && { reportLine1: row.report_line_1 }),
@@ -55,7 +55,7 @@ export function getFinanceCompany(code: string): Promise<FinanceCompanyResponseD
 
 export async function getOrganizationFinance(organizationId: number): Promise<FinanceCompanyResponseDto | null> {
   const row = await new FinanceCompanyRepo(getDb()).getByOrganizationId(organizationId);
-  return row?.finance_organization_id != null ? toDto(row) : null;
+  return row ? toDto(row) : null;
 }
 
 export async function createFinancialEntity({ organizationId }: { organizationId: number }): Promise<{ financialEntityId: number }> {
@@ -81,22 +81,6 @@ export async function resolveFinanceCompanySelectionForCurrentUser(requestedOrga
     ?? organizations[0]
     ?? null;
   return { organizations, selectedOrganization };
-}
-
-export async function activateFinanceCompany(code: string): Promise<FinanceCompanyResponseDto> {
-  return withTransaction(async (db) => {
-    const repo = new FinanceCompanyRepo(db);
-    await repo.lock(code);
-    const company = await repo.getActivationContext(code);
-    if (!company) throw new NotFoundError(`Company ${code} not found`);
-    if (company.status !== "ACTIVE") throw new BusinessRuleError("Only an active organization company can be enabled for Finance");
-    if (!company.financial_period_start_month) throw new BusinessRuleError(`Finance country settings are not configured for company ${code}`);
-
-    await provisionFinanceCompanyForErpOrganization(Number(company.id), db);
-    const result = await findByCode(code, db);
-    if (!result) throw new NotFoundError(`Company ${code} not found after Finance activation`);
-    return result;
-  });
 }
 
 async function provisionFinanceCompanyForErpOrganization(
@@ -133,31 +117,22 @@ export function createFinanceCompanyForErpOrganization(
   return withTransaction((db) => provisionFinanceCompanyForErpOrganization(organizationId, db));
 }
 
-export function activateFinanceCompanyForErpOrganization(
-  organizationId: number,
-): Promise<void> {
-  return withTransaction((db) => provisionFinanceCompanyForErpOrganization(organizationId, db));
-}
-
-export async function deactivateFinanceCompanyForErpOrganization(
-  _organizationId: number,
-): Promise<void> {
-  // Finance derives availability from the owning ERP organization's status.
-}
-
-export async function updateFinanceCompany(code: string, input: FinanceCompanyUpdateRequestDto): Promise<FinanceCompanyResponseDto> {
+export async function updateOrganizationFinance(organizationId: number, input: FinanceCompanyUpdateRequestDto): Promise<FinanceCompanyResponseDto> {
   return withTransaction(async (db) => {
     const repo = new FinanceCompanyRepo(db);
-    const current = await findByCode(code, db);
-    if (!current) throw new NotFoundError(`Company ${code} not found`);
-    if (!current.financeCompanyId) throw new BusinessRuleError(`Company ${code} is not enabled for Finance`);
+    const row = await repo.getForUpdate(organizationId);
+    if (!row) throw new NotFoundError(`Organization ${organizationId} not found`);
+    const current = toDto(row);
+    if (current.status !== "ACTIVE") throw new BusinessRuleError("Archived organizations have read-only Finance settings");
     await repo.updateSettings(current.financeCompanyId, input);
-    const updated = await findByCode(code, db);
-    if (!updated) throw new NotFoundError(`Company ${code} not found after update`);
-    return updated;
+    const updated = await repo.getByOrganizationId(organizationId);
+    if (!updated) throw new NotFoundError(`Organization ${organizationId} not found after update`);
+    return toDto(updated);
   });
 }
 
-export async function deleteFinanceCompanyForErpOrganization(organizationId: number): Promise<void> {
-  await new FinanceCompanyRepo(getDb()).deleteByOrganizationId(organizationId);
+export async function updateFinanceCompany(code: string, input: FinanceCompanyUpdateRequestDto): Promise<FinanceCompanyResponseDto> {
+  const current = await getFinanceCompany(code);
+  if (!current) throw new NotFoundError(`Organization ${code} not found`);
+  return updateOrganizationFinance(current.id, input);
 }

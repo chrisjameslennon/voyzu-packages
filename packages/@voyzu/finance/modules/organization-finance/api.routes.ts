@@ -26,16 +26,6 @@ export const apiDefinitions = {
       "500": { description: "Unexpected server error.", body: InternalServerErrorResponseDto },
     },
   },
-  activate: {
-    method: "POST", path: "/finance/companies/[code]/activate", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleActivate),
-    request: { path: codePath }, summary: "Enable an ERP company for Finance", description: "Creates the Finance company aggregate from its country settings and creates its fiscal calendar.", tags: ["Finance Companies"],
-    responses: {
-      "200": { description: "Activated Finance company.", body: FinanceCompanyResponseDto },
-      "400": { description: "Company cannot be enabled.", body: BusinessRuleErrorResponseDto },
-      "404": { description: "Company not found.", body: EntityNotFoundErrorResponseDto },
-      "500": { description: "Unexpected server error.", body: InternalServerErrorResponseDto },
-    },
-  },
   update: {
     method: "PUT", path: "/finance/companies/[code]", loadHandler: () => import("./server/api/finance-company.http.handlers").then((module) => module.handleUpdate),
     request: { path: codePath, contentType: "application/json", body: FinanceCompanyUpdateRequestDto },

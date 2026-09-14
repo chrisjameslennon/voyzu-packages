@@ -101,7 +101,6 @@
     "next": "^16",
     "react": "^19",
     "server-only": "^0.0.1",
-    "@voyzu/components": "^0.1.0",
     "@voyzu/ui-business-components": "^0.1.0"
   }
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AuditPanel } from "@voyzu/components/audit-panel";
+import { AuditPanel } from "@voyzu/ui-business-components";
 import { Badge, Breadcrumbs, Button, EditableGrid, Input, TabGroup, type EditableGridColumn, type TabDef } from "@voyzu/ui-components";
 import reportLayout from "@voyzu/ui-layout/css-modules/report.layout.module.css";
 import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";

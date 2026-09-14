@@ -2,13 +2,13 @@
 export const pageRoutes = {
   list: {
     id: "voyzu.countryTaxSettings.page.list", pageTitle: "Country Tax Settings",
-    path: "/finance/global-settings/country-tax-settings", loadPage: () => import("./server/pages/CountryTaxSettingsListSlotPage").then((module) => module.CountryTaxSettingsListSlotPage),
+    path: "/finance/global-settings/country-tax-settings", loadPage: () => import("./server/pages/CountryTaxSettingsListPage").then((module) => module.CountryTaxSettingsListPage),
     breadcrumbBase: [{ label: "Finance", href: "/finance/journals" }, { label: "Global Settings" }],
     auth: { required: true, minRole: "STANDARD" },
   },
   detail: {
     id: "voyzu.countryTaxSettings.page.detail", pageTitle: "Country Tax Settings",
-    path: "/finance/global-settings/country-tax-settings/[code]", loadPage: () => import("./server/pages/CountryTaxSettingDetailSlotPage").then((module) => module.CountryTaxSettingDetailSlotPage),
+    path: "/finance/global-settings/country-tax-settings/[code]", loadPage: () => import("./server/pages/CountryTaxSettingDetailPage").then((module) => module.CountryTaxSettingDetailPage),
     breadcrumbBase: [
       { label: "Finance", href: "/finance/journals" },
       { label: "Global Settings" },

@@ -29,13 +29,9 @@ export class FinanceCompanyRepo {
     return rows.map((row) => Number(row.organization_id));
   }
 
-  lock(code: string): Promise<unknown> {
-    return this.db.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`voyzu.finance-company.${code}`]);
-  }
-
-  async getActivationContext(code: string): Promise<Record<string, unknown> | null> {
-    const { rows } = await this.db.query(`SELECT c.id::int, c.status, fc.financial_period_start_month, fc.tax_filing_anchor_month::int, fc.tax_filing_interval_months::int FROM organization c LEFT JOIN finance_country fc ON fc.code = c.country_code WHERE c.code = $1 AND c.status != 'DELETED' FOR UPDATE OF c`, [code]);
-    return (rows[0] as Record<string, unknown> | undefined) ?? null;
+  async getForUpdate(organizationId: number): Promise<FinanceCompanyRow | null> {
+    const { rows } = await this.db.query(`${SELECT_SQL} WHERE c.id = $1 AND c.status != 'DELETED' FOR UPDATE OF c`, [organizationId]);
+    return (rows[0] as unknown as FinanceCompanyRow | undefined) ?? null;
   }
 
   async getProvisioningContext(organizationId: number): Promise<Record<string, unknown> | null> {
@@ -61,7 +57,4 @@ export class FinanceCompanyRepo {
     await this.db.query(`UPDATE finance_organization SET tax_filing_anchor_month = $2, tax_filing_interval_months = $3, report_line_1 = NULLIF($4, ''), report_line_2 = NULLIF($5, ''), report_footer = NULLIF($6, '') WHERE id = $1`, [id, input.taxFilingAnchorMonth, input.taxFilingIntervalMonths, input.reportLine1 ?? "", input.reportLine2 ?? "", input.reportFooter ?? ""]);
   }
 
-  async deleteByOrganizationId(organizationId: number): Promise<void> {
-    await this.db.query("DELETE FROM finance_organization WHERE organization_id = $1", [organizationId]);
-  }
 }

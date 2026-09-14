@@ -3,7 +3,7 @@
 import { Textarea } from "@voyzu/ui-components";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AuditPanel } from "@voyzu/components/audit-panel";
+import { AuditPanel } from "@voyzu/ui-business-components";
 import {
   Badge,
   Breadcrumbs,

@@ -4,6 +4,13 @@ DO $finance_entity_seed$
 DECLARE
   entity_id bigint;
 BEGIN
+  IF EXISTS (
+    SELECT 1 FROM organization o
+    LEFT JOIN finance_country c ON c.code = o.country_code
+    WHERE o.status != 'DELETED' AND c.code IS NULL
+  ) THEN
+    RAISE EXCEPTION 'Finance country settings are required for every existing organization';
+  END IF;
   FOR entity_id IN
     INSERT INTO finance_organization (
       organization_id, tax_filing_anchor_month, tax_filing_interval_months,
