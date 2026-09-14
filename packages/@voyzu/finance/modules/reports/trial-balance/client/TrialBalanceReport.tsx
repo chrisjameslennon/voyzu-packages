@@ -1,6 +1,6 @@
 "use client";
 
-import { financeApiUrl } from "../../../common/client/index";
+import { financeHttpApiUrl } from "../../../common/client/index";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { TrialBalanceResponseDto } from "../types/trial-balance.response.dto";
@@ -40,7 +40,7 @@ export function TrialBalanceReport({
     try {
       const params = new URLSearchParams({ companyId: String(companyId) });
       if (date) params.set("asAtDate", date);
-      const res = await fetch(await financeApiUrl(`/reports/trial-balance?${params.toString()}`));
+      const res = await fetch(await financeHttpApiUrl(`/reports/trial-balance?${params.toString()}`));
       if (!res.ok) return;
       setData((await res.json()) as TrialBalanceResponseDto);
     } finally {

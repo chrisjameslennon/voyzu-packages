@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyPageTitleBadges, financeApiUrl, getDrCrColor, getStatusSemanticColor } from "../../common/client/index";
+import { CompanyPageTitleBadges, financeHttpApiUrl, getDrCrColor, getStatusSemanticColor } from "../../common/client/index";
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -109,7 +109,7 @@ export function ApLedgerEntryEnquiry({ entries, financialYears, periods: initial
       setRangePreset("entire-financial-year");
       setRangeLabel("Financial year");
     }
-    const response = await fetch(await financeApiUrl(`/financial-years/${yearCode}/periods`));
+    const response = await fetch(await financeHttpApiUrl(`/financial-years/${yearCode}/periods`));
     const nextPeriods = response.ok ? await response.json() as FinancialPeriodResponseDto[] : [];
     setPeriods(nextPeriods);
     if (historical && nextYear) {

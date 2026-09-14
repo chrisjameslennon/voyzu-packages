@@ -20,7 +20,7 @@ interface CompanyGlAccountCategoryDetailProps {
   category: GlAccountCategoryResponseDto;
   listPath?: string;
   auditPath?: string;
-  apiPath?: string;
+  httpApiPath?: string;
   showArchived?: boolean;
   readOnly?: boolean;
 }
@@ -29,7 +29,7 @@ export function GlAccountCategoryDetail({
   category,
   listPath = "/organization/chart-of-accounts/reporting-categories",
   auditPath = "/settings/audit",
-  apiPath = "/api/organization/gl-account-categories",
+  httpApiPath = "/api/organization/gl-account-categories",
   showArchived = false,
   readOnly = false,
 }: CompanyGlAccountCategoryDetailProps) {
@@ -42,8 +42,8 @@ export function GlAccountCategoryDetail({
   }));
   const currentErrors = [...validation.errors, ...(serverError ? [serverError] : [])];
 
-  const apiUrl = (suffix = "") => {
-    const [path, query] = apiPath.split("?");
+  const httpApiUrl = (suffix = "") => {
+    const [path, query] = httpApiPath.split("?");
     return `${path}${suffix}${query ? `?${query}` : ""}`;
   };
 
@@ -54,7 +54,7 @@ export function GlAccountCategoryDetail({
     setSaving(true);
     try {
       const payload: GlAccountCategoryPatchRequestDto = { name: name.trim() };
-      const response = await fetch(apiUrl(`/${encodeURIComponent(category.code)}`), {
+      const response = await fetch(httpApiUrl(`/${encodeURIComponent(category.code)}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { ItemPostingProfilePatchRequestDto } from "./item-posting-profile.patch.request.dto";
 import { BusinessCode } from "../../common/types/constraints";
 

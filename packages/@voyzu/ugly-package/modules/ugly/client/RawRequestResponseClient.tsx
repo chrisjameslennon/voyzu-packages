@@ -73,9 +73,9 @@ export function RawRequestResponseClient({ pageExampleHtml }: { pageExampleHtml:
           />
         </div>
         <section className={styles.requestResponseExplanation}>
-          <h2>API</h2>
+          <h2>HTTP API</h2>
           <p>
-            Package API handlers operate at the raw HTTP boundary. They receive a Next.js <code>NextRequest</code> and
+            Package HTTP API handlers operate at the raw HTTP boundary. They receive a Next.js <code>NextRequest</code> and
             return a <code>NextResponse</code>, so they can set cookies and headers, choose a status, redirect the user,
             or return any supported response body.
           </p>

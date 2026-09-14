@@ -6,7 +6,7 @@ import { DetailBackButton } from "@voyzu/ui-surface/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { CompanyPageTitleBadges, financeApiUrl, getHasPostingsColor, getStatusSemanticColor } from "../../../common/client/index";
+import { CompanyPageTitleBadges, financeHttpApiUrl, getHasPostingsColor, getStatusSemanticColor } from "../../../common/client/index";
 import type { FinancialPeriodResponseDto } from "../../types/financial-period.response.dto";
 import type { FinancialYearResponseDto } from "../../types/index";
 import { Badge, Breadcrumbs, Button, Checkbox, ConfirmDialog, Input, ValidationAlert } from "@voyzu/ui-components";
@@ -127,7 +127,7 @@ export function FinancialYearDetail({
       const updatedPeriods: FinancialPeriodResponseDto[] = [];
       for (const period of targets) {
         const response = await fetch(
-          await financeApiUrl(`/financial-years/${encodeURIComponent(currentYear.code)}/periods/${encodeURIComponent(period.code)}/${action}`),
+          await financeHttpApiUrl(`/financial-years/${encodeURIComponent(currentYear.code)}/periods/${encodeURIComponent(period.code)}/${action}`),
           { method: "POST" },
         );
         if (!response.ok) throw new Error(`Unable to ${action} period ${period.code}`);
@@ -159,7 +159,7 @@ export function FinancialYearDetail({
     try {
       const effectiveAction = action === "open" && currentYear.status === "CLOSED" ? "reopen" : action;
       const response = await fetch(
-        await financeApiUrl(`/financial-years/${encodeURIComponent(currentYear.code)}/${effectiveAction}`),
+        await financeHttpApiUrl(`/financial-years/${encodeURIComponent(currentYear.code)}/${effectiveAction}`),
         { method: "POST" },
       );
       if (!response.ok) {
@@ -172,7 +172,7 @@ export function FinancialYearDetail({
 
       if (action === "open" && periodRows.length === 0) {
         const periodsResponse = await fetch(
-          await financeApiUrl(`/financial-years/${encodeURIComponent(updated.code)}/periods`),
+          await financeHttpApiUrl(`/financial-years/${encodeURIComponent(updated.code)}/periods`),
         );
         if (periodsResponse.ok) setPeriodRows(await periodsResponse.json() as FinancialPeriodResponseDto[]);
       }
@@ -188,7 +188,7 @@ export function FinancialYearDetail({
     setYearActionBusy(true);
     try {
       const response = await fetch(
-        await financeApiUrl(`/financial-years/${encodeURIComponent(currentYear.code)}`),
+        await financeHttpApiUrl(`/financial-years/${encodeURIComponent(currentYear.code)}`),
         { method: "DELETE" },
       );
       if (!response.ok) {

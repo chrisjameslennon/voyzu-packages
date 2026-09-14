@@ -28,8 +28,8 @@ type FinancialDocumentDefaultListRow = FinancialDocumentDefaultResponseDto & { i
 interface FinancialDocumentDefaultsListContentProps {
   financialDocumentDefaults: FinancialDocumentDefaultResponseDto[];
   routePrefix?: string;
-  apiPath?: string;
-  apiScope?: "template" | "selected";
+  httpApiPath?: string;
+  httpApiScope?: "template" | "selected";
   readOnly?: boolean;
 }
 
@@ -76,8 +76,8 @@ const columns: DataTableColumn<FinancialDocumentDefaultListRow>[] = [
 export function FinancialDocumentDefaultsListContent({
   financialDocumentDefaults,
   routePrefix = "/organization",
-  apiPath,
-  apiScope = "template",
+  httpApiPath,
+  httpApiScope = "template",
   readOnly = false,
 }: FinancialDocumentDefaultsListContentProps) {
   const router = useRouter();
@@ -132,7 +132,7 @@ export function FinancialDocumentDefaultsListContent({
     if (refreshing) return;
     setRefreshing(true);
     try {
-      const requestPath = apiPath ?? (apiScope === "template" ? "/api/organization/financial-document-defaults" : "/api/financial-document-defaults");
+      const requestPath = httpApiPath ?? (httpApiScope === "template" ? "/api/organization/financial-document-defaults" : "/api/financial-document-defaults");
       const response = await fetch(requestPath);
       if (response.ok) {
         setData(toRows(await response.json() as FinancialDocumentDefaultResponseDto[]));

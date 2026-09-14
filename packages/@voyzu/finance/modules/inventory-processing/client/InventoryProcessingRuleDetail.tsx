@@ -16,12 +16,12 @@ const label = (value: string) => value.replaceAll("_", " ");
 export function InventoryProcessingRuleDetail({
   rule,
   glAccounts,
-  apiPath,
+  httpApiPath,
   readOnly,
 }: {
   rule: FinanceInventoryProcessingRule;
   glAccounts: GlAccountResponseDto[];
-  apiPath: string;
+  httpApiPath: string;
   readOnly: boolean;
 }) {
   const [current, setCurrent] = useState(rule);
@@ -41,7 +41,7 @@ export function InventoryProcessingRuleDetail({
     setSaving(true);
     setError("");
     try {
-      const response = await fetch(apiPath, {
+      const response = await fetch(httpApiPath, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action, offsetGlAccountId: requiresOffsetAccount ? Number(accountId) : null }),

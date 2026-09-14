@@ -6,7 +6,7 @@ import { ApControlAccountDetail } from "../../client/index";
 import { getControlAccountByLedger } from "../index";
 import { listGlAccounts } from "../../../gl-accounts/server/index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 interface CompanyApControlAccountDetailPageProps {
   code?: string;
@@ -15,7 +15,7 @@ interface CompanyApControlAccountDetailPageProps {
 export async function ApControlAccountDetailPage({ code }: CompanyApControlAccountDetailPageProps) {
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [account, settingsState, allGlAccounts] = await Promise.all([
     getControlAccountByLedger(decodeURIComponent(code), "ACCOUNTS_PAYABLE", scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -27,7 +27,7 @@ export async function ApControlAccountDetailPage({ code }: CompanyApControlAccou
     <ApControlAccountDetail
       account={account}
       glAccounts={allGlAccounts}
-      apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/ap-control-accounts`}
+      httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/ap-control-accounts`}
       listPath="/finance/settings/control-accounts/ap"
       auditPath="/settings/audit"
       readOnly={settingsState.readOnly}

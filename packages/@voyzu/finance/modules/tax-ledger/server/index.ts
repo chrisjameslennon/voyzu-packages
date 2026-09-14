@@ -6,7 +6,7 @@ export {
 export {
   handleGetTaxEntry,
   handleListTaxEntries,
-} from "./api/tax-ledger.http.handlers";
+} from "./http-api/tax-ledger.http.handlers";
 
 export { TaxLedgerEntriesListPage } from "./pages/TaxLedgerEntriesListPage";
 export { TaxLedgerEntryDetailPage } from "./pages/TaxLedgerEntryDetailPage";

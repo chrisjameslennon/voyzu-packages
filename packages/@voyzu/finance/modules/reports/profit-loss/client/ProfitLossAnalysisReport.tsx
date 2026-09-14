@@ -1,6 +1,6 @@
 "use client";
 
-import { financeApiUrl } from "../../../common/client/index";
+import { financeHttpApiUrl } from "../../../common/client/index";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import type { FinancialPeriodResponseDto } from "../../../financial-years/types/financial-period.response.dto";
@@ -174,7 +174,7 @@ export function ProfitLossAnalysisReport({
         dimensionFilters: JSON.stringify(filters),
       });
       if (breakdown) params.set("breakdown", JSON.stringify(breakdown));
-      const res = await fetch(await financeApiUrl(`/reports/profit-loss-analysis?${params.toString()}`));
+      const res = await fetch(await financeHttpApiUrl(`/reports/profit-loss-analysis?${params.toString()}`));
       if (!res.ok) return;
       setData((await res.json()) as ProfitLossAnalysisResponseDto);
     } finally {
@@ -211,7 +211,7 @@ export function ProfitLossAnalysisReport({
   }, []);
 
   const fetchPeriods = useCallback(async (companyId: number, yearCode: string) => {
-    const res = await fetch(await financeApiUrl(`/financial-years/${yearCode}/periods`));
+    const res = await fetch(await financeHttpApiUrl(`/financial-years/${yearCode}/periods`));
     if (!res.ok) {
       setPeriods([]);
       return [];
@@ -243,7 +243,7 @@ export function ProfitLossAnalysisReport({
   useEffect(() => {
     if (!selectedCompanyId) return;
     const loadYears = async () => {
-      const res = await fetch(await financeApiUrl(`/financial-years`));
+      const res = await fetch(await financeHttpApiUrl(`/financial-years`));
       if (!res.ok) return;
       const years = ((await res.json()) as FinancialYearResponseDto[]).filter((year) => year.hasPostings);
       setFinancialYears(years);

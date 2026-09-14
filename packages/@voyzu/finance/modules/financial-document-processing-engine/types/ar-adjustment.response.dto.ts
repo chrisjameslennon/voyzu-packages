@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { DrCr, EntryType } from "../../common/types/index";
 import { ArInvoiceDetailedTaxComponentDto } from "./ar-invoice.response.dto";
 import { BankCashJournalDetailsDto } from "./bank-cash-details.dto";

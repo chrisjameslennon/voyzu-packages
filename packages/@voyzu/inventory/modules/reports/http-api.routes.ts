@@ -1,0 +1,24 @@
+import { InternalServerErrorResponseDto } from "@voyzu/types";
+import {
+  InventoryReportDto,
+  InventoryReportKeyDto,
+} from "./types/report.types";
+export const httpApiRoutes = {
+  "inventory.reports.report": {
+    method: "GET",
+    path: "/inventory/reports/[report]",
+    loadHandler: () =>
+      import("./server/http-api/report.http.handlers").then((m) => m.handleReport),
+    summary: "Get inventory report",
+    
+    
+    request: { path: { report: { schema: InventoryReportKeyDto } } },
+    responses: {
+      "200": { description: "Inventory report", body: InventoryReportDto },
+      "500": {
+        description: "Unexpected error",
+        body: InternalServerErrorResponseDto,
+      },
+    },
+  },
+} as const;

@@ -1,3 +1,4 @@
+import { httpApiRouting, httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
 import { install } from "./install/manifest";
@@ -11,6 +12,7 @@ import { uninstall } from "./uninstall/manifest";
  *
  **/
 export const iceCreamsPackage = {
+  contracts: { httpApiRouting, httpApiDocumentation },
   modules: [
     iceCreamsModule,
     iceCreamReportsModule,

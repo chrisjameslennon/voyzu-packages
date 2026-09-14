@@ -23,14 +23,14 @@ export function InventoryItemPostingProfileDetail({
   profile,
   glAccounts,
   listPath = "/finance/inventory/item-posting-profiles",
-  apiPath = "/api/inventory/item-posting-profiles",
+  httpApiPath = "/api/inventory/item-posting-profiles",
   showArchived = false,
   readOnly = false,
 }: {
   profile: ItemPostingProfileResponseDto;
   glAccounts: GlAccountResponseDto[];
   listPath?: string;
-  apiPath?: string;
+  httpApiPath?: string;
   showArchived?: boolean;
   readOnly?: boolean;
 }) {
@@ -73,8 +73,8 @@ export function InventoryItemPostingProfileDetail({
       .map((account) => ({ value: account.code, label: account.name, code: account.code })),
     [glAccounts],
   );
-  const apiUrl = (suffix = "") => {
-    const [path, query] = apiPath.split("?");
+  const httpApiUrl = (suffix = "") => {
+    const [path, query] = httpApiPath.split("?");
     return `${path}${suffix}${query ? `?${query}` : ""}`;
   };
 
@@ -98,7 +98,7 @@ export function InventoryItemPostingProfileDetail({
         adjustment_gain_code: adjustmentGainCode || null,
         adjustment_loss_code: adjustmentLossCode || null,
       };
-      const response = await fetch(apiUrl(`/${encodeURIComponent(profile.profile_code)}`), {
+      const response = await fetch(httpApiUrl(`/${encodeURIComponent(profile.profile_code)}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -130,7 +130,7 @@ export function InventoryItemPostingProfileDetail({
   const transitionStatus = async (action: "activate" | "deactivate") => {
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(apiUrl(`/batch-${action}`), {
+    const response = await fetch(httpApiUrl(`/batch-${action}`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: [profile.profile_code] }),
@@ -147,7 +147,7 @@ export function InventoryItemPostingProfileDetail({
   const deleteProfile = async () => {
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(apiUrl(`/${encodeURIComponent(profile.profile_code)}`), { method: "DELETE" });
+    const response = await fetch(httpApiUrl(`/${encodeURIComponent(profile.profile_code)}`), { method: "DELETE" });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string; error?: string } | null;
       setServerError(body?.message ?? "An unexpected error occurred");

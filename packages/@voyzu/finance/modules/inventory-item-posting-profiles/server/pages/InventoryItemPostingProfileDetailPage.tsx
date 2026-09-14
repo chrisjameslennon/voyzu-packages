@@ -6,7 +6,7 @@ import { listGlAccounts } from "../../../gl-accounts/server/index";
 import { InventoryItemPostingProfileDetail } from "../../client/index";
 import { getItemPostingProfile } from "../index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 interface CompanyInventoryItemPostingProfileDetailPageProps {
   code?: string;
@@ -15,7 +15,7 @@ interface CompanyInventoryItemPostingProfileDetailPageProps {
 export async function InventoryItemPostingProfileDetailPage({ code }: CompanyInventoryItemPostingProfileDetailPageProps) {
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [profile, glAccounts, settingsUiState] = await Promise.all([
     getItemPostingProfile(decodeURIComponent(code), scope.companyId),
     listGlAccounts(scope.companyId),
@@ -28,7 +28,7 @@ export async function InventoryItemPostingProfileDetailPage({ code }: CompanyInv
       profile={profile}
       glAccounts={glAccounts}
       listPath="/finance/inventory/item-posting-profiles"
-      apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/inventory/item-posting-profiles`}
+      httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/inventory/item-posting-profiles`}
       readOnly={settingsUiState.readOnly}
       showArchived={settingsUiState.isArchived}
     />

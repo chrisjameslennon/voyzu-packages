@@ -12,9 +12,6 @@
     "pageRootPaths": [
       "/template"
     ],
-    "apiRootPaths": [
-      "/template"
-    ],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }
@@ -36,9 +33,9 @@
       "types": "./modules/template/pages.routes.ts",
       "import": "./modules/template/pages.routes.ts"
     },
-    "./template/api.routes": {
-      "types": "./modules/template/api.routes.ts",
-      "import": "./modules/template/api.routes.ts"
+    "./template/http-api.routes": {
+      "types": "./modules/template/http-api.routes.ts",
+      "import": "./modules/template/http-api.routes.ts"
     },
     "./modules/reports": {
       "types": "./modules/reports/module.ts",
@@ -48,9 +45,9 @@
       "types": "./modules/reports/pages.routes.ts",
       "import": "./modules/reports/pages.routes.ts"
     },
-    "./reports/api.routes": {
-      "types": "./modules/reports/api.routes.ts",
-      "import": "./modules/reports/api.routes.ts"
+    "./reports/http-api.routes": {
+      "types": "./modules/reports/http-api.routes.ts",
+      "import": "./modules/reports/http-api.routes.ts"
     },
     "./types": {
       "types": "./modules/types/index.ts",

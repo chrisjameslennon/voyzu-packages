@@ -28,7 +28,7 @@ const TOAST_KEY = "voyzu:gl-account-categories:toast";
 interface CompanyGlAccountCategoriesListContentProps {
   categories: GlAccountCategoryResponseDto[];
   basePath?: string;
-  apiPath?: string;
+  httpApiPath?: string;
   readOnly?: boolean;
 }
 
@@ -85,7 +85,7 @@ const columns: DataTableColumn<GlAccountCategoryResponseDto>[] = [
 export function GlAccountCategoriesListContent({
   categories,
   basePath = "/organization/chart-of-accounts/reporting-categories",
-  apiPath = "/api/organization/gl-account-categories",
+  httpApiPath = "/api/organization/gl-account-categories",
   readOnly = false,
 }: CompanyGlAccountCategoriesListContentProps) {
   const router = useRouter();
@@ -152,7 +152,7 @@ export function GlAccountCategoriesListContent({
     if (refreshing) return;
     setRefreshing(true);
     try {
-      const response = await fetch(apiPath, { cache: "no-store" });
+      const response = await fetch(httpApiPath, { cache: "no-store" });
       if (response.ok) {
         setData(await response.json() as GlAccountCategoryResponseDto[]);
         setSelectedIds(new Set());

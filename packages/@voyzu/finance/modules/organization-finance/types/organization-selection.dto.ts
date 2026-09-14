@@ -1,9 +1,9 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { PositiveId } from "../../common/types/constraints";
 import { OrganizationResponseDto } from "./organization.response.dto";
 
-// Finance's filtered selection API owns its wire schema.
+// Finance's filtered selection HTTP API owns its wire schema.
 
 export const OrganizationSelectionResponseDto = StrictObject({
   organizations: Type.Array(OrganizationResponseDto),

@@ -1,6 +1,6 @@
 "use client";
 
-import { financeApiUrl } from "../../../common/client/index";
+import { financeHttpApiUrl } from "../../../common/client/index";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { TaxPositionResponseDto } from "../types/tax-position.response.dto";
@@ -32,7 +32,7 @@ export function TaxPositionReport({ pageTitle, initialData, initialAsAtDate, sel
     setLoading(true);
     try {
       const params = new URLSearchParams({ companyId: String(companyId), asAtDate: date });
-      const res = await fetch(await financeApiUrl(`/reports/tax-position?${params.toString()}`));
+      const res = await fetch(await financeHttpApiUrl(`/reports/tax-position?${params.toString()}`));
       if (!res.ok) return;
       setData((await res.json()) as TaxPositionResponseDto);
     } finally {

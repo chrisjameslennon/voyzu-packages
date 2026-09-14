@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { BusinessCode, CurrencyCode, IsoDate, NonBlankText, PositiveId } from "../../../common/types/constraints";
 
 export const ProfitLossSection = Type.Union([Type.Literal("INCOME"), Type.Literal("EXPENSE")]);

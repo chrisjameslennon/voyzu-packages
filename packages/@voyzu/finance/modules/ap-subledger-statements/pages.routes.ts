@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.ap-subledger-statements",
     id: "voyzu.ap-subledger-statements.page.list",
     pageTitle: "AP Statements",
     helpPath: "modules-help/company-ledger/ap-statements",
@@ -15,6 +16,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.ap-subledger-statements",
     id: "voyzu.ap-subledger-statements.page.detail",
     pageTitle: "AP Statement",
     helpPath: "modules-help/company-ledger/ap-statements",
@@ -28,6 +30,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detailPrintable: {
+    httpApiDocumentationGroupId: "finance.ap-subledger-statements",
     id: "voyzu.ap-subledger-statements.page.detail.printable",
     pageTitle: "AP Statement",
     path: "/finance/subledgers/ap/statements/[code]/printable",

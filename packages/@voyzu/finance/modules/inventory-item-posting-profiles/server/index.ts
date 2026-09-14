@@ -16,7 +16,7 @@ export {
   handlePatch,
   handleSearch,
   handleUpdate,
-} from "./api/item-posting-profile.http.handlers";
+} from "./http-api/item-posting-profile.http.handlers";
 export {
   activateItemPostingProfile,
   activateItemPostingProfiles,

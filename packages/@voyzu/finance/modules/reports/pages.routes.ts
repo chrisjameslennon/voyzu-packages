@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   balanceSheet: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.balanceSheet",
     pageTitle: "Balance Sheet",
     helpPath: "modules-help/company-ledger/balance-sheet",
@@ -14,6 +15,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   trialBalance: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.trialBalance",
     pageTitle: "Trial Balance",
     helpPath: "modules-help/company-ledger/trial-balance",
@@ -26,6 +28,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   taxPosition: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.taxPosition",
     pageTitle: "Tax Position",
     helpPath: "modules-help/company-ledger/tax-position",
@@ -38,6 +41,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   bankCashMovement: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.bankCashMovement",
     pageTitle: "Bank / Cash Movement",
     helpPath: "modules-help/company-ledger/bank-cash-movement",
@@ -50,6 +54,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   journalEntries: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.journalEntries",
     pageTitle: "Journal Entries",
     helpPath: "modules-help/company-ledger/journal-entries-report",
@@ -63,6 +68,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   accountActivity: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.accountActivity",
     pageTitle: "Account Activity",
     helpPath: "modules-help/company-ledger/account-activity",
@@ -75,6 +81,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   financialIntegrity: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.financialIntegrity",
     pageTitle: "Financial Integrity",
     helpPath: "modules-help/company-ledger/financial-integrity",
@@ -88,6 +95,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   profitLoss: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.profitLoss",
     pageTitle: "Profit & Loss",
     helpPath: "modules-help/company-ledger/profit-loss",
@@ -101,6 +109,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   profitLossAnalysis: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.profitLossAnalysis",
     pageTitle: "Profit & Loss Analysis",
     helpPath: "modules-help/company-ledger/profit-loss-analysis",
@@ -114,6 +123,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   taxActivity: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.taxActivity",
     pageTitle: "Tax Return",
     helpPath: "modules-help/company-ledger/tax-return",
@@ -127,6 +137,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   taxActivityReconciliation: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.taxActivityReconciliation",
     pageTitle: "Tax Reconciliation",
     helpPath: "modules-help/company-ledger/tax-reconciliation",
@@ -140,6 +151,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   arSubledgerEntriesAudit: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.arSubledgerEntriesAudit",
     pageTitle: "AR Subledger Entries",
     helpPath: "modules-help/company-ledger/ar-subledger-entries-report",
@@ -153,6 +165,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   apSubledgerEntriesAudit: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.apSubledgerEntriesAudit",
     pageTitle: "AP Subledger Entries",
     helpPath: "modules-help/company-ledger/ap-subledger-entries-report",
@@ -166,6 +179,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   inventoryLedgerEntriesAudit: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.inventoryLedgerEntriesAudit",
     pageTitle: "Inventory Ledger Entries",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries-report",
@@ -179,6 +193,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   taxLedgerEntriesAudit: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.taxLedgerEntriesAudit",
     pageTitle: "Tax Ledger Entries",
     helpPath: "modules-help/company-ledger/tax-ledger-entries-report",
@@ -192,6 +207,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   apSubledgerEntriesAuditPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.apSubledgerEntriesAudit.printable",
     pageTitle: "AP Subledger Entries",
     path: "/finance/reports/ap-subledger-entries-audit/printable",
@@ -200,6 +216,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   arSubledgerEntriesAuditPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.arSubledgerEntriesAudit.printable",
     pageTitle: "AR Subledger Entries",
     path: "/finance/reports/ar-subledger-entries-audit/printable",
@@ -208,6 +225,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   balanceSheetPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.balanceSheet.printable",
     pageTitle: "Balance Sheet",
     path: "/finance/reports/balance-sheet/printable",
@@ -216,6 +234,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   bankCashMovementPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.bankCashMovement.printable",
     pageTitle: "Bank / Cash Movement",
     path: "/finance/reports/bank-cash-movement/printable",
@@ -224,6 +243,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   financialIntegrityPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.financialIntegrity.printable",
     pageTitle: "Financial Integrity",
     path: "/finance/reports/financial-integrity/printable",
@@ -232,6 +252,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   inventoryLedgerEntriesAuditPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.inventoryLedgerEntriesAudit.printable",
     pageTitle: "Inventory Ledger Entries",
     path: "/finance/reports/inventory-ledger-entries-audit/printable",
@@ -240,6 +261,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   journalEntriesPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.journalEntries.printable",
     pageTitle: "Journal Entries",
     path: "/finance/reports/journal-entries/printable",
@@ -248,6 +270,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   profitLossPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.profitLoss.printable",
     pageTitle: "Profit & Loss",
     path: "/finance/reports/profit-loss/printable",
@@ -256,6 +279,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   profitLossAnalysisPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.profitLossAnalysis.printable",
     pageTitle: "Profit & Loss Analysis",
     path: "/finance/reports/profit-loss-analysis/printable",
@@ -264,6 +288,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   taxActivityPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.taxActivity.printable",
     pageTitle: "Tax Return",
     path: "/finance/reports/tax-activity/printable",
@@ -272,6 +297,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   taxActivityReconciliationPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.taxActivityReconciliation.printable",
     pageTitle: "Tax Reconciliation",
     path: "/finance/reports/tax-activity-reconciliation/printable",
@@ -280,6 +306,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   taxLedgerEntriesAuditPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.taxLedgerEntriesAudit.printable",
     pageTitle: "Tax Ledger Entries",
     path: "/finance/reports/tax-ledger-entries-audit/printable",
@@ -288,6 +315,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   taxPositionPrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.taxPosition.printable",
     pageTitle: "Tax Position",
     path: "/finance/reports/tax-position/printable",
@@ -296,6 +324,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   trialBalancePrintable: {
+    httpApiDocumentationGroupId: "finance.reports",
     id: "voyzu.companyReports.page.trialBalance.printable",
     pageTitle: "Trial Balance",
     path: "/finance/reports/trial-balance/printable",

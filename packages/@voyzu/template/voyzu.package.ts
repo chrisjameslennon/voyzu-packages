@@ -1,3 +1,4 @@
+import { httpApiRouting, httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 import { templateModule } from "./modules/template/module";
 import { templateReportsModule } from "./modules/reports/module";
@@ -5,6 +6,7 @@ import { install as installSampleData } from "./scripts/sample-data/install";
 import { templatesUninstall } from "./uninstall/manifest";
 
 export const templatePackage = {
+  contracts: { httpApiRouting, httpApiDocumentation },
   modules: [
     templateModule,
     templateReportsModule,

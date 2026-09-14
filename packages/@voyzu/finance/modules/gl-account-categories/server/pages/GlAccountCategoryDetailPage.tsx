@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { GlAccountCategoryDetail } from "../../client/index";
 import { getGlAccountCategory } from "../index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 interface CompanyGlAccountCategoryDetailPageProps {
   code?: string;
@@ -14,7 +14,7 @@ interface CompanyGlAccountCategoryDetailPageProps {
 export async function GlAccountCategoryDetailPage({ code }: CompanyGlAccountCategoryDetailPageProps) {
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [category, settingsUiState] = await Promise.all([
     getGlAccountCategory(decodeURIComponent(code), scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -26,7 +26,7 @@ export async function GlAccountCategoryDetailPage({ code }: CompanyGlAccountCate
       category={category}
       listPath="/finance/settings/reporting-categories"
       auditPath="/settings/audit"
-      apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/gl-account-categories`}
+      httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/gl-account-categories`}
       readOnly={settingsUiState.readOnly}
       showArchived={settingsUiState.isArchived}
     />

@@ -1,5 +1,6 @@
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "ice-creams.ice-creams",
     id: "voyzu.ice-creams.page.list",
     path: "/ice-creams",
     loadPage: () => import("./server/pages/IceCreamsListPage").then((module) => module.IceCreamsListPage),
@@ -9,6 +10,7 @@ export const pageRoutes = {
     auth: { required: true, minRole: "STANDARD" },
   },
   detail: {
+    httpApiDocumentationGroupId: "ice-creams.ice-creams",
     id: "voyzu.ice-creams.page.detail",
     path: "/ice-creams/[code]",
     loadPage: () => import("./server/pages/IceCreamDetailPage").then((module) => module.IceCreamDetailPage),

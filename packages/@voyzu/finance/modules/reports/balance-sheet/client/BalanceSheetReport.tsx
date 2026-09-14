@@ -1,6 +1,6 @@
 "use client";
 
-import { financeApiUrl } from "../../../common/client/index";
+import { financeHttpApiUrl } from "../../../common/client/index";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import type { BalanceSheetResponseDto } from "../types/balance-sheet.response.dto";
@@ -69,7 +69,7 @@ export function BalanceSheetReport({
     try {
       const params = new URLSearchParams({ companyId: String(companyId) });
       if (date) params.set("asAtDate", date);
-      const res = await fetch(await financeApiUrl(`/reports/balance-sheet?${params.toString()}`));
+      const res = await fetch(await financeHttpApiUrl(`/reports/balance-sheet?${params.toString()}`));
       if (!res.ok) return;
       const json = (await res.json()) as BalanceSheetResponseDto;
       setData(json);
@@ -90,7 +90,7 @@ export function BalanceSheetReport({
   useEffect(() => {
     if (!selectedCompanyId) return;
     const load = async () => {
-      const res = await fetch(await financeApiUrl(`/reports/financial-years`));
+      const res = await fetch(await financeHttpApiUrl(`/reports/financial-years`));
       if (!res.ok) return;
       const years = ((await res.json()) as FinancialYearResponseDto[]).filter((y) => y.hasPostings);
       setFinancialYears(years);
@@ -153,12 +153,12 @@ export function BalanceSheetReport({
 
   const openPdf = async () => {
     if (!pdfQueryString) return;
-    window.open(await financeApiUrl(`/reports/balance-sheet/pdf?${pdfQueryString}&disposition=inline`), "_blank", "noopener,noreferrer");
+    window.open(await financeHttpApiUrl(`/reports/balance-sheet/pdf?${pdfQueryString}&disposition=inline`), "_blank", "noopener,noreferrer");
   };
 
   const downloadPdf = async () => {
     if (!pdfQueryString) return;
-    window.location.href = await financeApiUrl(`/reports/balance-sheet/pdf?${pdfQueryString}&disposition=attachment`);
+    window.location.href = await financeHttpApiUrl(`/reports/balance-sheet/pdf?${pdfQueryString}&disposition=attachment`);
   };
 
   const refreshReport = () => {

@@ -12,9 +12,6 @@
     "pageRootPaths": [
       "/ice-creams"
     ],
-    "apiRootPaths": [
-      "/ice-creams"
-    ],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }
@@ -36,9 +33,9 @@
       "types": "./modules/ice-creams/pages.routes.ts",
       "import": "./modules/ice-creams/pages.routes.ts"
     },
-    "./ice-creams/api.routes": {
-      "types": "./modules/ice-creams/api.routes.ts",
-      "import": "./modules/ice-creams/api.routes.ts"
+    "./ice-creams/http-api.routes": {
+      "types": "./modules/ice-creams/http-api.routes.ts",
+      "import": "./modules/ice-creams/http-api.routes.ts"
     },
     "./modules/reports": {
       "types": "./modules/reports/module.ts",
@@ -48,9 +45,9 @@
       "types": "./modules/reports/pages.routes.ts",
       "import": "./modules/reports/pages.routes.ts"
     },
-    "./reports/api.routes": {
-      "types": "./modules/reports/api.routes.ts",
-      "import": "./modules/reports/api.routes.ts"
+    "./reports/http-api.routes": {
+      "types": "./modules/reports/http-api.routes.ts",
+      "import": "./modules/reports/http-api.routes.ts"
     },
     "./types": {
       "types": "./types/index.ts",

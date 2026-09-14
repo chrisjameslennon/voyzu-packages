@@ -1,6 +1,6 @@
 "use client";
 
-import { financeApiUrl } from "../../../common/client/index";
+import { financeHttpApiUrl } from "../../../common/client/index";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { BankCashMovementResponseDto } from "../types/bank-cash-movement.response.dto";
@@ -32,7 +32,7 @@ export function BankCashMovementReport({ pageTitle, initialData, initialFromDate
     setLoading(true);
     try {
       const params = new URLSearchParams({ companyId: String(companyId), fromDate: from, toDate: to });
-      const res = await fetch(await financeApiUrl(`/reports/bank-cash-movement?${params.toString()}`));
+      const res = await fetch(await financeHttpApiUrl(`/reports/bank-cash-movement?${params.toString()}`));
       if (!res.ok) return;
       setData((await res.json()) as BankCashMovementResponseDto);
     } finally {

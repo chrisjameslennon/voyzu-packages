@@ -44,11 +44,11 @@ Archived company data is read-only. UI badges communicate this state, while Core
 Company-scoped server pages resolve the shared Core context before calling services:
 
 ```tsx
-import { resolveServerCompanyApiContext } from "@voyzu/finance/common/server";
+import { resolveServerCompanyHttpApiContext } from "@voyzu/finance/common/server";
 import { listWarehouseItems } from "../lib/warehouse-item.service";
 
 export async function WarehouseItemsListPage() {
-  const company = await resolveServerCompanyApiContext();
+  const company = await resolveServerCompanyHttpApiContext();
   const items = await listWarehouseItems(company.companyId);
 
   return (
@@ -64,7 +64,7 @@ Pass the resolved company ID explicitly into the service. Do not make the cookie
 
 ## Client-request pattern
 
-Finance API routes identify the company by code:
+Finance HTTP API routes identify the company by code:
 
 ```text
 /api/finance/{companyCode}/inventory/items
@@ -73,14 +73,14 @@ Finance API routes identify the company by code:
 Use the validated shared selection to construct browser URLs:
 
 ```ts
-import { financeApiUrl } from "@voyzu/finance/common/client";
+import { financeHttpApiUrl } from "@voyzu/finance/common/client";
 
 const response = await fetch(
-  await financeApiUrl("/inventory/items"),
+  await financeHttpApiUrl("/inventory/items"),
 );
 ```
 
-External API clients do not use the UI selection cookie. They supply the company-code segment in the documented Finance API route.
+External HTTP API clients do not use the UI selection cookie. They supply the company-code segment in the documented Finance HTTP API route.
 
 ## Enforcement rules
 

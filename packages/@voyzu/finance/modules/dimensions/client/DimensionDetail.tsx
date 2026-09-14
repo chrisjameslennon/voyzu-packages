@@ -29,7 +29,7 @@ interface CompanyDimensionDetailProps {
   dimension: DimensionResponseDto;
   listPath?: string;
   auditPath?: string;
-  apiPath?: string;
+  httpApiPath?: string;
   showArchived?: boolean;
   readOnly?: boolean;
 }
@@ -38,7 +38,7 @@ export function DimensionDetail({
   dimension,
   listPath = "/organization/dimensions",
   auditPath = "/settings/audit",
-  apiPath = "/api/organization/dimensions",
+  httpApiPath = "/api/organization/dimensions",
   showArchived = false,
   readOnly = false,
 }: CompanyDimensionDetailProps) {
@@ -58,8 +58,8 @@ export function DimensionDetail({
   }));
   const currentErrors = [...validation.errors, ...(serverError ? [serverError] : [])];
 
-  const apiUrl = (suffix = "") => {
-    const [path, query] = apiPath.split("?");
+  const httpApiUrl = (suffix = "") => {
+    const [path, query] = httpApiPath.split("?");
     return `${path}${suffix}${query ? `?${query}` : ""}`;
   };
 
@@ -69,7 +69,7 @@ export function DimensionDetail({
   const createValue = async (value: DimensionValueCreateRequestDto): Promise<string | undefined> => {
     if (readOnly) return "Dimensions are read only while this financial entity is archived";
     setServerError("");
-    const response = await fetch(apiUrl(`/${encodeURIComponent(dimension.code)}/values`), {
+    const response = await fetch(httpApiUrl(`/${encodeURIComponent(dimension.code)}/values`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),
@@ -88,7 +88,7 @@ export function DimensionDetail({
   const patchValue = async (id: number, value: DimensionValuePatchRequestDto): Promise<string | undefined> => {
     if (readOnly) return "Dimensions are read only while this financial entity is archived";
     setServerError("");
-    const response = await fetch(apiUrl(`/values/${id}`), {
+    const response = await fetch(httpApiUrl(`/values/${id}`), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),
@@ -114,7 +114,7 @@ export function DimensionDetail({
   const deleteValue = async (value: DimensionValueResponseDto) => {
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(apiUrl(`/values/${value.id}`), { method: "DELETE" });
+    const response = await fetch(httpApiUrl(`/values/${value.id}`), { method: "DELETE" });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string; error?: string } | null;
       setServerError(body?.message ?? "An unexpected error occurred");
@@ -190,7 +190,7 @@ export function DimensionDetail({
     setSaving(true);
     try {
       const payload: DimensionPatchRequestDto = { code: code.trim(), name: name.trim() };
-      const response = await fetch(apiUrl(`/${encodeURIComponent(dimension.code)}`), {
+      const response = await fetch(httpApiUrl(`/${encodeURIComponent(dimension.code)}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -210,7 +210,7 @@ export function DimensionDetail({
   const transitionStatus = async (action: "activate" | "deactivate") => {
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(apiUrl(`/batch-${action}`), {
+    const response = await fetch(httpApiUrl(`/batch-${action}`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: [dimension.code] }),
@@ -227,7 +227,7 @@ export function DimensionDetail({
   const deleteDimension = async () => {
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(apiUrl(`/${encodeURIComponent(dimension.code)}`), { method: "DELETE" });
+    const response = await fetch(httpApiUrl(`/${encodeURIComponent(dimension.code)}`), { method: "DELETE" });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string; error?: string } | null;
       setServerError(body?.message ?? "An unexpected error occurred");

@@ -1,5 +1,5 @@
 import Type, { type Static } from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { AuditMetadataDto } from "@voyzu/types/modules/core";
 import { StockReasonCode } from "../../core/types";
 

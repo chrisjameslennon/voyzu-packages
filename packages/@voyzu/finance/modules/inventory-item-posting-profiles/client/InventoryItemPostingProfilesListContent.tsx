@@ -60,14 +60,14 @@ export function InventoryItemPostingProfilesListContent({
   profiles,
   glAccounts,
   basePath = "/finance/inventory/item-posting-profiles",
-  apiPath = "/api/inventory/item-posting-profiles",
+  httpApiPath = "/api/inventory/item-posting-profiles",
   showArchived = false,
   readOnly = false,
 }: {
   profiles: ItemPostingProfileResponseDto[];
   glAccounts: GlAccountResponseDto[];
   basePath?: string;
-  apiPath?: string;
+  httpApiPath?: string;
   showArchived?: boolean;
   readOnly?: boolean;
 }) {
@@ -165,8 +165,8 @@ export function InventoryItemPostingProfilesListContent({
     .map((account) => ({ value: account.code, label: account.name, code: account.code })),
   [glAccounts]);
 
-  const apiUrl = (suffix = "") => {
-    const [path, query] = apiPath.split("?");
+  const httpApiUrl = (suffix = "") => {
+    const [path, query] = httpApiPath.split("?");
     return `${path}${suffix}${query ? `?${query}` : ""}`;
   };
 
@@ -190,7 +190,7 @@ export function InventoryItemPostingProfilesListContent({
   const transitionSelected = async (action: "activate" | "deactivate") => {
     if (readOnly) return;
     setListError("");
-    const response = await fetch(apiUrl(`/batch-${action}`), {
+    const response = await fetch(httpApiUrl(`/batch-${action}`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: selectedRows.map((row) => row.profile_code) }),
@@ -210,7 +210,7 @@ export function InventoryItemPostingProfilesListContent({
     if (readOnly) return;
     setListError("");
     for (const row of selectedRows) {
-      const response = await fetch(apiUrl(`/${encodeURIComponent(row.profile_code)}`), { method: "DELETE" });
+      const response = await fetch(httpApiUrl(`/${encodeURIComponent(row.profile_code)}`), { method: "DELETE" });
       if (!response.ok) {
         const body = await response.json().catch(() => null) as { message?: string; error?: string } | null;
         setListError(body?.message ?? `Unable to delete posting profile ${row.profile_code}`);
@@ -261,7 +261,7 @@ export function InventoryItemPostingProfilesListContent({
 
   const createProfile = async (value: ItemPostingProfileCreateRequestDto): Promise<string | undefined> => {
     if (readOnly) return "Item posting profiles are read only while this financial entity is archived";
-    const response = await fetch(apiUrl(), {
+    const response = await fetch(httpApiUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),

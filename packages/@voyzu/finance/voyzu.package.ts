@@ -1,3 +1,4 @@
+import { httpApiRouting, httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
 import { financeInstall } from "./install/manifest";
@@ -78,6 +79,8 @@ export const financeServiceModules = [
 
 export const financePackage = {
   contracts: {
+    httpApiRouting,
+    httpApiDocumentation,
     internalApi: { implements: { ...organizationFinanceModule.implements, ...countryTaxSettingsModule.implements, ...inventoryProcessingModule.implements } },
 
   },

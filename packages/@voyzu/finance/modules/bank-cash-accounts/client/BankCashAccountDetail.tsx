@@ -24,7 +24,7 @@ interface CompanyBankCashAccountDetailProps {
   glAccounts: GlAccountResponseDto[];
   listPath?: string;
   auditPath?: string;
-  apiPath?: string;
+  httpApiPath?: string;
   readOnly?: boolean;
   isArchived?: boolean;
   from?: DetailBackSource;
@@ -36,7 +36,7 @@ export function BankCashAccountDetail({
   glAccounts,
   listPath = "/organization/bank-cash-accounts",
   auditPath = "/settings/audit",
-  apiPath = "/api/organization/bank-cash-accounts",
+  httpApiPath = "/api/organization/bank-cash-accounts",
   readOnly = false,
   isArchived = false,
   from,
@@ -66,8 +66,8 @@ export function BankCashAccountDetail({
   }));
   const currentErrors = [...validation.errors, ...(serverError ? [serverError] : [])];
 
-  const apiUrl = (suffix = "") => {
-    const [path, query] = apiPath.split("?");
+  const httpApiUrl = (suffix = "") => {
+    const [path, query] = httpApiPath.split("?");
     return `${path}${suffix}${query ? `?${query}` : ""}`;
   };
 
@@ -86,7 +86,7 @@ export function BankCashAccountDetail({
         bankAccountIdentifier: bankAccountIdentifier.trim() || null,
         cashAccountIdentifier: cashAccountIdentifier.trim() || null,
       };
-      const response = await fetch(apiUrl(`/${encodeURIComponent(account.code)}`), {
+      const response = await fetch(httpApiUrl(`/${encodeURIComponent(account.code)}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -106,7 +106,7 @@ export function BankCashAccountDetail({
   const transitionStatus = async (action: "activate" | "deactivate") => {
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(apiUrl(`/batch-${action}`), {
+    const response = await fetch(httpApiUrl(`/batch-${action}`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: [account.code] }),
@@ -123,7 +123,7 @@ export function BankCashAccountDetail({
   const deleteAccount = async () => {
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(apiUrl(`/${encodeURIComponent(account.code)}`), { method: "DELETE" });
+    const response = await fetch(httpApiUrl(`/${encodeURIComponent(account.code)}`), { method: "DELETE" });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string; error?: string } | null;
       setServerError(body?.message ?? "An unexpected error occurred");

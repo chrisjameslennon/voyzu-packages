@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { ArInvoiceCallerSuppliedTaxComponentDto, ArInvoiceDimensionsDto } from "./ar-invoice.request.dto";
 import { BusinessCode, CountryCode, IsoDate, NonBlankText, PositiveId } from "../../common/types/constraints";
 

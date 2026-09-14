@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { AuditMetadataDto } from "../../common/types/index";
 import { AccountType, Status } from "../../common/types/index";
 import { GlAccountPointerReference } from "../../gl-accounts/types/gl-account-pointer";

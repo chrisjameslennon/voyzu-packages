@@ -14,7 +14,7 @@ export {
   handleGetRule,
   handleListRules,
   handlePatchRule,
-} from "./api/inventory-processing.http.handlers";
+} from "./http-api/inventory-processing.http.handlers";
 
 export { InventoryProcessingRulesPage } from "./pages/InventoryProcessingRulesPage";
 export { InventoryProcessingRuleDetailPage } from "./pages/InventoryProcessingRuleDetailPage";

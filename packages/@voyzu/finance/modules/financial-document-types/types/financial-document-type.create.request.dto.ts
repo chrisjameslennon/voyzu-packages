@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { Ledger } from "../../common/types/index";
 import { BusinessCode, NonBlankText, TrimmedText200, TrimmedText70 } from "../../common/types/constraints";
 

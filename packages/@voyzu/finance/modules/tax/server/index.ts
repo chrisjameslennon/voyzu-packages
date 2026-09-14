@@ -24,4 +24,4 @@ export {
 export {
   handleGetTaxAuthority,
   handleListTaxAuthorities,
-} from "./api/tax.http.handlers";
+} from "./http-api/tax.http.handlers";

@@ -18,7 +18,7 @@ import { ApControlAccountDetailsForm } from "./ApControlAccountDetailsForm";
 interface CompanyApControlAccountDetailProps {
   account: ControlAccountResponseDto;
   glAccounts: GlAccountResponseDto[];
-  apiPath: string;
+  httpApiPath: string;
   listPath?: string;
   auditPath?: string;
   readOnly?: boolean;
@@ -28,7 +28,7 @@ interface CompanyApControlAccountDetailProps {
 export function ApControlAccountDetail({
   account,
   glAccounts,
-  apiPath,
+  httpApiPath,
   listPath = "/finance/settings/control-accounts/ap",
   auditPath = "/settings/audit",
   readOnly = false,
@@ -69,7 +69,7 @@ export function ApControlAccountDetail({
     setServerError("");
     setSaving(true);
     try {
-      const response = await fetch(`${apiPath}/${encodeURIComponent(currentAccount.code)}`, {
+      const response = await fetch(`${httpApiPath}/${encodeURIComponent(currentAccount.code)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ glAccountId: Number(glAccountId) }),

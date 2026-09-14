@@ -13,8 +13,7 @@
     ],
     "pageRootPaths": [
       "/commercial"
-    ],
-    "apiRootPaths": []
+    ]
   },
   "exports": {
     "./navigation/left-nav-header": {

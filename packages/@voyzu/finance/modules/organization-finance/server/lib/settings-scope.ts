@@ -10,7 +10,7 @@ export interface CompanySettingsScope {
   companyId: number;
 }
 
-export interface CompanyApiContext {
+export interface CompanyHttpApiContext {
   companyId: number;
   companyCode: string;
 }
@@ -33,8 +33,8 @@ async function getActiveCompanyIdByCode(companyCode: string, db: DbExecutor): Pr
   return id;
 }
 
-async function getActiveCompanyApiContext(companyId: number, db: DbExecutor): Promise<CompanyApiContext> {
-  const row = await new SettingsScopeRepo(db).getActiveCompanyApiContext(companyId);
+async function getActiveCompanyHttpApiContext(companyId: number, db: DbExecutor): Promise<CompanyHttpApiContext> {
+  const row = await new SettingsScopeRepo(db).getActiveCompanyHttpApiContext(companyId);
   if (!row) throw new BusinessRuleError(`Company id ${companyId} was not found`);
   return row;
 }
@@ -59,12 +59,12 @@ export async function resolveCompanySettingsScopeByCode(companyCode: string, db:
   return { companyId: await getActiveCompanyIdByCode(companyCode, db) };
 }
 
-export async function resolveServerCompanyApiContext(db: DbExecutor = getDb()): Promise<CompanyApiContext> {
+export async function resolveServerCompanyHttpApiContext(db: DbExecutor = getDb()): Promise<CompanyHttpApiContext> {
   const scope = await resolveServerSettingsScope(db);
-  return getActiveCompanyApiContext(scope.companyId, db);
+  return getActiveCompanyHttpApiContext(scope.companyId, db);
 }
 
-export async function resolveApiCompanyIdFromPath(
+export async function resolveHttpApiCompanyIdFromPath(
   request: NextRequest,
   db: DbExecutor = getDb(),
 ): Promise<number> {
@@ -111,7 +111,7 @@ export async function resolveServerSettingsScope(
   return resolveCompanySettingsScope(selectedCompany.id, db);
 }
 
-export async function resolveApiSettingsScope(
+export async function resolveHttpApiSettingsScope(
   request: NextRequest,
   db: DbExecutor = getDb(),
 ): Promise<CompanySettingsScope> {

@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.ar-subledger-counterparties",
     id: "voyzu.ar-subledger-counterparties.page.list",
     pageTitle: "AR Counterparties",
     helpPath: "modules-help/company-ledger/ar-counterparties",
@@ -15,6 +16,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.ar-subledger-counterparties",
     id: "voyzu.ar-subledger-counterparties.page.detail",
     pageTitle: "AR Counterparty",
     helpPath: "modules-help/company-ledger/ar-counterparties",
@@ -28,6 +30,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detailPrintable: {
+    httpApiDocumentationGroupId: "finance.ar-subledger-counterparties",
     id: "voyzu.ar-subledger-counterparties.page.detail.printable",
     pageTitle: "AR Counterparty",
     path: "/finance/subledgers/ar/counterparties/[code]/printable",

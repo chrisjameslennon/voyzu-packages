@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { ItemPostingProfileUpdateRequestDto } from "./item-posting-profile.update.request.dto";
 
 export const ItemPostingProfilePatchRequestDto = Type.Partial(ItemPostingProfileUpdateRequestDto, {

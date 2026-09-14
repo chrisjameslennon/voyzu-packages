@@ -196,12 +196,11 @@ export class StockRepo {
       type: String(row.type),
       reference: row.reference == null ? null : String(row.reference),
       notes: String(row.notes ?? ""),
-      linkedDocuments: links.rows.map((link: Record<string, unknown>) => {
+      linkedDocuments: links.rows.map((link: Record<string, unknown>): StockActivityDetail["linkedDocuments"][number] => {
         const documentType = String(link.document_type);
         const documentId = Number(link.document_id);
         const documentCode = String(link.document_code);
         return {
-          direction: link.direction as "UPSTREAM" | "DOWNSTREAM",
           documentType,
           documentId,
           documentCode,

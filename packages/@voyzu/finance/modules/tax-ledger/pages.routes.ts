@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.tax-ledger",
     id: "voyzu.tax-ledger.page.list",
     pageTitle: "Tax Ledger Entries",
     helpPath: "modules-help/company-ledger/tax-ledger-entries",
@@ -15,6 +16,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.tax-ledger",
     id: "voyzu.tax-ledger.page.detail",
     pageTitle: "Tax Ledger Entry",
     helpPath: "modules-help/company-ledger/tax-ledger-entries",

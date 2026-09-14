@@ -16,7 +16,7 @@ export {
   handlePatch,
   handleSearch,
   handleUpdate,
-} from "./api/gl-account.http.handlers";
+} from "./http-api/gl-account.http.handlers";
 export {
   batchCreateGlAccounts,
   batchDeleteGlAccounts,

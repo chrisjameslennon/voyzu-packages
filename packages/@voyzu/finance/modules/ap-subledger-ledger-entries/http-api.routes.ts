@@ -1,0 +1,43 @@
+import Type from "typebox";
+import { EntityNotFoundErrorResponseDto, InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types";
+import { ApSubledgerEntryResponseDto } from "./types/ap-subledger-entry.response.dto";
+
+
+
+export const httpApiRoutes = {
+  "finance.ap-subledger-ledger-entries.list": {
+    method: "GET",
+    path: "/finance/[companyCode]/ap-subledger/entries",
+    loadHandler: () => import("./server/http-api/ap-subledger-ledger-entries.http.handlers").then((module) => module.handleListApEntries),
+    request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } } } },
+    summary: "List",
+    
+    
+    responses: {
+      "200": {
+        description: "Successful response.",
+        body: Type.Array(ApSubledgerEntryResponseDto)
+      },
+      "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+      "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto }
+    }
+  },
+  "finance.ap-subledger-ledger-entries.get": {
+    method: "GET",
+    path: "/finance/[companyCode]/ap-subledger/entries/[code]",
+    loadHandler: () => import("./server/http-api/ap-subledger-ledger-entries.http.handlers").then((module) => module.handleGetApEntry),
+    request: { path: { companyCode: { description: "Company code that identifies the company scope for this finance HTTP API call.", schema: { type: "string" } }, code: { description: "Business code of the requested record.", schema: { type: "string" } } } },
+    summary: "Get",
+    
+    
+    responses: {
+      "200": {
+        description: "Successful response.",
+        body: ApSubledgerEntryResponseDto
+      },
+      "400": { description: "Validation failed.", body: InputValidationErrorResponseDto },
+      "404": { description: "Entity not found.", body: EntityNotFoundErrorResponseDto },
+      "500": { description: "An unexpected server error occurred.", body: InternalServerErrorResponseDto }
+    }
+  },
+} as const;

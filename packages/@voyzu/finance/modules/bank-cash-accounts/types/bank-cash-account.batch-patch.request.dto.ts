@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { BankCashAccountPatchRequestDto } from "./bank-cash-account.patch.request.dto";
 import { BusinessCode40, TrimmedText100, TrimmedText50 } from "../../common/types/constraints";
 

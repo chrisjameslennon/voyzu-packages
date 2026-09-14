@@ -5,7 +5,7 @@ export interface CompanySettingsStateRow {
   status: string;
 }
 
-export interface CompanyApiContextRow {
+export interface CompanyHttpApiContextRow {
   companyId: number;
   companyCode: string;
 }
@@ -56,9 +56,9 @@ export class SettingsScopeRepo {
     return rows[0]?.id == null ? null : Number(rows[0].id);
   }
 
-  async getActiveCompanyApiContext(
+  async getActiveCompanyHttpApiContext(
     companyId: number,
-  ): Promise<CompanyApiContextRow | null> {
+  ): Promise<CompanyHttpApiContextRow | null> {
     const { rows } = await this.db.query(
       `SELECT fc.id, c.code
        FROM organization c

@@ -12,9 +12,6 @@
     "pageRootPaths": [
       "/ugly-package"
     ],
-    "apiRootPaths": [
-      "/ugly-package"
-    ],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }
@@ -36,9 +33,9 @@
       "types": "./modules/ugly/pages.routes.ts",
       "import": "./modules/ugly/pages.routes.ts"
     },
-    "./ugly/api.routes": {
-      "types": "./modules/ugly/api.routes.ts",
-      "import": "./modules/ugly/api.routes.ts"
+    "./ugly/http-api.routes": {
+      "types": "./modules/ugly/http-api.routes.ts",
+      "import": "./modules/ugly/http-api.routes.ts"
     },
     "./modules/ugly": {
       "types": "./modules/ugly/module.ts",

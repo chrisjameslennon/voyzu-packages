@@ -22,6 +22,7 @@ const stockCrumbs = [
 ] as const;
 export const pageRoutes = {
   stock: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock.page.list",
     path: "/inventory/stock",
     loadPage: load("StockPage"),
@@ -30,6 +31,7 @@ export const pageRoutes = {
     auth,
   },
   activity: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock-activity.page.list",
     path: "/inventory/stock-activity",
     loadPage: load("StockActivityPage"),
@@ -38,6 +40,7 @@ export const pageRoutes = {
     auth,
   },
   activityDetail: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock-activity.page.detail",
     path: "/inventory/stock-activity/[code]",
     loadPage: load("StockTransactionDetailPage"),
@@ -49,6 +52,7 @@ export const pageRoutes = {
     auth,
   },
   activityDetailPrintable: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock-activity.page.detail.printable",
     path: "/inventory/stock-activity/[code]/printable",
     loadPage: load("StockTransactionDetailPage"),
@@ -57,6 +61,7 @@ export const pageRoutes = {
     auth,
   },
   counts: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock-counts.page.list",
     path: "/inventory/stock-counts",
     loadPage: load("StockCountsPage"),
@@ -65,6 +70,7 @@ export const pageRoutes = {
     auth,
   },
   countNew: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock-counts.page.new",
     path: "/inventory/stock-counts/new",
     loadPage: load("StockCountNewPage"),
@@ -76,6 +82,7 @@ export const pageRoutes = {
     auth,
   },
   count: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock-counts.page.detail",
     path: "/inventory/stock-counts/[id]",
     loadPage: load("StockCountDetailPage"),
@@ -87,6 +94,7 @@ export const pageRoutes = {
     auth,
   },
   countPrintable: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock-counts.page.detail.printable",
     path: "/inventory/stock-counts/[id]/printable",
     loadPage: load("StockCountDetailPage"),
@@ -95,6 +103,7 @@ export const pageRoutes = {
     auth,
   },
   receive: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock.page.receive",
     path: "/inventory/stock/receive",
     loadPage: load("ReceiveStockPage"),
@@ -103,6 +112,7 @@ export const pageRoutes = {
     auth,
   },
   issue: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock.page.issue",
     path: "/inventory/stock/issue",
     loadPage: load("IssueStockPage"),
@@ -111,6 +121,7 @@ export const pageRoutes = {
     auth,
   },
   transfer: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock.page.transfer",
     path: "/inventory/stock/transfer",
     loadPage: load("TransferStockPage"),
@@ -119,6 +130,7 @@ export const pageRoutes = {
     auth,
   },
   reserve: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock.page.reserve",
     path: "/inventory/stock/reserve",
     loadPage: load("ReserveStockPage"),
@@ -127,6 +139,7 @@ export const pageRoutes = {
     auth,
   },
   adjust: {
+    httpApiDocumentationGroupId: "inventory.stock",
     id: "voyzu.inventory.stock.page.adjust",
     path: "/inventory/stock/adjust",
     loadPage: load("AdjustStockPage"),

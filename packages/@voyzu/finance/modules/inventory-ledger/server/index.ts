@@ -7,7 +7,7 @@ export {
 export {
   handleGetInventoryEntry,
   handleListInventoryEntries,
-} from "./api/inventory-ledger.http.handlers";
+} from "./http-api/inventory-ledger.http.handlers";
 
 export { InventoryLedgerEntriesListPage } from "./pages/InventoryLedgerEntriesListPage";
 export { InventoryLedgerEntryDetailPage } from "./pages/InventoryLedgerEntryDetailPage";

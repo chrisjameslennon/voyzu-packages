@@ -20,7 +20,7 @@ async function selectedFinanceBase(): Promise<string> {
   return selectedFinanceBasePromise;
 }
 
-export async function financeApiUrl(path: string): Promise<string> {
+export async function financeHttpApiUrl(path: string): Promise<string> {
   const base = await selectedFinanceBase();
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }

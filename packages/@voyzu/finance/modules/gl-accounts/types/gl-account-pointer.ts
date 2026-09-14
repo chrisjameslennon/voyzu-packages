@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { OperationReference } from "../../common/types";
 
 export const GlAccountPointerName = Type.Union([

@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.bank-cash-accounts",
     id: "voyzu.company-bank-cash-accounts.page.list",
     pageTitle: "Bank / Cash Accounts",
     helpPath: "modules-help/company-ledger/bank-cash-accounts",
@@ -15,6 +16,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.bank-cash-accounts",
     id: "voyzu.company-bank-cash-accounts.page.detail",
     pageTitle: "Bank / Cash Account",
     helpPath: "modules-help/company-ledger/bank-cash-accounts",

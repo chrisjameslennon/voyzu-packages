@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { resolveApiCompanyIdFromPath } from "../../../../organization-finance/server/lib/settings-scope";
+import { resolveHttpApiCompanyIdFromPath } from "../../../../organization-finance/server/lib/settings-scope";
 
 import type {
   BusinessRuleErrorResponseDto,
@@ -18,7 +18,7 @@ import { FinancialYearRepo } from "../../db/financial-year.repo";
 import { getDb } from "@voyzu/capability/db";
 
 function getCompanyId(req: NextRequest): Promise<number> {
-  return resolveApiCompanyIdFromPath(req);
+  return resolveHttpApiCompanyIdFromPath(req);
 }
 
 // ── List periods for a financial year ─────────────────────────

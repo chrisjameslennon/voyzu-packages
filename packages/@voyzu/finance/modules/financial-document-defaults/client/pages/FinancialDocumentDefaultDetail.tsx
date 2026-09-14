@@ -19,7 +19,7 @@ interface FinancialDocumentDefaultDetailProps {
   financialDocumentDefault: FinancialDocumentDefaultResponseDto;
   glAccounts: GlAccountResponseDto[];
   bankCashAccounts: BankCashAccountResponseDto[];
-  apiPath: string;
+  httpApiPath: string;
   from?: DetailBackSource;
   fromCode?: string;
   routePrefix?: string;
@@ -31,7 +31,7 @@ export function FinancialDocumentDefaultDetail({
   financialDocumentDefault,
   glAccounts,
   bankCashAccounts,
-  apiPath,
+  httpApiPath,
   from,
   fromCode,
   routePrefix = "/organization",
@@ -80,7 +80,7 @@ export function FinancialDocumentDefaultDetail({
       const payload: FinancialDocumentDefaultPatchRequestDto = financialDocumentDefault.targetType === "GENERAL_LEDGER"
         ? { glAccountId: Number(targetId) }
         : { bankCashControlAccountId: Number(targetId) };
-      const response = await fetch(`${apiPath}/${key}`, {
+      const response = await fetch(`${httpApiPath}/${key}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

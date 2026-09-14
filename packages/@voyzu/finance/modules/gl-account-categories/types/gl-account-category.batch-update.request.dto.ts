@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { GlAccountCategoryUpdateRequestDto } from "./gl-account-category.update.request.dto";
 import { BusinessCode } from "../../common/types/constraints";
 

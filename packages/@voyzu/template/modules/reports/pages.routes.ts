@@ -2,12 +2,14 @@ const loadPage = () => import("./server/pages/AllTemplatesReportPage").then((mod
 
 export const pageRoutes = {
   all: {
+    httpApiDocumentationGroupId: "template.reports",
     id: "voyzu.template.reports.page.all", path: "/template/reports/all", loadPage,
     pageTitle: "Template Report", helpPath: "voyzu-platform-patterns/pdf-generation",
     breadcrumbBase: [{ label: "Template", href: "/template" }, { label: "Reports" }],
     auth: { required: true, minRole: "STANDARD" },
   },
   allPrintable: {
+    httpApiDocumentationGroupId: "template.reports",
     id: "voyzu.template.reports.page.all.printable", path: "/template/reports/all/printable", loadPage,
     pageTitle: "Template Report", helpPath: "voyzu-platform-patterns/pdf-generation", unframed: true,
     auth: { required: true, minRole: "STANDARD" },

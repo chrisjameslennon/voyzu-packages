@@ -7,7 +7,7 @@ import { listBankCashAccounts } from "../../../bank-cash-accounts/server/index";
 import { listGlAccounts } from "../../../gl-accounts/server/index";
 import { normalizeDetailBackSource } from "../../../common/server/index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { FinancialDocumentDefaultDetail } from "../../client/index";
 
 export async function FinancialDocumentDefaultDetailPage({ code, surface }: { code?: string; surface?: { searchParams?: Record<string, string> } }) {
@@ -15,12 +15,12 @@ export async function FinancialDocumentDefaultDetailPage({ code, surface }: { co
   const key = decodeFinancialDocumentDefaultKey(code);
   if (!key) notFound();
   const scope = await resolveServerSettingsScope();
-  const [financialDocumentDefault, glAccounts, bankCashAccounts, settingsUiState, companyApiContext] = await Promise.all([
+  const [financialDocumentDefault, glAccounts, bankCashAccounts, settingsUiState, companyHttpApiContext] = await Promise.all([
     getFinancialDocumentDefault(key.documentCode, key.code, scope.companyId),
     listGlAccounts(scope.companyId),
     listBankCashAccounts(scope.companyId),
     getCompanySettingsUiState(scope.companyId),
-    resolveServerCompanyApiContext(),
+    resolveServerCompanyHttpApiContext(),
   ]);
   if (!financialDocumentDefault) notFound();
   const searchParams = surface?.searchParams ?? {};
@@ -29,7 +29,7 @@ export async function FinancialDocumentDefaultDetailPage({ code, surface }: { co
       financialDocumentDefault={financialDocumentDefault}
       glAccounts={glAccounts}
       bankCashAccounts={bankCashAccounts}
-      apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/financial-document-defaults`}
+      httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/financial-document-defaults`}
       from={normalizeDetailBackSource(searchParams.from)}
       fromCode={searchParams.fromCode}
       routePrefix="/finance/integration"

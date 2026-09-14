@@ -16,7 +16,7 @@ export {
   handlePatch,
   handleSearch,
   handleUpdate,
-} from "./api/gl-account-category.http.handlers";
+} from "./http-api/gl-account-category.http.handlers";
 export {
   activateGlAccountCategory,
   activateGlAccountCategories,

@@ -7,13 +7,13 @@ import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 
 import { CompanySettingsTitleBadges } from "../../../common/client/index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { listFinancialDocumentTypes } from "../index";
 import { FinancialDocumentTypesListContent } from "../../client/index";
 
 export async function FinancialDocumentTypesListPage() {
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [processors, settingsUiState] = await Promise.all([
     listFinancialDocumentTypes(scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -38,7 +38,7 @@ export async function FinancialDocumentTypesListPage() {
       <FinancialDocumentTypesListContent
         processors={processors}
         routePrefix="/finance/integration"
-        apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/financial-document-types`}
+        httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/financial-document-types`}
         readOnly={settingsUiState.readOnly}
       />
     </div>

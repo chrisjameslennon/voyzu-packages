@@ -16,7 +16,7 @@ export {
   handlePatch,
   handleSearch,
   handleUpdate,
-} from "./api/template.http.handlers";
+} from "./http-api/template.http.handlers";
 
 export {
   activateTemplate,

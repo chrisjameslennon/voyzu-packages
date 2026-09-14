@@ -9,11 +9,11 @@ import { CompanySettingsTitleBadges } from "../../../common/client/index";
 import { GlAccountCategoriesListContent } from "../../client/index";
 import { listGlAccountCategories } from "../index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function GlAccountCategoriesListPage() {
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [categories, settingsUiState] = await Promise.all([
     listGlAccountCategories(scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -46,7 +46,7 @@ export async function GlAccountCategoriesListPage() {
       <GlAccountCategoriesListContent
         categories={categories}
         basePath="/finance/settings/reporting-categories"
-        apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/gl-account-categories`}
+        httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/gl-account-categories`}
         readOnly={settingsUiState.readOnly}
       />
     </div>

@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { InventoryDocumentSourceDto } from "./inventory-receipt.request.dto";
 import { BusinessCode, IsoDate, PositiveId } from "../../common/types/constraints";
 

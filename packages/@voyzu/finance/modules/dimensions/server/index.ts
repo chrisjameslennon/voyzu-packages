@@ -20,7 +20,7 @@ export {
   handlePatchValue,
   handleSearch,
   handleUpdate,
-} from "./api/dimension.http.handlers";
+} from "./http-api/dimension.http.handlers";
 export {
   activateDimension,
   activateDimensions,

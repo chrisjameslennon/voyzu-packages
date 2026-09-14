@@ -6,7 +6,7 @@ export {
 export {
   handleGetApEntry,
   handleListApEntries,
-} from "./api/ap-subledger-ledger-entries.http.handlers";
+} from "./http-api/ap-subledger-ledger-entries.http.handlers";
 
 export { ApLedgerEntriesListPage } from "./pages/ApLedgerEntriesListPage";
 export { ApLedgerEntryDetailPage } from "./pages/ApLedgerEntryDetailPage";

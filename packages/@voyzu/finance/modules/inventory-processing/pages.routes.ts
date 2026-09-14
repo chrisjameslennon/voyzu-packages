@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   rules: {
+    httpApiDocumentationGroupId: "finance.inventory-processing",
     id: "voyzu.inventory-processing.page.rules",
     pageTitle: "Movement Processing Rules",
     path: "/finance/integration/inventory-processing/rules",
@@ -10,6 +11,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth,
   },
   ruleDetail: {
+    httpApiDocumentationGroupId: "finance.inventory-processing",
     id: "voyzu.inventory-processing.page.rule-detail",
     pageTitle: "Inventory Processing Rule",
     path: "/finance/integration/inventory-processing/rules/[id]",
@@ -23,6 +25,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth,
   },
   inventoryTransactions: {
+    httpApiDocumentationGroupId: "finance.inventory-processing",
     id: "voyzu.inventory-processing.page.inventory-transactions",
     pageTitle: "Inventory Transactions",
     path: "/finance/integration/inventory-processing/inventory-transactions",
@@ -31,6 +34,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth,
   },
   inventoryTransactionDetail: {
+    httpApiDocumentationGroupId: "finance.inventory-processing",
     id: "voyzu.inventory-processing.page.inventory-transaction-detail",
     pageTitle: "Inventory Transaction",
     path: "/finance/integration/inventory-processing/inventory-transactions/[id]",
@@ -44,6 +48,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth,
   },
   inventoryTransactionDetailPrintable: {
+    httpApiDocumentationGroupId: "finance.inventory-processing",
     id: "voyzu.inventory-processing.page.inventory-transaction-detail.printable",
     pageTitle: "Inventory Transaction",
     path: "/finance/integration/inventory-processing/inventory-transactions/[id]/printable",

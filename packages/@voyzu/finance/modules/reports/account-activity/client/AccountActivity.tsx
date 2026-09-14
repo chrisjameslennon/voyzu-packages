@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyPageTitleBadges, financeApiUrl, getStatusSemanticColor } from "../../../common/client/index";
+import { CompanyPageTitleBadges, financeHttpApiUrl, getStatusSemanticColor } from "../../../common/client/index";
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -137,7 +137,7 @@ export function AccountActivity({ journals, financialYears, periods: initialPeri
       setRangePreset("entire-financial-year");
       setRangeLabel("Financial year");
     }
-    const response = await fetch(await financeApiUrl(`/financial-years/${yearCode}/periods`));
+    const response = await fetch(await financeHttpApiUrl(`/financial-years/${yearCode}/periods`));
     const nextPeriods = response.ok ? await response.json() as FinancialPeriodResponseDto[] : [];
     setPeriods(nextPeriods);
     if (historical && nextYear) {

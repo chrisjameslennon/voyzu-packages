@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { BusinessCode, IsoDate } from "../../common/types/constraints";
 
 export const ApBillCancellationRequestDto = StrictObject({

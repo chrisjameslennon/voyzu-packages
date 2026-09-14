@@ -12,7 +12,7 @@ export const iceCreamSampleData: IceCreamCreateRequestDto[] = [
   { code: "KYOTO_MATCHA", name: "Kyoto Matcha", flavorCode: "MATCHA", supplier: "Green Whisk Trading" },
   { code: "SESAME_NIGHT", name: "Black Sesame Night", flavorCode: "BLACK_SESAME", supplier: "Sub-Zero Scoops" },
   { code: "PURPLE_UBE", name: "Purple Ube Dream", flavorCode: "UBE", supplier: "Manila Frozen Foods" },
-  { code: "LAVENDER_APIARY", name: "Lavender Apiary", flavorCode: "LAVENDER_HONEY", supplier: "Brrr & Bloom" },
+  { code: "LAVENDER_APIARY", name: "Lavender HttpApiary", flavorCode: "LAVENDER_HONEY", supplier: "Brrr & Bloom" },
   { code: "FIG_AND_GOAT", name: "Fig and Goat Cheese", flavorCode: "GOAT_CHEESE_FIG", supplier: "Hill Country Dairy" },
   { code: "WASABI_WAKEUP", name: "Wasabi Wake-Up", flavorCode: "WASABI", supplier: "The Cold Shoulder Company" },
   { code: "BLUE_PEAR", name: "Blue Cheese and Pear", flavorCode: "BLUE_CHEESE_PEAR", supplier: "Frost & Forage" },

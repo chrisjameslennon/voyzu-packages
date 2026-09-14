@@ -57,7 +57,7 @@ function makeColumns(isMMDD: boolean): DataTableColumn<FinanceInventoryActivity>
   ];
 }
 
-export function InventoryTransactionsList({ activities, apiPath }: { activities: FinanceInventoryActivity[]; apiPath: string }) {
+export function InventoryTransactionsList({ activities, httpApiPath }: { activities: FinanceInventoryActivity[]; httpApiPath: string }) {
   const router = useRouter();
   const [rows, setRows] = useState(activities);
   const [search, setSearch] = useState("");
@@ -94,7 +94,7 @@ export function InventoryTransactionsList({ activities, apiPath }: { activities:
     if (refreshing) return;
     setRefreshing(true);
     try {
-      const response = await fetch(apiPath);
+      const response = await fetch(httpApiPath);
       if (response.ok) {
         setRows(await response.json() as FinanceInventoryActivity[]);
         setSelectedIds(new Set());

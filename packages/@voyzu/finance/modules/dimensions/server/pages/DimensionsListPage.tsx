@@ -9,11 +9,11 @@ import { CompanySettingsTitleBadges } from "../../../common/client/index";
 import { DimensionsListContent } from "../../client/index";
 import { listDimensions } from "../index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function DimensionsListPage() {
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [dimensions, settingsUiState] = await Promise.all([
     listDimensions(scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -46,7 +46,7 @@ export async function DimensionsListPage() {
       <DimensionsListContent
         dimensions={dimensions}
         basePath="/finance/settings/dimensions"
-        apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/dimensions`}
+        httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/dimensions`}
         readOnly={settingsUiState.readOnly}
       />
     </div>

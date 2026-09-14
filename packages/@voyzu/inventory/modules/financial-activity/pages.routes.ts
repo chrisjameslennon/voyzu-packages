@@ -1,6 +1,7 @@
 const auth = { required: true, minRole: "STANDARD" } as const;
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "inventory.financial-activity",
     id: "voyzu.inventory.financial-activity.page.list",
     path: "/inventory/financial-activity",
     loadPage: () => import("./server/pages/FinancialActivityPages").then((module) => module.FinancialActivityListPage),
@@ -9,6 +10,7 @@ export const pageRoutes = {
     auth,
   },
   detail: {
+    httpApiDocumentationGroupId: "inventory.financial-activity",
     id: "voyzu.inventory.financial-activity.page.detail",
     path: "/inventory/financial-activity/[id]",
     loadPage: () => import("./server/pages/FinancialActivityPages").then((module) => module.FinancialActivityDetailPage),
@@ -20,6 +22,7 @@ export const pageRoutes = {
     auth,
   },
   detailPrintable: {
+    httpApiDocumentationGroupId: "inventory.financial-activity",
     id: "voyzu.inventory.financial-activity.page.detail.printable",
     path: "/inventory/financial-activity/[id]/printable",
     loadPage: () => import("./server/pages/FinancialActivityPages").then((module) => module.FinancialActivityDetailPage),

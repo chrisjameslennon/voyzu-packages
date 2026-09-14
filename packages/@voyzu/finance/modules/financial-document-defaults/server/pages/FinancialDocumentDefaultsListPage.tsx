@@ -8,12 +8,12 @@ import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { listFinancialDocumentDefaults } from "../index";
 import { CompanySettingsTitleBadges } from "../../../common/client/index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { FinancialDocumentDefaultsListContent } from "../../client/index";
 
 export async function FinancialDocumentDefaultsListPage() {
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [financialDocumentDefaults, settingsUiState] = await Promise.all([
     listFinancialDocumentDefaults(scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -38,7 +38,7 @@ export async function FinancialDocumentDefaultsListPage() {
       <FinancialDocumentDefaultsListContent
         financialDocumentDefaults={financialDocumentDefaults}
         routePrefix="/finance/integration"
-        apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/financial-document-defaults`}
+        httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/financial-document-defaults`}
         readOnly={settingsUiState.readOnly}
       />
     </div>

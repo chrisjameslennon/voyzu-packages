@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanyPageTitleBadges, financeApiUrl, getStatusSemanticColor } from "../../../common/client/index";
+import { CompanyPageTitleBadges, financeHttpApiUrl, getStatusSemanticColor } from "../../../common/client/index";
 import { Close, Delete, Open, Reopen, type FinancialYearOperationState } from "../../domain/operation-policy";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -152,7 +152,7 @@ export function FinancialYearsListContent({
   };
 
   const lifecycleUrl = (year: FinancialYearResponseDto, action: "open" | "close" | "reopen") =>
-    financeApiUrl(`/financial-years/${encodeURIComponent(year.code)}/${action}`);
+    financeHttpApiUrl(`/financial-years/${encodeURIComponent(year.code)}/${action}`);
 
   const runLifecycleAction = async (action: "open" | "close") => {
     setLifecycleConfirmation(null);
@@ -189,7 +189,7 @@ export function FinancialYearsListContent({
     const deletedIds = new Set<number>();
     try {
       for (const year of selectedRows) {
-        const response = await fetch(await financeApiUrl(`/financial-years/${encodeURIComponent(year.code)}`), {
+        const response = await fetch(await financeHttpApiUrl(`/financial-years/${encodeURIComponent(year.code)}`), {
           method: "DELETE",
         });
         if (!response.ok) {
@@ -247,7 +247,7 @@ export function FinancialYearsListContent({
   const createYear = async (value: FinancialYearCreateRequestDto): Promise<string | undefined> => {
     if (readOnly) return "Financial periods are read only while this financial entity is archived";
     if (!companyId) return "Select a company before creating a financial year";
-    const response = await fetch(await financeApiUrl(`/financial-years`), {
+    const response = await fetch(await financeHttpApiUrl(`/financial-years`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),

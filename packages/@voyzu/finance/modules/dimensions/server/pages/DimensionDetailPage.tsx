@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { DimensionDetail } from "../../client/index";
 import { getDimension } from "../index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 interface CompanyDimensionDetailPageProps {
   code?: string;
@@ -14,7 +14,7 @@ interface CompanyDimensionDetailPageProps {
 export async function DimensionDetailPage({ code }: CompanyDimensionDetailPageProps) {
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [dimension, settingsUiState] = await Promise.all([
     getDimension(decodeURIComponent(code), scope.companyId),
     getCompanySettingsUiState(scope.companyId),
@@ -26,7 +26,7 @@ export async function DimensionDetailPage({ code }: CompanyDimensionDetailPagePr
       dimension={dimension}
       listPath="/finance/settings/dimensions"
       auditPath="/settings/audit"
-      apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/dimensions`}
+      httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/dimensions`}
       readOnly={settingsUiState.readOnly}
       showArchived={settingsUiState.isArchived}
     />

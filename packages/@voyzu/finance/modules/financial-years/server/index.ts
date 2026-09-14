@@ -8,7 +8,7 @@ export {
   handleOpen,
   handlePatch,
   handleReopen,
-} from "./api/financial-year.http.handlers";
+} from "./http-api/financial-year.http.handlers";
 export {
   handleClose as handleCloseFinancialPeriod,
   handleList as handleListFinancialPeriods,

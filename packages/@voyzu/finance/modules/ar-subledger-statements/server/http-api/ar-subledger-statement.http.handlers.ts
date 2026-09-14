@@ -1,0 +1,24 @@
+import { type NextRequest, NextResponse } from "next/server";
+import { resolveHttpApiCompanyIdFromPath } from "../../../organization-finance/server/lib/settings-scope";
+
+import { ok, serverError } from "@voyzu/capability/http";
+import type { InputValidationErrorResponseDto, InternalServerErrorResponseDto } from "@voyzu/types/errors";
+import type { ArCounterpartySummaryResponseDto } from "../../../ar-subledger-counterparties/types/ar-counterparty-summary.response.dto";
+
+import { listArCounterpartySummaries } from "../lib/ar-subledger-statement.service";
+
+function companyIdFrom(req: NextRequest): Promise<number> {
+  return resolveHttpApiCompanyIdFromPath(req);
+}
+
+export async function handleListArCounterpartySummaries(
+  req: NextRequest,
+): Promise<NextResponse<ArCounterpartySummaryResponseDto[] | InputValidationErrorResponseDto | InternalServerErrorResponseDto>> {
+  const companyId = await companyIdFrom(req);
+  try {
+    const summaries = await listArCounterpartySummaries(companyId);
+    return ok(summaries satisfies ArCounterpartySummaryResponseDto[]);
+  } catch (err) {
+    return serverError(err);
+  }
+}

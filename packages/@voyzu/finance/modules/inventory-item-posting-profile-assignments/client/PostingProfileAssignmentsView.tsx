@@ -17,7 +17,7 @@ const columns: DataTableColumn<PostingAssignment>[] = [
   { key: "status", label: "Status", align: "center", render: (row) => <Badge variant="soft" size="x-small" color={row.status === "ACTIVE" ? "success" : "neutral"}>{row.status}</Badge> },
 ];
 
-export function PostingProfileAssignmentsView({ data, apiPath }: { data: PostingAssignments; apiPath: string }) {
+export function PostingProfileAssignmentsView({ data, httpApiPath }: { data: PostingAssignments; httpApiPath: string }) {
   const [items, setItems] = useState(data.items); const [selected, setSelected] = useState<Set<number>>(new Set()); const [search, setSearch] = useState("");
   const [modal, setModal] = useState(false); const [profileId, setProfileId] = useState(""); const [error, setError] = useState(""); const [toast, setToast] = useState(""); const [saving, setSaving] = useState(false);
   const rows = useMemo(() => { const query = search.trim().toLowerCase(); return items.filter((item) => !query || [item.sku, item.name, item.category ?? "", item.postingCode ?? ""].some((value) => value.toLowerCase().includes(query))); }, [items, search]);
@@ -26,7 +26,7 @@ export function PostingProfileAssignmentsView({ data, apiPath }: { data: Posting
     if (!profileId) { setError("Select an item posting profile"); return; }
     setSaving(true); setError("");
     try {
-      const response = await fetch(apiPath, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ itemIds: [...selected], postingProfileId: Number(profileId) }) });
+      const response = await fetch(httpApiPath, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ itemIds: [...selected], postingProfileId: Number(profileId) }) });
       if (!response.ok) { const body = await response.json().catch(() => null) as { message?: string } | null; setError(body?.message ?? "The posting profile could not be assigned"); return; }
       const changed = await response.json() as PostingAssignments; setItems(changed.items); setSelected(new Set()); setModal(false); setProfileId(""); setToast("Item posting profile assigned");
     } finally { setSaving(false); }

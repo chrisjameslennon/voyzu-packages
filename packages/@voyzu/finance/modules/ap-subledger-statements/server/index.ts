@@ -1,4 +1,4 @@
-export { handleListApCounterpartySummaries } from "./api/ap-subledger-statement.http.handlers";
+export { handleListApCounterpartySummaries } from "./http-api/ap-subledger-statement.http.handlers";
 export {
   getApCounterpartyStatement,
   listApCounterpartySummaries,

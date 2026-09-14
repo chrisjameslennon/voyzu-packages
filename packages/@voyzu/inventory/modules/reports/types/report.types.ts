@@ -1,5 +1,5 @@
 import Type, { type Static } from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 export const InventoryReportKeyDto = Type.Union([
   Type.Literal("items"),
   Type.Literal("item-categories"),

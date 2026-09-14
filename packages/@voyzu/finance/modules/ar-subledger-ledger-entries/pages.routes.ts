@@ -1,6 +1,7 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.ar-subledger-ledger-entries",
     id: "voyzu.ar-subledger-ledger-entries.page.list",
     pageTitle: "AR Ledger Entries",
     helpPath: "modules-help/company-ledger/ar-ledger-entries",
@@ -14,6 +15,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.ar-subledger-ledger-entries",
     id: "voyzu.ar-subledger-ledger-entries.page.detail",
     pageTitle: "AR Ledger Entry",
     helpPath: "modules-help/company-ledger/ar-ledger-entries",
@@ -27,6 +29,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detailDocumentPrintable: {
+    httpApiDocumentationGroupId: "finance.ar-subledger-ledger-entries",
     id: "voyzu.ar-subledger-ledger-entries.page.detail.documentPrintable",
     pageTitle: "AR Ledger Entry",
     path: "/finance/subledgers/ar/ledger-entries/[code]/document-printable",

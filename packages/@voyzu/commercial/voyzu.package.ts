@@ -1,3 +1,4 @@
+import { httpApiRouting, httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 import { customersModule } from "./modules/customers/module";
 import { suppliersModule } from "./modules/suppliers/module";
@@ -8,6 +9,8 @@ import { settingsModule } from "./modules/settings/module";
 
 export const commercialPackage = {
   contracts: {
+    httpApiRouting,
+    httpApiDocumentation,
     internalApi: {
       defines: { ...customersModule.defines },
       implements: { ...customersModule.implements },

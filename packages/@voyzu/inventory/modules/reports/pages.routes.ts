@@ -21,6 +21,7 @@ const report = (
   name: PageName,
   group: "Items" | "Stock",
 ) => ({
+    httpApiDocumentationGroupId: "inventory.reports",
   id: `voyzu.inventory.reports.${id}`,
   path: `/inventory/reports/${path}`,
   loadPage: load(name),
@@ -34,6 +35,7 @@ const printable = (
   title: string,
   name: PageName,
 ) => ({
+    httpApiDocumentationGroupId: "inventory.reports",
   id: `voyzu.inventory.reports.${id}.printable`,
   path: `/inventory/reports/${path}/printable`,
   loadPage: load(name),

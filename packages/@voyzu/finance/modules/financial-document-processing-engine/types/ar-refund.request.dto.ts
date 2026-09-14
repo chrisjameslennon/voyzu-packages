@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { BankCashDetailsRequestDto } from "./bank-cash-details.dto";
 import { BusinessCode, IsoDate } from "../../common/types/constraints";
 

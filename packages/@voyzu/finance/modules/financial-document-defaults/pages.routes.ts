@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.financial-document-defaults",
     id: "voyzu.company-financial-document-defaults.page.list",
     pageTitle: "Financial Document Defaults",
     helpPath: "modules-help/company-ledger/financial-document-defaults",
@@ -15,6 +16,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.financial-document-defaults",
     id: "voyzu.company-financial-document-defaults.page.detail",
     pageTitle: "Financial Document Default",
     helpPath: "modules-help/company-ledger/financial-document-defaults",

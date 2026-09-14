@@ -14,7 +14,7 @@ export async function InventoryTransactionsListPage() {
   return (
     <InventoryTransactionsList
       activities={company ? await listFinanceInventoryActivities(company.id) : []}
-      apiPath={company
+      httpApiPath={company
         ? `/api/finance/${encodeURIComponent(company.code)}/inventory-processing/inventory-transactions`
         : ""}
     />

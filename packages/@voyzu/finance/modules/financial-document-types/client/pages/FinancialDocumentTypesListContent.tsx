@@ -15,8 +15,8 @@ const ITEMS_PER_PAGE = 100;
 interface FinancialDocumentTypeListContentProps {
   processors: FinancialDocumentTypeResponseDto[];
   routePrefix?: string;
-  apiPath?: string;
-  apiScope?: "template" | "selected";
+  httpApiPath?: string;
+  httpApiScope?: "template" | "selected";
   readOnly?: boolean;
 }
 
@@ -48,8 +48,8 @@ const columns: DataTableColumn<FinancialDocumentTypeRow>[] = [
 export function FinancialDocumentTypeListContent({
   processors,
   routePrefix = "/organization",
-  apiPath,
-  apiScope = "template",
+  httpApiPath,
+  httpApiScope = "template",
   readOnly = false,
 }: FinancialDocumentTypeListContentProps) {
   const router = useRouter();
@@ -97,7 +97,7 @@ export function FinancialDocumentTypeListContent({
     if (refreshing) return;
     setRefreshing(true);
     try {
-      const requestPath = apiPath ?? (apiScope === "template" ? "/api/organization/financial-document-types" : "/api/financial-document-types");
+      const requestPath = httpApiPath ?? (httpApiScope === "template" ? "/api/organization/financial-document-types" : "/api/financial-document-types");
       const response = await fetch(requestPath);
       if (response.ok) {
         setData(toRows(await response.json() as FinancialDocumentTypeResponseDto[]));

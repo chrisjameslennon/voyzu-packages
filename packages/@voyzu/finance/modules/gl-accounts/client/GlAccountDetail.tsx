@@ -3,7 +3,7 @@
 import { CompanyAuditPanel as AuditPanel } from "../../common/client/index";
 
 import { DetailBackButton } from "@voyzu/ui-surface/client";
-import { CompanySettingsTitleBadges, financeApiUrl } from "../../common/client/index";
+import { CompanySettingsTitleBadges, financeHttpApiUrl } from "../../common/client/index";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -76,7 +76,7 @@ export function GlAccountDetail({ account, categories, readOnly = false, isArchi
         accountType: accountType as GlAccountUpdateRequestDto["accountType"],
         ...(accountCategoryId ? { accountCategoryId: Number(accountCategoryId) } : {}),
       };
-      const response = await fetch(await financeApiUrl(`/gl-accounts/${encodeURIComponent(currentAccount.code)}`), {
+      const response = await fetch(await financeHttpApiUrl(`/gl-accounts/${encodeURIComponent(currentAccount.code)}`), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -99,7 +99,7 @@ export function GlAccountDetail({ account, categories, readOnly = false, isArchi
   const transitionStatus = async (action: "activate" | "deactivate") => {
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(await financeApiUrl(`/gl-accounts/batch-${action}`), {
+    const response = await fetch(await financeHttpApiUrl(`/gl-accounts/batch-${action}`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: [currentAccount.code] }),
@@ -117,7 +117,7 @@ export function GlAccountDetail({ account, categories, readOnly = false, isArchi
     setIsDeleteOpen(false);
     if (readOnly) return;
     setServerError("");
-    const response = await fetch(await financeApiUrl(`/gl-accounts/${encodeURIComponent(currentAccount.code)}`), { method: "DELETE" });
+    const response = await fetch(await financeHttpApiUrl(`/gl-accounts/${encodeURIComponent(currentAccount.code)}`), { method: "DELETE" });
     if (!response.ok) {
       const body = await response.json().catch(() => null) as { message?: string; error?: string } | null;
       setServerError(body?.message ?? "An unexpected error occurred");

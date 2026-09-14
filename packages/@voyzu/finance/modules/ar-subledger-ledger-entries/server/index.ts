@@ -7,7 +7,7 @@ export {
 export {
   handleGetArEntry,
   handleListArEntries,
-} from "./api/ar-subledger-ledger-entries.http.handlers";
+} from "./http-api/ar-subledger-ledger-entries.http.handlers";
 
 export { ArLedgerEntriesListPage } from "./pages/ArLedgerEntriesListPage";
 export { ArLedgerEntryDetailPage } from "./pages/ArLedgerEntryDetailPage";

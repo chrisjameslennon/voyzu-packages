@@ -5,6 +5,6 @@ export {
 export {
   handleGetApCounterparty,
   handleListApCounterparties,
-} from "./api/ap-subledger-counterparty.http.handlers";
+} from "./http-api/ap-subledger-counterparty.http.handlers";
 export { ApCounterpartiesListPage } from "./pages/ApCounterpartiesListPage";
 export { ApCounterpartyDetailPage } from "./pages/ApCounterpartyDetailPage";

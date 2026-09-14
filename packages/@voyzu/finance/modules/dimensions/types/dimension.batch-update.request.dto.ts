@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { DimensionUpdateRequestDto } from "./dimension.update.request.dto";
 import { BusinessCode14 } from "../../common/types/constraints";
 

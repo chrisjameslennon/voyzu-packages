@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.dimensions",
     id: "voyzu.company-dimensions.page.list",
     pageTitle: "Dimensions",
     helpPath: "modules-help/company-ledger/dimensions",
@@ -14,6 +15,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.dimensions",
     id: "voyzu.company-dimensions.page.detail",
     pageTitle: "Dimension",
     helpPath: "modules-help/company-ledger/dimensions",

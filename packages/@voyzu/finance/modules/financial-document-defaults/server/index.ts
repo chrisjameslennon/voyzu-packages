@@ -16,7 +16,7 @@ export {
   handlePatch,
   handleSearch,
   handleUpdate,
-} from "./api/financial-document-default.http.handlers";
+} from "./http-api/financial-document-default.http.handlers";
 export {
   activateFinancialDocumentDefault,
   activateFinancialDocumentDefaults,

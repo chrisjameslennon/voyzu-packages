@@ -14,9 +14,9 @@ import detailStyles from "@voyzu/ui-style/css-modules/detail.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { ArControlAccountDetailsForm } from "./ArControlAccountDetailsForm";
 
-interface Props { account: ControlAccountResponseDto; glAccounts: GlAccountResponseDto[]; apiPath: string; listPath?: string; auditPath?: string; readOnly?: boolean; isArchived?: boolean; }
+interface Props { account: ControlAccountResponseDto; glAccounts: GlAccountResponseDto[]; httpApiPath: string; listPath?: string; auditPath?: string; readOnly?: boolean; isArchived?: boolean; }
 
-export function ArControlAccountDetail({ account, glAccounts, apiPath, listPath = "/finance/settings/control-accounts/ar", auditPath = "/settings/audit", readOnly = false, isArchived = false }: Props) {
+export function ArControlAccountDetail({ account, glAccounts, httpApiPath, listPath = "/finance/settings/control-accounts/ar", auditPath = "/settings/audit", readOnly = false, isArchived = false }: Props) {
   const [currentAccount, setCurrentAccount] = useState(account);
   const [glAccountId, setGlAccountId] = useState(String(account.glAccountId));
   const [saving, setSaving] = useState(false);
@@ -34,7 +34,7 @@ export function ArControlAccountDetail({ account, glAccounts, apiPath, listPath 
     if (readOnly || !hasChange || blockers.length > 0 || saving) return;
     setServerError(""); setSaving(true);
     try {
-      const response = await fetch(`${apiPath}/${encodeURIComponent(currentAccount.code)}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ glAccountId: Number(glAccountId) }) });
+      const response = await fetch(`${httpApiPath}/${encodeURIComponent(currentAccount.code)}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ glAccountId: Number(glAccountId) }) });
       if (!response.ok) { const body = await response.json().catch(() => null) as { message?: string } | null; setServerError(body?.message ?? "An unexpected error occurred"); return; }
       setCurrentAccount(await response.json() as ControlAccountResponseDto); setToastVisible(true);
     } finally { setSaving(false); }

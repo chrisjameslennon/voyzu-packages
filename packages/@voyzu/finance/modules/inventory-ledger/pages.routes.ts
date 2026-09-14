@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   valuation: {
+    httpApiDocumentationGroupId: "finance.inventory-ledger",
     id: "voyzu.inventory-ledger.page.valuation",
     pageTitle: "Stock Valuation",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries",
@@ -11,6 +12,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth,
   },
   list: {
+    httpApiDocumentationGroupId: "finance.inventory-ledger",
     id: "voyzu.inventory-ledger.page.list",
     pageTitle: "Inventory Ledger Entries",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries",
@@ -23,6 +25,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.inventory-ledger",
     id: "voyzu.inventory-ledger.page.detail",
     pageTitle: "Inventory Ledger Entry",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries",

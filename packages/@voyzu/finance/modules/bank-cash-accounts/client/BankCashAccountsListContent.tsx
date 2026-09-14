@@ -33,7 +33,7 @@ interface CompanyBankCashAccountsListContentProps {
   accounts: BankCashAccountResponseDto[];
   glAccounts: GlAccountResponseDto[];
   basePath?: string;
-  apiPath?: string;
+  httpApiPath?: string;
   readOnly?: boolean;
 }
 
@@ -85,7 +85,7 @@ export function BankCashAccountsListContent({
   accounts,
   glAccounts,
   basePath = "/organization/bank-cash-accounts",
-  apiPath = "/api/organization/bank-cash-accounts",
+  httpApiPath = "/api/organization/bank-cash-accounts",
   readOnly = false,
 }: CompanyBankCashAccountsListContentProps) {
   const router = useRouter();
@@ -115,7 +115,7 @@ export function BankCashAccountsListContent({
     if (errors.length) return;
     setAddSaving(true);
     try {
-      const response = await fetch(apiPath, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(addValue) });
+      const response = await fetch(httpApiPath, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(addValue) });
       if (!response.ok) {
         const body = await response.json().catch(() => null) as { message?: string } | null;
         setAddErrors([body?.message ?? "An unexpected error occurred"]);
@@ -182,8 +182,8 @@ export function BankCashAccountsListContent({
   const isAllSelected = paginated.length > 0 && paginated.every((account) => selectedIds.has(account.id));
   const isSomeSelected = !isAllSelected && paginated.some((account) => selectedIds.has(account.id));
 
-  const apiUrl = (suffix = "") => {
-    const [path, query] = apiPath.split("?");
+  const httpApiUrl = (suffix = "") => {
+    const [path, query] = httpApiPath.split("?");
     return `${path}${suffix}${query ? `?${query}` : ""}`;
   };
 
@@ -191,7 +191,7 @@ export function BankCashAccountsListContent({
     if (refreshing) return;
     setRefreshing(true);
     try {
-      const response = await fetch(apiPath, { cache: "no-store" });
+      const response = await fetch(httpApiPath, { cache: "no-store" });
       if (response.ok) {
         setData(await response.json() as BankCashAccountResponseDto[]);
         setSelectedIds(new Set());
@@ -251,7 +251,7 @@ export function BankCashAccountsListContent({
     if (readOnly) return;
     setListError("");
     const codes = selectedAccounts.map((account) => account.code);
-    const response = await fetch(apiUrl(`/batch-${action}`), {
+    const response = await fetch(httpApiUrl(`/batch-${action}`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes }),
@@ -274,7 +274,7 @@ export function BankCashAccountsListContent({
     setListError("");
     const codes = selectedAccounts.map((account) => account.code);
     for (const code of codes) {
-      const response = await fetch(apiUrl(`/${encodeURIComponent(code)}`), { method: "DELETE" });
+      const response = await fetch(httpApiUrl(`/${encodeURIComponent(code)}`), { method: "DELETE" });
       if (!response.ok) {
         const body = await response.json().catch(() => null) as { message?: string; error?: string } | null;
         setListError(body?.message ?? "An unexpected error occurred");

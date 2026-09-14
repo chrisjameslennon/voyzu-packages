@@ -6,7 +6,7 @@ export {
   handleListAr,
   handlePatch,
   handleSearch,
-} from "./api/control-account.http.handlers";
+} from "./http-api/control-account.http.handlers";
 export {
   filterControlAccounts,
   getControlAccount,

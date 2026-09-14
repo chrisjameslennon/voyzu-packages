@@ -16,7 +16,7 @@ export {
   handlePatch,
   handleSearch,
   handleUpdate,
-} from "./api/bank-cash-account.http.handlers";
+} from "./http-api/bank-cash-account.http.handlers";
 export {
   activateBankCashAccount,
   activateBankCashAccounts,

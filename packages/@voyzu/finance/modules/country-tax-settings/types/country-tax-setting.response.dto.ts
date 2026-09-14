@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { CountryFinanceSchema } from "@voyzu/types/business-objects/country-finance";
 export {
   CountryTaxAuthorityResponseDto,

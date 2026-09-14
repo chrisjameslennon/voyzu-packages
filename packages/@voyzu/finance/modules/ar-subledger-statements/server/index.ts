@@ -1,4 +1,4 @@
-export { handleListArCounterpartySummaries } from "./api/ar-subledger-statement.http.handlers";
+export { handleListArCounterpartySummaries } from "./http-api/ar-subledger-statement.http.handlers";
 export {
   getArCounterpartyStatement,
   listArCounterpartySummaries,

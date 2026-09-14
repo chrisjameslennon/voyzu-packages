@@ -1,7 +1,7 @@
 export {
   handleGetArCounterparty,
   handleListArCounterparties,
-} from "./api/ar-subledger-counterparty.http.handlers";
+} from "./http-api/ar-subledger-counterparty.http.handlers";
 export {
   getArCounterparty,
   listArCounterparties,

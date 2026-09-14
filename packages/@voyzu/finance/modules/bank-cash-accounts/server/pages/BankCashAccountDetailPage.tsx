@@ -6,7 +6,7 @@ import { BankCashAccountDetail } from "../../client/index";
 import { getBankCashAccount } from "../index";
 import { listGlAccounts } from "../../../gl-accounts/server/index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { normalizeDetailBackSource } from "../../../common/server/index";
 
 interface CompanyBankCashAccountDetailPageProps {
@@ -17,7 +17,7 @@ interface CompanyBankCashAccountDetailPageProps {
 export async function BankCashAccountDetailPage({ code, surface }: CompanyBankCashAccountDetailPageProps) {
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [account, glAccounts, settingsState] = await Promise.all([
     getBankCashAccount(decodeURIComponent(code), scope.companyId),
     listGlAccounts(scope.companyId),
@@ -32,7 +32,7 @@ export async function BankCashAccountDetailPage({ code, surface }: CompanyBankCa
       glAccounts={glAccounts}
       listPath="/finance/settings/bank-cash-accounts"
       auditPath="/settings/audit"
-      apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/bank-cash-accounts`}
+      httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/bank-cash-accounts`}
       readOnly={settingsState.readOnly}
       isArchived={settingsState.isArchived}
       from={normalizeDetailBackSource(searchParams.from)}

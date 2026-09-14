@@ -1,5 +1,5 @@
 import Type from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 import { NonBlankText, NormalizableBusinessCode } from "../../common/types/constraints";
 
 const NullablePostingCode = Type.Union([NormalizableBusinessCode, Type.Literal(""), Type.Null()]);

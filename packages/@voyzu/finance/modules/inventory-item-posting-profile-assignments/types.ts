@@ -1,5 +1,5 @@
 import Type, { type Static } from "typebox";
-import { StrictObject } from "@voyzu/types/api";
+import { StrictObject } from "@voyzu/types/http-api";
 
 export const PostingProfileOptionDto = StrictObject({ id: Type.Integer(), code: Type.String(), name: Type.String(), status: Type.Union([Type.Literal("ACTIVE"), Type.Literal("INACTIVE")]) });
 export const PostingAssignmentDto = StrictObject({

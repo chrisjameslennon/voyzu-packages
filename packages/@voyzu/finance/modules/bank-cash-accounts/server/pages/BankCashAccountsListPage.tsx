@@ -10,11 +10,11 @@ import { BankCashAccountsListContent } from "../../client/index";
 import { listBankCashAccounts } from "../index";
 import { listGlAccounts } from "../../../gl-accounts/server/index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
-import { resolveServerCompanyApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
+import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
 export async function BankCashAccountsListPage() {
   const scope = await resolveServerSettingsScope();
-  const companyApiContext = await resolveServerCompanyApiContext();
+  const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [accounts, glAccounts, settingsState] = await Promise.all([
     listBankCashAccounts(scope.companyId),
     listGlAccounts(scope.companyId),
@@ -46,7 +46,7 @@ export async function BankCashAccountsListPage() {
         accounts={accounts}
         glAccounts={glAccounts}
         basePath="/finance/settings/bank-cash-accounts"
-        apiPath={`/api/finance/${encodeURIComponent(companyApiContext.companyCode)}/bank-cash-accounts`}
+        httpApiPath={`/api/finance/${encodeURIComponent(companyHttpApiContext.companyCode)}/bank-cash-accounts`}
         readOnly={settingsState.readOnly}
       />
     </div>

@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.gl-account-categories",
     id: "voyzu.company-gl-account-categories.page.list",
     pageTitle: "Reporting Categories",
     helpPath: "modules-help/company-ledger/reporting-categories",
@@ -15,6 +16,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.gl-account-categories",
     id: "voyzu.company-gl-account-categories.page.detail",
     pageTitle: "Reporting Category",
     helpPath: "modules-help/company-ledger/reporting-categories",

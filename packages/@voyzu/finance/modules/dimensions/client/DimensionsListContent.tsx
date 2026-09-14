@@ -33,7 +33,7 @@ const CODE_PATTERN = /^[A-Z0-9_-]+$/;
 interface CompanyDimensionsListContentProps {
   dimensions: DimensionResponseDto[];
   basePath?: string;
-  apiPath?: string;
+  httpApiPath?: string;
   readOnly?: boolean;
 }
 
@@ -72,7 +72,7 @@ const columns: DataTableColumn<DimensionResponseDto>[] = [
 export function DimensionsListContent({
   dimensions,
   basePath = "/organization/dimensions",
-  apiPath = "/api/organization/dimensions",
+  httpApiPath = "/api/organization/dimensions",
   readOnly = false,
 }: CompanyDimensionsListContentProps) {
   const router = useRouter();
@@ -117,8 +117,8 @@ export function DimensionsListContent({
     setCurrentPage(1);
   }, [dimensions]);
 
-  const apiUrl = (suffix = "") => {
-    const [path, query] = apiPath.split("?");
+  const httpApiUrl = (suffix = "") => {
+    const [path, query] = httpApiPath.split("?");
     return `${path}${suffix}${query ? `?${query}` : ""}`;
   };
 
@@ -158,7 +158,7 @@ export function DimensionsListContent({
     if (refreshing) return;
     setRefreshing(true);
     try {
-      const response = await fetch(apiUrl());
+      const response = await fetch(httpApiUrl());
       if (response.ok) {
         setData(await response.json() as DimensionResponseDto[]);
         setSelectedIds(new Set());
@@ -171,7 +171,7 @@ export function DimensionsListContent({
   const transitionSelected = async (action: "activate" | "deactivate") => {
     if (readOnly) return;
     setListError("");
-    const response = await fetch(apiUrl(`/batch-${action}`), {
+    const response = await fetch(httpApiUrl(`/batch-${action}`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes: selectedDimensions.map((dimension) => dimension.code) }),
@@ -193,7 +193,7 @@ export function DimensionsListContent({
     if (readOnly) return;
     setListError("");
     const codes = selectedDimensions.map((dimension) => dimension.code);
-    const response = await fetch(apiUrl("/batch/delete"), {
+    const response = await fetch(httpApiUrl("/batch/delete"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes }),
@@ -292,7 +292,7 @@ export function DimensionsListContent({
 
   const createDimension = async (value: DimensionCreateRequestDto): Promise<string | undefined> => {
     if (readOnly) return "Dimensions are read only while this financial entity is archived";
-    const response = await fetch(apiUrl(), {
+    const response = await fetch(httpApiUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),

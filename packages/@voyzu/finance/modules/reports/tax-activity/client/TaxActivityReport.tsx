@@ -1,6 +1,6 @@
 "use client";
 
-import { financeApiUrl } from "../../../common/client/index";
+import { financeHttpApiUrl } from "../../../common/client/index";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { FinancialYearResponseDto } from "../../../financial-years/types/index";
@@ -128,7 +128,7 @@ export function TaxActivityReport({
         periodEndDate: period.endDate,
         periodLabel: period.label,
       });
-      const res = await fetch(await financeApiUrl(`/reports/tax-activity?${params.toString()}`));
+      const res = await fetch(await financeHttpApiUrl(`/reports/tax-activity?${params.toString()}`));
       if (!res.ok) return;
       setData((await res.json()) as TaxActivityResponseDto);
     } finally {
@@ -148,7 +148,7 @@ export function TaxActivityReport({
   useEffect(() => {
     if (!selectedCompany) return;
     const loadYears = async () => {
-      const res = await fetch(await financeApiUrl(`/financial-years`));
+      const res = await fetch(await financeHttpApiUrl(`/financial-years`));
       if (!res.ok) return;
       const years = ((await res.json()) as FinancialYearResponseDto[]).filter((year) => year.hasPostings);
       setFinancialYears(years);

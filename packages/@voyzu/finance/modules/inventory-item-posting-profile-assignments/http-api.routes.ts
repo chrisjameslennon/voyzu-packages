@@ -1,0 +1,8 @@
+import { InternalServerErrorResponseDto } from "@voyzu/types";
+import { AssignPostingProfileRequestDto, PostingAssignmentsDto } from "./types";
+
+const companyCode = { description: "Company code that identifies the company scope.", schema: { type: "string" } };
+export const httpApiRoutes = {
+  "finance.inventory-item-posting-profile-assignments.list": { method: "GET", path: "/finance/[companyCode]/inventory/item-posting-profile-assignments", loadHandler: () => import("./server/http-api/posting-profile-assignment.http.handlers").then((module) => module.handleList), request: { path: { companyCode } }, summary: "List item posting profile assignments",   responses: { "200": { description: "Successful response.", body: PostingAssignmentsDto }, "500": { description: "Unexpected error.", body: InternalServerErrorResponseDto } } },
+  "finance.inventory-item-posting-profile-assignments.assign": { method: "POST", path: "/finance/[companyCode]/inventory/item-posting-profile-assignments", loadHandler: () => import("./server/http-api/posting-profile-assignment.http.handlers").then((module) => module.handleAssign), request: { path: { companyCode }, contentType: "application/json", body: AssignPostingProfileRequestDto }, summary: "Assign an item posting profile",   responses: { "200": { description: "Successful response.", body: PostingAssignmentsDto }, "500": { description: "Unexpected error.", body: InternalServerErrorResponseDto } } },
+} as const;

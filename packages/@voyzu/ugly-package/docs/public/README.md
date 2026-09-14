@@ -5,7 +5,7 @@ This directory is the public documentation root for `@voyzu/ugly-package`.
 The package deliberately demonstrates the freedom available inside a valid
 Voyzu package boundary. Its visual design and implementation patterns are not
 recommendations. The package has its own in-page navigation, no left
-navigation, no API, no database objects and no auditing. Its BYO Dependencies
+navigation, no HTTP API, no database objects and no auditing. Its BYO Dependencies
 page demonstrates a package-owned npm dependency and package-owned public
 assets.
 

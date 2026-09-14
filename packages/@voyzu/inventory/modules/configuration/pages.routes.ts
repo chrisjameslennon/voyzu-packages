@@ -14,6 +14,7 @@ const load =
     import("./server/pages/ConfigurationPages").then((module) => module[name]);
 export const pageRoutes = {
   categories: {
+    httpApiDocumentationGroupId: "inventory.configuration",
     id: "voyzu.inventory.categories.page.list",
     path: "/inventory/item-categories",
     loadPage: load("CategoriesPage"),
@@ -22,6 +23,7 @@ export const pageRoutes = {
     auth: { required: true, minRole: "STANDARD" },
   },
   category: {
+    httpApiDocumentationGroupId: "inventory.configuration",
     id: "voyzu.inventory.categories.page.detail",
     path: "/inventory/item-categories/[id]",
     loadPage: load("CategoryDetailPage"),
@@ -33,6 +35,7 @@ export const pageRoutes = {
     auth: { required: true, minRole: "STANDARD" },
   },
   warehouses: {
+    httpApiDocumentationGroupId: "inventory.configuration",
     id: "voyzu.inventory.warehouses.page.list",
     path: "/inventory/warehouses",
     loadPage: load("WarehousesPage"),
@@ -41,6 +44,7 @@ export const pageRoutes = {
     auth: { required: true, minRole: "STANDARD" },
   },
   warehouse: {
+    httpApiDocumentationGroupId: "inventory.configuration",
     id: "voyzu.inventory.warehouses.page.detail",
     path: "/inventory/warehouses/[id]",
     loadPage: load("WarehouseDetailPage"),
@@ -52,6 +56,7 @@ export const pageRoutes = {
     auth: { required: true, minRole: "STANDARD" },
   },
   customFields: {
+    httpApiDocumentationGroupId: "inventory.configuration",
     id: "voyzu.inventory.custom-fields.page.list",
     path: "/inventory/custom-fields",
     loadPage: load("CustomFieldsPage"),
@@ -60,6 +65,7 @@ export const pageRoutes = {
     auth: { required: true, minRole: "STANDARD" },
   },
   customField: {
+    httpApiDocumentationGroupId: "inventory.configuration",
     id: "voyzu.inventory.custom-fields.page.detail",
     path: "/inventory/custom-fields/[id]",
     loadPage: load("CustomFieldDetailPage"),
@@ -71,6 +77,7 @@ export const pageRoutes = {
     auth: { required: true, minRole: "STANDARD" },
   },
   optionLists: {
+    httpApiDocumentationGroupId: "inventory.configuration",
     id: "voyzu.inventory.option-lists.page.list",
     path: "/inventory/custom-field-option-lists",
     loadPage: load("OptionListsPage"),
@@ -79,6 +86,7 @@ export const pageRoutes = {
     auth: { required: true, minRole: "STANDARD" },
   },
   optionList: {
+    httpApiDocumentationGroupId: "inventory.configuration",
     id: "voyzu.inventory.option-lists.page.detail",
     path: "/inventory/custom-field-option-lists/[id]",
     loadPage: load("OptionListDetailPage"),

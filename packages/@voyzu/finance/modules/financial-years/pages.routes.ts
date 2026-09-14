@@ -2,6 +2,7 @@ import { companyFinancePageAuth } from "../organization-finance/server/lib/compa
 
 export const pageRoutes = {
   list: {
+    httpApiDocumentationGroupId: "finance.financial-years",
     id: "voyzu.financial-years.page.list",
     pageTitle: "Financial Periods",
     helpPath: "modules-help/company-ledger/financial-periods",
@@ -13,6 +14,7 @@ export const pageRoutes = {
     auth: companyFinancePageAuth
   },
   detail: {
+    httpApiDocumentationGroupId: "finance.financial-years",
     id: "voyzu.financial-years.page.detail",
     pageTitle: "Financial Year",
     helpPath: "modules-help/company-ledger/financial-periods",

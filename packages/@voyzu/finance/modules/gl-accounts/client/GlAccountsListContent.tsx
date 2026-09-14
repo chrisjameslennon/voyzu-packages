@@ -1,6 +1,6 @@
 "use client";
 
-import { CompanySettingsTitleBadges, financeApiUrl } from "../../common/client/index";
+import { CompanySettingsTitleBadges, financeHttpApiUrl } from "../../common/client/index";
 import { getGlAccountTypeColor, getStatusSemanticColor } from "../../common/client/index";
 import { Deactivate, Delete } from "../domain/operation-policy";
 import { AddGlAccountModal, GL_ACCOUNT_CODE_PATTERN, GL_ACCOUNT_TYPE_OPTIONS } from "./index";
@@ -184,7 +184,7 @@ export function GlAccountsListContent({
     if (refreshing) return;
     setRefreshing(true);
     try {
-      const response = await fetch(await financeApiUrl("/gl-accounts"), { cache: "no-store" });
+      const response = await fetch(await financeHttpApiUrl("/gl-accounts"), { cache: "no-store" });
       if (response.ok) {
         setData(await response.json() as GlAccountResponseDto[]);
         setSelectedIds(new Set());
@@ -243,7 +243,7 @@ export function GlAccountsListContent({
 
   const createAccount = async (value: GlAccountCreateRequestDto): Promise<string | undefined> => {
     if (readOnly) return "General ledger accounts are read only while this financial entity is archived";
-    const response = await fetch(await financeApiUrl("/gl-accounts"), {
+    const response = await fetch(await financeHttpApiUrl("/gl-accounts"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(value),
@@ -301,7 +301,7 @@ export function GlAccountsListContent({
     if (readOnly) return;
     setListError("");
     const codes = selectedAccounts.map((account) => account.code);
-    const response = await fetch(await financeApiUrl(`/gl-accounts/batch-${action}`), {
+    const response = await fetch(await financeHttpApiUrl(`/gl-accounts/batch-${action}`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes }),
@@ -324,7 +324,7 @@ export function GlAccountsListContent({
     if (readOnly) return;
     setListError("");
     const codes = selectedAccounts.map((account) => account.code);
-    const response = await fetch(await financeApiUrl("/gl-accounts/batch"), {
+    const response = await fetch(await financeHttpApiUrl("/gl-accounts/batch"), {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codes }),
