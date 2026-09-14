@@ -7,6 +7,14 @@ import { uglyPackageModule } from "./modules/ugly/module";
 
 export const uglyPackage = {
   contracts: {
+    uiSurface: {
+      "topnav.menu": {
+        "ugly-package": {
+          "label": "Ugly Package",
+          "routeId": "voyzu.ugly-package.page.home"
+        }
+      },
+    },
     pageRouting: {
       roots: {
         "/ugly-package": {

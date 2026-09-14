@@ -1,3 +1,4 @@
+import leftMenu from "./ui-surface/left-nav";
 
 import { mergePageRoutes } from "@voyzu/types/page-routing";
 import { pageRoutes as customersPageRoutes } from "./modules/customers/pages.routes";
@@ -16,6 +17,22 @@ import { settingsModule } from "./modules/settings/module";
 
 export const commercialPackage = {
   contracts: {
+    uiSurface: {
+      "topnav.menu": {
+        "commercial": {
+          "label": "Commercial",
+          "routeId": "voyzu.commercial.customers.page.customers"
+        }
+      },
+      "leftnav.menu": {
+        "/commercial": { content: leftMenu },
+      },
+      "leftnav.header": {
+        "/commercial": {
+          loadComponent: () => import("./ui-surface/left-nav-header").then(module => module.default),
+        },
+      },
+    },
     pageRouting: {
       roots: {
         "/commercial": {

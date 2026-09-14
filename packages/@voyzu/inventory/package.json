@@ -20,14 +20,6 @@
       "types": "./voyzu.package.ts",
       "import": "./voyzu.package.ts"
     },
-    "./navigation": {
-      "types": "./navigation/index.ts",
-      "import": "./navigation/index.ts"
-    },
-    "./navigation/left-nav-header": {
-      "types": "./navigation/left-nav-header.tsx",
-      "import": "./navigation/left-nav-header.tsx"
-    },
     "./modules/items": {
       "types": "./modules/items/module.ts",
       "import": "./modules/items/module.ts"
@@ -83,6 +75,10 @@
     "./reports/http-api.routes": {
       "types": "./modules/reports/http-api.routes.ts",
       "import": "./modules/reports/http-api.routes.ts"
+    },
+    "./ui-surface/left-nav-header": {
+      "types": "./ui-surface/left-nav-header.tsx",
+      "import": "./ui-surface/left-nav-header.tsx"
     }
   },
   "peerDependencies": {

@@ -1,3 +1,4 @@
+import leftMenu from "./ui-surface/left-nav";
 import { httpApiRoutes as routes0 } from "./modules/reports/http-api.routes";
 import { httpApiRoutes as routes1 } from "./modules/template/http-api.routes";
 import { mergePageRoutes } from "@voyzu/types/page-routing";
@@ -11,6 +12,17 @@ import { templatesUninstall } from "./uninstall/manifest";
 
 export const templatePackage = {
   contracts: {
+    uiSurface: {
+      "topnav.menu": {
+        "template": {
+          "label": "Template",
+          "routeId": "voyzu.template.page.list"
+        }
+      },
+      "leftnav.menu": {
+        "/template": { content: leftMenu },
+      },
+    },
     pageRouting: {
       roots: {
         "/template": {

@@ -1,3 +1,4 @@
+import leftMenu from "./ui-surface/left-nav";
 import { httpApiRoutes as routes0 } from "./modules/ice-creams/http-api.routes";
 import { httpApiRoutes as routes1 } from "./modules/reports/http-api.routes";
 import { mergePageRoutes } from "@voyzu/types/page-routing";
@@ -17,6 +18,17 @@ import { uninstall } from "./uninstall/manifest";
  **/
 export const iceCreamsPackage = {
   contracts: {
+    uiSurface: {
+      "topnav.menu": {
+        "ice-creams": {
+          "label": "Ice Creams",
+          "routeId": "voyzu.ice-creams.page.list"
+        }
+      },
+      "leftnav.menu": {
+        "/ice-creams": { content: leftMenu },
+      },
+    },
     pageRouting: {
       roots: {
         "/ice-creams": {

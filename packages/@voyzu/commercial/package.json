@@ -13,17 +13,9 @@
     ]
   },
   "exports": {
-    "./navigation/left-nav-header": {
-      "types": "./navigation/left-nav-header.tsx",
-      "import": "./navigation/left-nav-header.tsx"
-    },
     "./voyzu-package": {
       "types": "./voyzu.package.ts",
       "import": "./voyzu.package.ts"
-    },
-    "./navigation": {
-      "types": "./navigation/index.ts",
-      "import": "./navigation/index.ts"
     },
     "./modules/customers": {
       "types": "./modules/customers/module.ts",
@@ -72,6 +64,10 @@
     "./settings/pages.routes": {
       "types": "./modules/settings/pages.routes.ts",
       "import": "./modules/settings/pages.routes.ts"
+    },
+    "./ui-surface/left-nav-header": {
+      "types": "./ui-surface/left-nav-header.tsx",
+      "import": "./ui-surface/left-nav-header.tsx"
     }
   },
   "peerDependencies": {

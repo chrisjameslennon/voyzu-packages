@@ -1,3 +1,4 @@
+import leftMenu from "./ui-surface/left-nav";
 import { httpApiRoutes as routes0 } from "./modules/configuration/http-api.routes";
 import { httpApiRoutes as routes1 } from "./modules/financial-activity/http-api.routes";
 import { httpApiRoutes as routes2 } from "./modules/items/http-api.routes";
@@ -25,6 +26,22 @@ import { uninstall } from "./uninstall/manifest";
 
 export const inventoryPackage = {
   contracts: {
+    uiSurface: {
+      "topnav.menu": {
+        "inventory": {
+          "label": "Inventory",
+          "routeId": "voyzu.inventory.items.page.list"
+        }
+      },
+      "leftnav.menu": {
+        "/inventory": { content: leftMenu },
+      },
+      "leftnav.header": {
+        "/inventory": {
+          loadComponent: () => import("./ui-surface/left-nav-header").then(module => module.default),
+        },
+      },
+    },
     pageRouting: {
       roots: {
         "/inventory": {

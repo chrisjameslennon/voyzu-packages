@@ -1,3 +1,4 @@
+import leftMenu from "./ui-surface/left-nav";
 import { mergePageRoutes } from "@voyzu/types/page-routing";
 import { pageRoutes as apSubledgerBillsPageRoutes } from "./modules/ap-subledger-bills/pages.routes";
 import { pageRoutes as apSubledgerCounterpartiesPageRoutes } from "./modules/ap-subledger-counterparties/pages.routes";
@@ -136,6 +137,22 @@ export const financeServiceModules = [
 
 export const financePackage = {
   contracts: {
+    uiSurface: {
+      "topnav.menu": {
+        "finance.finance": {
+          "label": "Finance",
+          "routeId": "voyzu.countryTaxSettings.page.list"
+        }
+      },
+      "leftnav.menu": {
+        "/finance": { content: leftMenu },
+      },
+      "leftnav.header": {
+        "/finance": {
+          loadComponent: () => import("./ui-surface/left-nav-header").then(module => module.default),
+        },
+      },
+    },
     pageRouting: {
       roots: {
         "/finance": {

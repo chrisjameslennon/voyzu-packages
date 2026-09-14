@@ -17,7 +17,6 @@
   },
   "exports": {
     "./voyzu-package": "./voyzu.package.ts",
-    "./navigation/left-nav-header": "./navigation/left-nav-header.tsx",
     "./organization-finance": "./modules/organization-finance/module.ts",
     "./organization-finance/client": "./modules/organization-finance/client/index.ts",
     "./organization-finance/server": "./modules/organization-finance/server/index.ts",
@@ -147,7 +146,6 @@
     "./tax-ledger/client": "./modules/tax-ledger/client/index.ts",
     "./tax-ledger/server": "./modules/tax-ledger/server/index.ts",
     "./tax/server": "./modules/tax/server/index.ts",
-    "./navigation": "./navigation/index.ts",
     "./ap-subledger-bills/pages.routes": "./modules/ap-subledger-bills/pages.routes.ts",
     "./ap-subledger-bills/http-api.routes": "./modules/ap-subledger-bills/http-api.routes.ts",
     "./ap-subledger-counterparties/pages.routes": "./modules/ap-subledger-counterparties/pages.routes.ts",
@@ -285,7 +283,11 @@
     "./journals/types/*.dto": "./modules/journals/types/*.dto.ts",
     "./tax/types/*.dto": "./modules/tax/types/*.dto.ts",
     "./tax-control-accounts/types/*.dto": "./modules/tax-control-accounts/types/*.dto.ts",
-    "./tax-ledger/types/*.dto": "./modules/tax-ledger/types/*.dto.ts"
+    "./tax-ledger/types/*.dto": "./modules/tax-ledger/types/*.dto.ts",
+    "./ui-surface/left-nav-header": {
+      "types": "./ui-surface/left-nav-header.tsx",
+      "import": "./ui-surface/left-nav-header.tsx"
+    }
   },
   "dependencies": {
     "archiver": "^8.0.0"

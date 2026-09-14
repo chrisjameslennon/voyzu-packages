@@ -18,10 +18,6 @@
       "types": "./voyzu.package.ts",
       "import": "./voyzu.package.ts"
     },
-    "./navigation": {
-      "types": "./navigation/index.ts",
-      "import": "./navigation/index.ts"
-    },
     "./types": {
       "types": "./types/index.ts",
       "import": "./types/index.ts"
