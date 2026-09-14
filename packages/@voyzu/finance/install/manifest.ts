@@ -34,7 +34,6 @@ export const financeInstall = {
     "./install/db/objects/table.ar_subledger_entry_line.create.sql",
     "./install/db/objects/table.inventory_ledger_entry_header.create.sql",
     "./install/db/objects/table.inventory_ledger_entry_line.create.sql",
-    "./install/db/objects/inventory-operational-ownership.remove.sql",
     "./install/db/objects/table.tax_ledger_entry_header.create.sql",
     "./install/db/objects/table.tax_ledger_entry_line.create.sql",
     "./install/db/objects/table.financial_document_default.create.sql",
