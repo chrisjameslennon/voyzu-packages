@@ -1,3 +1,10 @@
+import { mergePageRoutes } from "@voyzu/types/page-routing";
+import { pageRoutes as customersPageRoutes } from "./modules/customers/pages.routes";
+import { pageRoutes as productsPageRoutes } from "./modules/products/pages.routes";
+import { pageRoutes as purchasingPageRoutes } from "./modules/purchasing/pages.routes";
+import { pageRoutes as salesPageRoutes } from "./modules/sales/pages.routes";
+import { pageRoutes as settingsPageRoutes } from "./modules/settings/pages.routes";
+import { pageRoutes as suppliersPageRoutes } from "./modules/suppliers/pages.routes";
 import { httpApiRouting, httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 import { customersModule } from "./modules/customers/module";
@@ -9,6 +16,17 @@ import { settingsModule } from "./modules/settings/module";
 
 export const commercialPackage = {
   contracts: {
+    pageRouting: {
+      roots: ["/commercial"],
+      routes: mergePageRoutes(
+        customersPageRoutes,
+        productsPageRoutes,
+        purchasingPageRoutes,
+        salesPageRoutes,
+        settingsPageRoutes,
+        suppliersPageRoutes,
+      ),
+    },
     httpApiRouting,
     httpApiDocumentation,
     internalApi: {

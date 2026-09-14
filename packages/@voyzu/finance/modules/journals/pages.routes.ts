@@ -1,8 +1,6 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
-    id: "voyzu.journals.page.list",
+  "voyzu.journals.page.list": {
     pageTitle: "Journal Entries",
     helpPath: "modules-help/company-ledger/journals",
     path: "/finance/journals",
@@ -13,8 +11,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
-    id: "voyzu.journals.page.detail",
+  "voyzu.journals.page.detail": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { code: { type: "string" } },
     pageTitle: "Journal Entry",
     helpPath: "modules-help/company-ledger/journals",
     path: "/finance/journals/[code]",

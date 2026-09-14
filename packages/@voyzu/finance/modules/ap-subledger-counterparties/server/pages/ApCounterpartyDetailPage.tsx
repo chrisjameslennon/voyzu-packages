@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -7,13 +8,14 @@ import { ApCounterpartyReportTemplate } from "../../client/templates/ApCounterpa
 import { getSelectedCompany } from "../../../journals/server/index";
 import { getApCounterparty } from "../lib/ap-subledger-counterparty.service";
 
-export async function ApCounterpartyDetailPage({ code, surface }: { code?: string; surface?: { unframed?: boolean } }) {
+export async function ApCounterpartyDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const company = await getSelectedCompany();
   if (!company) notFound();
-  const counterparty = await getApCounterparty(company.id, decodeURIComponent(code));
+  const counterparty = await getApCounterparty(company.id, code);
   if (!counterparty) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return <ApCounterpartyReportTemplate company={company} counterparty={counterparty} generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })} />;
   }
   return <ApCounterpartyDetail company={company} counterparty={counterparty} />;

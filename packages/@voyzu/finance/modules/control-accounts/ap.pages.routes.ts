@@ -1,8 +1,6 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
-    id: "voyzu.company-ap-control-accounts.page.list",
+  "voyzu.company-ap-control-accounts.page.list": {
     pageTitle: "Accounts Payable Control Accounts",
     helpPath: "modules-help/company-ledger/ap-control-accounts",
     path: "/finance/settings/control-accounts/ap",
@@ -14,8 +12,8 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
-    id: "voyzu.company-ap-control-accounts.page.detail",
+  "voyzu.company-ap-control-accounts.page.detail": {
+    pathParams: { code: { type: "string" } },
     pageTitle: "Accounts Payable Control Accounts",
     helpPath: "modules-help/company-ledger/ap-control-accounts",
     path: "/finance/settings/control-accounts/ap/[code]",

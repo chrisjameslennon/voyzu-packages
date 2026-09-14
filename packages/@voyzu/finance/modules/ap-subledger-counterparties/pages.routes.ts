@@ -1,9 +1,7 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.ap-subledger-counterparties.page.list": {
     httpApiDocumentationGroupId: "finance.ap-subledger-counterparties",
-    id: "voyzu.ap-subledger-counterparties.page.list",
     pageTitle: "AP Counterparties",
     helpPath: "modules-help/company-ledger/ap-counterparties",
     path: "/finance/subledgers/ap/counterparties",
@@ -15,9 +13,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.ap-subledger-counterparties.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.ap-subledger-counterparties",
-    id: "voyzu.ap-subledger-counterparties.page.detail",
     pageTitle: "AP Counterparty",
     helpPath: "modules-help/company-ledger/ap-counterparties",
     path: "/finance/subledgers/ap/counterparties/[code]",
@@ -29,9 +27,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detailPrintable: {
+  "voyzu.ap-subledger-counterparties.page.detail.printable": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.ap-subledger-counterparties",
-    id: "voyzu.ap-subledger-counterparties.page.detail.printable",
     pageTitle: "AP Counterparty",
     path: "/finance/subledgers/ap/counterparties/[code]/printable",
     loadPage: () => import("./server/pages/ApCounterpartyDetailPage").then((module) => module.ApCounterpartyDetailPage),

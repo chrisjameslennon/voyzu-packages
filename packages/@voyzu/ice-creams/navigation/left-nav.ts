@@ -1,13 +1,10 @@
-import { pageRoutes as iceCreamPageRoutes } from "../modules/ice-creams/pages.routes";
-import { pageRoutes as iceCreamReportPageRoutes } from "../modules/reports/pages.routes";
-
 export const iceCreamsLeftNav = [
   {
     items: [
       {
         label: "Ice Creams",
         icon: "icecream",
-        routeId: iceCreamPageRoutes.list.id,
+        routeId: "voyzu.ice-creams.page.list",
       },
     ],
   },
@@ -17,7 +14,7 @@ export const iceCreamsLeftNav = [
       {
         label: "All Ice Creams",
         icon: "summarize",
-        routeId: iceCreamReportPageRoutes.all.id,
+        routeId: "voyzu.ice-creams.reports.page.all",
       },
     ],
   },

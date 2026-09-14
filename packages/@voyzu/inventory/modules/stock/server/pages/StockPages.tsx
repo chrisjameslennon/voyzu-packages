@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 import { notFound } from "next/navigation";
 import { getSelectedOrganization } from "../../../common/server/organization-context";
@@ -23,7 +24,7 @@ import {
   listStockCounts,
   listStockPositions,
 } from "../lib/stock.service";
-async function context() {
+async function loadPageData() {
   const organization = await getSelectedOrganization();
   if (!organization)
     return {
@@ -38,7 +39,7 @@ async function context() {
   return { organizationId: organization.id, positions, options };
 }
 export async function StockPage() {
-  const c = await context();
+  const c = await loadPageData();
   return <StockPositionsView positions={c.positions} />;
 }
 export async function StockActivityPage() {
@@ -49,18 +50,13 @@ export async function StockActivityPage() {
     />
   );
 }
-export async function StockTransactionDetailPage({
-  code,
-  surface,
-}: {
-  code?: string;
-  surface?: { unframed?: boolean };
-}) {
+export async function StockTransactionDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   const organization = await getSelectedOrganization();
   if (!organization || !code) notFound();
   const record = await getStockActivityDetail(organization.id, code);
   if (!record) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <StockTransactionReportTemplate
         record={record}
@@ -88,7 +84,7 @@ export async function StockCountsPage() {
 async function operation(
   kind: "receive" | "issue" | "transfer" | "reserve" | "adjust",
 ) {
-  const c = await context();
+  const c = await loadPageData();
   let customFields: Awaited<ReturnType<typeof getConfiguration>>[] = [];
   if (c.organizationId && (kind === "receive" || kind === "issue")) {
     const rows = await listConfiguration(c.organizationId, "custom-field");
@@ -118,7 +114,7 @@ export const TransferStockPage = () => operation("transfer");
 export const ReserveStockPage = () => operation("reserve");
 export const AdjustStockPage = () => operation("adjust");
 export async function StockCountNewPage() {
-  const c = await context();
+  const c = await loadPageData();
   return (
     <StockCountEditor
       positions={c.positions}
@@ -126,20 +122,15 @@ export async function StockCountNewPage() {
     />
   );
 }
-export async function StockCountDetailPage({
-  id,
-  surface,
-}: {
-  id?: string;
-  surface?: { unframed?: boolean };
-}) {
-  const c = await context();
+export async function StockCountDetailPage({ context }: PageProps) {
+  const { id } = pageStringParameters(context.pathParams);
+  const c = await loadPageData();
   if (!c.organizationId || !id) notFound();
   const record = await getStockCount(c.organizationId, Number(id));
   if (!record) notFound();
   const organization = await getSelectedOrganization();
   if (!organization) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <StockCountReportTemplate
         record={record}

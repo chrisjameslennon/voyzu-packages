@@ -1,9 +1,7 @@
-import { pageRoutes } from "../modules/template/pages.routes";
-
 export const templatesTopNav = {
   label: "Template",
   icon: "description",
-  routeId: pageRoutes.list.id,
+  routeId: "voyzu.template.page.list",
 } as const;
 
 export default templatesTopNav;

@@ -21,27 +21,27 @@ const stockCrumbs = [
   { label: "Stock", href: "/inventory/stock" },
 ] as const;
 export const pageRoutes = {
-  stock: {
+  "voyzu.inventory.stock.page.list": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock.page.list",
     path: "/inventory/stock",
     loadPage: load("StockPage"),
     pageTitle: "Stock",
     breadcrumbBase: [{ label: "Inventory" }],
     auth,
   },
-  activity: {
+  "voyzu.inventory.stock-activity.page.list": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock-activity.page.list",
     path: "/inventory/stock-activity",
     loadPage: load("StockActivityPage"),
     pageTitle: "Stock Activity",
     breadcrumbBase: [{ label: "Inventory" }],
     auth,
   },
-  activityDetail: {
+  "voyzu.inventory.stock-activity.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock-activity.page.detail",
     path: "/inventory/stock-activity/[code]",
     loadPage: load("StockTransactionDetailPage"),
     pageTitle: "Stock Activity",
@@ -51,27 +51,27 @@ export const pageRoutes = {
     ],
     auth,
   },
-  activityDetailPrintable: {
+  "voyzu.inventory.stock-activity.page.detail.printable": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock-activity.page.detail.printable",
     path: "/inventory/stock-activity/[code]/printable",
     loadPage: load("StockTransactionDetailPage"),
     pageTitle: "Stock Activity",
     unframed: true,
     auth,
   },
-  counts: {
+  "voyzu.inventory.stock-counts.page.list": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock-counts.page.list",
     path: "/inventory/stock-counts",
     loadPage: load("StockCountsPage"),
     pageTitle: "Stock Counts",
     breadcrumbBase: [{ label: "Inventory" }],
     auth,
   },
-  countNew: {
+  "voyzu.inventory.stock-counts.page.new": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock-counts.page.new",
     path: "/inventory/stock-counts/new",
     loadPage: load("StockCountNewPage"),
     pageTitle: "New Stocktake",
@@ -81,9 +81,9 @@ export const pageRoutes = {
     ],
     auth,
   },
-  count: {
+  "voyzu.inventory.stock-counts.page.detail": {
+    pathParams: { id: { type: "string" } },
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock-counts.page.detail",
     path: "/inventory/stock-counts/[id]",
     loadPage: load("StockCountDetailPage"),
     pageTitle: "Stocktake",
@@ -93,54 +93,54 @@ export const pageRoutes = {
     ],
     auth,
   },
-  countPrintable: {
+  "voyzu.inventory.stock-counts.page.detail.printable": {
+    pathParams: { id: { type: "string" } },
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock-counts.page.detail.printable",
     path: "/inventory/stock-counts/[id]/printable",
     loadPage: load("StockCountDetailPage"),
     pageTitle: "Stocktake",
     unframed: true,
     auth,
   },
-  receive: {
+  "voyzu.inventory.stock.page.receive": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock.page.receive",
     path: "/inventory/stock/receive",
     loadPage: load("ReceiveStockPage"),
     pageTitle: "Receive Stock",
     breadcrumbBase: stockCrumbs,
     auth,
   },
-  issue: {
+  "voyzu.inventory.stock.page.issue": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock.page.issue",
     path: "/inventory/stock/issue",
     loadPage: load("IssueStockPage"),
     pageTitle: "Issue Stock",
     breadcrumbBase: stockCrumbs,
     auth,
   },
-  transfer: {
+  "voyzu.inventory.stock.page.transfer": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock.page.transfer",
     path: "/inventory/stock/transfer",
     loadPage: load("TransferStockPage"),
     pageTitle: "Transfer Stock",
     breadcrumbBase: stockCrumbs,
     auth,
   },
-  reserve: {
+  "voyzu.inventory.stock.page.reserve": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock.page.reserve",
     path: "/inventory/stock/reserve",
     loadPage: load("ReserveStockPage"),
     pageTitle: "Reserve Stock",
     breadcrumbBase: stockCrumbs,
     auth,
   },
-  adjust: {
+  "voyzu.inventory.stock.page.adjust": {
+
     httpApiDocumentationGroupId: "inventory.stock",
-    id: "voyzu.inventory.stock.page.adjust",
     path: "/inventory/stock/adjust",
     loadPage: load("AdjustStockPage"),
     pageTitle: "Adjust Quantity",

@@ -1,8 +1,6 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
-    id: "voyzu.ar-subledger-invoices.page.list",
+  "voyzu.ar-subledger-invoices.page.list": {
     pageTitle: "AR Invoices",
     helpPath: "modules-help/company-ledger/ar-invoices",
     path: "/finance/subledgers/ar/invoices",
@@ -14,8 +12,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
-    id: "voyzu.ar-subledger-invoices.page.detail",
+  "voyzu.ar-subledger-invoices.page.detail": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { documentId: { type: "string" } },
     pageTitle: "AR Invoice",
     helpPath: "modules-help/company-ledger/ar-invoices",
     path: "/finance/subledgers/ar/invoices/[documentId]",
@@ -27,8 +29,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detailPrintable: {
-    id: "voyzu.ar-subledger-invoices.page.detail.printable",
+  "voyzu.ar-subledger-invoices.page.detail.printable": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { documentId: { type: "string" } },
     pageTitle: "AR Invoice",
     path: "/finance/subledgers/ar/invoices/[documentId]/printable",
     loadPage: () => import("./server/pages/ArInvoiceDetailPage").then((module) => module.ArInvoiceDetailPage),

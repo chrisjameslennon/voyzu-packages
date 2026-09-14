@@ -4,20 +4,28 @@ import { getSingletonHighlighter } from "shiki";
 
 import { RawRequestResponseClient } from "../../client";
 
-const pageExample = `// module.ts
-pageRoutes: {
-  item: {
-    path: "/ugly-package/items/[id]",
-    Page: ItemPage,
+const pageExample = `// voyzu.package.ts
+contracts: {
+  pageRouting: {
+    roots: ["/ugly-package"],
+    routes: {
+      "ugly-package.items.detail": {
+        path: "/ugly-package/items/[id]",
+        pathParams: { id: { type: "string" } },
+        queryParams: { view: { type: "string", default: "details" } },
+        pageTitle: "Item",
+        loadPage: () => import("./ItemPage").then(module => module.ItemPage),
+      },
+    },
   },
 }
 
 // ItemPage.tsx
-export function ItemPage({ id, surface }) {
+export function ItemPage({ context }) {
   return (
     <main>
-      <h1>Item {id}</h1>
-      <p>View: {surface.searchParams.view}</p>
+      <h1>Item {context.pathParams.id}</h1>
+      <p>View: {context.queryParams.view}</p>
     </main>
   );
 }`;

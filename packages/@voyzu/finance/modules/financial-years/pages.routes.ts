@@ -1,9 +1,7 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.financial-years.page.list": {
     httpApiDocumentationGroupId: "finance.financial-years",
-    id: "voyzu.financial-years.page.list",
     pageTitle: "Financial Periods",
     helpPath: "modules-help/company-ledger/financial-periods",
     path: "/finance/financial-periods",
@@ -13,9 +11,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.financial-years.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.financial-years",
-    id: "voyzu.financial-years.page.detail",
     pageTitle: "Financial Year",
     helpPath: "modules-help/company-ledger/financial-periods",
     path: "/finance/financial-periods/[code]",

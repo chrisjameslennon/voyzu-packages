@@ -1,9 +1,8 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.company-bank-cash-accounts.page.list": {
+
     httpApiDocumentationGroupId: "finance.bank-cash-accounts",
-    id: "voyzu.company-bank-cash-accounts.page.list",
     pageTitle: "Bank / Cash Accounts",
     helpPath: "modules-help/company-ledger/bank-cash-accounts",
     path: "/finance/settings/bank-cash-accounts",
@@ -15,9 +14,13 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.company-bank-cash-accounts.page.detail": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.bank-cash-accounts",
-    id: "voyzu.company-bank-cash-accounts.page.detail",
     pageTitle: "Bank / Cash Account",
     helpPath: "modules-help/company-ledger/bank-cash-accounts",
     path: "/finance/settings/bank-cash-accounts/[code]",

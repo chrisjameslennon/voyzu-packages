@@ -1,9 +1,8 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.company-gl-account-categories.page.list": {
+
     httpApiDocumentationGroupId: "finance.gl-account-categories",
-    id: "voyzu.company-gl-account-categories.page.list",
     pageTitle: "Reporting Categories",
     helpPath: "modules-help/company-ledger/reporting-categories",
     path: "/finance/settings/reporting-categories",
@@ -15,9 +14,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.company-gl-account-categories.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.gl-account-categories",
-    id: "voyzu.company-gl-account-categories.page.detail",
     pageTitle: "Reporting Category",
     helpPath: "modules-help/company-ledger/reporting-categories",
     path: "/finance/settings/reporting-categories/[code]",

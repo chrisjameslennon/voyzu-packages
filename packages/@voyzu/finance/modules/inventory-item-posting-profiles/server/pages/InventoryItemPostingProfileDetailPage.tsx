@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -8,16 +9,13 @@ import { getItemPostingProfile } from "../index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
 import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
-interface CompanyInventoryItemPostingProfileDetailPageProps {
-  code?: string;
-}
-
-export async function InventoryItemPostingProfileDetailPage({ code }: CompanyInventoryItemPostingProfileDetailPageProps) {
+export async function InventoryItemPostingProfileDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
   const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [profile, glAccounts, settingsUiState] = await Promise.all([
-    getItemPostingProfile(decodeURIComponent(code), scope.companyId),
+    getItemPostingProfile((code), scope.companyId),
     listGlAccounts(scope.companyId),
     getCompanySettingsUiState(scope.companyId),
   ]);

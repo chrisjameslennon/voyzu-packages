@@ -1,8 +1,6 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
-    id: "voyzu.ap-subledger-bills.page.list",
+  "voyzu.ap-subledger-bills.page.list": {
     pageTitle: "AP Bills",
     helpPath: "modules-help/company-ledger/ap-bills",
     path: "/finance/subledgers/ap/bills",
@@ -14,8 +12,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
-    id: "voyzu.ap-subledger-bills.page.detail",
+  "voyzu.ap-subledger-bills.page.detail": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { documentId: { type: "string" } },
     pageTitle: "AP Bill",
     helpPath: "modules-help/company-ledger/ap-bills",
     path: "/finance/subledgers/ap/bills/[documentId]",
@@ -27,8 +29,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detailPrintable: {
-    id: "voyzu.ap-subledger-bills.page.detail.printable",
+  "voyzu.ap-subledger-bills.page.detail.printable": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { documentId: { type: "string" } },
     pageTitle: "AP Bill",
     path: "/finance/subledgers/ap/bills/[documentId]/printable",
     loadPage: () => import("./server/pages/ApBillDetailPage").then((module) => module.ApBillDetailPage),

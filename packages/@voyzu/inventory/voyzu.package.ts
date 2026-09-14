@@ -1,3 +1,9 @@
+import { pageRoutes as reportPageRoutes } from "./modules/reports/pages.routes";
+import { mergePageRoutes } from "@voyzu/types/page-routing";
+import { pageRoutes as configurationPageRoutes } from "./modules/configuration/pages.routes";
+import { pageRoutes as financialActivityPageRoutes } from "./modules/financial-activity/pages.routes";
+import { pageRoutes as itemsPageRoutes } from "./modules/items/pages.routes";
+import { pageRoutes as stockPageRoutes } from "./modules/stock/pages.routes";
 import { httpApiRouting, httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
@@ -15,10 +21,20 @@ import { uninstall } from "./uninstall/manifest";
 
 export const inventoryPackage = {
   contracts: {
+    pageRouting: {
+      roots: ["/inventory"],
+      routes: mergePageRoutes(
+        reportPageRoutes,
+        configurationPageRoutes,
+        financialActivityPageRoutes,
+        itemsPageRoutes,
+        stockPageRoutes,
+      ),
+    },
     httpApiRouting,
     httpApiDocumentation,
     internalApi: { implements: { ...itemsModule.implements, ...stockModule.implements } },
-    
+
   },
   modules: [
     coreModule,

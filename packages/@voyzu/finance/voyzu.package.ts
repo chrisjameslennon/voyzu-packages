@@ -1,3 +1,35 @@
+import { mergePageRoutes } from "@voyzu/types/page-routing";
+import { pageRoutes as apSubledgerBillsPageRoutes } from "./modules/ap-subledger-bills/pages.routes";
+import { pageRoutes as apSubledgerCounterpartiesPageRoutes } from "./modules/ap-subledger-counterparties/pages.routes";
+import { pageRoutes as apSubledgerLedgerEntriesPageRoutes } from "./modules/ap-subledger-ledger-entries/pages.routes";
+import { pageRoutes as apSubledgerLedgerEntryEnquiryPageRoutes } from "./modules/ap-subledger-ledger-entry-enquiry/pages.routes";
+import { pageRoutes as apSubledgerStatementsPageRoutes } from "./modules/ap-subledger-statements/pages.routes";
+import { pageRoutes as arIntegrationProcessingPageRoutes } from "./modules/ar-integration-processing/pages.routes";
+import { pageRoutes as arSubledgerCounterpartiesPageRoutes } from "./modules/ar-subledger-counterparties/pages.routes";
+import { pageRoutes as arSubledgerInvoicesPageRoutes } from "./modules/ar-subledger-invoices/pages.routes";
+import { pageRoutes as arSubledgerLedgerEntriesPageRoutes } from "./modules/ar-subledger-ledger-entries/pages.routes";
+import { pageRoutes as arSubledgerLedgerEntryEnquiryPageRoutes } from "./modules/ar-subledger-ledger-entry-enquiry/pages.routes";
+import { pageRoutes as arSubledgerStatementsPageRoutes } from "./modules/ar-subledger-statements/pages.routes";
+import { pageRoutes as bankCashAccountsPageRoutes } from "./modules/bank-cash-accounts/pages.routes";
+import { pageRoutes as controlAccountsApPageRoutes } from "./modules/control-accounts/ap.pages.routes";
+import { pageRoutes as controlAccountsArPageRoutes } from "./modules/control-accounts/ar.pages.routes";
+import { pageRoutes as countryTaxSettingsPageRoutes } from "./modules/country-tax-settings/pages.routes";
+import { pageRoutes as dimensionsPageRoutes } from "./modules/dimensions/pages.routes";
+import { pageRoutes as financialDocumentDefaultsPageRoutes } from "./modules/financial-document-defaults/pages.routes";
+import { pageRoutes as financialDocumentTypesPageRoutes } from "./modules/financial-document-types/pages.routes";
+import { pageRoutes as financialYearsPageRoutes } from "./modules/financial-years/pages.routes";
+import { pageRoutes as glAccountCategoriesPageRoutes } from "./modules/gl-account-categories/pages.routes";
+import { pageRoutes as glAccountsPageRoutes } from "./modules/gl-accounts/pages.routes";
+import { pageRoutes as inventoryControlAccountsPageRoutes } from "./modules/inventory-control-accounts/pages.routes";
+import { pageRoutes as inventoryItemPostingProfileAssignmentsPageRoutes } from "./modules/inventory-item-posting-profile-assignments/pages.routes";
+import { pageRoutes as inventoryItemPostingProfilesPageRoutes } from "./modules/inventory-item-posting-profiles/pages.routes";
+import { pageRoutes as inventoryLedgerPageRoutes } from "./modules/inventory-ledger/pages.routes";
+import { pageRoutes as inventoryProcessingPageRoutes } from "./modules/inventory-processing/pages.routes";
+import { pageRoutes as journalsPageRoutes } from "./modules/journals/pages.routes";
+import { pageRoutes as operationsInvoicesPageRoutes } from "./modules/operations-invoices/pages.routes";
+import { pageRoutes as reportsPageRoutes } from "./modules/reports/pages.routes";
+import { pageRoutes as taxControlAccountsPageRoutes } from "./modules/tax-control-accounts/pages.routes";
+import { pageRoutes as taxLedgerPageRoutes } from "./modules/tax-ledger/pages.routes";
 import { httpApiRoutes as routes0 } from "./modules/ap-subledger-counterparties/http-api.routes";
 import { httpApiRoutes as routes1 } from "./modules/ap-subledger-ledger-entries/http-api.routes";
 import { httpApiRoutes as routes2 } from "./modules/ap-subledger-statements/http-api.routes";
@@ -105,6 +137,42 @@ export const financeServiceModules = [
 
 export const financePackage = {
   contracts: {
+    pageRouting: {
+      roots: ["/finance"],
+      routes: mergePageRoutes(
+        apSubledgerBillsPageRoutes,
+        apSubledgerCounterpartiesPageRoutes,
+        apSubledgerLedgerEntriesPageRoutes,
+        apSubledgerLedgerEntryEnquiryPageRoutes,
+        apSubledgerStatementsPageRoutes,
+        arIntegrationProcessingPageRoutes,
+        arSubledgerCounterpartiesPageRoutes,
+        arSubledgerInvoicesPageRoutes,
+        arSubledgerLedgerEntriesPageRoutes,
+        arSubledgerLedgerEntryEnquiryPageRoutes,
+        arSubledgerStatementsPageRoutes,
+        bankCashAccountsPageRoutes,
+        controlAccountsApPageRoutes,
+        controlAccountsArPageRoutes,
+        countryTaxSettingsPageRoutes,
+        dimensionsPageRoutes,
+        financialDocumentDefaultsPageRoutes,
+        financialDocumentTypesPageRoutes,
+        financialYearsPageRoutes,
+        glAccountCategoriesPageRoutes,
+        glAccountsPageRoutes,
+        inventoryControlAccountsPageRoutes,
+        inventoryItemPostingProfileAssignmentsPageRoutes,
+        inventoryItemPostingProfilesPageRoutes,
+        inventoryLedgerPageRoutes,
+        inventoryProcessingPageRoutes,
+        journalsPageRoutes,
+        operationsInvoicesPageRoutes,
+        reportsPageRoutes,
+        taxControlAccountsPageRoutes,
+        taxLedgerPageRoutes,
+      ),
+    },
     httpApiRouting: {
       roots: ["/finance"],
       routes: { ...routes0, ...routes1, ...routes2, ...routes3, ...routes4, ...routes5, ...routes6, ...routes7, ...routes8, ...routes9, ...routes10, ...routes11, ...routes12, ...routes13, ...routes14, ...routes15, ...routes16, ...routes17, ...routes18, ...routes19, ...routes20, ...routes21, ...routes22, ...routes23, ...routes24, ...routes25 },

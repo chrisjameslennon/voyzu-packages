@@ -1,9 +1,9 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 
 export const pageRoutes = {
-  valuation: {
+  "voyzu.inventory-ledger.page.valuation": {
+
     httpApiDocumentationGroupId: "finance.inventory-ledger",
-    id: "voyzu.inventory-ledger.page.valuation",
     pageTitle: "Stock Valuation",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries",
     path: "/finance/inventory/valuation",
@@ -11,9 +11,9 @@ export const pageRoutes = {
     breadcrumbBase: [{ label: "Finance" }, { label: "Inventory" }],
     auth: companyFinancePageAuth,
   },
-  list: {
+  "voyzu.inventory-ledger.page.list": {
+
     httpApiDocumentationGroupId: "finance.inventory-ledger",
-    id: "voyzu.inventory-ledger.page.list",
     pageTitle: "Inventory Ledger Entries",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries",
     path: "/finance/inventory/ledger",
@@ -24,9 +24,13 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.inventory-ledger.page.detail": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.inventory-ledger",
-    id: "voyzu.inventory-ledger.page.detail",
     pageTitle: "Inventory Ledger Entry",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries",
     path: "/finance/inventory/ledger/[code]",

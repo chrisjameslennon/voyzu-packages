@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -8,16 +9,13 @@ import { resolveServerSettingsScope } from "../../../organization-finance/server
 import { getGlAccount } from "../index";
 import { GlAccountDetail } from "../../client/GlAccountDetail";
 
-interface CompanyGlAccountDetailPageProps {
-  code?: string;
-}
-
-export async function GlAccountDetailPage({ code }: CompanyGlAccountDetailPageProps) {
+export async function GlAccountDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
 
   const scope = await resolveServerSettingsScope();
   const [account, categories, settingsState] = await Promise.all([
-    getGlAccount(decodeURIComponent(code), scope.companyId),
+    getGlAccount((code), scope.companyId),
     listGlAccountCategories(scope.companyId),
     getCompanySettingsUiState(scope.companyId),
   ]);

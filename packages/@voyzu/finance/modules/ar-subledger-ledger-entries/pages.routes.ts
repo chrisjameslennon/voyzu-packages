@@ -1,8 +1,8 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 export const pageRoutes = {
-  list: {
+  "voyzu.ar-subledger-ledger-entries.page.list": {
+
     httpApiDocumentationGroupId: "finance.ar-subledger-ledger-entries",
-    id: "voyzu.ar-subledger-ledger-entries.page.list",
     pageTitle: "AR Ledger Entries",
     helpPath: "modules-help/company-ledger/ar-ledger-entries",
     path: "/finance/subledgers/ar/ledger-entries",
@@ -14,9 +14,13 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.ar-subledger-ledger-entries.page.detail": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.ar-subledger-ledger-entries",
-    id: "voyzu.ar-subledger-ledger-entries.page.detail",
     pageTitle: "AR Ledger Entry",
     helpPath: "modules-help/company-ledger/ar-ledger-entries",
     path: "/finance/subledgers/ar/ledger-entries/[code]",
@@ -28,9 +32,13 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detailDocumentPrintable: {
+  "voyzu.ar-subledger-ledger-entries.page.detail.documentPrintable": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.ar-subledger-ledger-entries",
-    id: "voyzu.ar-subledger-ledger-entries.page.detail.documentPrintable",
     pageTitle: "AR Ledger Entry",
     path: "/finance/subledgers/ar/ledger-entries/[code]/document-printable",
     loadPage: () => import("./server/pages/ArLedgerEntryDetailPage").then((module) => module.ArLedgerEntryDetailPage),

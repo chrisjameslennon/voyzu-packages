@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -7,19 +8,14 @@ import { ArCounterpartyReportTemplate } from "../../client/templates/ArCounterpa
 import { getSelectedCompany } from "../../../journals/server/index";
 import { getArCounterparty } from "../lib/ar-subledger-counterparty.service";
 
-export async function ArCounterpartyDetailPage({
-  code,
-  surface,
-}: {
-  code?: string;
-  surface?: { unframed?: boolean };
-}) {
+export async function ArCounterpartyDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const company = await getSelectedCompany();
   if (!company) notFound();
-  const counterparty = await getArCounterparty(company.id, decodeURIComponent(code));
+  const counterparty = await getArCounterparty(company.id, code);
   if (!counterparty) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <ArCounterpartyReportTemplate
         company={company}

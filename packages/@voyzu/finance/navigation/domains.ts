@@ -66,14 +66,14 @@ const financePageRoutes = [
   arIntegrationProcessingRouteManifest,
 ] as const;
 
-function routeIds(modules: readonly Readonly<Record<string, { id: string }>>[]) {
-  return modules.flatMap((pageRoutes) => Object.values(pageRoutes).map(({ id }) => id));
+function routeIds(modules: readonly Readonly<Record<string, unknown>>[]) {
+  return modules.flatMap((pageRoutes) => Object.keys(pageRoutes));
 }
 
 const domains = [
   {
     label: "Finance",
-    routeId: financePageRoutes[0].list.id,
+    routeId: "voyzu.countryTaxSettings.page.list",
     routeIds: routeIds(financePageRoutes),
     leftNav: financeLeftNav,
   },

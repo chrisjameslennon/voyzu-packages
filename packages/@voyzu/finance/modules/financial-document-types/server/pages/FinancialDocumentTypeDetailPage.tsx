@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -7,11 +8,12 @@ import { resolveServerSettingsScope } from "../../../organization-finance/server
 import { buildFinancialDocumentTypePostingTemplate, getFinancialDocumentType } from "../index";
 import { FinancialDocumentTypeDetail } from "../../client/index";
 
-export async function FinancialDocumentTypeDetailPage({ code }: { code?: string }) {
+export async function FinancialDocumentTypeDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
   const [processor, settingsUiState] = await Promise.all([
-    getFinancialDocumentType(decodeURIComponent(code), scope.companyId),
+    getFinancialDocumentType((code), scope.companyId),
     getCompanySettingsUiState(scope.companyId),
   ]);
   if (!processor) notFound();

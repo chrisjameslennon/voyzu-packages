@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -7,19 +8,14 @@ import { normalizeDetailBackSource } from "../../../common/server/index";
 import { getSelectedCompany } from "../../../journals/server/index";
 import { getInventoryLedgerEntry } from "../lib/inventory-ledger.service";
 
-export async function InventoryLedgerEntryDetailPage({
-  code,
-  surface,
-}: {
-  code?: string;
-  surface?: { searchParams?: Record<string, string> };
-}) {
+export async function InventoryLedgerEntryDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const company = await getSelectedCompany();
   if (!company) notFound();
-  const entry = await getInventoryLedgerEntry(company.id, decodeURIComponent(code));
+  const entry = await getInventoryLedgerEntry(company.id, code);
   if (!entry) notFound();
-  const searchParams = surface?.searchParams ?? {};
+  const searchParams = pageStringParameters(context.queryParams);
   return (
     <InventoryLedgerEntryDetail
       entry={entry}

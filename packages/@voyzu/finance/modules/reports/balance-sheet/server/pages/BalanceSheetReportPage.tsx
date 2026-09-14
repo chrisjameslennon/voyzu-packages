@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import { listReportOrganizations } from "../../../organization-directory.repo";
 import "server-only";
 
@@ -10,21 +11,14 @@ import {
   listFinancialYearsWithPostings,
 } from "../lib/balance-sheet.service";
 
-interface ReportPageProps {
-  surface?: {
-    searchParams?: Record<string, string>;
-    unframed?: boolean;
-  };
-}
-
 function todayIso(): string {
   const today = new Date();
   return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 }
 
-export async function BalanceSheetReportPage({ surface }: ReportPageProps = {}) {
-  const query = surface?.searchParams ?? {};
-  const queryCompanyId = query.companyId ? Number(query.companyId) : null;
+export async function BalanceSheetReportPage({ context }: PageProps) {
+  const query = pageStringParameters(context.queryParams);
+  const queryCompanyId = context.queryParams.companyId ? Number(context.queryParams.companyId) : null;
   const selectedCompanyId = queryCompanyId || (await internalApi.call("@core/organization-context", "get", {})).organization_id;
   const companies = await listReportOrganizations();
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
@@ -51,16 +45,16 @@ export async function BalanceSheetReportPage({ surface }: ReportPageProps = {}) 
   const asAtDate = query.asAtDate ?? defaultAsAtDate;
   const initialData = await getBalanceSheet(company.id, asAtDate);
 
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <BalanceSheetReportTemplate
         data={initialData}
         generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-        showCompanyHeader={query.showCompanyHeader !== "false"}
-        showCompanyFooter={query.showCompanyFooter !== "false"}
-        showAccountCode={query.showAccountCode !== "false"}
-        showReportingCategories={query.showReportingCategories === "true"}
-        showDecimals={query.showDecimals !== "false"}
+        showCompanyHeader={context.queryParams.showCompanyHeader !== false}
+        showCompanyFooter={context.queryParams.showCompanyFooter !== false}
+        showAccountCode={context.queryParams.showAccountCode !== false}
+        showReportingCategories={context.queryParams.showReportingCategories === true}
+        showDecimals={context.queryParams.showDecimals !== false}
       />
     );
   }

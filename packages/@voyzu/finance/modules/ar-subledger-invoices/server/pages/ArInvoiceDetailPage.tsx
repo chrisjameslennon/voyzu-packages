@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -9,19 +10,14 @@ import { ArInvoiceReport } from "../../client/index";
 import { ArInvoiceReportTemplate } from "../../client/templates/ArInvoiceReportTemplate";
 import { getArInvoiceStatement } from "../lib/ar-invoice-statement.service";
 
-export async function ArInvoiceDetailPage({
-  documentId,
-  surface,
-}: {
-  documentId?: string;
-  surface?: { searchParams?: Record<string, string>; unframed?: boolean };
-}) {
+export async function ArInvoiceDetailPage({ context }: PageProps) {
+  const { documentId } = pageStringParameters(context.pathParams);
   if (!documentId) notFound();
   const company = await getSelectedCompany();
   if (!company) notFound();
-  const statement = await getArInvoiceStatement(company, decodeURIComponent(documentId));
+  const statement = await getArInvoiceStatement(company, documentId);
   if (!statement) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <ArInvoiceReportTemplate
         statement={statement}
@@ -35,7 +31,7 @@ export async function ArInvoiceDetailPage({
       />
     );
   }
-  const searchParams = surface?.searchParams ?? {};
+  const searchParams = pageStringParameters(context.queryParams);
   return (
     <ArInvoiceReport
       statement={statement}

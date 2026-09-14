@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -8,25 +9,19 @@ import { normalizeDetailBackSource } from "../../../common/server/index";
 import { getSelectedCompany } from "../../../journals/server/index";
 import { getArLedgerEntryDocumentReport, getArSubledgerEntry } from "../lib/ar-subledger-ledger-entries.service";
 
-export async function ArLedgerEntryDetailPage({
-  code,
-  surface,
-  fallbackHref,
-  returnSource,
-}: {
-  code?: string;
-  surface?: { searchParams?: Record<string, string>; unframed?: boolean };
-  fallbackHref?: string;
-  returnSource?: "arLedgerEntry" | "arLedgerEntryEnquiry";
-}) {
+export async function ArLedgerEntryDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
+  const enquiry = context.routeDefinition.path.includes("ledger-entry-enquiry");
+  const fallbackHref = enquiry ? "/finance/subledgers/ar/ledger-entry-enquiry" : undefined;
+  const returnSource = enquiry ? "arLedgerEntryEnquiry" as const : undefined;
   if (!code) notFound();
   const company = await getSelectedCompany();
   if (!company) notFound();
-  const entry = await getArSubledgerEntry(company.id, decodeURIComponent(code));
+  const entry = await getArSubledgerEntry(company.id, code);
   if (!entry) notFound();
   const report = await getArLedgerEntryDocumentReport(company, entry);
   if (!report) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <ArLedgerEntryDocumentReportTemplate
         report={report}
@@ -40,7 +35,7 @@ export async function ArLedgerEntryDetailPage({
       />
     );
   }
-  const searchParams = surface?.searchParams ?? {};
+  const searchParams = pageStringParameters(context.queryParams);
   return (
     <ArLedgerEntryDocumentReport
       entry={entry}

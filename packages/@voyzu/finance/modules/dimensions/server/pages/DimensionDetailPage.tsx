@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -7,16 +8,13 @@ import { getDimension } from "../index";
 import { getCompanySettingsUiState } from "../../../organization-finance/server/lib/company-standard-settings";
 import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 
-interface CompanyDimensionDetailPageProps {
-  code?: string;
-}
-
-export async function DimensionDetailPage({ code }: CompanyDimensionDetailPageProps) {
+export async function DimensionDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
   const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [dimension, settingsUiState] = await Promise.all([
-    getDimension(decodeURIComponent(code), scope.companyId),
+    getDimension((code), scope.companyId),
     getCompanySettingsUiState(scope.companyId),
   ]);
   if (!dimension) notFound();

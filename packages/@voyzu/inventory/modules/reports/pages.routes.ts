@@ -1,3 +1,4 @@
+const queryParams = { rangePreset: { type: "string" }, fromDate: { type: "string" }, toDate: { type: "string" }, showInactive: { type: "boolean" }, showCustomFields: { type: "boolean" } } as const;
 const auth = { required: true, minRole: "STANDARD" } as const;
 type PageName =
   | "ItemsReportPage"
@@ -15,14 +16,13 @@ type PageName =
 const load = (name: PageName) => () =>
   import("./server/pages/InventoryReportPages").then((m) => m[name]);
 const report = (
-  id: string,
   path: string,
   title: string,
   name: PageName,
   group: "Items" | "Stock",
 ) => ({
-    httpApiDocumentationGroupId: "inventory.reports",
-  id: `voyzu.inventory.reports.${id}`,
+  queryParams,
+  httpApiDocumentationGroupId: "inventory.reports",
   path: `/inventory/reports/${path}`,
   loadPage: load(name),
   pageTitle: title,
@@ -30,13 +30,12 @@ const report = (
   auth,
 });
 const printable = (
-  id: string,
   path: string,
   title: string,
   name: PageName,
 ) => ({
-    httpApiDocumentationGroupId: "inventory.reports",
-  id: `voyzu.inventory.reports.${id}.printable`,
+  queryParams,
+  httpApiDocumentationGroupId: "inventory.reports",
   path: `/inventory/reports/${path}/printable`,
   loadPage: load(name),
   pageTitle: title,
@@ -44,147 +43,125 @@ const printable = (
   auth,
 });
 export const pageRoutes = {
-  items: report("items", "items", "Items", "ItemsReportPage", "Items"),
-  itemsPrintable: printable("items", "items", "Items", "ItemsReportPage"),
-  categories: report(
-    "item-categories",
+  "voyzu.inventory.reports.items": report("items", "Items", "ItemsReportPage", "Items"),
+  "voyzu.inventory.reports.items.printable": printable("items", "Items", "ItemsReportPage"),
+  "voyzu.inventory.reports.item-categories": report(
     "item-categories",
     "Item Categories",
     "ItemCategoriesReportPage",
     "Items",
   ),
-  categoriesPrintable: printable(
-    "item-categories",
+  "voyzu.inventory.reports.item-categories.printable": printable(
     "item-categories",
     "Item Categories",
     "ItemCategoriesReportPage",
   ),
-  onHand: report(
-    "stock-on-hand",
+  "voyzu.inventory.reports.stock-on-hand": report(
     "stock-on-hand",
     "Stock on Hand",
     "StockOnHandReportPage",
     "Stock",
   ),
-  onHandPrintable: printable(
-    "stock-on-hand",
+  "voyzu.inventory.reports.stock-on-hand.printable": printable(
     "stock-on-hand",
     "Stock on Hand",
     "StockOnHandReportPage",
   ),
-  availability: report(
-    "stock-availability",
+  "voyzu.inventory.reports.stock-availability": report(
     "stock-availability",
     "Stock Availability",
     "StockAvailabilityReportPage",
     "Stock",
   ),
-  availabilityPrintable: printable(
-    "stock-availability",
+  "voyzu.inventory.reports.stock-availability.printable": printable(
     "stock-availability",
     "Stock Availability",
     "StockAvailabilityReportPage",
   ),
-  activity: report(
-    "stock-activity",
+  "voyzu.inventory.reports.stock-activity": report(
     "stock-activity",
     "Stock Activity",
     "StockActivityReportPage",
     "Stock",
   ),
-  activityPrintable: printable(
-    "stock-activity",
+  "voyzu.inventory.reports.stock-activity.printable": printable(
     "stock-activity",
     "Stock Activity",
     "StockActivityReportPage",
   ),
-  issuances: report(
-    "stock-issuances",
+  "voyzu.inventory.reports.stock-issuances": report(
     "stock-issuances",
     "Stock Issuances",
     "StockIssuancesReportPage",
     "Stock",
   ),
-  issuancesPrintable: printable(
-    "stock-issuances",
+  "voyzu.inventory.reports.stock-issuances.printable": printable(
     "stock-issuances",
     "Stock Issuances",
     "StockIssuancesReportPage",
   ),
-  receipts: report(
-    "stock-receipts",
+  "voyzu.inventory.reports.stock-receipts": report(
     "stock-receipts",
     "Stock Receipts",
     "StockReceiptsReportPage",
     "Stock",
   ),
-  receiptsPrintable: printable(
-    "stock-receipts",
+  "voyzu.inventory.reports.stock-receipts.printable": printable(
     "stock-receipts",
     "Stock Receipts",
     "StockReceiptsReportPage",
   ),
-  transfers: report(
-    "stock-transfers",
+  "voyzu.inventory.reports.stock-transfers": report(
     "stock-transfers",
     "Stock Transfers",
     "StockTransfersReportPage",
     "Stock",
   ),
-  transfersPrintable: printable(
-    "stock-transfers",
+  "voyzu.inventory.reports.stock-transfers.printable": printable(
     "stock-transfers",
     "Stock Transfers",
     "StockTransfersReportPage",
   ),
-  reservationActivity: report(
-    "stock-reservation-activity",
+  "voyzu.inventory.reports.stock-reservation-activity": report(
     "stock-reservation-activity",
     "Stock Reservation Activity",
     "StockReservationActivityReportPage",
     "Stock",
   ),
-  reservationActivityPrintable: printable(
-    "stock-reservation-activity",
+  "voyzu.inventory.reports.stock-reservation-activity.printable": printable(
     "stock-reservation-activity",
     "Stock Reservation Activity",
     "StockReservationActivityReportPage",
   ),
-  variance: report(
-    "stocktake-variance",
+  "voyzu.inventory.reports.stocktake-variance": report(
     "stocktake-variance",
     "Stocktake Variance",
     "StocktakeVarianceReportPage",
     "Stock",
   ),
-  variancePrintable: printable(
-    "stocktake-variance",
+  "voyzu.inventory.reports.stocktake-variance.printable": printable(
     "stocktake-variance",
     "Stocktake Variance",
     "StocktakeVarianceReportPage",
   ),
-  adjustments: report(
-    "quantity-adjustments",
+  "voyzu.inventory.reports.quantity-adjustments": report(
     "quantity-adjustments",
     "Quantity Adjustments",
     "QuantityAdjustmentsReportPage",
     "Stock",
   ),
-  adjustmentsPrintable: printable(
-    "quantity-adjustments",
+  "voyzu.inventory.reports.quantity-adjustments.printable": printable(
     "quantity-adjustments",
     "Quantity Adjustments",
     "QuantityAdjustmentsReportPage",
   ),
-  financialActivity: report(
-    "financial-activity",
+  "voyzu.inventory.reports.financial-activity": report(
     "financial-activity",
     "Financial Activity",
     "FinancialActivityReportPage",
     "Stock",
   ),
-  financialActivityPrintable: printable(
-    "financial-activity",
+  "voyzu.inventory.reports.financial-activity.printable": printable(
     "financial-activity",
     "Financial Activity",
     "FinancialActivityReportPage",

@@ -1,9 +1,7 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.company-tax-control-accounts.page.list": {
     httpApiDocumentationGroupId: "finance.tax-control-accounts",
-    id: "voyzu.company-tax-control-accounts.page.list",
     pageTitle: "Tax Control Accounts",
     helpPath: "modules-help/company-ledger/tax-accounts",
     path: "/finance/settings/control-accounts/tax",
@@ -15,9 +13,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.company-tax-control-accounts.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.tax-control-accounts",
-    id: "voyzu.company-tax-control-accounts.page.detail",
     pageTitle: "Tax Control Accounts",
     helpPath: "modules-help/company-ledger/tax-accounts",
     path: "/finance/settings/control-accounts/tax/[code]",

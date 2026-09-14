@@ -1,20 +1,12 @@
+import { type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { ArLedgerEntryDetailPage } from "../../../ar-subledger-ledger-entries/server/index";
 
-export function ArLedgerEntryEnquiryDetailPage({
-  code,
-  surface,
-}: {
-  code?: string;
-  surface?: { searchParams?: Record<string, string>; unframed?: boolean };
-}) {
+export function ArLedgerEntryEnquiryDetailPage({ context }: PageProps) {
   return (
     <ArLedgerEntryDetailPage
-      code={code}
-      surface={surface}
-      fallbackHref="/finance/subledgers/ar/ledger-entry-enquiry"
-      returnSource="arLedgerEntryEnquiry"
+      context={context}
     />
   );
 }

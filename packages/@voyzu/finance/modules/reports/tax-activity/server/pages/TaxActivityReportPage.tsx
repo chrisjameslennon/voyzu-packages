@@ -1,6 +1,6 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import { listReportOrganizations } from "../../../organization-directory.repo";
 import "server-only";
-
 
 import { getDb } from "@voyzu/capability/db";
 import type { FinancialYearResponseDto } from "../../../../financial-years/types/index";
@@ -15,13 +15,6 @@ import {
   type FinanceCompanyFilingSettings,
 } from "../../../server/lib/company-report.service";
 import { getTaxActivity } from "../lib/tax-activity.service";
-
-interface ReportPageProps {
-  surface?: {
-    searchParams?: Record<string, string>;
-    unframed?: boolean;
-  };
-}
 
 interface FilingPeriod {
   value: string;
@@ -86,9 +79,9 @@ function deriveFilingPeriods(
   return periods;
 }
 
-export async function TaxActivityReportPage({ surface }: ReportPageProps = {}) {
-  const query = surface?.searchParams ?? {};
-  const queryCompanyId = query.companyId ? Number(query.companyId) : null;
+export async function TaxActivityReportPage({ context }: PageProps) {
+  const query = pageStringParameters(context.queryParams);
+  const queryCompanyId = context.queryParams.companyId ? Number(context.queryParams.companyId) : null;
   const selectedCompanyId = queryCompanyId || (await internalApi.call("@core/organization-context", "get", {})).organization_id;
   const companies = await listReportOrganizations();
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
@@ -132,14 +125,14 @@ export async function TaxActivityReportPage({ surface }: ReportPageProps = {}) {
     ? await getTaxActivity(company.id, selectedPeriod.startDate, selectedPeriod.endDate, selectedPeriod.label)
     : null;
 
-  if (surface?.unframed && initialData) {
+  if (context.routeDefinition.unframed && initialData) {
     return (
       <TaxActivityReportTemplate
         data={initialData}
         generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-        showCompanyHeader={query.showCompanyHeader === "true"}
-        showCompanyFooter={query.showCompanyFooter === "true"}
-        showDecimals={query.showDecimals === "true"}
+        showCompanyHeader={context.queryParams.showCompanyHeader === true}
+        showCompanyFooter={context.queryParams.showCompanyFooter === true}
+        showDecimals={context.queryParams.showDecimals === true}
       />
     );
   }

@@ -11,9 +11,6 @@
     "dependencies": [
       "@voyzu/organization"
     ],
-    "pageRootPaths": [
-      "/inventory"
-    ],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }

@@ -1,6 +1,6 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import { listReportOrganizations } from "../../../organization-directory.repo";
 import "server-only";
-
 
 import type { ProfitLossBreakdownDto, ProfitLossDimensionSelectionDto } from "../../types/profit-loss-analysis.response.dto";
 
@@ -12,13 +12,6 @@ import { listPeriods } from "../../../../financial-years/server/index";
 import { ProfitLossAnalysisReport } from "../../client/index";
 import { ProfitLossAnalysisReportTemplate } from "../../templates/ProfitLossAnalysisReportTemplate";
 import { getProfitLossAnalysis } from "../lib/profit-loss.service";
-
-interface ReportPageProps {
-  surface?: {
-    searchParams?: Record<string, string>;
-    unframed?: boolean;
-  };
-}
 
 function todayIso(): string {
   const today = new Date();
@@ -48,9 +41,9 @@ function parseJsonParam<T>(value: string | undefined, fallback: T): T {
   }
 }
 
-export async function ProfitLossAnalysisReportPage({ surface }: ReportPageProps = {}) {
-  const query = surface?.searchParams ?? {};
-  const queryCompanyId = query.companyId ? Number(query.companyId) : null;
+export async function ProfitLossAnalysisReportPage({ context }: PageProps) {
+  const query = pageStringParameters(context.queryParams);
+  const queryCompanyId = context.queryParams.companyId ? Number(context.queryParams.companyId) : null;
   const selectedCompanyId = queryCompanyId || (await internalApi.call("@core/organization-context", "get", {})).organization_id;
   const companies = await listReportOrganizations();
   const company = companies.find((item) => item.id === selectedCompanyId) ?? companies[0] ?? null;
@@ -92,15 +85,15 @@ export async function ProfitLossAnalysisReportPage({ surface }: ReportPageProps 
   const periods = selectedYear ? await listPeriods(selectedYear.id) : [];
   const initialData = await getProfitLossAnalysis(company.id, reportFromDate, reportToDate, dimensionFilters, breakdown);
 
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <ProfitLossAnalysisReportTemplate
         data={initialData}
         generatedAt={new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-        showAccountCode={query.showAccountCode === "true"}
-        showCompanyHeader={query.showCompanyHeader === "true"}
-        showCompanyFooter={query.showCompanyFooter === "true"}
-        showDecimals={query.showDecimals === "true"}
+        showAccountCode={context.queryParams.showAccountCode === true}
+        showCompanyHeader={context.queryParams.showCompanyHeader === true}
+        showCompanyFooter={context.queryParams.showCompanyFooter === true}
+        showDecimals={context.queryParams.showDecimals === true}
       />
     );
   }

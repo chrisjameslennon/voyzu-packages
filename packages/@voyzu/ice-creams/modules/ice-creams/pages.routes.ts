@@ -1,7 +1,7 @@
 export const pageRoutes = {
-  list: {
+  "voyzu.ice-creams.page.list": {
+
     httpApiDocumentationGroupId: "ice-creams.ice-creams",
-    id: "voyzu.ice-creams.page.list",
     path: "/ice-creams",
     loadPage: () => import("./server/pages/IceCreamsListPage").then((module) => module.IceCreamsListPage),
     pageTitle: "Ice Creams",
@@ -9,9 +9,9 @@ export const pageRoutes = {
     breadcrumbBase: [],
     auth: { required: true, minRole: "STANDARD" },
   },
-  detail: {
+  "voyzu.ice-creams.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "ice-creams.ice-creams",
-    id: "voyzu.ice-creams.page.detail",
     path: "/ice-creams/[code]",
     loadPage: () => import("./server/pages/IceCreamDetailPage").then((module) => module.IceCreamDetailPage),
     pageTitle: "Ice Cream",

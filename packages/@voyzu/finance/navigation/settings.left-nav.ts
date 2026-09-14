@@ -1,12 +1,11 @@
 import type { VoyzuPackageNavigationGroup } from "@voyzu/types/framework";
-import { pageRoutes as countryTaxSettingsPageRoutes } from "../modules/country-tax-settings/pages.routes";
 
 export const settingsLeftNav = [{
   slotId: "settings.integration",
   items: [{
     label: "Country Tax Settings",
     icon: "public",
-    routeId: countryTaxSettingsPageRoutes.list.id,
+    routeId: "voyzu.countryTaxSettings.page.list",
   }],
 }] as const satisfies readonly VoyzuPackageNavigationGroup[];
 

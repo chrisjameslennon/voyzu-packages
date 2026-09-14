@@ -9,9 +9,6 @@
     "voyzu-package": true,
     "allowInstall": true,
     "dependencies": [],
-    "pageRootPaths": [
-      "/template"
-    ],
     "settings": {
       "helpBaseUrl": "https://voyzu.gitbook.io/docs/"
     }

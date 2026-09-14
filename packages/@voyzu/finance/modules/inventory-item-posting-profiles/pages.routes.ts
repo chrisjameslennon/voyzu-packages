@@ -1,9 +1,8 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.company-inventory-item-posting-profiles.page.list": {
+
     httpApiDocumentationGroupId: "finance.inventory-item-posting-profiles",
-    id: "voyzu.company-inventory-item-posting-profiles.page.list",
     pageTitle: "Item Posting Profiles",
     helpPath: "modules-help/company-ledger/inventory-item-posting-profiles",
     path: "/finance/inventory/item-posting-profiles",
@@ -15,9 +14,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.company-inventory-item-posting-profiles.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.inventory-item-posting-profiles",
-    id: "voyzu.company-inventory-item-posting-profiles.page.detail",
     pageTitle: "Item Posting Profile",
     helpPath: "modules-help/company-ledger/inventory-item-posting-profiles",
     path: "/finance/inventory/item-posting-profiles/[code]",

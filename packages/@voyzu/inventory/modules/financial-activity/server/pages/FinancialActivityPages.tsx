@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 import { notFound } from "next/navigation";
 import { getSelectedOrganization } from "../../../common/server/organization-context";
@@ -21,13 +22,8 @@ export async function FinancialActivityListPage() {
   );
 }
 
-export async function FinancialActivityDetailPage({
-  id,
-  surface,
-}: {
-  id?: string;
-  surface?: { unframed?: boolean };
-}) {
+export async function FinancialActivityDetailPage({ context }: PageProps) {
+  const { id } = pageStringParameters(context.pathParams);
   const organization = await getSelectedOrganization();
   if (!organization || !id) notFound();
   const financialActivity = await getFinancialActivity(organization.id, Number(id));
@@ -37,7 +33,7 @@ export async function FinancialActivityDetailPage({
     financialActivity.transactionCode,
   );
   if (!record) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <StockTransactionReportTemplate
         record={record}

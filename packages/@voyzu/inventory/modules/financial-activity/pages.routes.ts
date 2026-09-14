@@ -1,17 +1,16 @@
 const auth = { required: true, minRole: "STANDARD" } as const;
 export const pageRoutes = {
-  list: {
+  "voyzu.inventory.financial-activity.page.list": {
     httpApiDocumentationGroupId: "inventory.financial-activity",
-    id: "voyzu.inventory.financial-activity.page.list",
     path: "/inventory/financial-activity",
     loadPage: () => import("./server/pages/FinancialActivityPages").then((module) => module.FinancialActivityListPage),
     pageTitle: "Financial Activity",
     breadcrumbBase: [{ label: "Inventory" }],
     auth,
   },
-  detail: {
+  "voyzu.inventory.financial-activity.page.detail": {
+    pathParams: { id: { type: "string" } },
     httpApiDocumentationGroupId: "inventory.financial-activity",
-    id: "voyzu.inventory.financial-activity.page.detail",
     path: "/inventory/financial-activity/[id]",
     loadPage: () => import("./server/pages/FinancialActivityPages").then((module) => module.FinancialActivityDetailPage),
     pageTitle: "Financial Activity",
@@ -21,9 +20,9 @@ export const pageRoutes = {
     ],
     auth,
   },
-  detailPrintable: {
+  "voyzu.inventory.financial-activity.page.detail.printable": {
+    pathParams: { id: { type: "string" } },
     httpApiDocumentationGroupId: "inventory.financial-activity",
-    id: "voyzu.inventory.financial-activity.page.detail.printable",
     path: "/inventory/financial-activity/[id]/printable",
     loadPage: () => import("./server/pages/FinancialActivityPages").then((module) => module.FinancialActivityDetailPage),
     pageTitle: "Financial Activity",

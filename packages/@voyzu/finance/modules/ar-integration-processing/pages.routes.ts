@@ -1,8 +1,7 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 
 export const pageRoutes = {
-  transactions: {
-    id: "voyzu.ar-integration-processing.page.transactions",
+  "voyzu.ar-integration-processing.page.transactions": {
     pageTitle: "Accounts Receivable Transactions",
     path: "/finance/integration/accounts-receivable/transactions",
     loadPage: () => import("./server/pages/ArIntegrationTransactionsPage").then((module) => module.ArIntegrationTransactionsPage),

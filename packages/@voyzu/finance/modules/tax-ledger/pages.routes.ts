@@ -1,9 +1,8 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.tax-ledger.page.list": {
+
     httpApiDocumentationGroupId: "finance.tax-ledger",
-    id: "voyzu.tax-ledger.page.list",
     pageTitle: "Tax Ledger Entries",
     helpPath: "modules-help/company-ledger/tax-ledger-entries",
     path: "/finance/subledgers/tax/ledger-entries",
@@ -15,9 +14,13 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.tax-ledger.page.detail": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.tax-ledger",
-    id: "voyzu.tax-ledger.page.detail",
     pageTitle: "Tax Ledger Entry",
     helpPath: "modules-help/company-ledger/tax-ledger-entries",
     path: "/finance/subledgers/tax/ledger-entries/[code]",

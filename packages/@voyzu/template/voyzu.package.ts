@@ -1,3 +1,6 @@
+import { mergePageRoutes } from "@voyzu/types/page-routing";
+import { pageRoutes as reportsPageRoutes } from "./modules/reports/pages.routes";
+import { pageRoutes as templatePageRoutes } from "./modules/template/pages.routes";
 import { httpApiRouting, httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 import { templateModule } from "./modules/template/module";
@@ -6,7 +9,14 @@ import { install as installSampleData } from "./scripts/sample-data/install";
 import { templatesUninstall } from "./uninstall/manifest";
 
 export const templatePackage = {
-  contracts: { httpApiRouting, httpApiDocumentation },
+  contracts: {
+    pageRouting: {
+      roots: ["/template"],
+      routes: mergePageRoutes(
+        reportsPageRoutes,
+        templatePageRoutes,
+      ),
+    }, httpApiRouting, httpApiDocumentation },
   modules: [
     templateModule,
     templateReportsModule,

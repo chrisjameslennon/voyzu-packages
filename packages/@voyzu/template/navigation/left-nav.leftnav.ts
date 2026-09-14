@@ -1,13 +1,10 @@
-import { pageRoutes as templatePageRoutes } from "../modules/template/pages.routes";
-import { pageRoutes as templateReportPageRoutes } from "../modules/reports/pages.routes";
-
 export const templatesLeftNav = [
   {
     items: [
       {
         label: "Template",
         icon: "description",
-        routeId: templatePageRoutes.list.id,
+        routeId: "voyzu.template.page.list",
       },
     ],
   },
@@ -17,7 +14,7 @@ export const templatesLeftNav = [
       {
         label: "Template Report",
         icon: "summarize",
-        routeId: templateReportPageRoutes.all.id,
+        routeId: "voyzu.template.reports.page.all",
       },
     ],
   },

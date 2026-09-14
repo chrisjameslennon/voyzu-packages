@@ -1,9 +1,9 @@
+import type { PageHelpContext } from "@voyzu/types/page-routing";
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.company-financial-document-types.page.list": {
+
     httpApiDocumentationGroupId: "finance.financial-document-types",
-    id: "voyzu.company-financial-document-types.page.list",
     pageTitle: "Financial Document Types",
     helpPath: "modules-help/company-ledger/financial-document-types",
     path: "/finance/integration/financial-document-types",
@@ -15,12 +15,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.company-financial-document-types.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.financial-document-types",
-    id: "voyzu.company-financial-document-types.page.detail",
     pageTitle: "Financial Document Type",
-    helpPathResolver: ({ params }: { params: Readonly<Record<string, string>> }) =>
-      `help-core/financial-documents/${params.code.toLowerCase()}`,
+    helpPathResolver: ({ pathParams }: PageHelpContext) =>
+      `help-core/financial-documents/${String(pathParams.code).toLowerCase()}`,
     path: "/finance/integration/financial-document-types/[code]",
     loadPage: () => import("./server/pages/FinancialDocumentTypeDetailPage").then((module) => module.FinancialDocumentTypeDetailPage),
     breadcrumbBase: [

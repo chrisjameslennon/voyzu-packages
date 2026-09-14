@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -7,7 +8,8 @@ import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "
 import { InventoryProcessingRuleDetail } from "../../client/index";
 import { getFinanceInventoryProcessingRule } from "../lib/inventory-processing.service";
 
-export async function InventoryProcessingRuleDetailPage({ id }: { id?: string }) {
+export async function InventoryProcessingRuleDetailPage({ context }: PageProps) {
+  const { id } = pageStringParameters(context.pathParams);
   const ruleId = Number(id);
   if (!Number.isInteger(ruleId)) notFound();
   const [scope, httpApiContext] = await Promise.all([resolveServerSettingsScope(), resolveServerCompanyHttpApiContext()]);

@@ -1,9 +1,16 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  balanceSheet: {
+  "voyzu.companyReports.page.balanceSheet": {
+    queryParams: {
+      asAtDate: { type: "string" },
+      companyId: { type: "integer" },
+      showAccountCode: { type: "boolean" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+      showReportingCategories: { type: "boolean" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.balanceSheet",
     pageTitle: "Balance Sheet",
     helpPath: "modules-help/company-ledger/balance-sheet",
     path: "/finance/reports/balance-sheet",
@@ -14,9 +21,13 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  trialBalance: {
+  "voyzu.companyReports.page.trialBalance": {
+    queryParams: {
+      asAtDate: { type: "string" },
+      companyId: { type: "integer" },
+      showAccountCode: { type: "boolean" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.trialBalance",
     pageTitle: "Trial Balance",
     helpPath: "modules-help/company-ledger/trial-balance",
     path: "/finance/reports/trial-balance",
@@ -27,9 +38,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  taxPosition: {
+  "voyzu.companyReports.page.taxPosition": {
+    queryParams: {
+      asAtDate: { type: "string" },
+      companyId: { type: "integer" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.taxPosition",
     pageTitle: "Tax Position",
     helpPath: "modules-help/company-ledger/tax-position",
     path: "/finance/reports/tax-position",
@@ -40,9 +54,13 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  bankCashMovement: {
+  "voyzu.companyReports.page.bankCashMovement": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.bankCashMovement",
     pageTitle: "Bank / Cash Movement",
     helpPath: "modules-help/company-ledger/bank-cash-movement",
     path: "/finance/reports/bank-cash-movement",
@@ -53,9 +71,14 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  journalEntries: {
+  "voyzu.companyReports.page.journalEntries": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.journalEntries",
     pageTitle: "Journal Entries",
     helpPath: "modules-help/company-ledger/journal-entries-report",
     path: "/finance/reports/journal-entries",
@@ -67,9 +90,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  accountActivity: {
+  "voyzu.companyReports.page.accountActivity": {
+
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.accountActivity",
     pageTitle: "Account Activity",
     helpPath: "modules-help/company-ledger/account-activity",
     path: "/finance/general-ledger/account-activity",
@@ -80,9 +103,16 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  financialIntegrity: {
+  "voyzu.companyReports.page.financialIntegrity": {
+    queryParams: {
+      companyId: { type: "integer" },
+      documentTypeCode: { type: "string" },
+      fromDate: { type: "string" },
+      showSourceDocument: { type: "boolean" },
+      showSubledgerEntries: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.financialIntegrity",
     pageTitle: "Financial Integrity",
     helpPath: "modules-help/company-ledger/financial-integrity",
     path: "/finance/reports/financial-integrity",
@@ -94,9 +124,18 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  profitLoss: {
+  "voyzu.companyReports.page.profitLoss": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showAccountCode: { type: "boolean" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+      showReportingCategories: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.profitLoss",
     pageTitle: "Profit & Loss",
     helpPath: "modules-help/company-ledger/profit-loss",
     path: "/finance/reports/profit-loss",
@@ -108,9 +147,19 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  profitLossAnalysis: {
+  "voyzu.companyReports.page.profitLossAnalysis": {
+    queryParams: {
+      breakdown: { type: "string" },
+      companyId: { type: "integer" },
+      dimensionFilters: { type: "string" },
+      fromDate: { type: "string" },
+      showAccountCode: { type: "boolean" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.profitLossAnalysis",
     pageTitle: "Profit & Loss Analysis",
     helpPath: "modules-help/company-ledger/profit-loss-analysis",
     path: "/finance/reports/profit-loss-analysis",
@@ -122,9 +171,17 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  taxActivity: {
+  "voyzu.companyReports.page.taxActivity": {
+    queryParams: {
+      companyId: { type: "integer" },
+      periodEndDate: { type: "string" },
+      periodLabel: { type: "string" },
+      periodStartDate: { type: "string" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.taxActivity",
     pageTitle: "Tax Return",
     helpPath: "modules-help/company-ledger/tax-return",
     path: "/finance/reports/tax-activity",
@@ -136,9 +193,18 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  taxActivityReconciliation: {
+  "voyzu.companyReports.page.taxActivityReconciliation": {
+    queryParams: {
+      companyId: { type: "integer" },
+      periodEndDate: { type: "string" },
+      periodLabel: { type: "string" },
+      periodStartDate: { type: "string" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+      taxAuthorityCode: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.taxActivityReconciliation",
     pageTitle: "Tax Reconciliation",
     helpPath: "modules-help/company-ledger/tax-reconciliation",
     path: "/finance/reports/tax-activity-reconciliation",
@@ -150,9 +216,14 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  arSubledgerEntriesAudit: {
+  "voyzu.companyReports.page.arSubledgerEntriesAudit": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.arSubledgerEntriesAudit",
     pageTitle: "AR Subledger Entries",
     helpPath: "modules-help/company-ledger/ar-subledger-entries-report",
     path: "/finance/reports/ar-subledger-entries-audit",
@@ -164,9 +235,14 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  apSubledgerEntriesAudit: {
+  "voyzu.companyReports.page.apSubledgerEntriesAudit": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.apSubledgerEntriesAudit",
     pageTitle: "AP Subledger Entries",
     helpPath: "modules-help/company-ledger/ap-subledger-entries-report",
     path: "/finance/reports/ap-subledger-entries-audit",
@@ -178,9 +254,14 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  inventoryLedgerEntriesAudit: {
+  "voyzu.companyReports.page.inventoryLedgerEntriesAudit": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.inventoryLedgerEntriesAudit",
     pageTitle: "Inventory Ledger Entries",
     helpPath: "modules-help/company-ledger/inventory-ledger-entries-report",
     path: "/finance/reports/inventory-ledger-entries-audit",
@@ -192,9 +273,14 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  taxLedgerEntriesAudit: {
+  "voyzu.companyReports.page.taxLedgerEntriesAudit": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.taxLedgerEntriesAudit",
     pageTitle: "Tax Ledger Entries",
     helpPath: "modules-help/company-ledger/tax-ledger-entries-report",
     path: "/finance/reports/tax-ledger-entries-audit",
@@ -206,126 +292,213 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  apSubledgerEntriesAuditPrintable: {
+  "voyzu.companyReports.page.apSubledgerEntriesAudit.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.apSubledgerEntriesAudit.printable",
     pageTitle: "AP Subledger Entries",
     path: "/finance/reports/ap-subledger-entries-audit/printable",
     loadPage: () => import("./ap-subledger-entries-audit/server/pages/ApSubledgerEntriesAuditReportPage").then((module) => module.ApSubledgerEntriesAuditReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  arSubledgerEntriesAuditPrintable: {
+  "voyzu.companyReports.page.arSubledgerEntriesAudit.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.arSubledgerEntriesAudit.printable",
     pageTitle: "AR Subledger Entries",
     path: "/finance/reports/ar-subledger-entries-audit/printable",
     loadPage: () => import("./ar-subledger-entries-audit/server/pages/ArSubledgerEntriesAuditReportPage").then((module) => module.ArSubledgerEntriesAuditReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  balanceSheetPrintable: {
+  "voyzu.companyReports.page.balanceSheet.printable": {
+    queryParams: {
+      asAtDate: { type: "string" },
+      companyId: { type: "integer" },
+      showAccountCode: { type: "boolean" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+      showReportingCategories: { type: "boolean" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.balanceSheet.printable",
     pageTitle: "Balance Sheet",
     path: "/finance/reports/balance-sheet/printable",
     loadPage: () => import("./balance-sheet/server/pages/BalanceSheetReportPage").then((module) => module.BalanceSheetReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  bankCashMovementPrintable: {
+  "voyzu.companyReports.page.bankCashMovement.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.bankCashMovement.printable",
     pageTitle: "Bank / Cash Movement",
     path: "/finance/reports/bank-cash-movement/printable",
     loadPage: () => import("./bank-cash-movement/server/pages/BankCashMovementReportPage").then((module) => module.BankCashMovementReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  financialIntegrityPrintable: {
+  "voyzu.companyReports.page.financialIntegrity.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      documentTypeCode: { type: "string" },
+      fromDate: { type: "string" },
+      showSourceDocument: { type: "boolean" },
+      showSubledgerEntries: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.financialIntegrity.printable",
     pageTitle: "Financial Integrity",
     path: "/finance/reports/financial-integrity/printable",
     loadPage: () => import("./financial-integrity/server/pages/FinancialIntegrityReportPage").then((module) => module.FinancialIntegrityReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  inventoryLedgerEntriesAuditPrintable: {
+  "voyzu.companyReports.page.inventoryLedgerEntriesAudit.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.inventoryLedgerEntriesAudit.printable",
     pageTitle: "Inventory Ledger Entries",
     path: "/finance/reports/inventory-ledger-entries-audit/printable",
     loadPage: () => import("./inventory-ledger-entries-audit/server/pages/InventoryLedgerEntriesAuditReportPage").then((module) => module.InventoryLedgerEntriesAuditReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  journalEntriesPrintable: {
+  "voyzu.companyReports.page.journalEntries.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.journalEntries.printable",
     pageTitle: "Journal Entries",
     path: "/finance/reports/journal-entries/printable",
     loadPage: () => import("./journal-entries/server/pages/JournalEntriesReportPage").then((module) => module.JournalEntriesReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  profitLossPrintable: {
+  "voyzu.companyReports.page.profitLoss.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showAccountCode: { type: "boolean" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+      showReportingCategories: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.profitLoss.printable",
     pageTitle: "Profit & Loss",
     path: "/finance/reports/profit-loss/printable",
     loadPage: () => import("./profit-loss/server/pages/ProfitLossReportPage").then((module) => module.ProfitLossReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  profitLossAnalysisPrintable: {
+  "voyzu.companyReports.page.profitLossAnalysis.printable": {
+    queryParams: {
+      breakdown: { type: "string" },
+      companyId: { type: "integer" },
+      dimensionFilters: { type: "string" },
+      fromDate: { type: "string" },
+      showAccountCode: { type: "boolean" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.profitLossAnalysis.printable",
     pageTitle: "Profit & Loss Analysis",
     path: "/finance/reports/profit-loss-analysis/printable",
     loadPage: () => import("./profit-loss/server/pages/ProfitLossAnalysisReportPage").then((module) => module.ProfitLossAnalysisReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  taxActivityPrintable: {
+  "voyzu.companyReports.page.taxActivity.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      periodEndDate: { type: "string" },
+      periodLabel: { type: "string" },
+      periodStartDate: { type: "string" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.taxActivity.printable",
     pageTitle: "Tax Return",
     path: "/finance/reports/tax-activity/printable",
     loadPage: () => import("./tax-activity/server/pages/TaxActivityReportPage").then((module) => module.TaxActivityReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  taxActivityReconciliationPrintable: {
+  "voyzu.companyReports.page.taxActivityReconciliation.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      periodEndDate: { type: "string" },
+      periodLabel: { type: "string" },
+      periodStartDate: { type: "string" },
+      showCompanyFooter: { type: "boolean" },
+      showCompanyHeader: { type: "boolean" },
+      showDecimals: { type: "boolean" },
+      taxAuthorityCode: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.taxActivityReconciliation.printable",
     pageTitle: "Tax Reconciliation",
     path: "/finance/reports/tax-activity-reconciliation/printable",
     loadPage: () => import("./tax-activity-reconciliation/server/pages/TaxActivityReconciliationReportPage").then((module) => module.TaxActivityReconciliationReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  taxLedgerEntriesAuditPrintable: {
+  "voyzu.companyReports.page.taxLedgerEntriesAudit.printable": {
+    queryParams: {
+      companyId: { type: "integer" },
+      fromDate: { type: "string" },
+      showSnapshotData: { type: "boolean" },
+      toDate: { type: "string" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.taxLedgerEntriesAudit.printable",
     pageTitle: "Tax Ledger Entries",
     path: "/finance/reports/tax-ledger-entries-audit/printable",
     loadPage: () => import("./tax-ledger-entries-audit/server/pages/TaxLedgerEntriesAuditReportPage").then((module) => module.TaxLedgerEntriesAuditReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  taxPositionPrintable: {
+  "voyzu.companyReports.page.taxPosition.printable": {
+    queryParams: {
+      asAtDate: { type: "string" },
+      companyId: { type: "integer" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.taxPosition.printable",
     pageTitle: "Tax Position",
     path: "/finance/reports/tax-position/printable",
     loadPage: () => import("./tax-position/server/pages/TaxPositionReportPage").then((module) => module.TaxPositionReportPage),
     unframed: true,
     auth: companyFinancePageAuth
   },
-  trialBalancePrintable: {
+  "voyzu.companyReports.page.trialBalance.printable": {
+    queryParams: {
+      asAtDate: { type: "string" },
+      companyId: { type: "integer" },
+      showAccountCode: { type: "boolean" },
+    },
     httpApiDocumentationGroupId: "finance.reports",
-    id: "voyzu.companyReports.page.trialBalance.printable",
     pageTitle: "Trial Balance",
     path: "/finance/reports/trial-balance/printable",
     loadPage: () => import("./trial-balance/server/pages/TrialBalanceReportPage").then((module) => module.TrialBalanceReportPage),

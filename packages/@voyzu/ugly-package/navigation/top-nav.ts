@@ -1,8 +1,6 @@
-import { pageRoutes } from "../modules/ugly/pages.routes";
-
 const uglyPackageTopNav = {
   label: "Ugly Package",
-  routeId: pageRoutes.home.id,
+  routeId: "voyzu.ugly-package.page.home",
 } as const;
 
 export default uglyPackageTopNav;

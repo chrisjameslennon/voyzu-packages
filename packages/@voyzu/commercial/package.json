@@ -10,9 +10,6 @@
     "allowInstall": true,
     "dependencies": [
       "@voyzu/organization"
-    ],
-    "pageRootPaths": [
-      "/commercial"
     ]
   },
   "exports": {

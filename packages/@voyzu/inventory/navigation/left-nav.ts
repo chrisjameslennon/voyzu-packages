@@ -1,9 +1,3 @@
-import { pageRoutes } from "../modules/items/pages.routes";
-import { pageRoutes as configurationRoutes } from "../modules/configuration/pages.routes";
-import { pageRoutes as financialActivityRoutes } from "../modules/financial-activity/pages.routes";
-import { pageRoutes as reportRoutes } from "../modules/reports/pages.routes";
-import { pageRoutes as stockRoutes } from "../modules/stock/pages.routes";
-
 export const inventoryLeftNav = [
   {
     label: "Inventory",
@@ -11,32 +5,32 @@ export const inventoryLeftNav = [
       {
         label: "Items",
         icon: "box",
-        routeId: pageRoutes.list.id,
+        routeId: "voyzu.inventory.items.page.list",
       },
       {
         label: "Item Categories",
         icon: "category",
-        routeId: configurationRoutes.categories.id,
+        routeId: "voyzu.inventory.categories.page.list",
       },
       {
         label: "Stock",
         icon: "inventory",
-        routeId: stockRoutes.stock.id,
+        routeId: "voyzu.inventory.stock.page.list",
       },
       {
         label: "Stock Counts",
         icon: "fact_check",
-        routeId: stockRoutes.counts.id,
+        routeId: "voyzu.inventory.stock-counts.page.list",
       },
       {
         label: "Stock Activity",
         icon: "history",
-        routeId: stockRoutes.activity.id,
+        routeId: "voyzu.inventory.stock-activity.page.list",
       },
       {
         label: "Warehouses",
         icon: "warehouse",
-        routeId: configurationRoutes.warehouses.id,
+        routeId: "voyzu.inventory.warehouses.page.list",
       },
     ],
   },
@@ -46,12 +40,12 @@ export const inventoryLeftNav = [
       {
         label: "Custom Fields",
         icon: "dynamic_form",
-        routeId: configurationRoutes.customFields.id,
+        routeId: "voyzu.inventory.custom-fields.page.list",
       },
       {
         label: "Custom Field Option Lists",
         icon: "list_alt",
-        routeId: configurationRoutes.optionLists.id,
+        routeId: "voyzu.inventory.option-lists.page.list",
       },
     ],
   },
@@ -61,7 +55,7 @@ export const inventoryLeftNav = [
       {
         label: "Financial Activity",
         icon: "account_balance",
-        routeId: financialActivityRoutes.list.id,
+        routeId: "voyzu.inventory.financial-activity.page.list",
       },
     ],
   },
@@ -74,11 +68,11 @@ export const inventoryLeftNav = [
         children: [
           {
             label: "Items",
-            routeId: reportRoutes.items.id,
+            routeId: "voyzu.inventory.reports.items",
           },
           {
             label: "Item Categories",
-            routeId: reportRoutes.categories.id,
+            routeId: "voyzu.inventory.reports.item-categories",
           },
         ],
       },
@@ -88,15 +82,15 @@ export const inventoryLeftNav = [
         children: [
           {
             label: "Stock on Hand",
-            routeId: reportRoutes.onHand.id,
+            routeId: "voyzu.inventory.reports.stock-on-hand",
           },
           {
             label: "Stock Availability",
-            routeId: reportRoutes.availability.id,
+            routeId: "voyzu.inventory.reports.stock-availability",
           },
           {
             label: "Stocktake Variance",
-            routeId: reportRoutes.variance.id,
+            routeId: "voyzu.inventory.reports.stocktake-variance",
           },
         ],
       },
@@ -106,31 +100,31 @@ export const inventoryLeftNav = [
         children: [
           {
             label: "Stock Issuances",
-            routeId: reportRoutes.issuances.id,
+            routeId: "voyzu.inventory.reports.stock-issuances",
           },
           {
             label: "Stock Receipts",
-            routeId: reportRoutes.receipts.id,
+            routeId: "voyzu.inventory.reports.stock-receipts",
           },
           {
             label: "Stock Reservation Activity",
-            routeId: reportRoutes.reservationActivity.id,
+            routeId: "voyzu.inventory.reports.stock-reservation-activity",
           },
           {
             label: "Stock Transfers",
-            routeId: reportRoutes.transfers.id,
+            routeId: "voyzu.inventory.reports.stock-transfers",
           },
           {
             label: "Quantity Adjustments",
-            routeId: reportRoutes.adjustments.id,
+            routeId: "voyzu.inventory.reports.quantity-adjustments",
           },
           {
             label: "Stock Activity",
-            routeId: reportRoutes.activity.id,
+            routeId: "voyzu.inventory.reports.stock-activity",
           },
           {
             label: "Financial Activity",
-            routeId: reportRoutes.financialActivity.id,
+            routeId: "voyzu.inventory.reports.financial-activity",
           },
         ],
       },

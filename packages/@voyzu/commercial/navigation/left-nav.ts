@@ -1,10 +1,4 @@
 import type { VoyzuPackageNavigationGroup } from "@voyzu/types/framework";
-import { pageRoutes as customersRoutes } from "../modules/customers/pages.routes";
-import { pageRoutes as suppliersRoutes } from "../modules/suppliers/pages.routes";
-import { pageRoutes as salesRoutes } from "../modules/sales/pages.routes";
-import { pageRoutes as purchasingRoutes } from "../modules/purchasing/pages.routes";
-import { pageRoutes as productsRoutes } from "../modules/products/pages.routes";
-import { pageRoutes as settingsRoutes } from "../modules/settings/pages.routes";
 
 export const commercialLeftNav = [
   {
@@ -13,56 +7,56 @@ export const commercialLeftNav = [
       {
         label: "Customers",
         icon: "group",
-        routeId: customersRoutes.customers.id,
+        routeId: "voyzu.commercial.customers.page.customers",
         children: [
-          { label: "Customers", routeId: customersRoutes.customers.id },
-          { label: "Customer Price Lists", routeId: customersRoutes.customerPriceLists.id },
+          { label: "Customers", routeId: "voyzu.commercial.customers.page.customers" },
+          { label: "Customer Price Lists", routeId: "voyzu.commercial.customers.page.customerPriceLists" },
         ],
       },
       {
         label: "Suppliers",
         icon: "local_shipping",
-        routeId: suppliersRoutes.suppliers.id,
+        routeId: "voyzu.commercial.suppliers.page.suppliers",
         children: [
-          { label: "Suppliers", routeId: suppliersRoutes.suppliers.id },
+          { label: "Suppliers", routeId: "voyzu.commercial.suppliers.page.suppliers" },
         ],
       },
       {
         label: "Sales",
         icon: "sell",
-        routeId: salesRoutes.quotes.id,
+        routeId: "voyzu.commercial.sales.page.quotes",
         children: [
-          { label: "Quotes", routeId: salesRoutes.quotes.id },
-          { label: "Sales Orders", routeId: salesRoutes.salesOrders.id },
+          { label: "Quotes", routeId: "voyzu.commercial.sales.page.quotes" },
+          { label: "Sales Orders", routeId: "voyzu.commercial.sales.page.salesOrders" },
         ],
       },
       {
         label: "Purchasing",
         icon: "shopping_cart",
-        routeId: purchasingRoutes.purchaseOrders.id,
+        routeId: "voyzu.commercial.purchasing.page.purchaseOrders",
         children: [
-          { label: "Purchase Orders", routeId: purchasingRoutes.purchaseOrders.id },
+          { label: "Purchase Orders", routeId: "voyzu.commercial.purchasing.page.purchaseOrders" },
         ],
       },
       {
         label: "Products",
         icon: "inventory_2",
-        routeId: productsRoutes.products.id,
+        routeId: "voyzu.commercial.products.page.products",
         children: [
-          { label: "Products", routeId: productsRoutes.products.id },
-          { label: "Product Options", routeId: productsRoutes.productOptions.id },
-          { label: "Product Option Lists", routeId: productsRoutes.productOptionLists.id },
-          { label: "Price Lists", routeId: productsRoutes.priceLists.id },
+          { label: "Products", routeId: "voyzu.commercial.products.page.products" },
+          { label: "Product Options", routeId: "voyzu.commercial.products.page.productOptions" },
+          { label: "Product Option Lists", routeId: "voyzu.commercial.products.page.productOptionLists" },
+          { label: "Price Lists", routeId: "voyzu.commercial.products.page.priceLists" },
         ],
       },
       {
         label: "Settings",
         icon: "settings",
-        routeId: settingsRoutes.entities.id,
+        routeId: "voyzu.commercial.settings.page.entities",
         children: [
-          { label: "Entities", routeId: settingsRoutes.entities.id },
-          { label: "Custom Fields", routeId: settingsRoutes.customFields.id },
-          { label: "Custom Field Option Lists", routeId: settingsRoutes.customFieldOptionLists.id },
+          { label: "Entities", routeId: "voyzu.commercial.settings.page.entities" },
+          { label: "Custom Fields", routeId: "voyzu.commercial.settings.page.customFields" },
+          { label: "Custom Field Option Lists", routeId: "voyzu.commercial.settings.page.customFieldOptionLists" },
         ],
       },
     ],

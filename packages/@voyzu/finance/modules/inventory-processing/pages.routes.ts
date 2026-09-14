@@ -1,18 +1,17 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 
 export const pageRoutes = {
-  rules: {
+  "voyzu.inventory-processing.page.rules": {
     httpApiDocumentationGroupId: "finance.inventory-processing",
-    id: "voyzu.inventory-processing.page.rules",
     pageTitle: "Movement Processing Rules",
     path: "/finance/integration/inventory-processing/rules",
     loadPage: () => import("./server/pages/InventoryProcessingRulesPage").then((module) => module.InventoryProcessingRulesPage),
     breadcrumbBase: [{ label: "Finance" }, { label: "Integration" }, { label: "Inventory" }],
     auth: companyFinancePageAuth,
   },
-  ruleDetail: {
+  "voyzu.inventory-processing.page.rule-detail": {
+    pathParams: { id: { type: "string" } },
     httpApiDocumentationGroupId: "finance.inventory-processing",
-    id: "voyzu.inventory-processing.page.rule-detail",
     pageTitle: "Inventory Processing Rule",
     path: "/finance/integration/inventory-processing/rules/[id]",
     loadPage: () => import("./server/pages/InventoryProcessingRuleDetailPage").then((module) => module.InventoryProcessingRuleDetailPage),
@@ -24,18 +23,17 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth,
   },
-  inventoryTransactions: {
+  "voyzu.inventory-processing.page.inventory-transactions": {
     httpApiDocumentationGroupId: "finance.inventory-processing",
-    id: "voyzu.inventory-processing.page.inventory-transactions",
     pageTitle: "Inventory Transactions",
     path: "/finance/integration/inventory-processing/inventory-transactions",
     loadPage: () => import("./server/pages/InventoryTransactionsListPage").then((module) => module.InventoryTransactionsListPage),
     breadcrumbBase: [{ label: "Finance" }, { label: "Integration" }, { label: "Inventory" }],
     auth: companyFinancePageAuth,
   },
-  inventoryTransactionDetail: {
+  "voyzu.inventory-processing.page.inventory-transaction-detail": {
+    pathParams: { id: { type: "string" } },
     httpApiDocumentationGroupId: "finance.inventory-processing",
-    id: "voyzu.inventory-processing.page.inventory-transaction-detail",
     pageTitle: "Inventory Transaction",
     path: "/finance/integration/inventory-processing/inventory-transactions/[id]",
     loadPage: () => import("./server/pages/InventoryTransactionDetailPage").then((module) => module.InventoryTransactionDetailPage),
@@ -47,9 +45,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth,
   },
-  inventoryTransactionDetailPrintable: {
+  "voyzu.inventory-processing.page.inventory-transaction-detail.printable": {
+    pathParams: { id: { type: "string" } },
     httpApiDocumentationGroupId: "finance.inventory-processing",
-    id: "voyzu.inventory-processing.page.inventory-transaction-detail.printable",
     pageTitle: "Inventory Transaction",
     path: "/finance/integration/inventory-processing/inventory-transactions/[id]/printable",
     loadPage: () => import("./server/pages/InventoryTransactionDetailPage").then((module) => module.InventoryTransactionDetailPage),

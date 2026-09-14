@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -10,7 +11,8 @@ import { getCompanySettingsUiState } from "../../../organization-finance/server/
 import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { FinancialDocumentDefaultDetail } from "../../client/index";
 
-export async function FinancialDocumentDefaultDetailPage({ code, surface }: { code?: string; surface?: { searchParams?: Record<string, string> } }) {
+export async function FinancialDocumentDefaultDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const key = decodeFinancialDocumentDefaultKey(code);
   if (!key) notFound();
@@ -23,7 +25,7 @@ export async function FinancialDocumentDefaultDetailPage({ code, surface }: { co
     resolveServerCompanyHttpApiContext(),
   ]);
   if (!financialDocumentDefault) notFound();
-  const searchParams = surface?.searchParams ?? {};
+  const searchParams = pageStringParameters(context.queryParams);
   return (
     <FinancialDocumentDefaultDetail
       financialDocumentDefault={financialDocumentDefault}

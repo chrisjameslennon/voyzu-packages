@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -10,22 +11,17 @@ import { ApBillReport } from "../../client/index";
 import { ApLedgerEntryDocumentReportTemplate } from "../../client/templates/ApLedgerEntryDocumentReportTemplate";
 import { getApLedgerEntryDocumentReport } from "../lib/ap-bill-report.service";
 
-export async function ApBillDetailPage({
-  documentId,
-  surface,
-}: {
-  documentId?: string;
-  surface?: { searchParams?: Record<string, string>; unframed?: boolean };
-}) {
+export async function ApBillDetailPage({ context }: PageProps) {
+  const { documentId } = pageStringParameters(context.pathParams);
   if (!documentId) notFound();
   const company = await getSelectedCompany();
   if (!company) notFound();
   const entries = await listApSubledgerEntries(company.id);
-  const entry = entries.find((candidate) => candidate.documentId === decodeURIComponent(documentId));
+  const entry = entries.find((candidate) => candidate.documentId === (documentId));
   if (!entry) notFound();
   const report = await getApLedgerEntryDocumentReport(company, entry);
   if (!report) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <ApLedgerEntryDocumentReportTemplate
         report={report}
@@ -39,7 +35,7 @@ export async function ApBillDetailPage({
       />
     );
   }
-  const searchParams = surface?.searchParams ?? {};
+  const searchParams = pageStringParameters(context.queryParams);
   return (
     <ApBillReport
       entry={entry}

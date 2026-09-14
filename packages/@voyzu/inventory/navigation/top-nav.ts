@@ -1,9 +1,7 @@
-import { pageRoutes } from "../modules/items/pages.routes";
-
 export const inventoryTopNav = {
   label: "Inventory",
   icon: "inventory_2",
-  routeId: pageRoutes.list.id,
+  routeId: "voyzu.inventory.items.page.list",
 } as const;
 
 export default inventoryTopNav;

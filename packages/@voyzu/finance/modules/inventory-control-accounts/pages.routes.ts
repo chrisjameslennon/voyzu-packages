@@ -1,9 +1,8 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 
 export const pageRoutes = {
-  list: {
+  "voyzu.company-inventory-control-accounts.page.list": {
     httpApiDocumentationGroupId: "finance.inventory-control-accounts",
-    id: "voyzu.company-inventory-control-accounts.page.list",
     pageTitle: "Inventory Control Accounts",
     helpPath: "modules-help/company-ledger/inventory-control-accounts",
     path: "/finance/settings/control-accounts/inventory",
@@ -15,9 +14,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.company-inventory-control-accounts.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.inventory-control-accounts",
-    id: "voyzu.company-inventory-control-accounts.page.detail",
     pageTitle: "Inventory Control Accounts",
     helpPath: "modules-help/company-ledger/inventory-control-accounts",
     path: "/finance/settings/control-accounts/inventory/[code]",

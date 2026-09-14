@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -9,19 +10,14 @@ import { ArCounterpartyStatementReport } from "../../client/index";
 import { ArCounterpartyStatementReportTemplate } from "../../client/templates/ArCounterpartyStatementReportTemplate";
 import { getArCounterpartyStatement } from "../lib/ar-subledger-statement.service";
 
-export async function ArStatementDetailPage({
-  code,
-  surface,
-}: {
-  code?: string;
-  surface?: { searchParams?: Record<string, string>; unframed?: boolean };
-}) {
+export async function ArStatementDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const company = await getSelectedCompany();
   if (!company) notFound();
-  const statement = await getArCounterpartyStatement(company, decodeURIComponent(code));
+  const statement = await getArCounterpartyStatement(company, code);
   if (!statement) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return (
       <ArCounterpartyStatementReportTemplate
         statement={statement}
@@ -35,7 +31,7 @@ export async function ArStatementDetailPage({
       />
     );
   }
-  const searchParams = surface?.searchParams ?? {};
+  const searchParams = pageStringParameters(context.queryParams);
   return (
     <ArCounterpartyStatementReport
       statement={statement}

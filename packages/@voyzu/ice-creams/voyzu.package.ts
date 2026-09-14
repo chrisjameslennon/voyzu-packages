@@ -1,3 +1,6 @@
+import { mergePageRoutes } from "@voyzu/types/page-routing";
+import { pageRoutes as iceCreamsPageRoutes } from "./modules/ice-creams/pages.routes";
+import { pageRoutes as reportsPageRoutes } from "./modules/reports/pages.routes";
 import { httpApiRouting, httpApiDocumentation } from "./http-api.contracts";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
@@ -12,7 +15,14 @@ import { uninstall } from "./uninstall/manifest";
  *
  **/
 export const iceCreamsPackage = {
-  contracts: { httpApiRouting, httpApiDocumentation },
+  contracts: {
+    pageRouting: {
+      roots: ["/ice-creams"],
+      routes: mergePageRoutes(
+        iceCreamsPageRoutes,
+        reportsPageRoutes,
+      ),
+    }, httpApiRouting, httpApiDocumentation },
   modules: [
     iceCreamsModule,
     iceCreamReportsModule,

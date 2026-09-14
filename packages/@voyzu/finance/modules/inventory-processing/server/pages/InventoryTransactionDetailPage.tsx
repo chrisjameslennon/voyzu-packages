@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { internalApi } from "@voyzu/capability/internal-api";
@@ -9,7 +10,8 @@ import { InventoryTransactionDetail } from "../../client/index";
 import { InventoryTransactionReportTemplate } from "../../client/InventoryTransactionReportTemplate";
 import { getFinanceInventoryActivity } from "../lib/inventory-processing.service";
 
-export async function InventoryTransactionDetailPage({ id, surface }: { id?: string; surface?: { unframed?: boolean } }) {
+export async function InventoryTransactionDetailPage({ context }: PageProps) {
+  const { id } = pageStringParameters(context.pathParams);
   const inventory = internalApi.has("@erp/stock-activity");
   if (!inventory) {
     return <IntegrationUnavailablePage pageTitle="Inventory Transaction" packageName="Inventory" message="Install the Inventory package to view the source stock document." icon="inventory_2" />;
@@ -23,7 +25,7 @@ export async function InventoryTransactionDetailPage({ id, surface }: { id?: str
     code: activity.inventoryDocumentCode,
   });
   if (!record) notFound();
-  if (surface?.unframed) {
+  if (context.routeDefinition.unframed) {
     return <InventoryTransactionReportTemplate record={record} organization={company} generatedAt={new Date().toLocaleString(undefined, { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })} />;
   }
   return <InventoryTransactionDetail record={record} organization={company} financeActivityId={activity.id} />;

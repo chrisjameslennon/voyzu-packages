@@ -1,9 +1,8 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 
 export const pageRoutes = {
-  list: {
+  "voyzu.company-inventory-item-posting-profile-assignments.page.list": {
     httpApiDocumentationGroupId: "finance.inventory-item-posting-profile-assignments",
-    id: "voyzu.company-inventory-item-posting-profile-assignments.page.list",
     pageTitle: "Posting Profile Assignments",
     helpPath: "modules-help/company-ledger/inventory-item-posting-profiles",
     path: "/finance/inventory/item-posting-profile-assignments",

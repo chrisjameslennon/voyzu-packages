@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { JournalDetail } from "../../client/index";
@@ -5,18 +6,12 @@ import { normalizeDetailBackSource } from "../../../common/server/index";
 import { getSelectedCompany } from "../lib/company-context";
 import { getJournal } from "../lib/journal.service";
 
-interface JournalDetailPageProps {
-  code?: string;
-  surface?: {
-    searchParams?: Record<string, string>;
-  };
-}
-
-export async function JournalDetailPage({ code, surface }: JournalDetailPageProps) {
+export async function JournalDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   const company = await getSelectedCompany();
-  const resolvedCode = decodeURIComponent(code ?? "");
+  const resolvedCode = (code ?? "");
   const journal = company && resolvedCode ? await getJournal(company.id, resolvedCode) : null;
-  const searchParams = surface?.searchParams ?? {};
+  const searchParams = pageStringParameters(context.queryParams);
 
   return (
     <JournalDetail

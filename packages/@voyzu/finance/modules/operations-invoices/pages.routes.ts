@@ -1,8 +1,7 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
 
 export const pageRoutes = {
-  salesItems: {
-    id: "voyzu.operations-invoices.page.sales-items",
+  "voyzu.operations-invoices.page.sales-items": {
     pageTitle: "Sales Items",
     path: "/finance/operations/accounts-receivable/sales-items",
     loadPage: () => import("./server/pages/SalesItemsPage").then((module) => module.SalesItemsPage),
@@ -13,8 +12,7 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth,
   },
-  create: {
-    id: "voyzu.operations-invoices.page.create",
+  "voyzu.operations-invoices.page.create": {
     pageTitle: "New Invoice",
     path: "/finance/operations/accounts-receivable/invoices/new",
     loadPage: () => import("./server/pages/NewInvoicePage").then((module) => module.NewInvoicePage),
@@ -26,8 +24,7 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth,
   },
-  list: {
-    id: "voyzu.operations-invoices.page.list",
+  "voyzu.operations-invoices.page.list": {
     pageTitle: "Invoices",
     path: "/finance/operations/accounts-receivable/invoices",
     loadPage: () => import("./server/pages/OperationsInvoicesListPage").then((module) => module.OperationsInvoicesListPage),

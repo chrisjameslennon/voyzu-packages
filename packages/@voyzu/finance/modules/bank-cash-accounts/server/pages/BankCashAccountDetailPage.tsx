@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 
 import { notFound } from "next/navigation";
@@ -9,22 +10,18 @@ import { getCompanySettingsUiState } from "../../../organization-finance/server/
 import { resolveServerCompanyHttpApiContext, resolveServerSettingsScope } from "../../../organization-finance/server/lib/settings-scope";
 import { normalizeDetailBackSource } from "../../../common/server/index";
 
-interface CompanyBankCashAccountDetailPageProps {
-  code?: string;
-  surface?: { searchParams?: Record<string, string> };
-}
-
-export async function BankCashAccountDetailPage({ code, surface }: CompanyBankCashAccountDetailPageProps) {
+export async function BankCashAccountDetailPage({ context }: PageProps) {
+  const { code } = pageStringParameters(context.pathParams);
   if (!code) notFound();
   const scope = await resolveServerSettingsScope();
   const companyHttpApiContext = await resolveServerCompanyHttpApiContext();
   const [account, glAccounts, settingsState] = await Promise.all([
-    getBankCashAccount(decodeURIComponent(code), scope.companyId),
+    getBankCashAccount((code), scope.companyId),
     listGlAccounts(scope.companyId),
     getCompanySettingsUiState(scope.companyId),
   ]);
   if (!account) notFound();
-  const searchParams = surface?.searchParams ?? {};
+  const searchParams = pageStringParameters(context.queryParams);
 
   return (
     <BankCashAccountDetail

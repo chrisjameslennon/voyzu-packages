@@ -1,8 +1,10 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
-    id: "voyzu.ap-subledger-ledger-entry-enquiry.page.list",
+  "voyzu.ap-subledger-ledger-entry-enquiry.page.list": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
     pageTitle: "AP Ledger Entry Enquiry",
     helpPath: "modules-help/company-ledger/ap-ledger-entry-enquiry",
     path: "/finance/subledgers/ap/ledger-entry-enquiry",
@@ -14,8 +16,12 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
-    id: "voyzu.ap-subledger-ledger-entry-enquiry.page.detail",
+  "voyzu.ap-subledger-ledger-entry-enquiry.page.detail": {
+    queryParams: {
+      from: { type: "string" },
+      fromCode: { type: "string" },
+    },
+    pathParams: { code: { type: "string" } },
     pageTitle: "AP Ledger Entry Enquiry",
     helpPath: "modules-help/company-ledger/ap-ledger-entry-enquiry",
     path: "/finance/subledgers/ap/ledger-entry-enquiry/[code]",

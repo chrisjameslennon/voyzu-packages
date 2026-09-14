@@ -1,8 +1,6 @@
-import { pageRoutes } from "../modules/customers/pages.routes";
-
 export const commercialTopNav = {
   label: "Commercial",
   icon: "storefront",
-  routeId: pageRoutes.customers.id,
+  routeId: "voyzu.commercial.customers.page.customers",
 } as const;
 export default commercialTopNav;

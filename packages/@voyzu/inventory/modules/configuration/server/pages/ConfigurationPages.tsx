@@ -1,3 +1,4 @@
+import { pageStringParameters, type PageProps } from "@voyzu/types/page-routing";
 import "server-only";
 import { notFound } from "next/navigation";
 import { ConfigurationDetailView, ConfigurationListView } from "../../client";
@@ -76,11 +77,11 @@ export const CategoriesPage = () => listPage("category");
 export const WarehousesPage = () => listPage("warehouse");
 export const CustomFieldsPage = () => listPage("custom-field");
 export const OptionListsPage = () => listPage("option-list");
-export const CategoryDetailPage = ({ id }: { id?: string }) =>
-  detailPage("category", id);
-export const WarehouseDetailPage = ({ id }: { id?: string }) =>
-  detailPage("warehouse", id);
-export const CustomFieldDetailPage = ({ id }: { id?: string }) =>
-  detailPage("custom-field", id);
-export const OptionListDetailPage = ({ id }: { id?: string }) =>
-  detailPage("option-list", id);
+export const CategoryDetailPage = ({ context }: PageProps) =>
+  detailPage("category", pageStringParameters(context.pathParams).id);
+export const WarehouseDetailPage = ({ context }: PageProps) =>
+  detailPage("warehouse", pageStringParameters(context.pathParams).id);
+export const CustomFieldDetailPage = ({ context }: PageProps) =>
+  detailPage("custom-field", pageStringParameters(context.pathParams).id);
+export const OptionListDetailPage = ({ context }: PageProps) =>
+  detailPage("option-list", pageStringParameters(context.pathParams).id);

@@ -1,9 +1,8 @@
 import { companyFinancePageAuth } from "../organization-finance/server/lib/company-finance-page-auth";
-
 export const pageRoutes = {
-  list: {
+  "voyzu.company-dimensions.page.list": {
+
     httpApiDocumentationGroupId: "finance.dimensions",
-    id: "voyzu.company-dimensions.page.list",
     pageTitle: "Dimensions",
     helpPath: "modules-help/company-ledger/dimensions",
     path: "/finance/settings/dimensions",
@@ -14,9 +13,9 @@ export const pageRoutes = {
     ],
     auth: companyFinancePageAuth
   },
-  detail: {
+  "voyzu.company-dimensions.page.detail": {
+    pathParams: { code: { type: "string" } },
     httpApiDocumentationGroupId: "finance.dimensions",
-    id: "voyzu.company-dimensions.page.detail",
     pageTitle: "Dimension",
     helpPath: "modules-help/company-ledger/dimensions",
     path: "/finance/settings/dimensions/[code]",
