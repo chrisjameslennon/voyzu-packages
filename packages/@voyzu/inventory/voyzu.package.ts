@@ -13,11 +13,7 @@ import { pageRoutes as stockPageRoutes } from "./modules/stock/pages.routes";
 import type { VoyzuPackageDefinition } from "@voyzu/types/framework";
 
 import { install } from "./install/manifest";
-import { coreModule } from "./modules/core/module";
-import { configurationModule } from "./modules/configuration/module";
-import { financialActivityModule } from "./modules/financial-activity/module";
 import { itemsModule } from "./modules/items/module";
-import { reportsModule } from "./modules/reports/module";
 import { sampleData } from "./scripts/sample-data";
 import { sampleDataLarge } from "./scripts/sample-data-large";
 import { teardownSampleData } from "./scripts/teardown-sample-data";
@@ -147,14 +143,6 @@ export const inventoryPackage = {
     internalApi: { implements: { ...itemsModule.implements, ...stockModule.implements } },
 
   },
-  modules: [
-    coreModule,
-    itemsModule,
-    configurationModule,
-    stockModule,
-    financialActivityModule,
-    reportsModule,
-  ],
   install,
   uninstall,
   scripts: {
