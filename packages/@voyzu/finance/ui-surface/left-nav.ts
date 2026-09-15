@@ -1,7 +1,7 @@
 import type { UiSurfaceMenuGroup } from "@voyzu/types/ui-surface";
 export default [
   {
-    "label": "Operations",
+    "label": "Accounting Operations",
     "items": {
       "finance.menu1.accounts-receivable": {
         "label": "Accounts Receivable",

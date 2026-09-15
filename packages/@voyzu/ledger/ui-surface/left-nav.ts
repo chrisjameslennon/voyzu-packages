@@ -82,7 +82,7 @@ export default [
         "routeId": "voyzu.company-financial-document-types.page.list"
       },
       "ledger.menu2.inventory": {
-        "label": "Inventory",
+        "label": "Inventory Integration",
         "icon": "inventory_2",
         "children": {
           "ledger.menu2.inventory.item-valuation": {
@@ -96,6 +96,16 @@ export default [
           "ledger.menu2.inventory.inventory-transactions": {
             "label": "Inventory Transactions",
             "routeId": "voyzu.inventory-processing.page.inventory-transactions"
+          }
+        }
+      },
+      "ledger.menu2.finance": {
+        "label": "Finance Integration",
+        "icon": "account_balance",
+        "children": {
+          "ledger.menu2.finance.finance-transactions": {
+            "label": "Finance Transactions",
+            "path": "/ledger/integration/finance/finance-transactions"
           }
         }
       }
@@ -169,7 +179,6 @@ export default [
           },
           "ledger.menu3.financial-periods": {
             "label": "Financial Periods",
-            "icon": "calendar_month",
             "routeId": "voyzu.financial-years.page.list"
           }
         }

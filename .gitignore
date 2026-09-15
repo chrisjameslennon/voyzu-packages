@@ -4,3 +4,4 @@
 /.env.development
 /.env.local
 /.env.production
+AGENTS.md

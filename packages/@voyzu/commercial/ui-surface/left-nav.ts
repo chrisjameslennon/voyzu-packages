@@ -4,34 +4,26 @@ export default [
   {
     "label": "Commercial",
     "items": {
-      "commercial.menu1.customers": {
-        "label": "Customers",
-        "icon": "group",
-        "children": {
-          "commercial.menu1.customers.customers": {
-            "label": "Customers",
-            "routeId": "voyzu.commercial.customers.page.customers"
-          },
-          "commercial.menu1.customers.customer-price-lists": {
-            "label": "Customer Price Lists",
-            "routeId": "voyzu.commercial.customers.page.customerPriceLists"
-          }
-        }
-      },
-      "commercial.menu1.suppliers": {
-        "label": "Suppliers",
-        "icon": "local_shipping",
-        "children": {
-          "commercial.menu1.suppliers.suppliers": {
-            "label": "Suppliers",
-            "routeId": "voyzu.commercial.suppliers.page.suppliers"
-          }
-        }
-      },
       "commercial.menu1.sales": {
         "label": "Sales",
         "icon": "sell",
         "children": {
+          "commercial.menu1.sales.customers": {
+            "label": "Customers",
+            "routeId": "voyzu.commercial.customers.page.customers"
+          },
+          "commercial.menu1.sales.customer-categories": {
+            "label": "Customer Categories",
+            "path": "/commercial/customers/customer-categories"
+          },
+          "commercial.menu1.sales.customer-pricing": {
+            "label": "Customer Pricing",
+            "path": "/commercial/customers/pricing"
+          },
+          "commercial.menu1.sales.pricing-categories": {
+            "label": "Customer Pricing Categories",
+            "path": "/commercial/customers/pricing-categories"
+          },
           "commercial.menu1.sales.quotes": {
             "label": "Quotes",
             "routeId": "voyzu.commercial.sales.page.quotes"
@@ -46,6 +38,10 @@ export default [
         "label": "Purchasing",
         "icon": "shopping_cart",
         "children": {
+          "commercial.menu1.purchasing.suppliers": {
+            "label": "Suppliers",
+            "routeId": "voyzu.commercial.suppliers.page.suppliers"
+          },
           "commercial.menu1.purchasing.purchase-orders": {
             "label": "Purchase Orders",
             "routeId": "voyzu.commercial.purchasing.page.purchaseOrders"
@@ -60,17 +56,21 @@ export default [
             "label": "Products",
             "routeId": "voyzu.commercial.products.page.products"
           },
-          "commercial.menu1.products.product-options": {
-            "label": "Product Options",
-            "routeId": "voyzu.commercial.products.page.productOptions"
+          "commercial.menu1.products.product-categories": {
+            "label": "Product Categories",
+            "path": "/commercial/products/product-categories"
           },
           "commercial.menu1.products.product-option-lists": {
             "label": "Product Option Lists",
             "routeId": "voyzu.commercial.products.page.productOptionLists"
           },
-          "commercial.menu1.products.price-lists": {
-            "label": "Price Lists",
-            "routeId": "voyzu.commercial.products.page.priceLists"
+          "commercial.menu1.products.product-pricing": {
+            "label": "Product Pricing",
+            "path": "/commercial/products/pricing"
+          },
+          "commercial.menu1.products.pricing-categories": {
+            "label": "Product Pricing Categories",
+            "path": "/commercial/products/pricing-categories"
           }
         }
       },
