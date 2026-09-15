@@ -1,0 +1,26 @@
+.dialog { border: 0; padding: 0; margin: auto; width: calc(100% - 2rem); color: var(--voyzu-color-text); }
+.dialog::backdrop { background: var(--voyzu-color-overlay); backdrop-filter: blur(1px); }
+
+.radioChoices { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem; }
+.radioChoices legend { margin-bottom: 0.5rem; }
+.radioChoices label { display: inline-flex; align-items: center; gap: 0.5rem; font-size: var(--voyzu-font-size-body); }
+
+.adjustmentField { width: 50%; }
+
+.productLink {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: 1.75rem;
+  padding: 0 0.5rem;
+  border-radius: var(--voyzu-radius-control);
+  outline: 1px solid var(--voyzu-color-border);
+  color: var(--voyzu-color-link);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.productLink:hover, .productLink:focus-visible {
+  background: var(--voyzu-color-surface);
+  outline: 1px solid var(--voyzu-color-link);
+}

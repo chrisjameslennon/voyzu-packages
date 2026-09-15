@@ -1,6 +1,29 @@
 export const pageRoutes = {
+  "voyzu.commercial.products.page.productDetail": {
+    path: "/commercial/products/[code]",
+    pathParams: { code: { type: "string" } },
+    pageTitle: "Product",
+    loadPage: () => import("./server/pages/ProductDetailPage").then((module) => module.ProductDetailPage),
+    breadcrumbBase: [{ label: "Commercial" }, { label: "Products", href: "/commercial/products" }],
+    auth: { required: true, minRole: "STANDARD" },
+  },
+  "voyzu.commercial.products.page.manageLists": {
+    path: "/commercial/products/manage-lists",
+    pageTitle: "Manage Lists",
+    loadPage: () => import("./server/pages/ProductConfigurationPages").then((module) => module.ManageListsPage),
+    breadcrumbBase: [{ label: "Commercial" }, { label: "Products", href: "/commercial/products" }],
+    auth: { required: true, minRole: "STANDARD" },
+  },
+  "voyzu.commercial.products.page.productCategories": {
+    path: "/commercial/products/product-categories",
+    pageTitle: "Product Categories",
+    loadPage: () => import("./server/pages/ProductConfigurationPages").then((module) => module.ProductCategoriesPage),
+    breadcrumbBase: [{ label: "Commercial" }, { label: "Products", href: "/commercial/products" }],
+    auth: { required: true, minRole: "STANDARD" },
+  },
   "voyzu.commercial.products.page.products": {
     path: "/commercial/products",
+    queryParams: { pricingCategory: { type: "string" }, status: { type: "string" } },
     pageTitle: "Products",
     loadPage: () => import("./server/pages/ProductsPage").then((module) => module.ProductsPage),
     breadcrumbBase: [{ label: "Commercial" }],
@@ -17,13 +40,6 @@ export const pageRoutes = {
     path: "/commercial/products/option-lists",
     pageTitle: "Product Option Lists",
     loadPage: () => import("./server/pages/ProductOptionListsPage").then((module) => module.ProductOptionListsPage),
-    breadcrumbBase: [{ label: "Commercial" }, { label: "Products" }],
-    auth: { required: true, minRole: "STANDARD" },
-  },
-  "voyzu.commercial.products.page.priceLists": {
-    path: "/commercial/products/price-lists",
-    pageTitle: "Price Lists",
-    loadPage: () => import("./server/pages/PriceListsPage").then((module) => module.PriceListsPage),
     breadcrumbBase: [{ label: "Commercial" }, { label: "Products" }],
     auth: { required: true, minRole: "STANDARD" },
   },

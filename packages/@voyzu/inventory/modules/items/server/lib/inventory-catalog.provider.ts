@@ -19,3 +19,8 @@ export async function getOperational(id: number) {
 export async function bySkus(input: { organizationId: number; skus: string[] }) {
   return readOperationalItems(input.organizationId, input.skus);
 }
+
+export async function availabilityByOrganization({ organizationId }: { organizationId: number }) {
+  const { listStockPositions } = await import("../../../stock/server/lib/stock.service");
+  return (await listStockPositions(organizationId)).map(({ itemId, warehouseId, warehouseName, onHand, reserved, available }) => ({ itemId, warehouseId, warehouseName, onHand, reserved, available }));
+}

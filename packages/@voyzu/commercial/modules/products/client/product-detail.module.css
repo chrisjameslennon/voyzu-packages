@@ -1,0 +1,45 @@
+.optionsTable { table-layout: fixed; }
+.optionsTable th:last-child { width: 5rem; }
+.optionsTable td:first-child { overflow-wrap: anywhere; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.label { color: var(--voyzu-color-text-secondary); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+.muted { color: var(--voyzu-color-text-caption); font-size: 0.875rem; margin: 0; }
+.sectionHeading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+.sectionHeading h3, .sectionHeading h4 { margin: 0; }
+.optionCard { padding: 1.5rem; background: var(--voyzu-color-surface-muted); border: 1px solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-surface); display: grid; gap: 1rem; }
+.dialog { border: 1px solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-surface); padding: 0; width: min(620px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); background: var(--voyzu-color-surface); color: var(--voyzu-color-text); box-shadow: var(--voyzu-shadow-overlay); }
+.dialog::backdrop { background: var(--voyzu-color-overlay); }
+.emptyOptions { padding: 3rem 1.5rem; text-align: center; border: 1px solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-surface); background: var(--voyzu-color-surface); color: var(--voyzu-color-text-caption); font-size: var(--voyzu-font-size-body); }
+@media (max-width: 720px) { .fields { grid-template-columns: 1fr; } }
+
+.variantControls { display: grid; grid-template-columns: minmax(8rem, 1fr) minmax(0, 2fr); gap: 2rem; align-items: start; }
+.variantControls h3 { margin: 0; }
+.variantDivider { width: 100%; margin: 0; border: 0; border-top: 1px solid var(--voyzu-color-border); }
+@media (max-width: 720px) { .variantControls { grid-template-columns: minmax(0, 1fr); gap: 1rem; } }
+
+.variantSaveRow { display: flex; justify-content: flex-end; }
+
+.inventoryDetails { font-size: 0.875rem; }
+.inventoryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: 1.75rem;
+  padding: 0 0.5rem;
+  border-radius: var(--voyzu-radius-control);
+  outline: 1px solid var(--voyzu-color-border);
+  color: var(--voyzu-color-link);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.inventoryLink:hover, .inventoryLink:focus-visible {
+  background: var(--voyzu-color-surface);
+  outline: 1px solid var(--voyzu-color-link);
+}
+
+.inventoryInfo { display: grid; gap: 1rem; padding: 1rem; border: 1px solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-control); background: var(--voyzu-color-surface); font-size: 0.875rem; }
+.inventoryInfoHeader { display: flex; flex-wrap: wrap; gap: 2rem; }
+
+.inventoryInfoHeader { align-items: center; }
+.inventoryInfoHeader .inventoryLink { margin-left: auto; }

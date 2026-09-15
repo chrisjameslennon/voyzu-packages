@@ -1,5 +1,6 @@
 export const implementations = {
   "@erp/inventory-item": () => import("./server/lib/inventory-catalog.provider").then(m => ({ methods: {
+    availabilityByOrganization: ({ organization_id }: { organization_id: number }) => m.availabilityByOrganization({ organizationId: organization_id }),
     get: ({ id }: { id: number }) => m.get(id),
     byOrganization: ({ organization_id }: { organization_id: number }) => m.byOrganization({ organizationId: organization_id }),
   } })),

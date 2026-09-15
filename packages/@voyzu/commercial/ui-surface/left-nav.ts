@@ -4,6 +4,11 @@ export default [
   {
     "label": "Commercial",
     "items": {
+      "commercial.menu1.dashboard": {
+        "label": "Dashboard",
+        "icon": "chart_data",
+        "routeId": "voyzu.commercial.dashboard.page.dashboard"
+      },
       "commercial.menu1.sales": {
         "label": "Sales",
         "icon": "sell",
@@ -56,21 +61,21 @@ export default [
             "label": "Products",
             "routeId": "voyzu.commercial.products.page.products"
           },
+          "commercial.menu1.products.pricing-categories": {
+            "label": "Product Pricing",
+            "path": "/commercial/products/pricing-categories"
+          },
           "commercial.menu1.products.product-categories": {
             "label": "Product Categories",
-            "path": "/commercial/products/product-categories"
+            "routeId": "voyzu.commercial.products.page.productCategories"
           },
           "commercial.menu1.products.product-option-lists": {
             "label": "Product Option Lists",
             "routeId": "voyzu.commercial.products.page.productOptionLists"
           },
-          "commercial.menu1.products.product-pricing": {
-            "label": "Product Pricing",
-            "path": "/commercial/products/pricing"
-          },
-          "commercial.menu1.products.pricing-categories": {
-            "label": "Product Pricing Categories",
-            "path": "/commercial/products/pricing-categories"
+          "commercial.menu1.products.manage-lists": {
+            "label": "Manage Lists",
+            "routeId": "voyzu.commercial.products.page.manageLists"
           }
         }
       },

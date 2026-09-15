@@ -8,7 +8,7 @@ export function CommercialOrganizationSwitcher({ isCollapsed }: { isCollapsed: b
   return <OrganizationSwitcher
     isCollapsed={isCollapsed}
     onSelected={() => {
-      router.push("/commercial/products");
+      router.push("/commercial");
       router.refresh();
     }}
   />;
