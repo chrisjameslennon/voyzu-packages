@@ -6,30 +6,29 @@ import { ConfirmDialog, Toast, ValidationAlert, Alert, Badge, Breadcrumbs, Butto
 import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
-import { AddConfigurationModal } from "./AddConfigurationModal";
-import { transitionConfigurationAction } from "../server/actions/product-configuration.actions";
-import { configurationMeta } from "../types/product-configuration.dto";
-import type { ProductConfigurationKind, ProductConfigurationRowDto } from "../types/product-configuration.dto";
+import { AddCustomerConfigurationModal } from "./AddCustomerConfigurationModal";
+import { transitionCustomerConfigurationAction } from "../server/actions/customer-configuration.actions";
+
+import { customerConfigurationMeta, type CustomerConfigurationKind, type CustomerConfiguration } from "../types/customer-configuration.dto";
 
 const filterTabs: FilterTab[] = [
   { key: "status", label: "Status", type: "checkbox", options: ["ACTIVE", "INACTIVE"] },
 ];
 const PAGE_SIZE = 25;
 
-export function ProductConfigurationList({ products, hasOrganization, kind }: { products: ProductConfigurationRowDto[]; hasOrganization: boolean; kind: ProductConfigurationKind }) {
-  const isList = kind !== "categories";
-  const title = kind === "optionLists" ? "Product Option Lists" : isList ? "Manage Lists" : "Product Categories";
-  const itemLabel = isList ? "lists" : "categories";
-  const columns: DataTableColumn<ProductConfigurationRowDto>[] = [
-    { key: "code", label: "Code", width: "14%" },
-    { key: "name", label: isList ? "List Name" : "Category", width: "19%", render: (row) => <span className={listStyles.nameCell}>{row.name}</span> },
-    { key: "description", label: "Description", width: isList ? "24%" : undefined },
-    ...(isList ? [{ key: "values", label: "Values",  render: (row: ProductConfigurationRowDto) => row.values.join(", ") }] : []),
-    { key: "count", label: isList ? "Number of Values" : "Number of Products", width: "12%", align: "center" },
+export function CustomerConfigurationList({ customers, hasOrganization, kind }: { customers: CustomerConfiguration[]; hasOrganization: boolean; kind: CustomerConfigurationKind }) {
+  const meta = customerConfigurationMeta[kind];
+  const title = meta.title, itemLabel = kind === "categories" ? "categories" : "price lists";
+  const columns: DataTableColumn<CustomerConfiguration>[] = [
+    { key: "code", label: kind === "categories" ? "Category Code" : "Price List Code", width: "17%", render: (row) => <span className={listStyles.codeCell}>{row.code}</span> },
+    { key: "name", label: "Name", render: (row) => <span className={listStyles.nameCell}>{row.name}</span> },
+    { key: "description", label: "Description", width: "25%" },
+    ...(kind === "priceLists" ? [{ key: "value", label: "Adjustment", width: "16%", render: (row: CustomerConfiguration) => (row.direction === "increase" ? "+" : "?") + (row.method === "amount" ? "$" : "") + row.value.toFixed(2) + (row.method === "percentage" ? "%" : "") }] : []),
+    { key: "count", label: "Number of Customers", header: <>Number of<br />Customers</>, width: "13%", align: "center" },
     { key: "status", label: "Status", width: "10%", render: (row) => <Badge variant="soft" size="x-small" color={row.status === "ACTIVE" ? "success" : "neutral"}>{row.status}</Badge> },
   ];
   const router = useRouter();
-  const meta = configurationMeta[kind];
+
   const [adding,setAdding]=useState(false),[confirm,setConfirm]=useState(false),[error,setError]=useState(""),[toast,setToast]=useState("");
   const [pending,startTransition]=useTransition();
   const [refreshing, startRefresh] = useTransition();
@@ -42,23 +41,23 @@ export function ProductConfigurationList({ products, hasOrganization, kind }: { 
   const visibleRows = useMemo(() => {
     const query = search.trim().toLowerCase();
     const statuses = filters.status as string[] | undefined;
-    return products.filter((row) => (
-      (!query || [row.code, row.name, row.description, ...row.values].some((value) => value?.toLowerCase().includes(query)))
+    return customers.filter((row) => (
+      (!query || [row.code, row.name, row.description].some((value) => value?.toLowerCase().includes(query)))
       && (!statuses?.length || statuses.includes(row.status))
     ));
-  }, [products, search, filters]);
+  }, [customers, search, filters]);
   const totalPages = Math.max(1, Math.ceil(visibleRows.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pageRows = visibleRows.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-  const selectedRows = products.filter(({ id }) => selectedIds.has(id));
-  const transition=(operation:"activate"|"deactivate"|"delete")=>{setError("");startTransition(async()=>{try{const result=await transitionConfigurationAction(kind,selectedRows.map((row)=>row.code),operation);if(result.error){setError(result.error);return;}setSelectedIds(new Set());setToast(operation==="delete"?"Records deleted":operation==="activate"?"Records activated":"Records deactivated");router.refresh();}catch{setError("Unable to update. Please try again.");}});};
+  const selectedRows = customers.filter(({ id }) => selectedIds.has(id));
+  const transition=(operation:"activate"|"deactivate"|"delete")=>{setError("");startTransition(async()=>{try{const result=await transitionCustomerConfigurationAction(kind,selectedRows.map((row)=>row.code),operation);if(result.error){setError(result.error);return;}setSelectedIds(new Set());setToast(operation==="delete"?"Records deleted":operation==="activate"?"Records activated":"Records deactivated");router.refresh();}catch{setError("Unable to update. Please try again.");}});};
   const allSelected = pageRows.length > 0 && pageRows.every(({ id }) => selectedIds.has(id));
   const removeFilter = (key: string) => {
     setFilters((current) => { const next = { ...current }; delete next[key]; return next; });
     setPage(1);
   };
   const clearFilters = () => { setFilters({}); setSearch(""); setPage(1); };
-  const exportRows = async (rows: ProductConfigurationRowDto[], suffix: string) => {
+  const exportRows = async (rows: CustomerConfiguration[], suffix: string) => {
     setExporting(true);
     setExportError("");
     try {
@@ -68,7 +67,7 @@ export function ProductConfigurationList({ products, hasOrganization, kind }: { 
         body: JSON.stringify({
           filename: `${kind}_${suffix}`,
           columns: columns.map(({ key, label }) => ({ key, label })),
-          rows: rows.map((row) => ({ ...row })),
+          rows: rows.map((row) => ({ ...row, value: (row.direction === "increase" ? "+" : "-") + (row.method === "amount" ? "$" : "") + row.value.toFixed(2) + (row.method === "percentage" ? "%" : "") })),
         }),
       });
       if (!response.ok) throw new Error("Export failed");
@@ -79,7 +78,7 @@ export function ProductConfigurationList({ products, hasOrganization, kind }: { 
       link.click();
       URL.revokeObjectURL(url);
     } catch {
-      setExportError("Reference data could not be exported. Please try again.");
+      setExportError("Customers could not be exported. Please try again.");
     } finally {
       setExporting(false);
     }
@@ -90,11 +89,11 @@ export function ProductConfigurationList({ products, hasOrganization, kind }: { 
       <header className={layout.listHeader}>
         <div className={layout.slotBreadcrumb}><Breadcrumbs /></div>
         <div className={layout.slotTitle}>
-          <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>inventory_2</span></div>
+          <div className={listStyles.titleIcon}><span className={`material-symbols-outlined ${listStyles.titleIconSymbol}`}>group</span></div>
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>{title}</h1>
-          <div className={layout.slotTitleByline}><p className={typography.headingByline}>Maintain your product reference data.</p></div>
+          <div className={layout.slotTitleByline}><p className={typography.headingByline}>{kind === "categories" ? "Manage your customer categories." : "Manage customer price lists and pricing adjustments."}</p></div>
         </div>
-        {kind !== "lists" && <div className={layout.slotActions}><Button variant="primary" icon="add" className={layout.slotPrimaryAction} disabled={!hasOrganization||pending} onClick={()=>setAdding(true)}>{"Add "+meta.singular}</Button></div>}
+        <div className={layout.slotActions}><Button variant="primary" icon="add" className={layout.slotPrimaryAction} disabled={!hasOrganization||pending} onClick={()=>setAdding(true)}>{"Add "+meta.singular}</Button></div>
         <div className={layout.slotAlert}><ValidationAlert errors={error?[error]:[]} visible={!!error} onDismiss={()=>setError("")}/></div>
       </header>
       <div className={layout.listToolbar}>
@@ -105,13 +104,13 @@ export function ProductConfigurationList({ products, hasOrganization, kind }: { 
             <Button variant="secondary" icon="check_circle" disabled={pending||!selectedRows.some((row)=>row.status==="INACTIVE")} onClick={()=>transition("activate")}>Activate</Button>
             <Button variant="secondary" icon="block" disabled={pending||!selectedRows.some((row)=>row.status==="ACTIVE")} onClick={()=>transition("deactivate")}>Deactivate</Button>
             <Button variant="secondary-destructive" icon="delete" aria-label="Delete selected records" disabled={pending||!selectedRows.length} onClick={()=>setConfirm(true)}/>
-            <Button variant="plain" icon="sync" title="Refresh" aria-label="Refresh reference data" disabled={refreshing} onClick={() => startRefresh(() => router.refresh())} />
+            <Button variant="plain" icon="sync" title="Refresh" aria-label={"Refresh " + itemLabel} disabled={refreshing} onClick={() => startRefresh(() => router.refresh())} />
             <DropdownMenu
-              trigger={<Button variant="plain" icon="file_download" title="Export" aria-label="Export reference data" disabled={exporting || products.length === 0} />}
+              trigger={<Button variant="plain" icon="file_download" title="Export" aria-label={"Export " + itemLabel} disabled={exporting || customers.length === 0} />}
               items={[
                 { value: "selected", label: `Selected (${selectedRows.length})`, icon: "check_box", disabled: exporting || selectedRows.length === 0, onSelect: () => void exportRows(selectedRows, "selected") },
                 { value: "current-view", label: `Current view (${visibleRows.length})`, icon: "visibility", disabled: exporting || visibleRows.length === 0, onSelect: () => void exportRows(visibleRows, "current_view") },
-                { value: "full-dataset", label: `Full dataset (${products.length})`, icon: "database", disabled: exporting || products.length === 0, onSelect: () => void exportRows(products, "full_dataset") },
+                { value: "full-dataset", label: `Full dataset (${customers.length})`, icon: "database", disabled: exporting || customers.length === 0, onSelect: () => void exportRows(customers, "full_dataset") },
               ]}
               alignment="right"
               width={260}
@@ -125,7 +124,7 @@ export function ProductConfigurationList({ products, hasOrganization, kind }: { 
       <div className={layout.listBody}>
         <div className={layout.slotBody}>
           {exportError && <Alert variant="soft" color="danger" title="Export failed" text={exportError} />}
-          <DataTable<ProductConfigurationRowDto, number>
+          <DataTable<CustomerConfiguration, number>
             onRowClick={(row)=>router.push(meta.href+"/"+encodeURIComponent(row.code))}
             columns={columns}
             rows={pageRows}
@@ -141,21 +140,21 @@ export function ProductConfigurationList({ products, hasOrganization, kind }: { 
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setPage}
-            totalCount={products.length}
+            totalCount={customers.length}
             filteredCount={visibleRows.length}
             itemLabel={itemLabel}
-            hasData={products.length > 0}
+            hasData={customers.length > 0}
             loading={refreshing}
-            emptyIcon="inventory_2"
+            emptyIcon="group"
             emptyTitle={hasOrganization ? `No ${itemLabel} yet` : "Select an organization"}
-            emptyText={hasOrganization ? "Add the first "+meta.singular.toLowerCase()+"." : "Select an organization to view its reference data."}
-            emptyFilterText="No records match your search or filters"
-            mobileRender={(row) => <div className={listStyles.mobileCard}><div className={listStyles.mobileName}>{row.name}</div><div className={listStyles.mobileMeta}>{row.description}</div>{isList && <div className={listStyles.mobileMeta}>{row.values.join(", ")}</div>}<div className={listStyles.mobileMeta}>{row.count} {isList ? "values" : "products"}</div><Badge variant="soft" size="x-small" color={row.status === "ACTIVE" ? "success" : "neutral"}>{row.status}</Badge></div>}
+            emptyText={hasOrganization ? "Add the first "+meta.singular.toLowerCase()+"." : "Select an organization to view its customers."}
+            emptyFilterText="No customers match your search or filters"
+            mobileRender={(row) => <div className={listStyles.mobileCard}><div className={listStyles.mobileCode}>{row.code}</div><div className={listStyles.mobileName}>{row.name}</div><div className={listStyles.mobileMeta}>{row.description}</div><div className={listStyles.mobileMeta}>{row.count} customers</div><Badge variant="soft" size="x-small" color={row.status === "ACTIVE" ? "success" : "neutral"}>{row.status}</Badge></div>}
           />
         </div>
       </div>
-      {adding && kind !== "lists" && <AddConfigurationModal kind={kind} onClose={()=>setAdding(false)}/>}
-      <ConfirmDialog isOpen={confirm} title="Delete Records" message="Permanently delete the selected records?" confirmLabel="Delete" confirmVariant="danger" onClose={()=>setConfirm(false)} onConfirm={()=>{setConfirm(false);transition("delete");}}/>
+      {adding && <AddCustomerConfigurationModal kind={kind} onClose={()=>setAdding(false)}/>}
+      <ConfirmDialog isOpen={confirm} title={"Delete " + meta.title} message="Permanently delete the selected records?" confirmLabel="Delete" confirmVariant="danger" onClose={()=>setConfirm(false)} onConfirm={()=>{setConfirm(false);transition("delete");}}/>
       <Toast isVisible={!!toast} message={toast} onClose={()=>setToast("")}/>
     </div>
   );

@@ -1,4 +1,5 @@
 "use client";
+import { LinkButton } from "@voyzu/ui-components";
 
 import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
@@ -161,9 +162,9 @@ export function ProductDetailView({ initial, lists, categories, optionLists, pri
       <Field label="Name"><Input invalid={validation.hasError("name")} aria-label="Name" value={product.name} onChange={(event) => change("name", event.target.value)} /></Field>
       <Field label="Type"><SearchableSelect ariaLabel="Type" searchable={false} options={selectOptions(["Physical", "Service", "Other"])} value={product.type} onChange={(value) => change("type", value as ProductEditDto["type"])} /></Field>
       {referenceSelect("Category", "category", categories.filter((row) => row.status === "ACTIVE").map((row) => row.name))}
-      {referenceSelect("Brand", "brand", lists.find((row) => row.code === "BRAND")?.values ?? [])}
-      {referenceSelect("Manufacturer", "manufacturer", lists.find((row) => row.code === "MANUFACTURER")?.values ?? [])}
-      {referenceSelect("Sales Unit", "salesUnit", lists.find((row) => row.code === "SALES-UNIT")?.values ?? [])}
+      {referenceSelect("Brand", "brand", lists.find((row) => row.code === "BRAND" && row.status === "ACTIVE")?.values ?? [])}
+      {referenceSelect("Manufacturer", "manufacturer", lists.find((row) => row.code === "MANUFACTURER" && row.status === "ACTIVE")?.values ?? [])}
+      {referenceSelect("Sales Unit", "salesUnit", lists.find((row) => row.code === "SALES-UNIT" && row.status === "ACTIVE")?.values ?? [])}
       <Field label="Status"><Input aria-label="Status" value={product.status} disabled /></Field>
     </div>
     <Field label="Short Description"><Textarea invalid={validation.hasError("shortDescription")} aria-label="Short Description" rows={2} value={product.shortDescription} onChange={(event) => change("shortDescription", event.target.value)} /></Field>
@@ -231,7 +232,7 @@ export function ProductDetailView({ initial, lists, categories, optionLists, pri
         {product.useVariants && <h3 className={typography.sectionHeading}>{Object.values(variant.options).join(" / ")}</h3>}
         <Field label="Inventory Item"><SearchableSelect ariaLabel={"Inventory item for " + variant.sku} clearable placeholder="Select an inventory item" value={String(inventoryLinks[variant.id] ?? "")} options={(inventoryItems ?? []).filter((row) => row.status === "ACTIVE").map((row) => ({ value: String(row.id), label: row.sku + " - " + row.name }))} onChange={(value) => setInventoryLinks((current) => { const next = { ...current }; if (value) next[variant.id] = Number(value); else delete next[variant.id]; return next; })} /></Field>
         {item ? <div className={styles.inventoryInfo}>
-          <div className={styles.inventoryInfoHeader}><span><strong>SKU:</strong> {item.sku}</span><span><strong>Unit:</strong> {item.unit ?? "None"}</span><a className={styles.inventoryLink} href={"/inventory/items/" + encodeURIComponent(item.sku)}>View inventory item</a></div>
+          <div className={styles.inventoryInfoHeader}><span><strong>SKU:</strong> {item.sku}</span><span><strong>Unit:</strong> {item.unit ?? "None"}</span><LinkButton className={styles.inventoryLink} href={"/inventory/items/" + encodeURIComponent(item.sku)}>View inventory item</LinkButton></div>
           <h4 className={typography.sectionHeading}>Availability by Warehouse</h4>
           {item.quantityTracked ? <div className={detail.tableWrap}><table className={detail.table}><thead><tr><th>Warehouse</th><th>On Hand</th><th>Reserved</th><th>Available</th></tr></thead><tbody>
             {inventoryAvailability.filter((position) => position.itemId === item.id).map((position) => <tr key={position.warehouseId}><td>{position.warehouseName}</td><td>{position.onHand.toLocaleString()}</td><td>{position.reserved.toLocaleString()}</td><td>{position.available.toLocaleString()}</td></tr>)}
@@ -262,10 +263,10 @@ export function ProductDetailView({ initial, lists, categories, optionLists, pri
     <div className={layout.slotAlert}><ValidationAlert errors={[...(validation.showErrors ? validation.errors : []), ...(error ? [error] : [])]} visible={validation.showErrors || !!error} onDismiss={() => { validation.dismiss(); setError(""); }} /></div>
     <Toast isVisible={!!message} message={message} onClose={() => setMessage("")} />
     <main className={layout.mainSection}><fieldset disabled={pending} className={detail.fieldset}><TabGroup activeKey={tab} onChange={(key) => { setTab(key); validation.reset(); setError(""); }} tabs={[
-      { key: "details", label: "Details", content: <section className={detail.card}>{detailsContent}</section> }, 
+      { key: "details", label: "Details", content: <section className={detail.card}>{detailsContent}</section> }, { key: "pricing", label: "Pricing", content: <section className={detail.card}>{pricingContent}</section> }, 
       { key: "variants", label: "Variants", content: <section className={detail.card}>{variantsContent}</section> },
       ...(inventoryItems !== null ? [{ key: "inventory", label: "Inventory", content: <section className={detail.card}>{inventoryContent}</section> }] : []),
-      { key: "pricing", label: "Pricing", content: <section className={detail.card}>{pricingContent}</section> }, { key: "images", label: "Images", content: <section className={detail.card}>{imagesContent}</section> }, { key: "custom", label: "Custom Fields", content: <section className={detail.card}>{customFieldsContent}</section> },
+       { key: "images", label: "Images", content: <section className={detail.card}>{imagesContent}</section> }, { key: "custom", label: "Custom Fields", content: <section className={detail.card}>{customFieldsContent}</section> },
     ]} /></fieldset></main>
     <aside className={layout.statusSection}>
       <section className={detail.card}>

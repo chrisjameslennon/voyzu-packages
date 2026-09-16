@@ -1,4 +1,5 @@
 "use client";
+import { LinkButton } from "@voyzu/ui-components";
 
 import { AdjustPricingModal } from "./AdjustPricingModal";
 
@@ -83,7 +84,7 @@ export function PricingCategoryDetail({ initial }: { initial: PricingCategory })
         </div>
       </section>
       <section className={detail.card}>
-        <div className={detail.cardHeader}><h2 className={typography.sectionHeading + " " + detail.cardHeaderTitle}>Products</h2><a className={styles.productLink} href={"/commercial/products?" + new URLSearchParams({ pricingCategory: record.code, status: "all" })}>View Products</a></div>
+        <div className={detail.cardHeader}><h2 className={typography.sectionHeading + " " + detail.cardHeaderTitle}>Products</h2><LinkButton href={"/commercial/products?" + new URLSearchParams({ pricingCategory: record.code, status: "all" })}>View Products</LinkButton></div>
         <div className={detail.fieldGroup}><span className={typography.fieldLabel}>Number of Products</span><span className={typography.bodyText}>{record.count}</span></div>
       </section>
     </main>

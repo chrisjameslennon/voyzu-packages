@@ -20,26 +20,13 @@
 .variantSaveRow { display: flex; justify-content: flex-end; }
 
 .inventoryDetails { font-size: 0.875rem; }
-.inventoryLink {
-  display: inline-flex;
-  align-items: center;
-  justify-self: start;
-  min-height: 1.75rem;
-  padding: 0 0.5rem;
-  border-radius: var(--voyzu-radius-control);
-  outline: 1px solid var(--voyzu-color-border);
-  color: var(--voyzu-color-link);
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-.inventoryLink:hover, .inventoryLink:focus-visible {
-  background: var(--voyzu-color-surface);
-  outline: 1px solid var(--voyzu-color-link);
-}
+
 
 .inventoryInfo { display: grid; gap: 1rem; padding: 1rem; border: 1px solid var(--voyzu-color-border); border-radius: var(--voyzu-radius-control); background: var(--voyzu-color-surface); font-size: 0.875rem; }
 .inventoryInfoHeader { display: flex; flex-wrap: wrap; gap: 2rem; }
 
 .inventoryInfoHeader { align-items: center; }
 .inventoryInfoHeader .inventoryLink { margin-left: auto; }
+
+.standardDialog { border: 0; padding: 0; margin: auto; width: calc(100% - 2rem); color: var(--voyzu-color-text); }
+.standardDialog::backdrop { background: var(--voyzu-color-overlay); backdrop-filter: blur(1px); }

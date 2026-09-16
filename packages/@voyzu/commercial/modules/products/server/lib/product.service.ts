@@ -21,7 +21,7 @@ const productsByOrganization: Map<number, Map<number, PrototypeProduct>> =
 
 export async function upsertSampleProduct(
   organizationId: number,
-  input: Omit<ProductListRowDto, "id" | "numberOfVariants" | "itemSku"> & { manufacturer: string },
+  input: Omit<ProductListRowDto, "id" | "numberOfVariants" | "itemSku"> & { manufacturer: string; sampleDetails?: Pick<ProductEditDto, "shortDescription" | "description" | "customFields"> },
 ): Promise<void> {
   let products = productsByOrganization.get(organizationId);
   if (!products) {
@@ -42,9 +42,9 @@ export async function upsertSampleProduct(
       variantPricing: "BASE_PRICE",
       name: product.name, type: product.type, category: product.category, brand: product.brand,
       manufacturer: product.manufacturer, salesUnit: product.salesUnit, status: product.status,
-      shortDescription: "", description: "", images: [], options: [],
+      shortDescription: input.sampleDetails?.shortDescription ?? "", description: input.sampleDetails?.description ?? "", images: [], options: [],
       variants: [{ id: String(existing?.defaultVariant.id ?? id), sku: product.code, basePrice: product.basePrice, status: product.status, options: {}, imagePath: "" }],
-      basePrice: product.basePrice, pricingCategoryCode: product.pricingCategoryCode, customFields: [],
+      basePrice: product.basePrice, pricingCategoryCode: product.pricingCategoryCode, customFields: input.sampleDetails?.customFields ?? [],
     },
   });
 }
@@ -109,6 +109,13 @@ export async function saveProduct(organizationId: number, code: string, input: P
   if (input.images.length && input.images.filter((image) => image.primary).length !== 1) throw new Error("Choose one primary image.");
   const { listProductConfiguration } = await import("./product-configuration.service");
   const sharedLists = await listProductConfiguration(organizationId, "optionLists");
+  const lists = await listProductConfiguration(organizationId, "lists");
+  const categories = await listProductConfiguration(organizationId, "categories");
+  if (input.category && input.category !== current.category && !categories.some((row) => row.status === "ACTIVE" && row.name === input.category)) throw new Error("Select an active product category.");
+  for (const [field, listCode] of [["brand", "BRAND"], ["manufacturer", "MANUFACTURER"], ["salesUnit", "SALES-UNIT"]] as const) {
+    if (input[field] && input[field] !== current[field] && !lists.some((row) => row.code === listCode && row.status === "ACTIVE" && row.values.includes(input[field]!))) throw new Error("Select an available " + field + " value.");
+  }
+  if (!unique(input.customFields.map((field) => field.name.trim().toLowerCase()))) throw new Error("Custom field names must be unique.");
   for (const option of input.options) {
     if (option.sourceListCode) {
       const list = sharedLists.find((row) => row.code === option.sourceListCode && row.status === "ACTIVE");
@@ -162,4 +169,38 @@ export function adjustProductBasePrices(organizationId: number, input: { codes: 
     for (const { product, after } of changes) records!.set(product.id, { ...product, basePrice: after, detail: product.detail ? { ...product.detail, basePrice: after } : undefined, updatedAt: Date.now() });
   }
   return { count: changes.length, signature };
+}
+
+export async function createProduct(organizationId: number, input: { code: string; name: string; type: ProductEditDto["type"] }) {
+ const code = input.code.trim().toUpperCase();
+ if (["pricing-categories", "product-categories", "manage-lists", "option-lists", "options"].includes(code.toLowerCase())) throw new Error("This product code is reserved. Choose another code.");
+ if (Array.from(productsByOrganization.get(organizationId)?.values() ?? []).some((row) => row.code.toUpperCase() === code)) throw new Error("A product with this code already exists.");
+ await upsertSampleProduct(organizationId, { code, name: input.name.trim(), type: input.type, basePrice: 0, pricingCategoryCode: null, category: null, brand: null, manufacturer: "", salesUnit: null, status: "ACTIVE" });
+ return (await getProduct(organizationId, code))!;
+}
+export function productConfigurationReferences(organizationId: number) {
+ return Array.from(productsByOrganization.get(organizationId)?.values() ?? [], (row) => ({ id: row.id, code: row.code, name: row.name, category: row.category, brand: row.brand, manufacturer: row.manufacturer, salesUnit: row.salesUnit, options: row.detail?.options ?? [] }));
+}
+export function renameProductCategory(organizationId: number, oldName: string, name: string) {
+ for (const row of productsByOrganization.get(organizationId)?.values() ?? []) if (row.category === oldName) {
+   row.category = name; if (row.detail) row.detail.category = name; row.updatedAt = Date.now();
+ }
+}
+
+export async function changeProductsCategory(organizationId: number, codes: string[], kind: "category" | "pricingCategory", categoryCode: string) {
+  const { listProductConfiguration } = await import("./product-configuration.service");
+  const { listPricingCategories } = await import("../../../product-pricing-categories/server/lib/pricing-category.service");
+  const categories = kind === "category" ? await listProductConfiguration(organizationId, "categories") : listPricingCategories(organizationId);
+  const category = categories.find((row) => row.code === categoryCode && row.status === "ACTIVE");
+  if (!category) throw new Error("Select an active category.");
+  const records = productsByOrganization.get(organizationId);
+  const selected = [...new Set(codes)].map((code) => [...(records?.values() ?? [])].find((row) => row.code === code));
+  if (selected.some((row) => !row)) throw new Error("A selected product no longer exists.");
+  const updatedAt = Date.now();
+  for (const row of selected) {
+    if (!row) continue;
+    if (kind === "category") { row.category = category.name; if (row.detail) row.detail.category = category.name; }
+    else { row.pricingCategoryCode = category.code; if (row.detail) row.detail.pricingCategoryCode = category.code; }
+    row.updatedAt = updatedAt;
+  }
 }

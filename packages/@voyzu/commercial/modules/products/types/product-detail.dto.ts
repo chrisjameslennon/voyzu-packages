@@ -40,3 +40,5 @@ export type ProductEditDto = Type.Static<typeof ProductEditDto>;
 export type ProductOption = Type.Static<typeof ProductOptionDto>;
 export type ProductVariant = Type.Static<typeof ProductVariantDto>;
 export type ProductDetail = ProductEditDto & { id: number; code: string; createdAt: number; updatedAt?: number };
+
+export const ProductCreateDto = Type.Object({ code: Type.String({ pattern: "^[A-Za-z0-9][A-Za-z0-9_-]*$", maxLength: 50 }), name: ProductEditDto.properties.name, type: ProductEditDto.properties.type }, { additionalProperties: false });

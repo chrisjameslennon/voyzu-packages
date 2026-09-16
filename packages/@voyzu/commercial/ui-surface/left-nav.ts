@@ -19,15 +19,11 @@ export default [
           },
           "commercial.menu1.sales.customer-categories": {
             "label": "Customer Categories",
-            "path": "/commercial/customers/customer-categories"
+            "routeId": "voyzu.commercial.customers.page.customerCategories"
           },
           "commercial.menu1.sales.customer-pricing": {
-            "label": "Customer Pricing",
-            "path": "/commercial/customers/pricing"
-          },
-          "commercial.menu1.sales.pricing-categories": {
-            "label": "Customer Pricing Categories",
-            "path": "/commercial/customers/pricing-categories"
+            "label": "Customer Price Lists",
+            "routeId": "voyzu.commercial.customers.page.customerPriceLists"
           },
           "commercial.menu1.sales.quotes": {
             "label": "Quotes",

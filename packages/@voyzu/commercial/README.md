@@ -51,3 +51,17 @@ The product-pricing-categories module uses organization-scoped in-memory storage
 Assign a category on a product's Pricing tab. Counts include active and inactive products. View Products opens the products list with selected pricing categories checked and all statuses included, so the list matches those counts. Pricing Category is a filter, not a product list column.
 
 Add sample data upserts Coffee and Tea, Accessories, and Services pricing categories and assigns the ten sample products to them.
+
+## Product screen completion
+
+Products has a Create Product modal and list activation, deactivation and deletion actions. Product Categories and Product Option Lists have create modals. These screens and Manage Lists have detail routes, status actions, audit panels and usage displays. Manage Lists only edits the built-in Brand, Manufacturer and Sales Unit lists; creating additional lists is not supported. List values can be added, edited and removed, then persisted with Save. Used values cannot be renamed or removed, and referenced categories/lists cannot be deactivated or deleted. Renaming a product category preserves its product assignments. Brand, Manufacturer and Sales Unit remain required lists.
+
+Sample data upserts descriptive product content and custom fields, shared values, categories and pricing assignments. Variants remain off and pricing defaults to the product base price. Existing active Inventory items are linked only when their SKU matches the sample product code; no inventory records are created. Images remain user-supplied paths. The legacy Product Options route redirects to Product Option Lists.
+
+## Customer prototype
+
+Customers have organization-scoped in-memory CRUD at /commercial/customers, independent of Party and the composed customer internal API. Fields are code, name, status, primary contact name, email, notes, and an addresses array. Addresses have an address_type (PRIMARY, SHIPPING, POSTAL) plus address_line_1, address_line_2, city, region_or_state, postal_code and country_code. Country codes use two uppercase letters. Code is immutable after creation. The detail page uses the shared status and audit panels; audit events and database persistence are deferred until after prototyping.
+
+The standard sample-data script and dashboard button upsert three customers, including contact details, all address types and an inactive customer. Records reset with the server process.
+
+Customer Categories and Customer Price Lists provide in-memory CRUD, status filtering, bulk actions, export, customer counts and linked-customer detail sections. Customers store categoryCode and priceListCode; selectors allow active references and retain current selections. In-use records cannot be deleted or deactivated. Customer price lists store an increase/decrease rule by percentage or amount, with two-decimal precision. Percentage decreases cannot exceed 100%. The customer-pricing service applies the saved rule to a resolved product or variant base price on demand, rounds to two decimals, and rejects negative results without changing product base prices. Sales screens can consume this service when implemented. Existing composed customer/price-list internal API contracts remain unchanged. The sample-data script upserts three categories and five price lists and links the three sample customers.

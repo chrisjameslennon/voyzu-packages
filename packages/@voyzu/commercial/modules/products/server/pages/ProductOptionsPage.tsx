@@ -1,6 +1,3 @@
 import "server-only";
-import { CommercialPageShell } from "../../../common/server/CommercialPageShell";
-
-export function ProductOptionsPage() {
-  return <CommercialPageShell title="Product Options" icon="inventory_2" />;
-}
+import { redirect } from "next/navigation";
+export function ProductOptionsPage() { redirect("/commercial/products/option-lists"); return null; }

@@ -1,6 +1,10 @@
+import { getCustomerConfiguration, saveCustomerConfiguration, transitionCustomerConfiguration } from "../modules/customers/server/lib/customer-configuration.service";
+import { emptyCustomer, emptyAddress } from "../modules/customers/types/customer.dto";
+import { getCustomer, saveCustomer, transitionCustomers } from "../modules/customers/server/lib/customer.service";
 import { seedPricingCategory } from "../modules/product-pricing-categories/server/lib/pricing-category.service";
 import { internalApi } from "@voyzu/capability/internal-api";
-import { upsertSampleProduct } from "../modules/products/server/lib/product.service";
+import { getProduct, upsertSampleProduct } from "../modules/products/server/lib/product.service";
+import { loadInventoryItems, saveInventoryLinks } from "../modules/products/server/lib/product-inventory.service";
 import { upsertProductConfiguration } from "../modules/products/server/lib/product-configuration.service";
 
 const products = [
@@ -23,7 +27,8 @@ export async function sampleData(): Promise<void> {
     throw new Error("Active organization TESTCO was not found. Run @voyzu/organization:sampleData first.");
   }
   await seedSampleProducts(organization.organization_id);
-  console.log(`Commercial sample data ready for TESTCO: ${products.length} products in this process's memory.`);
+  seedSampleCustomers(organization.organization_id);
+  console.log(`Commercial sample data ready for TESTCO: ${products.length} products and 3 customers in this process's memory.`);
 }
 
 export async function seedSampleProducts(organizationId: number): Promise<void> {
@@ -51,10 +56,69 @@ export async function seedSampleProducts(organizationId: number): Promise<void> 
     });
   }
   for (const category of [{ code: "COFFEE-TEA", name: "Coffee and Tea" }, { code: "ACCESSORIES", name: "Accessories" }, { code: "SERVICES", name: "Services" }]) seedPricingCategory(organizationId, category);
+  const inventoryItems = await loadInventoryItems(organizationId);
   for (const product of products) {
     const pricingCategoryCode = product.type === "Service" ? "SERVICES" : product.category === "Coffee & Tea" ? "COFFEE-TEA" : "ACCESSORIES";
-    await upsertSampleProduct(organizationId, { ...product, pricingCategoryCode });
+    const descriptions: Record<string, string> = {
+      COFFEE: "A balanced whole-bean blend with chocolate and caramel notes. Roasted for espresso and filter brewing.",
+      BOX: "A protective shipping box for coffee gifts and accessories. Supplied flat for easy storage.",
+      GIFT: "A selection of coffee and accessories, packaged together for gifting.",
+      MUG: "A ceramic mug for everyday coffee and tea. Dishwasher safe.",
+      FILTER: "A reusable filter for pour-over coffee. Rinse after use and allow to dry.",
+      TEA: "Black tea blended with bergamot for a classic Earl Grey flavour.",
+      BOTTLE: "A reusable insulated bottle for hot and cold drinks. Hand wash recommended.",
+      DELIVERY: "Local delivery of your order to an address within our delivery area.",
+      TRAINING: "A practical barista training session covering espresso preparation and milk texturing.",
+      APRON: "A durable canvas apron with useful pockets for cafe and workshop use.",
+    };
+    await upsertSampleProduct(organizationId, { ...product, pricingCategoryCode, sampleDetails: {
+      shortDescription: descriptions[product.code].split(". ")[0] + ".",
+      description: descriptions[product.code],
+      customFields: product.type === "Service" ? [{ name: "Booking required", value: product.code === "TRAINING" ? "Yes" : "No" }] : [{ name: "Care instructions", value: product.code === "MUG" ? "Dishwasher safe" : product.code === "BOTTLE" ? "Hand wash" : "Store in a cool, dry place" }],
+    } });
+    const item = inventoryItems?.find((item) => item.status === "ACTIVE" && item.sku.toUpperCase() === product.code);
+    if (item) { const saved = await getProduct(organizationId, product.code); if (saved) saveInventoryLinks(organizationId, product.code, { [saved.variants[0].id]: item.id }); }
   }
 }
 
 export default sampleData;
+
+/** Inserts or replaces sample customers by code, preserving their identities. */
+export function seedSampleCustomers(organizationId: number): void {
+  for (const [kind, rows] of [
+    ["categories", [
+      { code: "HOSPITALITY", name: "Hospitality", description: "Cafes and hospitality businesses.", direction: "decrease", method: "percentage", value: 0 },
+      { code: "CORPORATE", name: "Corporate", description: "Office and business customers.", direction: "decrease", method: "percentage", value: 0 },
+      { code: "RETAIL", name: "Retail", description: "Retail businesses.", direction: "decrease", method: "percentage", value: 0 },
+    ]],
+    ["priceLists", [
+      { code: "STANDARD", name: "Standard", description: "Standard customer pricing.", direction: "decrease", method: "percentage", value: 0 },
+      { code: "PREFERRED", name: "Preferred", description: "Preferred customer discount.", direction: "decrease", method: "amount", value: 5 },
+      { code: "WHOLESALE", name: "Wholesale", description: "Wholesale customer discount.", direction: "decrease", method: "percentage", value: 10 },
+      { code: "PREMIUM", name: "Premium", description: "Premium service pricing.", direction: "increase", method: "percentage", value: 5 },
+      { code: "HANDLING", name: "Handling", description: "Fixed handling adjustment.", direction: "increase", method: "amount", value: 2 },
+    ]],
+  ] as const) {
+    for (const row of rows) {
+      const current = getCustomerConfiguration(organizationId, kind, row.code);
+      saveCustomerConfiguration(organizationId, kind, row, current?.code);
+      transitionCustomerConfiguration(organizationId, kind, [row.code], "activate");
+    }
+  }
+  const samples = [
+    { code: "HARBOUR-CAFE", name: "Harbour Cafe", primaryContactName: "Alex Morgan", email: "alex@harbour-cafe.example", city: "Auckland", region: "Auckland", postal: "1010", street: "12 Sample Street", status: "ACTIVE" },
+    { code: "CITY-OFFICES", name: "City Offices", primaryContactName: "Sam Taylor", email: "sam@city-offices.example", city: "Wellington", region: "Wellington", postal: "6011", street: "24 Example Road", status: "ACTIVE" },
+    { code: "GARDEN-STORE", name: "Garden Store", primaryContactName: "Jamie Lee", email: "jamie@garden-store.example", city: "Christchurch", region: "Canterbury", postal: "8011", street: "36 Demo Lane", status: "INACTIVE" },
+  ] as const;
+  for (const sample of samples) {
+    const primary = { ...emptyAddress("PRIMARY"), address_line_1: sample.street, city: sample.city, region_or_state: sample.region, postal_code: sample.postal, country_code: "NZ" };
+    const current = getCustomer(organizationId, sample.code);
+    saveCustomer(organizationId, { ...emptyCustomer(), code: sample.code, name: sample.name, primaryContactName: sample.primaryContactName, email: sample.email,
+      categoryCode: sample.code === "HARBOUR-CAFE" ? "HOSPITALITY" : sample.code === "CITY-OFFICES" ? "CORPORATE" : "RETAIL",
+      priceListCode: sample.code === "HARBOUR-CAFE" ? "WHOLESALE" : sample.code === "CITY-OFFICES" ? "PREFERRED" : "STANDARD",
+      addresses: [primary, { ...primary, address_type: "SHIPPING", address_line_2: "Deliver to reception" }, { ...primary, address_type: "POSTAL", address_line_1: "PO Box 100", address_line_2: "" }],
+      notes: "Sample customer for the Commercial prototype.",
+    }, current?.code);
+    transitionCustomers(organizationId, [sample.code], sample.status === "ACTIVE" ? "activate" : "deactivate");
+  }
+}

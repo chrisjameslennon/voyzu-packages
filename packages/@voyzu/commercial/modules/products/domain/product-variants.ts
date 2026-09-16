@@ -15,7 +15,7 @@ export function generateVariants(code: string, options: ProductOption[], existin
   for (const option of options) {
     combinations = combinations.flatMap((combination) => option.values.map((value) => ({ ...combination, [option.id]: value })));
   }
-  const result = existing.map((variant) => ({ ...variant, basePrice: variant.basePrice ?? basePrice, status: variantMatchesOptions(variant, options) ? variant.status : "INACTIVE" as const }));
+  const result = existing.map((variant) => ({ ...variant, basePrice: variant.basePrice ?? basePrice, status: variantMatchesOptions(variant, options) ? "ACTIVE" as const : "INACTIVE" as const }));
   const keys = new Set(existing.map((variant) => combinationKey(variant.options)));
   for (const combination of combinations) {
     if (keys.has(combinationKey(combination))) continue;

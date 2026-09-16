@@ -67,3 +67,60 @@ export async function saveProductInventoryAction(code: string, links: Record<str
     return { links };
   } catch (error) { return { error: error instanceof Error ? error.message : "Inventory links could not be saved." }; }
 }
+
+export async function createProductAction(input: unknown, inventoryItemId?: number) {
+ try {
+  const { ProductCreateDto } = await import("../../types/product-detail.dto");
+  if (!Check(ProductCreateDto, input)) throw new Error("Supply a valid product code, name and type.");
+  const { selectedOrganization } = await internalApi.call("@core/organization-context", "get", {});
+  if (!selectedOrganization) throw new Error("Select an organization first.");
+  const { loadInventoryItems, saveInventoryLinks } = await import("../lib/product-inventory.service");
+  if (inventoryItemId !== undefined) {
+    if (!Number.isSafeInteger(inventoryItemId) || inventoryItemId <= 0) throw new Error("Select an inventory item.");
+    const items = await loadInventoryItems(selectedOrganization.organization_id);
+    if (!items?.some((item) => item.id === inventoryItemId && item.status === "ACTIVE")) throw new Error("Select an active inventory item belonging to this organization.");
+  }
+  const { createProduct } = await import("../lib/product.service");
+  const product = await createProduct(selectedOrganization.organization_id, input);
+  if (inventoryItemId !== undefined) saveInventoryLinks(selectedOrganization.organization_id, product.code, { [product.variants[0].id]: inventoryItemId });
+  refreshProduct(product.code); return { product };
+ } catch (error) { return { error: error instanceof Error ? error.message : "Unable to create product." }; }
+}
+export async function transitionProductsAction(codes: string[], operation: "activate" | "deactivate" | "delete") {
+ try {
+  if (!Array.isArray(codes) || !codes.length || !codes.every((code) => typeof code === "string") || !["activate", "deactivate", "delete"].includes(operation)) throw new Error("Invalid product selection.");
+  const { selectedOrganization } = await internalApi.call("@core/organization-context", "get", {});
+  if (!selectedOrganization) throw new Error("Select an organization first.");
+  const id = selectedOrganization.organization_id;
+  if ((await Promise.all(codes.map((code) => getProduct(id, code)))).some((product) => !product)) throw new Error("A selected product no longer exists.");
+  for (const code of new Set(codes)) { await transitionProduct(id, code, operation); refreshProduct(code); }
+  return { success: true };
+ } catch (error) { return { error: error instanceof Error ? error.message : "Unable to update products." }; }
+}
+
+export async function changeProductsCategoryAction(codes: string[], kind: "category" | "pricingCategory", categoryCode: string) {
+  try {
+    if (!Array.isArray(codes) || !codes.length || !codes.every((code) => typeof code === "string" && code.length > 0) || !["category", "pricingCategory"].includes(kind) || typeof categoryCode !== "string" || !categoryCode) throw new Error("Select products and a category.");
+    const { selectedOrganization } = await internalApi.call("@core/organization-context", "get", {});
+    if (!selectedOrganization) throw new Error("Select an organization first.");
+    const { changeProductsCategory } = await import("../lib/product.service");
+    await changeProductsCategory(selectedOrganization.organization_id, codes, kind, categoryCode);
+    for (const code of new Set(codes)) refreshProduct(code);
+    revalidatePath("/commercial/products/product-categories");
+    revalidatePath("/commercial/products/product-categories/[code]", "page");
+    revalidatePath("/commercial/products/pricing-categories");
+    revalidatePath("/commercial/products/pricing-categories/[code]", "page");
+    return { success: true };
+  } catch (error) { return { error: error instanceof Error ? error.message : "Unable to update products." }; }
+}
+
+export async function productCreationInventoryItemsAction() {
+  try {
+    const { selectedOrganization } = await internalApi.call("@core/organization-context", "get", {});
+    if (!selectedOrganization) throw new Error("Select an organization first.");
+    const { loadInventoryItems } = await import("../lib/product-inventory.service");
+    const items = await loadInventoryItems(selectedOrganization.organization_id);
+    if (!items) throw new Error("Inventory is not available.");
+    return { items: items.filter((item) => item.status === "ACTIVE").map(({ id, sku, name }) => ({ id, sku, name })) };
+  } catch (error) { return { error: error instanceof Error ? error.message : "Unable to load inventory items." }; }
+}

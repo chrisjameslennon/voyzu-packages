@@ -1,4 +1,8 @@
 export const pageRoutes = {
+  "voyzu.commercial.products.page.categoryDetail": { path: "/commercial/products/product-categories/[code]", pathParams: { code: { type: "string" } }, pageTitle: "Product Categories", loadPage: () => import("./server/pages/ProductConfigurationDetailPages").then((module) => module.ProductCategoryDetailPage), breadcrumbBase: [{ label: "Commercial" }, { label: "Products", href: "/commercial/products" }, { label: "Product Categories", href: "/commercial/products/product-categories" }], auth: { required: true, minRole: "STANDARD" } },
+  "voyzu.commercial.products.page.listDetail": { path: "/commercial/products/manage-lists/[code]", pathParams: { code: { type: "string" } }, pageTitle: "Manage Lists", loadPage: () => import("./server/pages/ProductConfigurationDetailPages").then((module) => module.ProductListDetailPage), breadcrumbBase: [{ label: "Commercial" }, { label: "Products", href: "/commercial/products" }, { label: "Manage Lists", href: "/commercial/products/manage-lists" }], auth: { required: true, minRole: "STANDARD" } },
+  "voyzu.commercial.products.page.optionListDetail": { path: "/commercial/products/option-lists/[code]", pathParams: { code: { type: "string" } }, pageTitle: "Product Option Lists", loadPage: () => import("./server/pages/ProductConfigurationDetailPages").then((module) => module.ProductOptionListDetailPage), breadcrumbBase: [{ label: "Commercial" }, { label: "Products", href: "/commercial/products" }, { label: "Product Option Lists", href: "/commercial/products/option-lists" }], auth: { required: true, minRole: "STANDARD" } },
+
   "voyzu.commercial.products.page.productDetail": {
     path: "/commercial/products/[code]",
     pathParams: { code: { type: "string" } },
