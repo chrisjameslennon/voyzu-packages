@@ -121,6 +121,19 @@ export async function productCreationInventoryItemsAction() {
     const { loadInventoryItems } = await import("../lib/product-inventory.service");
     const items = await loadInventoryItems(selectedOrganization.organization_id);
     if (!items) throw new Error("Inventory is not available.");
-    return { items: items.filter((item) => item.status === "ACTIVE").map(({ id, sku, name }) => ({ id, sku, name })) };
+    const availability = await internalApi.call("@erp/inventory-item", "availabilityByOrganization", { organization_id: selectedOrganization.organization_id });
+    return { items: items.filter((item) => item.status === "ACTIVE").map((item) => ({ ...item, unitsOnHand: availability.filter((stock) => stock.itemId === item.id).reduce((total, stock) => total + stock.onHand, 0) })) };
   } catch (error) { return { error: error instanceof Error ? error.message : "Unable to load inventory items." }; }
+}
+
+export async function createProductsFromInventoryAction(itemIds: number[]) {
+  try {
+    if (!Array.isArray(itemIds) || !itemIds.length || !itemIds.every((id) => Number.isSafeInteger(id) && id > 0)) throw new Error("Select inventory items.");
+    const { selectedOrganization } = await internalApi.call("@core/organization-context", "get", {});
+    if (!selectedOrganization) throw new Error("Select an organization first.");
+    const { createProductsFromInventory } = await import("../lib/product.service");
+    const codes = await createProductsFromInventory(selectedOrganization.organization_id, itemIds);
+    for (const code of codes) refreshProduct(code);
+    return { count: codes.length };
+  } catch (error) { return { error: error instanceof Error ? error.message : "Unable to create products." }; }
 }

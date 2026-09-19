@@ -11,7 +11,7 @@ import type { CustomerConfiguration } from "../types/customer-configuration.dto"
 import type { Customer, CustomerInput } from "../types/customer.dto";
 import { saveCustomerAction, transitionCustomersAction } from "../server/actions/customer.actions";
 import { CustomerFields, useCustomerValidation } from "./CustomerFields";
-const inputOf = ({ code, name, primaryContactName, email, categoryCode, priceListCode, addresses, notes }: Customer): CustomerInput => ({ code, name, primaryContactName, email, categoryCode, priceListCode, addresses, notes });
+const inputOf = ({ code, name, primaryContactName, email, categoryCode, priceListCode, usePostalAddressForShipping, addresses, notes }: Customer): CustomerInput => ({ code, name, primaryContactName, email, categoryCode, priceListCode, usePostalAddressForShipping, addresses, notes });
 export function CustomerDetailView({ initial, categories, priceLists }: { initial: Customer; categories: CustomerConfiguration[]; priceLists: CustomerConfiguration[] }) {
   const router = useRouter(), pathname = usePathname();
   const [record, setRecord] = useState(initial);

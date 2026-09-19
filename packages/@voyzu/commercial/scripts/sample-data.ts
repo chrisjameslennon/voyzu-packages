@@ -73,7 +73,7 @@ export async function seedSampleProducts(organizationId: number): Promise<void> 
     };
     await upsertSampleProduct(organizationId, { ...product, pricingCategoryCode, sampleDetails: {
       shortDescription: descriptions[product.code].split(". ")[0] + ".",
-      description: descriptions[product.code],
+      description: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: descriptions[product.code] }] }] },
       customFields: product.type === "Service" ? [{ name: "Booking required", value: product.code === "TRAINING" ? "Yes" : "No" }] : [{ name: "Care instructions", value: product.code === "MUG" ? "Dishwasher safe" : product.code === "BOTTLE" ? "Hand wash" : "Store in a cool, dry place" }],
     } });
     const item = inventoryItems?.find((item) => item.status === "ACTIVE" && item.sku.toUpperCase() === product.code);
@@ -111,12 +111,13 @@ export function seedSampleCustomers(organizationId: number): void {
     { code: "GARDEN-STORE", name: "Garden Store", primaryContactName: "Jamie Lee", email: "jamie@garden-store.example", city: "Christchurch", region: "Canterbury", postal: "8011", street: "36 Demo Lane", status: "INACTIVE" },
   ] as const;
   for (const sample of samples) {
-    const primary = { ...emptyAddress("PRIMARY"), address_line_1: sample.street, city: sample.city, region_or_state: sample.region, postal_code: sample.postal, country_code: "NZ" };
+    const postal = { ...emptyAddress("POSTAL"), address_line_1: sample.street, city: sample.city, region_or_state: sample.region, postal_code: sample.postal, country_code: "NZ" };
     const current = getCustomer(organizationId, sample.code);
     saveCustomer(organizationId, { ...emptyCustomer(), code: sample.code, name: sample.name, primaryContactName: sample.primaryContactName, email: sample.email,
       categoryCode: sample.code === "HARBOUR-CAFE" ? "HOSPITALITY" : sample.code === "CITY-OFFICES" ? "CORPORATE" : "RETAIL",
       priceListCode: sample.code === "HARBOUR-CAFE" ? "WHOLESALE" : sample.code === "CITY-OFFICES" ? "PREFERRED" : "STANDARD",
-      addresses: [primary, { ...primary, address_type: "SHIPPING", address_line_2: "Deliver to reception" }, { ...primary, address_type: "POSTAL", address_line_1: "PO Box 100", address_line_2: "" }],
+      usePostalAddressForShipping: sample.code === "HARBOUR-CAFE",
+      addresses: [postal, { ...postal, address_type: "SHIPPING", address_line_2: "Deliver to reception" }],
       notes: "Sample customer for the Commercial prototype.",
     }, current?.code);
     transitionCustomers(organizationId, [sample.code], sample.status === "ACTIVE" ? "activate" : "deactivate");

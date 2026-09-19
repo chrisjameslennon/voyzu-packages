@@ -1,3 +1,4 @@
+import type { RichTextDocument } from "@voyzu/ui-components/rich-text-editor/document";
 import Type from "typebox";
 import { ProductListRowDto } from "./product-list.dto";
 
@@ -28,7 +29,7 @@ export const ProductEditDto = Type.Object({
   salesUnit: Type.Union([Type.String(), Type.Null()]),
   status,
   shortDescription: text,
-  description: Type.String({ maxLength: 20000 }),
+  description: Type.Unsafe<RichTextDocument>(Type.Object({ type: Type.Literal("doc"), content: Type.Array(Type.Unknown()) }, { additionalProperties: false })),
   images: Type.Array(Type.Object({ path: Type.String({ pattern: "\\S", maxLength: 2000 }), primary: Type.Boolean() }, { additionalProperties: false }), { maxItems: 100 }),
   options: Type.Array(ProductOptionDto, { maxItems: 6 }),
   variants: Type.Array(ProductVariantDto, { minItems: 1, maxItems: 500 }),

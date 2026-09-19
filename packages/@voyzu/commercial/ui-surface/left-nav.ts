@@ -75,6 +75,36 @@ export default [
           }
         }
       },
+      "commercial.menu1.e-commerce": {
+        "label": "E-commerce",
+        "icon": "storefront",
+        "children": {
+          "commercial.menu1.e-commerce.sales-channels": {
+            "label": "Sales Channels",
+            "path": "/commercial/e-commerce/sales-channels"
+          },
+          "commercial.menu1.e-commerce.product-views": {
+            "label": "Product Views",
+            "path": "/commercial/e-commerce/product-views"
+          },
+          "commercial.menu1.e-commerce.carts": {
+            "label": "Carts",
+            "path": "/commercial/e-commerce/carts"
+          },
+          "commercial.menu1.e-commerce.promotions": {
+            "label": "Promotions",
+            "path": "/commercial/e-commerce/promotions"
+          },
+          "commercial.menu1.e-commerce.shipping": {
+            "label": "Shipping",
+            "path": "/commercial/e-commerce/shipping"
+          },
+          "commercial.menu1.e-commerce.payments": {
+            "label": "Payments",
+            "path": "/commercial/e-commerce/payments"
+          }
+        }
+      },
       "commercial.menu1.settings": {
         "label": "Settings",
         "icon": "settings",

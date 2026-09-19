@@ -1,0 +1,27 @@
+{
+  "name": "@voyzu/cms",
+  "version": "0.1.0",
+  "description": "Website content management for Voyzu.",
+  "repository": "https://github.com/chrisjameslennon/voyzu-packages.git",
+  "private": true,
+  "type": "module",
+  "voyzu": {
+    "voyzu-package": true,
+    "allowInstall": true,
+    "dependencies": []
+  },
+  "exports": {
+    "./voyzu-package": {
+      "types": "./voyzu.package.ts",
+      "import": "./voyzu.package.ts"
+    }
+  },
+  "peerDependencies": {
+    "@voyzu/types": "^0.1.0",
+    "@voyzu/ui-components": "^0.1.0",
+    "@voyzu/ui-layout": "^0.1.0",
+    "@voyzu/ui-style": "^0.1.0",
+    "react": "^19",
+    "server-only": "^0.0.1"
+  }
+}

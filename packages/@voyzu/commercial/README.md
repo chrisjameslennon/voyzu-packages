@@ -60,7 +60,7 @@ Sample data upserts descriptive product content and custom fields, shared values
 
 ## Customer prototype
 
-Customers have organization-scoped in-memory CRUD at /commercial/customers, independent of Party and the composed customer internal API. Fields are code, name, status, primary contact name, email, notes, and an addresses array. Addresses have an address_type (PRIMARY, SHIPPING, POSTAL) plus address_line_1, address_line_2, city, region_or_state, postal_code and country_code. Country codes use two uppercase letters. Code is immutable after creation. The detail page uses the shared status and audit panels; audit events and database persistence are deferred until after prototyping.
+Customers have organization-scoped in-memory CRUD at /commercial/customers, independent of Party and the composed customer internal API. Fields are code, name, status, primary contact name, email, notes, and an addresses array. Addresses have an address_type (POSTAL, SHIPPING) plus address_line_1, address_line_2, city, region_or_state, postal_code and country_code. The shipping address can use the postal address via usePostalAddressForShipping; saving keeps the two synchronized when enabled. Country codes use two uppercase letters. Code is immutable after creation. The detail page uses the shared status and audit panels; audit events and database persistence are deferred until after prototyping.
 
 The standard sample-data script and dashboard button upsert three customers, including contact details, all address types and an inactive customer. Records reset with the server process.
 

@@ -1,3 +1,4 @@
+import { readRichTextDocument } from "@voyzu/ui-components/rich-text-editor/document";
 import { required, maxLength, type FieldDescriptor } from "@voyzu/ui-components";
 import { variantMatchesOptions } from "../domain/product-variants";
 import type { ProductDetail } from "../types/product-detail.dto";
@@ -10,7 +11,7 @@ export function productTabFields(product: ProductDetail, tab: string): Record<st
   if (tab === "details") {
     text("name", "product name", product.name, 200);
     text("shortDescription", "short description", product.shortDescription, 2000, false);
-    text("description", "description", product.description, 20000, false);
+    text("description", "description", readRichTextDocument(product.description).textContent, 20000, false);
   }
   if (tab === "images") {
     product.images.forEach((image, index) => text("image-" + index, "image path for row " + (index + 1), image.path, 2000));

@@ -1,3 +1,4 @@
+import { createEmptyRichTextDocument, parseRichTextDocument, readRichTextDocument } from "@voyzu/ui-components/rich-text-editor/document";
 import "server-only";
 import { loadInventoryItems, getInventoryLinks, saveInventoryLinks } from "./product-inventory.service";
 
@@ -42,7 +43,7 @@ export async function upsertSampleProduct(
       variantPricing: "BASE_PRICE",
       name: product.name, type: product.type, category: product.category, brand: product.brand,
       manufacturer: product.manufacturer, salesUnit: product.salesUnit, status: product.status,
-      shortDescription: input.sampleDetails?.shortDescription ?? "", description: input.sampleDetails?.description ?? "", images: [], options: [],
+      shortDescription: input.sampleDetails?.shortDescription ?? "", description: input.sampleDetails?.description ?? createEmptyRichTextDocument(), images: [], options: [],
       variants: [{ id: String(existing?.defaultVariant.id ?? id), sku: product.code, basePrice: product.basePrice, status: product.status, options: {}, imagePath: "" }],
       basePrice: product.basePrice, pricingCategoryCode: product.pricingCategoryCode, customFields: input.sampleDetails?.customFields ?? [],
     },
@@ -81,16 +82,23 @@ export async function getProduct(organizationId: number, code: string): Promise<
     useVariants: false, variantPricing: "BASE_PRICE",
     name: product.name, type: product.type, category: product.category, brand: product.brand,
     manufacturer: product.manufacturer ?? "", salesUnit: product.salesUnit, status: product.status,
-    shortDescription: "", description: "", images: [], options: [],
+    shortDescription: "", description: createEmptyRichTextDocument(), images: [], options: [],
     variants: [{ id: String(product.defaultVariant.id), sku: product.defaultVariant.sku, status: product.defaultVariant.status, options: {}, imagePath: "" }],
     basePrice, pricingCategoryCode: product.pricingCategoryCode ?? null, customFields: [],
   };
+  const previousDescription: unknown = detail.description;
+  detail.description = typeof previousDescription === "string"
+    ? { type: "doc", content: previousDescription.split(/\r?\n/).map((text) => ({ type: "paragraph", ...(text ? { content: [{ type: "text", text }] } : {}) })) }
+    : parseRichTextDocument(previousDescription ?? createEmptyRichTextDocument());
   return structuredClone({ ...detail, pricingCategoryCode: detail.pricingCategoryCode ?? null, variantPricing: detail.variantPricing ?? "BASE_PRICE", variants: detail.variants.map((variant) => ({ ...variant, basePrice: variant.basePrice ?? basePrice })), useVariants: detail.useVariants ?? detail.options.length > 0, id: product.id, code: product.code, createdAt: product.createdAt, updatedAt: product.updatedAt });
 }
 
 export async function saveProduct(organizationId: number, code: string, input: ProductEditDto): Promise<ProductDetail> {
   const current = await getProduct(organizationId, code);
   if (!current) throw new Error("Product was not found.");
+  const description = readRichTextDocument(input.description);
+  if (description.textContent.length > 20000) throw new Error("Description must be 20000 characters or less.");
+  input = { ...input, description: parseRichTextDocument(input.description) };
   if (input.pricingCategoryCode && input.pricingCategoryCode !== current.pricingCategoryCode) {
     const { listPricingCategories } = await import("../../../product-pricing-categories/server/lib/pricing-category.service");
     if (!listPricingCategories(organizationId).some((row) => row.code === input.pricingCategoryCode && row.status === "ACTIVE")) throw new Error("Select an active pricing category.");
@@ -203,4 +211,29 @@ export async function changeProductsCategory(organizationId: number, codes: stri
     else { row.pricingCategoryCode = category.code; if (row.detail) row.detail.pricingCategoryCode = category.code; }
     row.updatedAt = updatedAt;
   }
+}
+
+export async function createProductsFromInventory(organizationId: number, itemIds: number[]): Promise<string[]> {
+  const items = await loadInventoryItems(organizationId);
+  if (!items) throw new Error("Inventory is not available.");
+  const selected = [...new Set(itemIds)].map((id) => {
+    const item = items.find((row) => row.id === id && row.status === "ACTIVE");
+    if (!item) throw new Error("Select active inventory items belonging to this organization.");
+    return { ...item, code: item.sku.toUpperCase().replace(/[^A-Z0-9_-]/g, "-").replace(/^[^A-Z0-9]+/, "").slice(0, 50) };
+  });
+  const codes = new Set(Array.from(productsByOrganization.get(organizationId)?.values() ?? [], (row) => row.code.toUpperCase()));
+  for (const item of selected) {
+    if (!item.code || !item.name.trim() || item.name.trim().length > 200 || ["PRICING-CATEGORIES", "PRODUCT-CATEGORIES", "MANAGE-LISTS", "OPTION-LISTS", "OPTIONS"].includes(item.code)) throw new Error("Inventory item " + item.sku + " cannot be used as a product code or name.");
+    if (codes.has(item.code)) throw new Error("Product code " + item.code + " already exists or is repeated in this selection. Deselect the conflicting item.");
+    codes.add(item.code);
+  }
+  // All validation precedes these synchronous in-memory writes.
+  const writes = selected.map((item) => {
+    const write = upsertSampleProduct(organizationId, { code: item.code, name: item.name.trim(), type: "Physical", basePrice: 0, pricingCategoryCode: null, category: null, brand: null, manufacturer: "", salesUnit: item.unit, status: "ACTIVE" });
+    const product = Array.from(productsByOrganization.get(organizationId)!.values()).find((row) => row.code === item.code)!;
+    saveInventoryLinks(organizationId, item.code, { [String(product.defaultVariant.id)]: item.id });
+    return write;
+  });
+  await Promise.all(writes);
+  return selected.map((item) => item.code);
 }

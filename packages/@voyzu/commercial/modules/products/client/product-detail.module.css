@@ -30,3 +30,5 @@
 
 .standardDialog { border: 0; padding: 0; margin: auto; width: calc(100% - 2rem); color: var(--voyzu-color-text); }
 .standardDialog::backdrop { background: var(--voyzu-color-overlay); backdrop-filter: blur(1px); }
+
+.inventoryVariant > h3 { margin: 0; }

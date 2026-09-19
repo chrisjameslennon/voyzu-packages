@@ -1,5 +1,5 @@
 "use client";
-import { LinkButton } from "@voyzu/ui-components";
+import { LinkButton, RichTextEditor } from "@voyzu/ui-components";
 
 import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import { DetailBackButton } from "@voyzu/ui-surface/client";
@@ -168,7 +168,7 @@ export function ProductDetailView({ initial, lists, categories, optionLists, pri
       <Field label="Status"><Input aria-label="Status" value={product.status} disabled /></Field>
     </div>
     <Field label="Short Description"><Textarea invalid={validation.hasError("shortDescription")} aria-label="Short Description" rows={2} value={product.shortDescription} onChange={(event) => change("shortDescription", event.target.value)} /></Field>
-    <Field label="Description"><Textarea invalid={validation.hasError("description")} aria-label="Description" rows={6} value={product.description} onChange={(event) => change("description", event.target.value)} /></Field>
+    <Field label="Description"><RichTextEditor resizable invalid={validation.hasError("description")} ariaLabel="Description" value={product.description} onChange={(value) => change("description", value)} /></Field>
   </div>;
   const imagesContent = <div className={detail.stack}>
     <div className={detail.cardHeader}><h3 className={typography.sectionHeading}>Images</h3><div className={detail.cardHeaderActions}><Button variant="secondary" icon="add" onClick={() => change("images", [...product.images, { path: "", primary: !product.images.length }])}>Add Image Path</Button>{saveButton("images")}</div></div>
@@ -228,7 +228,7 @@ export function ProductDetailView({ initial, lists, categories, optionLists, pri
     <div className={detail.cardHeader}><h3 className={typography.sectionHeading}>Inventory</h3><Button variant="secondary" icon="save" disabled={pending} onClick={saveInventory}>Save</Button></div>
     {inventoryVariants.map((variant) => {
       const item = inventoryItems?.find((row) => row.id === inventoryLinks[variant.id]);
-      return <section key={variant.id} className={styles.optionCard}>
+      return <section key={variant.id} className={`${styles.optionCard} ${styles.inventoryVariant}`}>
         {product.useVariants && <h3 className={typography.sectionHeading}>{Object.values(variant.options).join(" / ")}</h3>}
         <Field label="Inventory Item"><SearchableSelect ariaLabel={"Inventory item for " + variant.sku} clearable placeholder="Select an inventory item" value={String(inventoryLinks[variant.id] ?? "")} options={(inventoryItems ?? []).filter((row) => row.status === "ACTIVE").map((row) => ({ value: String(row.id), label: row.sku + " - " + row.name }))} onChange={(value) => setInventoryLinks((current) => { const next = { ...current }; if (value) next[variant.id] = Number(value); else delete next[variant.id]; return next; })} /></Field>
         {item ? <div className={styles.inventoryInfo}>

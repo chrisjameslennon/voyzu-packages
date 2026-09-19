@@ -1,15 +1,22 @@
 import "server-only";
 import { getCustomerConfiguration } from "./customer-configuration.service";
 import { Check } from "typebox/value";
-import { CustomerInputDto, type Customer, type CustomerInput } from "../../types/customer.dto";
+import { CustomerInputDto, emptyAddress, synchronizeCustomerAddresses, type Customer, type CustomerInput } from "../../types/customer.dto";
 const memory = globalThis as typeof globalThis & { commercialPrototypeCustomers?: Map<number, Map<string, Customer>>; commercialCustomerNextId?: number };
 const store = memory.commercialPrototypeCustomers ??= new Map();
+function normalizeCustomer(row: Customer): Customer {
+  // Preserve addresses from prototypes created before postal/shipping replaced primary.
+  const legacy = row.addresses as Array<Omit<Customer["addresses"][number], "address_type"> & { address_type: string }>;
+  const postal = legacy.find((address) => address.address_type === "POSTAL") ?? legacy.find((address) => address.address_type === "PRIMARY") ?? emptyAddress("POSTAL");
+  const shipping = legacy.find((address) => address.address_type === "SHIPPING") ?? emptyAddress("SHIPPING");
+  return { ...row, ...synchronizeCustomerAddresses({ ...row, categoryCode: row.categoryCode ?? null, priceListCode: row.priceListCode ?? null, usePostalAddressForShipping: row.usePostalAddressForShipping ?? false, addresses: [{ ...postal, address_type: "POSTAL" }, { ...shipping, address_type: "SHIPPING" }] }) };
+}
 export function listCustomers(organizationId: number): Customer[] {
-  return structuredClone([...store.get(organizationId)?.values() ?? []].map((row) => ({ ...row, categoryCode: row.categoryCode ?? null, priceListCode: row.priceListCode ?? null })).sort((a, b) => a.code.localeCompare(b.code)));
+  return structuredClone([...store.get(organizationId)?.values() ?? []].map(normalizeCustomer).sort((a, b) => a.code.localeCompare(b.code)));
 }
 export function getCustomer(organizationId: number, code: string): Customer | null {
   const row = store.get(organizationId)?.get(code);
-  return row ? structuredClone({ ...row, categoryCode: row.categoryCode ?? null, priceListCode: row.priceListCode ?? null }) : null;
+  return row ? structuredClone(normalizeCustomer(row)) : null;
 }
 export function saveCustomer(organizationId: number, input: unknown, existingCode?: string): Customer {
   if (!Check(CustomerInputDto, input)) throw new Error("Supply a valid customer code, name and address fields.");
@@ -26,7 +33,7 @@ export function saveCustomer(organizationId: number, input: unknown, existingCod
   for (const [field, kind] of [["categoryCode", "categories"], ["priceListCode", "priceLists"]] as const) {
     if (value[field] && value[field] !== current?.[field] && getCustomerConfiguration(organizationId, kind, value[field])?.status !== "ACTIVE") throw new Error("Select an active " + (kind === "categories" ? "customer category." : "customer price list."));
   }
-  const customer: Customer = { ...value, id: current?.id ?? (memory.commercialCustomerNextId = (memory.commercialCustomerNextId ?? 0) + 1), status: current?.status ?? "ACTIVE", createdAt: current?.createdAt ?? Date.now(), updatedAt: current ? Date.now() : undefined };
+  const customer: Customer = { ...synchronizeCustomerAddresses(value), id: current?.id ?? (memory.commercialCustomerNextId = (memory.commercialCustomerNextId ?? 0) + 1), status: current?.status ?? "ACTIVE", createdAt: current?.createdAt ?? Date.now(), updatedAt: current ? Date.now() : undefined };
   if (!records) { records = new Map(); store.set(organizationId, records); }
   records.set(customer.code, customer);
   return structuredClone(customer);

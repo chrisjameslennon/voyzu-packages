@@ -13,5 +13,5 @@ export async function ProductsPage({ context }: PageProps) {
   const products = selectedOrganization
     ? await listProducts(selectedOrganization.organization_id)
     : [];
-  return <ProductsList categories={selectedOrganization ? (await listProductConfiguration(selectedOrganization.organization_id, "categories")).filter((row) => row.status === "ACTIVE") : []} pricingCategories={selectedOrganization ? listPricingCategories(selectedOrganization.organization_id) : []} initialPricingCategoryCodes={pricingCategoryCodes} showAllStatuses={query.status === "all"} key={(selectedOrganization?.organization_id ?? "none") + JSON.stringify(query)} products={products} hasOrganization={Boolean(selectedOrganization)} />;
+  return <ProductsList inventoryInstalled={internalApi.has("@erp/inventory-item", "byOrganization")} categories={selectedOrganization ? (await listProductConfiguration(selectedOrganization.organization_id, "categories")).filter((row) => row.status === "ACTIVE") : []} pricingCategories={selectedOrganization ? listPricingCategories(selectedOrganization.organization_id) : []} initialPricingCategoryCodes={pricingCategoryCodes} showAllStatuses={query.status === "all"} key={(selectedOrganization?.organization_id ?? "none") + JSON.stringify(query)} products={products} hasOrganization={Boolean(selectedOrganization)} />;
 }

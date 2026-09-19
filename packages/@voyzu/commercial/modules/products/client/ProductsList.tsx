@@ -7,6 +7,7 @@ import layout from "@voyzu/ui-layout/css-modules/list.layout.module.css";
 import listStyles from "@voyzu/ui-style/css-modules/list.module.css";
 import typography from "@voyzu/ui-style/css-modules/typography.module.css";
 import { ChangeProductCategoryModal } from "./ChangeProductCategoryModal";
+import { CreateProductsFromInventoryModal } from "./CreateProductsFromInventoryModal";
 import { AddProductModal } from "./AddProductModal";
 import { transitionProductsAction } from "../server/actions/product.actions";
 import type { ProductListRowDto } from "../types/product-list.dto";
@@ -24,7 +25,7 @@ const productColumns = (pricingCategories: { code: string; name: string }[]): Da
 ];
 const PAGE_SIZE = 25;
 
-export function ProductsList({ products, hasOrganization, categories, pricingCategories, initialPricingCategoryCodes, showAllStatuses }: { products: ProductListRowDto[]; hasOrganization: boolean; categories: { code: string; name: string }[]; pricingCategories: { code: string; name: string; status: string }[]; initialPricingCategoryCodes: string[]; showAllStatuses: boolean }) {
+export function ProductsList({ products, hasOrganization, inventoryInstalled, categories, pricingCategories, initialPricingCategoryCodes, showAllStatuses }: { products: ProductListRowDto[]; hasOrganization: boolean; inventoryInstalled: boolean; categories: { code: string; name: string }[]; pricingCategories: { code: string; name: string; status: string }[]; initialPricingCategoryCodes: string[]; showAllStatuses: boolean }) {
   const router = useRouter();
   const columns = productColumns(pricingCategories);
   const [categoryChange, setCategoryChange] = useState<"category" | "pricingCategory" | null>(null);
@@ -108,7 +109,7 @@ export function ProductsList({ products, hasOrganization, categories, pricingCat
           <h1 className={`${typography.pageTitle} ${layout.pageTitleResponsive}`}>Products</h1>
           <div className={layout.slotTitleByline}><p className={typography.headingByline}>Manage your product catalogue.</p></div>
         </div>
-        <div className={layout.slotActions}><div className={layout.slotPrimaryAction}><SplitButton variant="primary" icon="add" label="Add Product" disabled={!hasOrganization || pending} onClick={() => setAdding("normal")} items={[{ label: "Add from Inventory", icon: "inventory_2", onClick: () => setAdding("inventory") }]} /></div></div>
+        <div className={layout.slotActions}><div className={layout.slotPrimaryAction}>{inventoryInstalled ? <SplitButton variant="primary" icon="add" label="Add Product" disabled={!hasOrganization || pending} onClick={() => setAdding("normal")} items={[{ label: "Create from Inventory", icon: "inventory_2", onClick: () => setAdding("inventory") }]} /> : <Button variant="primary" icon="add" disabled={!hasOrganization || pending} onClick={() => setAdding("normal")}>Add Product</Button>}</div></div>
         <div className={layout.slotAlert}><ValidationAlert errors={error ? [error] : []} visible={!!error} onDismiss={() => setError("")} /></div>
       </header>
       <div className={layout.listToolbar}>
@@ -177,7 +178,8 @@ export function ProductsList({ products, hasOrganization, categories, pricingCat
         </div>
       </div>
       {categoryChange && <ChangeProductCategoryModal kind={categoryChange} codes={selectedRows.map((row) => row.code)} options={categoryChange === "category" ? categories : pricingCategories.filter((row) => row.status === "ACTIVE")} onClose={() => setCategoryChange(null)} onSaved={() => { setToast(categoryChange === "category" ? "Product categories changed" : "Product pricing categories changed"); setCategoryChange(null); setSelectedIds(new Set()); router.refresh(); }} />}
-      {adding && <AddProductModal fromInventory={adding === "inventory"} onClose={() => setAdding(null)} />}
+      {adding === "normal" && <AddProductModal onClose={() => setAdding(null)} />}
+      {adding === "inventory" && inventoryInstalled && <CreateProductsFromInventoryModal onClose={() => setAdding(null)} onCreated={(count) => { setAdding(null); setToast(`${count} product${count === 1 ? "" : "s"} created`); router.refresh(); }} />}
       <ConfirmDialog isOpen={confirmDelete} title="Delete Products" message="Permanently delete the selected products?" confirmLabel="Delete" confirmVariant="danger" onClose={() => setConfirmDelete(false)} onConfirm={() => { setConfirmDelete(false); transition("delete"); }} />
       <Toast isVisible={!!toast} message={toast} onClose={() => setToast("")} />
     </div>
